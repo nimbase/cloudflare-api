@@ -49,4 +49,4 @@ jobs:
           gen-command: |
             tmp="$(mktemp -d)"
             nimbase oapi.gen "https://raw.githubusercontent.com/cloudflare/api-schemas/refs/heads/main/openapi.json" "$tmp/cloudflare"
-            cp -R "$tmp/cloudflare" .
+            rsync -a --exclude='.github' "$tmp/cloudflare/" .
