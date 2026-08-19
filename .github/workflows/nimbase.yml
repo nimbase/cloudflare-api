@@ -47,4 +47,6 @@ jobs:
           # Regeneration only ever replaces the generated src/ and tests/ dirs;
           # every other file in the repo is left untouched.
           gen-command: |
-            # TODO: set `source` in nimbase.oapi.config.yaml to enable regeneration
+            tmp="$(mktemp -d)"
+            nimbase oapi.gen "https://raw.githubusercontent.com/cloudflare/api-schemas/refs/heads/main/openapi.json" "$tmp/cloudflare"
+            cp -R "$tmp/cloudflare" .
