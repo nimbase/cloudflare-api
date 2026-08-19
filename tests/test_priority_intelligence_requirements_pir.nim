@@ -1,0 +1,72 @@
+# cloudflare API client for Nim
+#
+# Auto-generated from OpenAPI 3.x specification
+# Nimbase CLI https://github.com/nimbase/nimbase
+#
+# License: MIT
+import std/[asyncdispatch]
+import unittest
+import pkg/openparser/json as openjson
+import cloudflare
+import ./common
+
+suite "priority_intelligence_requirements_pir serialization":
+  test "round-trips CloudforceOneRequestsPriorityItem":
+    let obj = newCloudforceOneRequestsPriorityItem()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneRequestsPriorityItem)) == openjson.toJson(obj)
+
+  test "round-trips CloudforceOneRequestsPriorityEdit":
+    let obj = newCloudforceOneRequestsPriorityEdit()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneRequestsPriorityEdit)) == openjson.toJson(obj)
+
+  test "round-trips CloudforceOneRequestsApiResponseCommon":
+    let obj = newCloudforceOneRequestsApiResponseCommon()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneRequestsApiResponseCommon)) == openjson.toJson(obj)
+
+  test "round-trips CloudforceOneRequestsQuota":
+    let obj = newCloudforceOneRequestsQuota()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneRequestsQuota)) == openjson.toJson(obj)
+
+  test "round-trips CloudforceOneRequestsRequestItem":
+    let obj = newCloudforceOneRequestsRequestItem()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneRequestsRequestItem)) == openjson.toJson(obj)
+
+  test "round-trips CloudforceOneRequestsApiResponseCommonFailure":
+    let obj = newCloudforceOneRequestsApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneRequestsApiResponseCommonFailure)) == openjson.toJson(obj)
+
+  test "round-trips CloudforceOneRequestsPriorityList":
+    let obj = newCloudforceOneRequestsPriorityList()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneRequestsPriorityList)) == openjson.toJson(obj)
+
+suite "priority_intelligence_requirements_pir endpoints":
+  test "POST /accounts/{account_id}/cloudforce-one/requests/priority":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdCloudforceOneRequestsPriority("test", newCloudforceOneRequestsPriorityList())
+
+  test "POST /accounts/{account_id}/cloudforce-one/requests/priority/new":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdCloudforceOneRequestsPriorityNew("test", newCloudforceOneRequestsPriorityEdit())
+
+  test "GET /accounts/{account_id}/cloudforce-one/requests/priority/quota":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneRequestsPriorityQuota("test")
+
+  test "GET /accounts/{account_id}/cloudforce-one/requests/priority/{priority_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneRequestsPriorityPriorityId("test", "test")
+
+  test "PUT /accounts/{account_id}/cloudforce-one/requests/priority/{priority_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.putAccountsAccountIdCloudforceOneRequestsPriorityPriorityId("test", "test", newCloudforceOneRequestsPriorityEdit())
+
+  test "DELETE /accounts/{account_id}/cloudforce-one/requests/priority/{priority_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdCloudforceOneRequestsPriorityPriorityId("test", "test")
+
