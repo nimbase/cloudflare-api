@@ -1,0 +1,50 @@
+# NimbaseBot workflow
+#
+# The cloudflare client is a single package living at the repo root and
+# is generated from the upstream spec (the upstream OpenAPI 3.x specification). This workflow
+# regenerates it from the upstream spec on a nightly schedule (or manually),
+# bumps the version (from the latest git tag), commits, tags and releases.
+# Testing happens in the repo's own test.yml workflow, which the bot's commits
+# re-trigger.
+#
+# Setup:
+#   1. Works out of the box with GITHUB_TOKEN (no secrets needed). Optionally
+#      add a bot PAT as `BOT_TOKEN` so the bot's pushes re-trigger the dependent
+#      test/docs workflows.
+#   2. Ensure an initial tag exists matching the root cloudflare.nimble version.
+
+name: nimbase
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'cloudflare.nimble'
+      - 'nimbase.oapi.config.yaml'
+      - '.github/workflows/nimbase.yml'
+  schedule:
+    - cron: '0 3 * * *'   # nightly re-check for upstream spec changes
+  workflow_dispatch:
+
+concurrency:
+  group: nimbase
+  cancel-in-progress: false
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: nimbase/nimbase-bot@v1
+        with:
+          # token is optional; defaults to GITHUB_TOKEN. Pass secrets.BOT_TOKEN
+          # to re-trigger dependent test/docs workflows.
+          # Regeneration only ever replaces the generated src/ and tests/ dirs;
+          # every other file in the repo is left untouched.
+          gen-command: |
+            # TODO: set `source` in nimbase.oapi.config.yaml to enable regeneration
