@@ -30,15 +30,15 @@ proc getZonesZoneIdSslCertificatePacks*(client: CloudflareClient,
                                         zoneId: types.TlsCertificatesAndHostnamesIdentifier,
                                         page: float64 = default(float64),
                                         perPage: float64 = default(float64),
-                                        status: set[CertificatePackStatusOption] = {},
-                                        deploy: set[CertificatePackDeployOption] = {}): Future[types.TlsCertificatesAndHostnamesCertificatePackResponseCollection] {.async.} =
+                                        status: CertificatePackStatusOption,
+                                        deploy: CertificatePackDeployOption): Future[types.TlsCertificatesAndHostnamesCertificatePackResponseCollection] {.async.} =
   ## For a given zone, list all active certificate packs.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in status: q["status"] = $v
-  for v in deploy: q["deploy"] = $v
+  q["status"] = $status
+  q["deploy"] = $deploy
   let res = await client.httpGET(fmt"/zones/{zoneId}/ssl/certificate_packs", q)
   let body = await res.body
   case res.code

@@ -55,12 +55,12 @@ proc getAccountsAccountIdPayPerCrawlTermsSignature*(client: CloudflareClient,
 
 proc postAccountsAccountIdPayPerCrawlTermsSignature*(client: CloudflareClient,
                                                      accountId: string,
-                                                     eventType: set[PpcTermEventTypeOption] = {},
+                                                     eventType: PpcTermEventTypeOption,
                                                      vid: string): Future[types.PayPerCrawlApiNoResultResponse] {.async.} =
   ## Records that an account displayed or agreed to the pay-per-crawl terms.
 
   var q = initOrderedTable[string, string]()
-  for v in eventType: q["event_type"] = $v
+  q["event_type"] = $eventType
   q["vid"] = $vid
   let res = await client.httpPOST(fmt"/accounts/{accountId}/pay-per-crawl/terms/signature", q)
   let body = await res.body

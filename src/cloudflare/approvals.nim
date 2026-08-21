@@ -27,21 +27,21 @@ type
 proc getAccountsAccountIdCloudforceOneRulesApprovals*(client: CloudflareClient,
                                                       accountId: string,
                                                       status: JsonNode = default(JsonNode),
-                                                      latestOnly: string = "false",
+                                                      latestOnly: ApprovalLatestOnlyOption = latestOnlyFalse,
                                                       limit: float64 = default(float64),
                                                       offset: float64 = default(float64),
-                                                      reviewerScope: set[ApprovalReviewerScopeOption] = {},
-                                                      changeType: set[ApprovalChangeTypeOption] = {}): Future[types.CloudforceOneRuleApprovalsListResponse] {.async.} =
+                                                      reviewerScope: ApprovalReviewerScopeOption,
+                                                      changeType: ApprovalChangeTypeOption): Future[types.CloudforceOneRuleApprovalsListResponse] {.async.} =
   ## List rule approvals with optional status, revision, reviewer-scope, and
   ## mutation-type filtering.
 
   var q = initOrderedTable[string, string]()
   q["status"] = $status
-  for v in latestOnly: q["latest_only"] = $v
+  q["latest_only"] = $latestOnly
   q["limit"] = $limit
   q["offset"] = $offset
-  for v in reviewerScope: q["reviewer_scope"] = $v
-  for v in changeType: q["change_type"] = $v
+  q["reviewer_scope"] = $reviewerScope
+  q["change_type"] = $changeType
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/rules/approvals", q)
   let body = await res.body
   case res.code

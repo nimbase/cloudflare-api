@@ -52,7 +52,7 @@ proc getAccountsAccountIdAiGatewayCustomProvidersCosts*(client: CloudflareClient
                                                         perPage: int64 = 20,
                                                         enable: bool = default(bool),
                                                         accountProviderId: string = default(string),
-                                                        modelRule: string = "equals",
+                                                        modelRule: AiGatewayAccountProviderCostModelRuleOption = modelRuleEquals,
                                                         costType: string = "tokens",
                                                         search: string = default(string)): Future[GetAccountsAccountIdAiGatewayCustomProvidersCostsResponse] {.async.} =
   ## Lists all AI Gateway evaluator types configured for the account.
@@ -62,7 +62,7 @@ proc getAccountsAccountIdAiGatewayCustomProvidersCosts*(client: CloudflareClient
   q["per_page"] = $perPage
   q["enable"] = $enable
   q["account_provider_id"] = $accountProviderId
-  for v in modelRule: q["model_rule"] = $v
+  q["model_rule"] = $modelRule
   q["cost_type"] = $costType
   q["search"] = $search
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/custom-providers/costs", q)

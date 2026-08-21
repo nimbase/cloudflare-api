@@ -19,14 +19,14 @@ type
 proc getAccountsAccountIdLoadBalancersSearch*(client: CloudflareClient,
                                               accountId: types.LoadBalancingComponentsSchemasIdentifier,
                                               query: string = "",
-                                              references: string = "",
+                                              references: AccountLoadBalancerSearchReferencesOption = references,
                                               page: float64 = default(float64),
                                               perPage: float64 = default(float64)): Future[JsonNode] {.async.} =
   ## Search for Load Balancing resources.
 
   var q = initOrderedTable[string, string]()
   q["query"] = $query
-  for v in references: q["references"] = $v
+  q["references"] = $references
   q["page"] = $page
   q["per_page"] = $perPage
   let res = await client.httpGET(fmt"/accounts/{accountId}/load_balancers/search", q)

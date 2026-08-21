@@ -52,7 +52,7 @@ proc putZonesZoneIdCertificateAuthoritiesHostnameAssociations*(client: Cloudflar
 
 proc getZonesZoneIdClientCertificates*(client: CloudflareClient,
                                        zoneId: types.TlsCertificatesAndHostnamesIdentifier,
-                                       status: set[ApiShieldClientCertificatesForAZoneStatusOption] = {},
+                                       status: ApiShieldClientCertificatesForAZoneStatusOption,
                                        page: float64 = default(float64),
                                        perPage: float64 = default(float64),
                                        limit: int64 = default(int64),
@@ -61,7 +61,7 @@ proc getZonesZoneIdClientCertificates*(client: CloudflareClient,
   ## using Pagination.
 
   var q = initOrderedTable[string, string]()
-  for v in status: q["status"] = $v
+  q["status"] = $status
   q["page"] = $page
   q["per_page"] = $perPage
   q["limit"] = $limit

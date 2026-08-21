@@ -46,8 +46,8 @@ proc getAccountsAccountIdZerotrustSubnets*(client: CloudflareClient,
                                            addressFamily: types.TunnelAddressFamily = default(types.TunnelAddressFamily),
                                            isDefaultNetwork: bool = default(bool),
                                            isDeleted: bool = default(bool),
-                                           sortOrder: set[ZeroTrustSubnetSortOrderOption] = {},
-                                           subnetTypes: set[ZeroTrustSubnetSubnetTypesOption] = {},
+                                           sortOrder: ZeroTrustSubnetSortOrderOption,
+                                           subnetTypes: ZeroTrustSubnetSubnetTypesOption,
                                            perPage: types.TunnelPerPage = default(types.TunnelPerPage),
                                            page: types.TunnelPageNumber = default(types.TunnelPageNumber)): Future[types.TunnelSubnetResponseCollection] {.async.} =
   ## Lists and filters subnets in an account.
@@ -60,8 +60,8 @@ proc getAccountsAccountIdZerotrustSubnets*(client: CloudflareClient,
   q["address_family"] = $addressFamily
   q["is_default_network"] = $isDefaultNetwork
   q["is_deleted"] = $isDeleted
-  for v in sortOrder: q["sort_order"] = $v
-  for v in subnetTypes: q["subnet_types"] = $v
+  q["sort_order"] = $sortOrder
+  q["subnet_types"] = $subnetTypes
   q["per_page"] = $perPage
   q["page"] = $page
   let res = await client.httpGET(fmt"/accounts/{accountId}/zerotrust/subnets", q)

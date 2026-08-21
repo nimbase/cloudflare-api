@@ -54,15 +54,15 @@ type
 
 proc getAccountsAccountIdAgentMemoryNamespaces*(client: CloudflareClient,
                                                 perPage: int64 = default(int64),
-                                                order: set[NamespaceOrderOption] = {},
-                                                direction: set[NamespaceDirectionOption] = {},
+                                                order: NamespaceOrderOption,
+                                                direction: NamespaceDirectionOption,
                                                 cursor: string = default(string)): Future[GetAccountsAccountIdAgentMemoryNamespacesResponse] {.async.} =
   ## Lists all namespaces for the given account. Results are paginated.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   q["cursor"] = $cursor
   let res = await client.httpGET("/accounts/{account_id}/agent-memory/namespaces", q)
   let body = await res.body

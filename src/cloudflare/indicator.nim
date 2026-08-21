@@ -211,8 +211,8 @@ proc getAccountsAccountIdCloudforceOneEventsIndicators*(client: CloudflareClient
                                                         relatedEventsLimit: float64 = default(float64),
                                                         includeTags: bool = default(bool),
                                                         includeTotalCount: bool = default(bool),
-                                                        format: set[IndicatorFormatOption] = {},
-                                                        cache: set[IndicatorCacheOption] = {},
+                                                        format: IndicatorFormatOption,
+                                                        cache: IndicatorCacheOption,
                                                         cursor: string = default(string)): Future[GetAccountsAccountIdCloudforceOneEventsIndicatorsResponse] {.async.} =
   ## Retrieves indicators across specified datasets, ordered by createdAt descending
   ## then UUID, dataset ID, and shard ID ascending. Use datasetIds=all or
@@ -234,8 +234,8 @@ proc getAccountsAccountIdCloudforceOneEventsIndicators*(client: CloudflareClient
   q["relatedEventsLimit"] = $relatedEventsLimit
   q["includeTags"] = $includeTags
   q["includeTotalCount"] = $includeTotalCount
-  for v in format: q["format"] = $v
-  for v in cache: q["cache"] = $v
+  q["format"] = $format
+  q["cache"] = $cache
   q["cursor"] = $cursor
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/indicators", q)
   let body = await res.body
@@ -248,7 +248,7 @@ proc getAccountsAccountIdCloudforceOneEventsIndicators*(client: CloudflareClient
 proc getAccountsAccountIdCloudforceOneEventsIndicatorsAggregate*(client: CloudflareClient,
                                                                  accountId: string,
                                                                  aggregateBy: string,
-                                                                 measure: string = "indicators",
+                                                                 measure: IndicatorMeasureOption = measureIndicators,
                                                                  tagUuid: string = default(string),
                                                                  datasetIds: seq[string] = @[],
                                                                  createdAfter: JsonNode = default(JsonNode),
@@ -261,7 +261,7 @@ proc getAccountsAccountIdCloudforceOneEventsIndicatorsAggregate*(client: Cloudfl
 
   var q = initOrderedTable[string, string]()
   q["aggregateBy"] = $aggregateBy
-  for v in measure: q["measure"] = $v
+  q["measure"] = $measure
   q["tagUuid"] = $tagUuid
   for v in datasetIds: q["datasetIds"] = $v
   q["createdAfter"] = $createdAfter

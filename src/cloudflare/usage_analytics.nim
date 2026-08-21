@@ -23,7 +23,7 @@ proc getAccountsAccountIdBillingUsage*(client: CloudflareClient,
                                        metrics: string = default(string),
                                        since: string = default(string),
                                        until: string = default(string),
-                                       timeDelta: string = "hour",
+                                       timeDelta: UsageAnalyticTimeDeltaOption = timeDeltaHour,
                                        limit: int64 = 100,
                                        filters: string = default(string)): Future[types.UsageAnalyticsBillingUsageResponse] {.async.} =
   ## Retrieve billing usage analytics for an account. Returns time-series data for
@@ -34,7 +34,7 @@ proc getAccountsAccountIdBillingUsage*(client: CloudflareClient,
   q["metrics"] = $metrics
   q["since"] = $since
   q["until"] = $until
-  for v in timeDelta: q["time_delta"] = $v
+  q["time_delta"] = $timeDelta
   q["limit"] = $limit
   q["filters"] = $filters
   let res = await client.httpGET(fmt"/accounts/{accountId}/billing/usage", q)
@@ -50,7 +50,7 @@ proc getAccountsAccountIdMediaUsage*(client: CloudflareClient,
                                      metrics: string = default(string),
                                      since: string = default(string),
                                      until: string = default(string),
-                                     timeDelta: string = "hour",
+                                     timeDelta: UsageAnalyticTimeDeltaOption = timeDeltaHour,
                                      limit: int64 = 100,
                                      filters: string = default(string)): Future[types.UsageAnalyticsStreamUsageResponse] {.async.} =
   ## Retrieve Media usage analytics for an account. This endpoint shares the same
@@ -62,7 +62,7 @@ proc getAccountsAccountIdMediaUsage*(client: CloudflareClient,
   q["metrics"] = $metrics
   q["since"] = $since
   q["until"] = $until
-  for v in timeDelta: q["time_delta"] = $v
+  q["time_delta"] = $timeDelta
   q["limit"] = $limit
   q["filters"] = $filters
   let res = await client.httpGET(fmt"/accounts/{accountId}/media/usage", q)
@@ -78,7 +78,7 @@ proc getAccountsAccountIdStreamUsage*(client: CloudflareClient,
                                       metrics: string = default(string),
                                       since: string = default(string),
                                       until: string = default(string),
-                                      timeDelta: string = "hour",
+                                      timeDelta: UsageAnalyticTimeDeltaOption = timeDeltaHour,
                                       limit: int64 = 100,
                                       filters: string = default(string)): Future[types.UsageAnalyticsStreamUsageResponse] {.async.} =
   ## Retrieve Stream usage analytics for an account. Returns time-series data for
@@ -89,7 +89,7 @@ proc getAccountsAccountIdStreamUsage*(client: CloudflareClient,
   q["metrics"] = $metrics
   q["since"] = $since
   q["until"] = $until
-  for v in timeDelta: q["time_delta"] = $v
+  q["time_delta"] = $timeDelta
   q["limit"] = $limit
   q["filters"] = $filters
   let res = await client.httpGET(fmt"/accounts/{accountId}/stream/usage", q)
@@ -105,7 +105,8 @@ proc getZonesZoneIdMediaUsage*(client: CloudflareClient,
                                metrics: string = default(string),
                                since: string = default(string),
                                until: string = default(string),
-                               timeDelta: string = "hour", limit: int64 = 100,
+                               timeDelta: UsageAnalyticTimeDeltaOption = timeDeltaHour,
+                               limit: int64 = 100,
                                filters: string = default(string)): Future[types.UsageAnalyticsStreamUsageResponse] {.async.} =
   ## Retrieve Media usage analytics for a zone. This endpoint shares the same backend
   ## handler as the Stream usage endpoint and returns identical Stream metrics
@@ -116,7 +117,7 @@ proc getZonesZoneIdMediaUsage*(client: CloudflareClient,
   q["metrics"] = $metrics
   q["since"] = $since
   q["until"] = $until
-  for v in timeDelta: q["time_delta"] = $v
+  q["time_delta"] = $timeDelta
   q["limit"] = $limit
   q["filters"] = $filters
   let res = await client.httpGET(fmt"/zones/{zoneId}/media/usage", q)
@@ -132,7 +133,8 @@ proc getZonesZoneIdStreamUsage*(client: CloudflareClient,
                                 metrics: string = default(string),
                                 since: string = default(string),
                                 until: string = default(string),
-                                timeDelta: string = "hour", limit: int64 = 100,
+                                timeDelta: UsageAnalyticTimeDeltaOption = timeDeltaHour,
+                                limit: int64 = 100,
                                 filters: string = default(string)): Future[types.UsageAnalyticsStreamUsageResponse] {.async.} =
   ## Retrieve Stream usage analytics for a zone. Returns time-series data for Stream
   ## billable minutes viewed. The gateway resolves the zone to its owning account and
@@ -142,7 +144,7 @@ proc getZonesZoneIdStreamUsage*(client: CloudflareClient,
   q["metrics"] = $metrics
   q["since"] = $since
   q["until"] = $until
-  for v in timeDelta: q["time_delta"] = $v
+  q["time_delta"] = $timeDelta
   q["limit"] = $limit
   q["filters"] = $filters
   let res = await client.httpGET(fmt"/zones/{zoneId}/stream/usage", q)

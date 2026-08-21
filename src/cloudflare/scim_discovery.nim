@@ -21,7 +21,7 @@ proc getAccountsAccountIdScimV2ResourceTypes*(client: CloudflareClient,
 
 proc getAccountsAccountIdScimV2ResourceTypesResourceTypeId*(client: CloudflareClient,
                                                             accountId: types.IamAccountIdentifier,
-                                                            resourceTypeId: string): Future[AsyncResponse] {.async.} =
+                                                            resourceTypeId: ResourceTypeId): Future[AsyncResponse] {.async.} =
   ## Returns a single SCIM resource type by ID (RFC 7643 Section 6). Valid IDs are
   ## `User` and `Group`.
 

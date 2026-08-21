@@ -114,8 +114,8 @@ proc getRadarAttacksLayer3SummaryBitrate*(client: CloudflareClient,
                                           continent: seq[string] = @[],
                                           ipVersion: seq[string] = default(seq[string]),
                                           protocol: seq[string] = default(seq[string]),
-                                          direction: string = "ORIGIN",
-                                          format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3SummaryBitrateResponse] {.async.} =
+                                          direction: RadarLayer3AttackDirectionOption = directionORIGIN,
+                                          format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3SummaryBitrateResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by bitrate.
 
   var q = initOrderedTable[string, string]()
@@ -127,8 +127,8 @@ proc getRadarAttacksLayer3SummaryBitrate*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in direction: q["direction"] = $v
-  for v in format: q["format"] = $v
+  q["direction"] = $direction
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/summary/bitrate", q)
   let body = await res.body
   case res.code
@@ -146,8 +146,8 @@ proc getRadarAttacksLayer3SummaryDuration*(client: CloudflareClient,
                                            continent: seq[string] = @[],
                                            ipVersion: seq[string] = default(seq[string]),
                                            protocol: seq[string] = default(seq[string]),
-                                           direction: string = "ORIGIN",
-                                           format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3SummaryDurationResponse] {.async.} =
+                                           direction: RadarLayer3AttackDirectionOption = directionORIGIN,
+                                           format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3SummaryDurationResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by duration.
 
   var q = initOrderedTable[string, string]()
@@ -159,8 +159,8 @@ proc getRadarAttacksLayer3SummaryDuration*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in direction: q["direction"] = $v
-  for v in format: q["format"] = $v
+  q["direction"] = $direction
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/summary/duration", q)
   let body = await res.body
   case res.code
@@ -178,9 +178,9 @@ proc getRadarAttacksLayer3SummaryIndustry*(client: CloudflareClient,
                                            continent: seq[string] = @[],
                                            ipVersion: seq[string] = default(seq[string]),
                                            protocol: seq[string] = default(seq[string]),
-                                           direction: string = "ORIGIN",
+                                           direction: RadarLayer3AttackDirectionOption = directionORIGIN,
                                            limitPerGroup: int64 = default(int64),
-                                           format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3SummaryIndustryResponse] {.async.} =
+                                           format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3SummaryIndustryResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by targeted industry.
 
   var q = initOrderedTable[string, string]()
@@ -192,9 +192,9 @@ proc getRadarAttacksLayer3SummaryIndustry*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/summary/industry", q)
   let body = await res.body
   case res.code
@@ -211,8 +211,8 @@ proc getRadarAttacksLayer3SummaryIpVersion*(client: CloudflareClient,
                                             location: seq[string] = @[],
                                             continent: seq[string] = @[],
                                             protocol: seq[string] = default(seq[string]),
-                                            direction: string = "ORIGIN",
-                                            format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3SummaryIpVersionResponse] {.async.} =
+                                            direction: RadarLayer3AttackDirectionOption = directionORIGIN,
+                                            format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3SummaryIpVersionResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by IP version.
 
   var q = initOrderedTable[string, string]()
@@ -223,8 +223,8 @@ proc getRadarAttacksLayer3SummaryIpVersion*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   q["protocol"] = $protocol
-  for v in direction: q["direction"] = $v
-  for v in format: q["format"] = $v
+  q["direction"] = $direction
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/summary/ip_version", q)
   let body = await res.body
   case res.code
@@ -241,8 +241,8 @@ proc getRadarAttacksLayer3SummaryProtocol*(client: CloudflareClient,
                                            location: seq[string] = @[],
                                            continent: seq[string] = @[],
                                            ipVersion: seq[string] = default(seq[string]),
-                                           direction: string = "ORIGIN",
-                                           format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3SummaryProtocolResponse] {.async.} =
+                                           direction: RadarLayer3AttackDirectionOption = directionORIGIN,
+                                           format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3SummaryProtocolResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by protocol.
 
   var q = initOrderedTable[string, string]()
@@ -253,8 +253,8 @@ proc getRadarAttacksLayer3SummaryProtocol*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
-  for v in direction: q["direction"] = $v
-  for v in format: q["format"] = $v
+  q["direction"] = $direction
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/summary/protocol", q)
   let body = await res.body
   case res.code
@@ -272,9 +272,9 @@ proc getRadarAttacksLayer3SummaryVector*(client: CloudflareClient,
                                          continent: seq[string] = @[],
                                          ipVersion: seq[string] = default(seq[string]),
                                          protocol: seq[string] = default(seq[string]),
-                                         direction: string = "ORIGIN",
+                                         direction: RadarLayer3AttackDirectionOption = directionORIGIN,
                                          limitPerGroup: int64 = default(int64),
-                                         format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3SummaryVectorResponse] {.async.} =
+                                         format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3SummaryVectorResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by vector.
 
   var q = initOrderedTable[string, string]()
@@ -286,9 +286,9 @@ proc getRadarAttacksLayer3SummaryVector*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/summary/vector", q)
   let body = await res.body
   case res.code
@@ -306,9 +306,9 @@ proc getRadarAttacksLayer3SummaryVertical*(client: CloudflareClient,
                                            continent: seq[string] = @[],
                                            ipVersion: seq[string] = default(seq[string]),
                                            protocol: seq[string] = default(seq[string]),
-                                           direction: string = "ORIGIN",
+                                           direction: RadarLayer3AttackDirectionOption = directionORIGIN,
                                            limitPerGroup: int64 = default(int64),
-                                           format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3SummaryVerticalResponse] {.async.} =
+                                           format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3SummaryVerticalResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by targeted vertical.
 
   var q = initOrderedTable[string, string]()
@@ -320,9 +320,9 @@ proc getRadarAttacksLayer3SummaryVertical*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/summary/vertical", q)
   let body = await res.body
   case res.code
@@ -332,7 +332,7 @@ proc getRadarAttacksLayer3SummaryVertical*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAttacksLayer3SummaryDimension*(client: CloudflareClient,
-                                            dimension: string,
+                                            dimension: Dimension,
                                             name: seq[string] = @[],
                                             dateRange: seq[string] = @[],
                                             dateStart: seq[string] = @[],
@@ -341,9 +341,9 @@ proc getRadarAttacksLayer3SummaryDimension*(client: CloudflareClient,
                                             continent: seq[string] = @[],
                                             ipVersion: seq[string] = default(seq[string]),
                                             protocol: seq[string] = default(seq[string]),
-                                            direction: string = "ORIGIN",
+                                            direction: RadarLayer3AttackDirectionOption = directionORIGIN,
                                             limitPerGroup: int64 = default(int64),
-                                            format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3SummaryDimensionResponse] {.async.} =
+                                            format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3SummaryDimensionResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by the specified dimension.
 
   var q = initOrderedTable[string, string]()
@@ -355,9 +355,9 @@ proc getRadarAttacksLayer3SummaryDimension*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/attacks/layer3/summary/{dimension}", q)
   let body = await res.body
   case res.code
@@ -367,7 +367,7 @@ proc getRadarAttacksLayer3SummaryDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAttacksLayer3Timeseries*(client: CloudflareClient,
-                                      aggInterval: set[RadarLayer3AttackAggIntervalOption] = {},
+                                      aggInterval: RadarLayer3AttackAggIntervalOption,
                                       name: seq[string] = @[],
                                       dateRange: seq[string] = @[],
                                       dateStart: seq[string] = @[],
@@ -377,14 +377,14 @@ proc getRadarAttacksLayer3Timeseries*(client: CloudflareClient,
                                       continent: seq[string] = @[],
                                       ipVersion: seq[string] = default(seq[string]),
                                       protocol: seq[string] = default(seq[string]),
-                                      normalization: set[RadarLayer3AttackNormalizationOption] = {},
-                                      metric: string = "bytes",
-                                      direction: string = "ORIGIN",
-                                      format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TimeseriesResponse] {.async.} =
+                                      normalization: RadarLayer3AttackNormalizationOption,
+                                      metric: RadarLayer3AttackMetricOption = metricBytes,
+                                      direction: RadarLayer3AttackDirectionOption = directionORIGIN,
+                                      format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TimeseriesResponse] {.async.} =
   ## Retrieves layer 3 attacks over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -394,10 +394,10 @@ proc getRadarAttacksLayer3Timeseries*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in normalization: q["normalization"] = $v
-  for v in metric: q["metric"] = $v
-  for v in direction: q["direction"] = $v
-  for v in format: q["format"] = $v
+  q["normalization"] = $normalization
+  q["metric"] = $metric
+  q["direction"] = $direction
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/timeseries", q)
   let body = await res.body
   case res.code
@@ -407,7 +407,7 @@ proc getRadarAttacksLayer3Timeseries*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAttacksLayer3TimeseriesGroupsBitrate*(client: CloudflareClient,
-                                                   aggInterval: set[RadarLayer3AttackAggIntervalOption] = {},
+                                                   aggInterval: RadarLayer3AttackAggIntervalOption,
                                                    name: seq[string] = @[],
                                                    dateRange: seq[string] = @[],
                                                    dateStart: seq[string] = @[],
@@ -416,13 +416,13 @@ proc getRadarAttacksLayer3TimeseriesGroupsBitrate*(client: CloudflareClient,
                                                    continent: seq[string] = @[],
                                                    ipVersion: seq[string] = default(seq[string]),
                                                    protocol: seq[string] = default(seq[string]),
-                                                   normalization: string = "PERCENTAGE",
-                                                   direction: string = "ORIGIN",
-                                                   format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TimeseriesGroupsBitrateResponse] {.async.} =
+                                                   normalization: RadarLayer3AttackNormalizationOption = normalizationPERCENTAGE,
+                                                   direction: RadarLayer3AttackDirectionOption = directionORIGIN,
+                                                   format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TimeseriesGroupsBitrateResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by bitrate over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -431,9 +431,9 @@ proc getRadarAttacksLayer3TimeseriesGroupsBitrate*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in normalization: q["normalization"] = $v
-  for v in direction: q["direction"] = $v
-  for v in format: q["format"] = $v
+  q["normalization"] = $normalization
+  q["direction"] = $direction
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/timeseries_groups/bitrate", q)
   let body = await res.body
   case res.code
@@ -443,7 +443,7 @@ proc getRadarAttacksLayer3TimeseriesGroupsBitrate*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAttacksLayer3TimeseriesGroupsDuration*(client: CloudflareClient,
-                                                    aggInterval: set[RadarLayer3AttackAggIntervalOption] = {},
+                                                    aggInterval: RadarLayer3AttackAggIntervalOption,
                                                     name: seq[string] = @[],
                                                     dateRange: seq[string] = @[],
                                                     dateStart: seq[string] = @[],
@@ -452,13 +452,13 @@ proc getRadarAttacksLayer3TimeseriesGroupsDuration*(client: CloudflareClient,
                                                     continent: seq[string] = @[],
                                                     ipVersion: seq[string] = default(seq[string]),
                                                     protocol: seq[string] = default(seq[string]),
-                                                    normalization: string = "PERCENTAGE",
-                                                    direction: string = "ORIGIN",
-                                                    format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TimeseriesGroupsDurationResponse] {.async.} =
+                                                    normalization: RadarLayer3AttackNormalizationOption = normalizationPERCENTAGE,
+                                                    direction: RadarLayer3AttackDirectionOption = directionORIGIN,
+                                                    format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TimeseriesGroupsDurationResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by duration over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -467,9 +467,9 @@ proc getRadarAttacksLayer3TimeseriesGroupsDuration*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in normalization: q["normalization"] = $v
-  for v in direction: q["direction"] = $v
-  for v in format: q["format"] = $v
+  q["normalization"] = $normalization
+  q["direction"] = $direction
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/timeseries_groups/duration", q)
   let body = await res.body
   case res.code
@@ -479,7 +479,7 @@ proc getRadarAttacksLayer3TimeseriesGroupsDuration*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAttacksLayer3TimeseriesGroupsIndustry*(client: CloudflareClient,
-                                                    aggInterval: set[RadarLayer3AttackAggIntervalOption] = {},
+                                                    aggInterval: RadarLayer3AttackAggIntervalOption,
                                                     name: seq[string] = @[],
                                                     dateRange: seq[string] = @[],
                                                     dateStart: seq[string] = @[],
@@ -488,14 +488,14 @@ proc getRadarAttacksLayer3TimeseriesGroupsIndustry*(client: CloudflareClient,
                                                     continent: seq[string] = @[],
                                                     ipVersion: seq[string] = default(seq[string]),
                                                     protocol: seq[string] = default(seq[string]),
-                                                    normalization: string = "PERCENTAGE",
-                                                    direction: string = "ORIGIN",
+                                                    normalization: RadarLayer3AttackNormalizationOption = normalizationPERCENTAGE,
+                                                    direction: RadarLayer3AttackDirectionOption = directionORIGIN,
                                                     limitPerGroup: int64 = default(int64),
-                                                    format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TimeseriesGroupsIndustryResponse] {.async.} =
+                                                    format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TimeseriesGroupsIndustryResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by targeted industry over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -504,10 +504,10 @@ proc getRadarAttacksLayer3TimeseriesGroupsIndustry*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in normalization: q["normalization"] = $v
-  for v in direction: q["direction"] = $v
+  q["normalization"] = $normalization
+  q["direction"] = $direction
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/timeseries_groups/industry", q)
   let body = await res.body
   case res.code
@@ -517,7 +517,7 @@ proc getRadarAttacksLayer3TimeseriesGroupsIndustry*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAttacksLayer3TimeseriesGroupsIpVersion*(client: CloudflareClient,
-                                                     aggInterval: set[RadarLayer3AttackAggIntervalOption] = {},
+                                                     aggInterval: RadarLayer3AttackAggIntervalOption,
                                                      name: seq[string] = @[],
                                                      dateRange: seq[string] = @[],
                                                      dateStart: seq[string] = @[],
@@ -525,13 +525,13 @@ proc getRadarAttacksLayer3TimeseriesGroupsIpVersion*(client: CloudflareClient,
                                                      location: seq[string] = @[],
                                                      continent: seq[string] = @[],
                                                      protocol: seq[string] = default(seq[string]),
-                                                     normalization: string = "PERCENTAGE",
-                                                     direction: string = "ORIGIN",
-                                                     format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TimeseriesGroupsIpVersionResponse] {.async.} =
+                                                     normalization: RadarLayer3AttackNormalizationOption = normalizationPERCENTAGE,
+                                                     direction: RadarLayer3AttackDirectionOption = directionORIGIN,
+                                                     format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TimeseriesGroupsIpVersionResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by IP version over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -539,9 +539,9 @@ proc getRadarAttacksLayer3TimeseriesGroupsIpVersion*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   q["protocol"] = $protocol
-  for v in normalization: q["normalization"] = $v
-  for v in direction: q["direction"] = $v
-  for v in format: q["format"] = $v
+  q["normalization"] = $normalization
+  q["direction"] = $direction
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/timeseries_groups/ip_version", q)
   let body = await res.body
   case res.code
@@ -551,7 +551,7 @@ proc getRadarAttacksLayer3TimeseriesGroupsIpVersion*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAttacksLayer3TimeseriesGroupsProtocol*(client: CloudflareClient,
-                                                    aggInterval: set[RadarLayer3AttackAggIntervalOption] = {},
+                                                    aggInterval: RadarLayer3AttackAggIntervalOption,
                                                     name: seq[string] = @[],
                                                     dateRange: seq[string] = @[],
                                                     dateStart: seq[string] = @[],
@@ -559,13 +559,13 @@ proc getRadarAttacksLayer3TimeseriesGroupsProtocol*(client: CloudflareClient,
                                                     location: seq[string] = @[],
                                                     continent: seq[string] = @[],
                                                     ipVersion: seq[string] = default(seq[string]),
-                                                    normalization: string = "PERCENTAGE",
-                                                    direction: string = "ORIGIN",
-                                                    format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TimeseriesGroupsProtocolResponse] {.async.} =
+                                                    normalization: RadarLayer3AttackNormalizationOption = normalizationPERCENTAGE,
+                                                    direction: RadarLayer3AttackDirectionOption = directionORIGIN,
+                                                    format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TimeseriesGroupsProtocolResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by protocol over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -573,9 +573,9 @@ proc getRadarAttacksLayer3TimeseriesGroupsProtocol*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
-  for v in normalization: q["normalization"] = $v
-  for v in direction: q["direction"] = $v
-  for v in format: q["format"] = $v
+  q["normalization"] = $normalization
+  q["direction"] = $direction
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/timeseries_groups/protocol", q)
   let body = await res.body
   case res.code
@@ -585,7 +585,7 @@ proc getRadarAttacksLayer3TimeseriesGroupsProtocol*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAttacksLayer3TimeseriesGroupsVector*(client: CloudflareClient,
-                                                  aggInterval: set[RadarLayer3AttackAggIntervalOption] = {},
+                                                  aggInterval: RadarLayer3AttackAggIntervalOption,
                                                   name: seq[string] = @[],
                                                   dateRange: seq[string] = @[],
                                                   dateStart: seq[string] = @[],
@@ -594,14 +594,14 @@ proc getRadarAttacksLayer3TimeseriesGroupsVector*(client: CloudflareClient,
                                                   continent: seq[string] = @[],
                                                   ipVersion: seq[string] = default(seq[string]),
                                                   protocol: seq[string] = default(seq[string]),
-                                                  normalization: string = "PERCENTAGE",
-                                                  direction: string = "ORIGIN",
+                                                  normalization: RadarLayer3AttackNormalizationOption = normalizationPERCENTAGE,
+                                                  direction: RadarLayer3AttackDirectionOption = directionORIGIN,
                                                   limitPerGroup: int64 = default(int64),
-                                                  format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TimeseriesGroupsVectorResponse] {.async.} =
+                                                  format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TimeseriesGroupsVectorResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by vector over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -610,10 +610,10 @@ proc getRadarAttacksLayer3TimeseriesGroupsVector*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in normalization: q["normalization"] = $v
-  for v in direction: q["direction"] = $v
+  q["normalization"] = $normalization
+  q["direction"] = $direction
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/timeseries_groups/vector", q)
   let body = await res.body
   case res.code
@@ -623,7 +623,7 @@ proc getRadarAttacksLayer3TimeseriesGroupsVector*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAttacksLayer3TimeseriesGroupsVertical*(client: CloudflareClient,
-                                                    aggInterval: set[RadarLayer3AttackAggIntervalOption] = {},
+                                                    aggInterval: RadarLayer3AttackAggIntervalOption,
                                                     name: seq[string] = @[],
                                                     dateRange: seq[string] = @[],
                                                     dateStart: seq[string] = @[],
@@ -632,14 +632,14 @@ proc getRadarAttacksLayer3TimeseriesGroupsVertical*(client: CloudflareClient,
                                                     continent: seq[string] = @[],
                                                     ipVersion: seq[string] = default(seq[string]),
                                                     protocol: seq[string] = default(seq[string]),
-                                                    normalization: string = "PERCENTAGE",
-                                                    direction: string = "ORIGIN",
+                                                    normalization: RadarLayer3AttackNormalizationOption = normalizationPERCENTAGE,
+                                                    direction: RadarLayer3AttackDirectionOption = directionORIGIN,
                                                     limitPerGroup: int64 = default(int64),
-                                                    format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TimeseriesGroupsVerticalResponse] {.async.} =
+                                                    format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TimeseriesGroupsVerticalResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks by targeted vertical over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -648,10 +648,10 @@ proc getRadarAttacksLayer3TimeseriesGroupsVertical*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in normalization: q["normalization"] = $v
-  for v in direction: q["direction"] = $v
+  q["normalization"] = $normalization
+  q["direction"] = $direction
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/timeseries_groups/vertical", q)
   let body = await res.body
   case res.code
@@ -661,8 +661,8 @@ proc getRadarAttacksLayer3TimeseriesGroupsVertical*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAttacksLayer3TimeseriesGroupsDimension*(client: CloudflareClient,
-                                                     dimension: string,
-                                                     aggInterval: set[RadarLayer3AttackAggIntervalOption] = {},
+                                                     dimension: Dimension,
+                                                     aggInterval: RadarLayer3AttackAggIntervalOption,
                                                      name: seq[string] = @[],
                                                      dateRange: seq[string] = @[],
                                                      dateStart: seq[string] = @[],
@@ -671,14 +671,14 @@ proc getRadarAttacksLayer3TimeseriesGroupsDimension*(client: CloudflareClient,
                                                      continent: seq[string] = @[],
                                                      ipVersion: seq[string] = default(seq[string]),
                                                      protocol: seq[string] = default(seq[string]),
-                                                     normalization: string = "PERCENTAGE",
-                                                     direction: string = "ORIGIN",
+                                                     normalization: RadarLayer3AttackNormalizationOption = normalizationPERCENTAGE,
+                                                     direction: RadarLayer3AttackDirectionOption = directionORIGIN,
                                                      limitPerGroup: int64 = default(int64),
-                                                     format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TimeseriesGroupsDimensionResponse] {.async.} =
+                                                     format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of layer 3 attacks grouped by dimension over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -687,10 +687,10 @@ proc getRadarAttacksLayer3TimeseriesGroupsDimension*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in normalization: q["normalization"] = $v
-  for v in direction: q["direction"] = $v
+  q["normalization"] = $normalization
+  q["direction"] = $direction
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/attacks/layer3/timeseries_groups/{dimension}", q)
   let body = await res.body
   case res.code
@@ -708,11 +708,11 @@ proc getRadarAttacksLayer3TopAttacks*(client: CloudflareClient, limit: int64 = 5
                                       continent: seq[string] = @[],
                                       ipVersion: seq[string] = default(seq[string]),
                                       protocol: seq[string] = default(seq[string]),
-                                      limitDirection: string = "ORIGIN",
+                                      limitDirection: RadarLayer3AttackLimitDirectionOption = limitDirectionORIGIN,
                                       limitPerLocation: int64 = 10,
-                                      magnitude: set[RadarLayer3AttackMagnitudeOption] = {},
-                                      normalization: string = "PERCENTAGE",
-                                      format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TopAttacksResponse] {.async.} =
+                                      magnitude: RadarLayer3AttackMagnitudeOption,
+                                      normalization: RadarLayer3AttackNormalizationOption = normalizationPERCENTAGE,
+                                      format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TopAttacksResponse] {.async.} =
   ## Retrieves the top layer 3 attacks from origin to target location. Values are a
   ## percentage out of the total layer 3 attacks (with billing country). You can
   ## optionally limit the number of attacks by origin/target location (useful if all
@@ -728,11 +728,11 @@ proc getRadarAttacksLayer3TopAttacks*(client: CloudflareClient, limit: int64 = 5
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in limitDirection: q["limitDirection"] = $v
+  q["limitDirection"] = $limitDirection
   q["limitPerLocation"] = $limitPerLocation
-  for v in magnitude: q["magnitude"] = $v
-  for v in normalization: q["normalization"] = $v
-  for v in format: q["format"] = $v
+  q["magnitude"] = $magnitude
+  q["normalization"] = $normalization
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/top/attacks", q)
   let body = await res.body
   case res.code
@@ -750,7 +750,7 @@ proc getRadarAttacksLayer3TopIndustry*(client: CloudflareClient,
                                        continent: seq[string] = @[],
                                        ipVersion: seq[string] = default(seq[string]),
                                        protocol: seq[string] = default(seq[string]),
-                                       format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TopIndustryResponse] {.async.} =
+                                       format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TopIndustryResponse] {.async.} =
   ## This endpoint is deprecated. To continue getting this data, switch to the
   ## summary by industry endpoint.
 
@@ -764,7 +764,7 @@ proc getRadarAttacksLayer3TopIndustry*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/top/industry", q)
   let body = await res.body
   case res.code
@@ -783,7 +783,7 @@ proc getRadarAttacksLayer3TopLocationsOrigin*(client: CloudflareClient,
                                               continent: seq[string] = @[],
                                               ipVersion: seq[string] = default(seq[string]),
                                               protocol: seq[string] = default(seq[string]),
-                                              format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TopLocationsOriginResponse] {.async.} =
+                                              format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TopLocationsOriginResponse] {.async.} =
   ## Retrieves the origin locations of layer 3 attacks.
 
   var q = initOrderedTable[string, string]()
@@ -796,7 +796,7 @@ proc getRadarAttacksLayer3TopLocationsOrigin*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/top/locations/origin", q)
   let body = await res.body
   case res.code
@@ -815,7 +815,7 @@ proc getRadarAttacksLayer3TopLocationsTarget*(client: CloudflareClient,
                                               continent: seq[string] = @[],
                                               ipVersion: seq[string] = default(seq[string]),
                                               protocol: seq[string] = default(seq[string]),
-                                              format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TopLocationsTargetResponse] {.async.} =
+                                              format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TopLocationsTargetResponse] {.async.} =
   ## Retrieves the target locations of layer 3 attacks.
 
   var q = initOrderedTable[string, string]()
@@ -828,7 +828,7 @@ proc getRadarAttacksLayer3TopLocationsTarget*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/top/locations/target", q)
   let body = await res.body
   case res.code
@@ -846,7 +846,7 @@ proc getRadarAttacksLayer3TopVertical*(client: CloudflareClient,
                                        continent: seq[string] = @[],
                                        ipVersion: seq[string] = default(seq[string]),
                                        protocol: seq[string] = default(seq[string]),
-                                       format: set[RadarLayer3AttackFormatOption] = {}): Future[GetRadarAttacksLayer3TopVerticalResponse] {.async.} =
+                                       format: RadarLayer3AttackFormatOption): Future[GetRadarAttacksLayer3TopVerticalResponse] {.async.} =
   ## This endpoint is deprecated. To continue getting this data, switch to the
   ## summary by vertical endpoint.
 
@@ -860,7 +860,7 @@ proc getRadarAttacksLayer3TopVertical*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["ipVersion"] = $ipVersion
   q["protocol"] = $protocol
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer3/top/vertical", q)
   let body = await res.body
   case res.code

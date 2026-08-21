@@ -120,7 +120,7 @@ proc getAccountsAccountIdAbuseReportsReportIdMitigations*(client: CloudflareClie
                                                           reportId: string,
                                                           page: int64 = default(int64),
                                                           perPage: int64 = default(int64),
-                                                          sort: set[TsengAbuseComplaintProcessorOtherSortOption] = {},
+                                                          sort: TsengAbuseComplaintProcessorOtherSortOption,
                                                           `type`: types.AbuseReportsMitigationType = default(types.AbuseReportsMitigationType),
                                                           effectiveBefore: string = default(string),
                                                           effectiveAfter: string = default(string),
@@ -131,7 +131,7 @@ proc getAccountsAccountIdAbuseReportsReportIdMitigations*(client: CloudflareClie
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in sort: q["sort"] = $v
+  q["sort"] = $sort
   q["type"] = $`type`
   q["effective_before"] = $effectiveBefore
   q["effective_after"] = $effectiveAfter

@@ -24,7 +24,7 @@ proc getAccountsAccountIdAuditLogs*(client: CloudflareClient,
                                     since: JsonNode = default(JsonNode),
                                     before: JsonNode = default(JsonNode),
                                     zoneName: string = default(string),
-                                    direction: string = "desc",
+                                    direction: AuditLogDirectionOption = directionDesc,
                                     perPage: float64 = default(float64),
                                     page: float64 = default(float64),
                                     hideUserLogs: bool = false): Future[types.AaaAuditLogsResponseCollection2] {.async.} =
@@ -40,7 +40,7 @@ proc getAccountsAccountIdAuditLogs*(client: CloudflareClient,
   q["since"] = $since
   q["before"] = $before
   q["zone.name"] = $zoneName
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["per_page"] = $perPage
   q["page"] = $page
   q["hide_user_logs"] = $hideUserLogs
@@ -99,7 +99,7 @@ proc getAccountsAccountIdLogsAudit*(client: CloudflareClient, accountId: string,
                                     zoneIdNot: seq[string] = @[],
                                     zoneNameNot: seq[string] = @[],
                                     since: string, before: string,
-                                    direction: string = "desc",
+                                    direction: AuditLogDirectionOption = directionDesc,
                                     limit: float64 = default(float64),
                                     cursor: string = default(string)): Future[types.AaaAuditLogsV2ResponseCollection] {.async.} =
   ## Gets a list of audit logs for an account.
@@ -152,7 +152,7 @@ proc getAccountsAccountIdLogsAudit*(client: CloudflareClient, accountId: string,
   for v in zoneNameNot: q["zone_name.not"] = $v
   q["since"] = $since
   q["before"] = $before
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["limit"] = $limit
   q["cursor"] = $cursor
   let res = await client.httpGET(fmt"/accounts/{accountId}/logs/audit", q)
@@ -181,7 +181,7 @@ proc getAccountsAccountIdLogsAuditIdHistory*(client: CloudflareClient,
                                              accountId: string, id: string,
                                              actionTime: string, since: string,
                                              before: string,
-                                             direction: string = "desc",
+                                             direction: AuditLogDirectionOption = directionDesc,
                                              limit: float64 = default(float64),
                                              cursor: string = default(string)): Future[types.AaaAuditLogsV2HistoryResponseCollection] {.async.} =
   ## Returns the chronological change history for the resource identified by the
@@ -203,7 +203,7 @@ proc getAccountsAccountIdLogsAuditIdHistory*(client: CloudflareClient,
   q["action_time"] = $actionTime
   q["since"] = $since
   q["before"] = $before
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["limit"] = $limit
   q["cursor"] = $cursor
   let res = await client.httpGET(fmt"/accounts/{accountId}/logs/audit/{id}/history", q)
@@ -253,7 +253,7 @@ proc getOrganizationsOrganizationIdLogsAudit*(client: CloudflareClient,
                                               resourceTypeNot: seq[string] = @[],
                                               resourceScopeNot: seq[string] = default(seq[string]),
                                               since: string, before: string,
-                                              direction: string = "desc",
+                                              direction: AuditLogDirectionOption = directionDesc,
                                               limit: float64 = default(float64),
                                               cursor: string = default(string)): Future[types.AaaAuditLogsV2OrgResponseCollection] {.async.} =
   ## Gets a list of audit logs for an organization.
@@ -297,7 +297,7 @@ proc getOrganizationsOrganizationIdLogsAudit*(client: CloudflareClient,
   q["resource_scope.not"] = $resourceScopeNot
   q["since"] = $since
   q["before"] = $before
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["limit"] = $limit
   q["cursor"] = $cursor
   let res = await client.httpGET(fmt"/organizations/{organizationId}/logs/audit", q)
@@ -314,7 +314,7 @@ proc getOrganizationsOrganizationIdLogsAuditIdHistory*(client: CloudflareClient,
                                                        actionTime: string,
                                                        since: string,
                                                        before: string,
-                                                       direction: string = "desc",
+                                                       direction: AuditLogDirectionOption = directionDesc,
                                                        limit: float64 = default(float64),
                                                        cursor: string = default(string)): Future[types.AaaAuditLogsV2OrgHistoryResponseCollection] {.async.} =
   ## Returns the chronological change history for the resource identified by the
@@ -336,7 +336,7 @@ proc getOrganizationsOrganizationIdLogsAuditIdHistory*(client: CloudflareClient,
   q["action_time"] = $actionTime
   q["since"] = $since
   q["before"] = $before
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["limit"] = $limit
   q["cursor"] = $cursor
   let res = await client.httpGET(fmt"/organizations/{organizationId}/logs/audit/{id}/history", q)
@@ -355,7 +355,7 @@ proc getUserAuditLogs*(client: CloudflareClient, id: string = default(string),
                        since: JsonNode = default(JsonNode),
                        before: JsonNode = default(JsonNode),
                        zoneName: string = default(string),
-                       direction: string = "desc",
+                       direction: AuditLogDirectionOption = directionDesc,
                        perPage: float64 = default(float64),
                        page: float64 = default(float64),
                        hideUserLogs: bool = false): Future[types.AaaAuditLogsResponseCollection2] {.async.} =
@@ -371,7 +371,7 @@ proc getUserAuditLogs*(client: CloudflareClient, id: string = default(string),
   q["since"] = $since
   q["before"] = $before
   q["zone.name"] = $zoneName
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["per_page"] = $perPage
   q["page"] = $page
   q["hide_user_logs"] = $hideUserLogs

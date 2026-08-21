@@ -109,12 +109,12 @@ proc getAccountsAccountIdVectorizeV2IndexesIndexNameInfo*(client: CloudflareClie
 proc postAccountsAccountIdVectorizeV2IndexesIndexNameInsert*(client: CloudflareClient,
                                                              accountId: types.VectorizeIdentifier,
                                                              indexName: types.VectorizeIndexName,
-                                                             unparsableBehavior: set[VectorizeUnparsableBehaviorOption] = {}): Future[JsonNode] {.async.} =
+                                                             unparsableBehavior: VectorizeUnparsableBehaviorOption): Future[JsonNode] {.async.} =
   ## Inserts vectors into the specified index and returns a mutation id corresponding
   ## to the vectors enqueued for insertion.
 
   var q = initOrderedTable[string, string]()
-  for v in unparsableBehavior: q["unparsable-behavior"] = $v
+  q["unparsable-behavior"] = $unparsableBehavior
   let res = await client.httpPOST(fmt"/accounts/{accountId}/vectorize/v2/indexes/{indexName}/insert", q)
   let body = await res.body
   case res.code
@@ -199,12 +199,12 @@ proc postAccountsAccountIdVectorizeV2IndexesIndexNameQuery*(client: CloudflareCl
 proc postAccountsAccountIdVectorizeV2IndexesIndexNameUpsert*(client: CloudflareClient,
                                                              accountId: types.VectorizeIdentifier,
                                                              indexName: types.VectorizeIndexName,
-                                                             unparsableBehavior: set[VectorizeUnparsableBehaviorOption] = {}): Future[JsonNode] {.async.} =
+                                                             unparsableBehavior: VectorizeUnparsableBehaviorOption): Future[JsonNode] {.async.} =
   ## Upserts vectors into the specified index, creating them if they do not exist and
   ## returns a mutation id corresponding to the vectors enqueued for upsertion.
 
   var q = initOrderedTable[string, string]()
-  for v in unparsableBehavior: q["unparsable-behavior"] = $v
+  q["unparsable-behavior"] = $unparsableBehavior
   let res = await client.httpPOST(fmt"/accounts/{accountId}/vectorize/v2/indexes/{indexName}/upsert", q)
   let body = await res.body
   case res.code

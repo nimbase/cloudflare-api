@@ -46,13 +46,13 @@ proc getAccountsAccountIdAccessPolicyTestsPolicyTestIdUsers*(client: CloudflareC
                                                              policyTestId: types.AccessPolicyTestId,
                                                              page: int64 = 1,
                                                              perPage: int64 = 25,
-                                                             status: set[AccessPolicyTesterStatusOption] = {}): Future[types.AccessPolicyUsersResp] {.async.} =
+                                                             status: AccessPolicyTesterStatusOption): Future[types.AccessPolicyUsersResp] {.async.} =
   ## Fetches a single page of user results from an Access policy test.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in status: q["status"] = $v
+  q["status"] = $status
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/policy-tests/{policyTestId}/users", q)
   let body = await res.body
   case res.code

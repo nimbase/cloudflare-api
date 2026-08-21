@@ -112,7 +112,7 @@ proc getRadarDnsSummaryCacheHit*(client: CloudflareClient,
                                  protocol: seq[string] = default(seq[string]),
                                  responseCode: seq[string] = default(seq[string]),
                                  nodata: seq[string] = @[],
-                                 format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsSummaryCacheHitResponse] {.async.} =
+                                 format: RadarDnFormatOption): Future[GetRadarDnsSummaryCacheHitResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by cache status.
 
   var q = initOrderedTable[string, string]()
@@ -128,7 +128,7 @@ proc getRadarDnsSummaryCacheHit*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/summary/cache_hit", q)
   let body = await res.body
   case res.code
@@ -149,7 +149,7 @@ proc getRadarDnsSummaryDnssec*(client: CloudflareClient, name: seq[string] = @[]
                                protocol: seq[string] = default(seq[string]),
                                responseCode: seq[string] = default(seq[string]),
                                nodata: seq[string] = @[],
-                               format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsSummaryDnssecResponse] {.async.} =
+                               format: RadarDnFormatOption): Future[GetRadarDnsSummaryDnssecResponse] {.async.} =
   ## Retrieves the distribution of DNS responses by DNSSEC (DNS Security Extensions)
   ## support.
 
@@ -166,7 +166,7 @@ proc getRadarDnsSummaryDnssec*(client: CloudflareClient, name: seq[string] = @[]
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/summary/dnssec", q)
   let body = await res.body
   case res.code
@@ -188,7 +188,7 @@ proc getRadarDnsSummaryDnssecAware*(client: CloudflareClient,
                                     protocol: seq[string] = default(seq[string]),
                                     responseCode: seq[string] = default(seq[string]),
                                     nodata: seq[string] = @[],
-                                    format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsSummaryDnssecAwareResponse] {.async.} =
+                                    format: RadarDnFormatOption): Future[GetRadarDnsSummaryDnssecAwareResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by DNSSEC (DNS Security Extensions)
   ## client awareness.
 
@@ -205,7 +205,7 @@ proc getRadarDnsSummaryDnssecAware*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/summary/dnssec_aware", q)
   let body = await res.body
   case res.code
@@ -227,7 +227,7 @@ proc getRadarDnsSummaryDnssecE2e*(client: CloudflareClient,
                                   protocol: seq[string] = default(seq[string]),
                                   responseCode: seq[string] = default(seq[string]),
                                   nodata: seq[string] = @[],
-                                  format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsSummaryDnssecE2eResponse] {.async.} =
+                                  format: RadarDnFormatOption): Future[GetRadarDnsSummaryDnssecE2eResponse] {.async.} =
   ## Retrieves the distribution of DNSSEC-validated answers by end-to-end security
   ## status.
 
@@ -244,7 +244,7 @@ proc getRadarDnsSummaryDnssecE2e*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/summary/dnssec_e2e", q)
   let body = await res.body
   case res.code
@@ -266,7 +266,7 @@ proc getRadarDnsSummaryIpVersion*(client: CloudflareClient,
                                   protocol: seq[string] = default(seq[string]),
                                   responseCode: seq[string] = default(seq[string]),
                                   nodata: seq[string] = @[],
-                                  format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsSummaryIpVersionResponse] {.async.} =
+                                  format: RadarDnFormatOption): Future[GetRadarDnsSummaryIpVersionResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by IP version.
 
   var q = initOrderedTable[string, string]()
@@ -282,7 +282,7 @@ proc getRadarDnsSummaryIpVersion*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/summary/ip_version", q)
   let body = await res.body
   case res.code
@@ -304,7 +304,7 @@ proc getRadarDnsSummaryMatchingAnswer*(client: CloudflareClient,
                                        protocol: seq[string] = default(seq[string]),
                                        responseCode: seq[string] = default(seq[string]),
                                        nodata: seq[string] = @[],
-                                       format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsSummaryMatchingAnswerResponse] {.async.} =
+                                       format: RadarDnFormatOption): Future[GetRadarDnsSummaryMatchingAnswerResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by matching answers.
 
   var q = initOrderedTable[string, string]()
@@ -320,7 +320,7 @@ proc getRadarDnsSummaryMatchingAnswer*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/summary/matching_answer", q)
   let body = await res.body
   case res.code
@@ -341,7 +341,7 @@ proc getRadarDnsSummaryProtocol*(client: CloudflareClient,
                                  queryType: seq[string] = default(seq[string]),
                                  responseCode: seq[string] = default(seq[string]),
                                  nodata: seq[string] = @[],
-                                 format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsSummaryProtocolResponse] {.async.} =
+                                 format: RadarDnFormatOption): Future[GetRadarDnsSummaryProtocolResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by DNS transport protocol.
 
   var q = initOrderedTable[string, string]()
@@ -356,7 +356,7 @@ proc getRadarDnsSummaryProtocol*(client: CloudflareClient,
   q["queryType"] = $queryType
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/summary/protocol", q)
   let body = await res.body
   case res.code
@@ -378,7 +378,7 @@ proc getRadarDnsSummaryQueryType*(client: CloudflareClient,
                                   responseCode: seq[string] = default(seq[string]),
                                   nodata: seq[string] = @[],
                                   limitPerGroup: int64 = default(int64),
-                                  format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsSummaryQueryTypeResponse] {.async.} =
+                                  format: RadarDnFormatOption): Future[GetRadarDnsSummaryQueryTypeResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by type.
 
   var q = initOrderedTable[string, string]()
@@ -394,7 +394,7 @@ proc getRadarDnsSummaryQueryType*(client: CloudflareClient,
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/summary/query_type", q)
   let body = await res.body
   case res.code
@@ -416,7 +416,7 @@ proc getRadarDnsSummaryResponseCode*(client: CloudflareClient,
                                      protocol: seq[string] = default(seq[string]),
                                      nodata: seq[string] = @[],
                                      limitPerGroup: int64 = default(int64),
-                                     format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsSummaryResponseCodeResponse] {.async.} =
+                                     format: RadarDnFormatOption): Future[GetRadarDnsSummaryResponseCodeResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by response code.
 
   var q = initOrderedTable[string, string]()
@@ -432,7 +432,7 @@ proc getRadarDnsSummaryResponseCode*(client: CloudflareClient,
   q["protocol"] = $protocol
   for v in nodata: q["nodata"] = $v
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/summary/response_code", q)
   let body = await res.body
   case res.code
@@ -454,7 +454,7 @@ proc getRadarDnsSummaryResponseTtl*(client: CloudflareClient,
                                     protocol: seq[string] = default(seq[string]),
                                     responseCode: seq[string] = default(seq[string]),
                                     nodata: seq[string] = @[],
-                                    format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsSummaryResponseTtlResponse] {.async.} =
+                                    format: RadarDnFormatOption): Future[GetRadarDnsSummaryResponseTtlResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by minimum response TTL.
 
   var q = initOrderedTable[string, string]()
@@ -470,7 +470,7 @@ proc getRadarDnsSummaryResponseTtl*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/summary/response_ttl", q)
   let body = await res.body
   case res.code
@@ -479,7 +479,7 @@ proc getRadarDnsSummaryResponseTtl*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc getRadarDnsSummaryDimension*(client: CloudflareClient, dimension: string,
+proc getRadarDnsSummaryDimension*(client: CloudflareClient, dimension: Dimension,
                                   name: seq[string] = @[],
                                   dateRange: seq[string] = @[],
                                   dateStart: seq[string] = @[],
@@ -500,7 +500,7 @@ proc getRadarDnsSummaryDimension*(client: CloudflareClient, dimension: string,
                                   limitPerGroup: int64 = default(int64),
                                   matchingAnswer: seq[string] = @[],
                                   tld: seq[string] = @[],
-                                  format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsSummaryDimensionResponse] {.async.} =
+                                  format: RadarDnFormatOption): Future[GetRadarDnsSummaryDimensionResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by the specified dimension.
 
   var q = initOrderedTable[string, string]()
@@ -524,7 +524,7 @@ proc getRadarDnsSummaryDimension*(client: CloudflareClient, dimension: string,
   q["limitPerGroup"] = $limitPerGroup
   for v in matchingAnswer: q["matchingAnswer"] = $v
   for v in tld: q["tld"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/dns/summary/{dimension}", q)
   let body = await res.body
   case res.code
@@ -534,7 +534,7 @@ proc getRadarDnsSummaryDimension*(client: CloudflareClient, dimension: string,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseries*(client: CloudflareClient,
-                            aggInterval: set[RadarDnAggIntervalOption] = {},
+                            aggInterval: RadarDnAggIntervalOption,
                             name: seq[string] = @[],
                             dateRange: seq[string] = @[],
                             dateStart: seq[string] = @[],
@@ -552,12 +552,11 @@ proc getRadarDnsTimeseries*(client: CloudflareClient,
                             dnssecE2e: seq[string] = @[],
                             ipVersion: seq[string] = default(seq[string]),
                             matchingAnswer: seq[string] = @[],
-                            tld: seq[string] = @[],
-                            format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTimeseriesResponse] {.async.} =
+                            tld: seq[string] = @[], format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesResponse] {.async.} =
   ## Retrieves normalized query volume to the 1.1.1.1 DNS resolver over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -577,7 +576,7 @@ proc getRadarDnsTimeseries*(client: CloudflareClient,
   q["ipVersion"] = $ipVersion
   for v in matchingAnswer: q["matchingAnswer"] = $v
   for v in tld: q["tld"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/timeseries", q)
   let body = await res.body
   case res.code
@@ -587,7 +586,7 @@ proc getRadarDnsTimeseries*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsCacheHit*(client: CloudflareClient,
-                                          aggInterval: set[RadarDnAggIntervalOption] = {},
+                                          aggInterval: RadarDnAggIntervalOption,
                                           name: seq[string] = @[],
                                           dateRange: seq[string] = @[],
                                           dateStart: seq[string] = @[],
@@ -600,11 +599,11 @@ proc getRadarDnsTimeseriesGroupsCacheHit*(client: CloudflareClient,
                                           protocol: seq[string] = default(seq[string]),
                                           responseCode: seq[string] = default(seq[string]),
                                           nodata: seq[string] = @[],
-                                          format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTimeseriesGroupsCacheHitResponse] {.async.} =
+                                          format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsCacheHitResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by cache status over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -617,7 +616,7 @@ proc getRadarDnsTimeseriesGroupsCacheHit*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/timeseries_groups/cache_hit", q)
   let body = await res.body
   case res.code
@@ -627,7 +626,7 @@ proc getRadarDnsTimeseriesGroupsCacheHit*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsDnssec*(client: CloudflareClient,
-                                        aggInterval: set[RadarDnAggIntervalOption] = {},
+                                        aggInterval: RadarDnAggIntervalOption,
                                         name: seq[string] = @[],
                                         dateRange: seq[string] = @[],
                                         dateStart: seq[string] = @[],
@@ -640,12 +639,12 @@ proc getRadarDnsTimeseriesGroupsDnssec*(client: CloudflareClient,
                                         protocol: seq[string] = default(seq[string]),
                                         responseCode: seq[string] = default(seq[string]),
                                         nodata: seq[string] = @[],
-                                        format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTimeseriesGroupsDnssecResponse] {.async.} =
+                                        format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsDnssecResponse] {.async.} =
   ## Retrieves the distribution of DNS responses by DNSSEC (DNS Security Extensions)
   ## support over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -658,7 +657,7 @@ proc getRadarDnsTimeseriesGroupsDnssec*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/timeseries_groups/dnssec", q)
   let body = await res.body
   case res.code
@@ -668,7 +667,7 @@ proc getRadarDnsTimeseriesGroupsDnssec*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsDnssecAware*(client: CloudflareClient,
-                                             aggInterval: set[RadarDnAggIntervalOption] = {},
+                                             aggInterval: RadarDnAggIntervalOption,
                                              name: seq[string] = @[],
                                              dateRange: seq[string] = @[],
                                              dateStart: seq[string] = @[],
@@ -681,12 +680,12 @@ proc getRadarDnsTimeseriesGroupsDnssecAware*(client: CloudflareClient,
                                              protocol: seq[string] = default(seq[string]),
                                              responseCode: seq[string] = default(seq[string]),
                                              nodata: seq[string] = @[],
-                                             format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTimeseriesGroupsDnssecAwareResponse] {.async.} =
+                                             format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsDnssecAwareResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by DNSSEC (DNS Security Extensions)
   ## client awareness over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -699,7 +698,7 @@ proc getRadarDnsTimeseriesGroupsDnssecAware*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/timeseries_groups/dnssec_aware", q)
   let body = await res.body
   case res.code
@@ -709,7 +708,7 @@ proc getRadarDnsTimeseriesGroupsDnssecAware*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsDnssecE2e*(client: CloudflareClient,
-                                           aggInterval: set[RadarDnAggIntervalOption] = {},
+                                           aggInterval: RadarDnAggIntervalOption,
                                            name: seq[string] = @[],
                                            dateRange: seq[string] = @[],
                                            dateStart: seq[string] = @[],
@@ -722,12 +721,12 @@ proc getRadarDnsTimeseriesGroupsDnssecE2e*(client: CloudflareClient,
                                            protocol: seq[string] = default(seq[string]),
                                            responseCode: seq[string] = default(seq[string]),
                                            nodata: seq[string] = @[],
-                                           format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTimeseriesGroupsDnssecE2eResponse] {.async.} =
+                                           format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsDnssecE2eResponse] {.async.} =
   ## Retrieves the distribution of DNSSEC-validated answers by end-to-end security
   ## status over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -740,7 +739,7 @@ proc getRadarDnsTimeseriesGroupsDnssecE2e*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/timeseries_groups/dnssec_e2e", q)
   let body = await res.body
   case res.code
@@ -750,7 +749,7 @@ proc getRadarDnsTimeseriesGroupsDnssecE2e*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsIpVersion*(client: CloudflareClient,
-                                           aggInterval: set[RadarDnAggIntervalOption] = {},
+                                           aggInterval: RadarDnAggIntervalOption,
                                            name: seq[string] = @[],
                                            dateRange: seq[string] = @[],
                                            dateStart: seq[string] = @[],
@@ -763,11 +762,11 @@ proc getRadarDnsTimeseriesGroupsIpVersion*(client: CloudflareClient,
                                            protocol: seq[string] = default(seq[string]),
                                            responseCode: seq[string] = default(seq[string]),
                                            nodata: seq[string] = @[],
-                                           format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTimeseriesGroupsIpVersionResponse] {.async.} =
+                                           format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsIpVersionResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by IP version over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -780,7 +779,7 @@ proc getRadarDnsTimeseriesGroupsIpVersion*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/timeseries_groups/ip_version", q)
   let body = await res.body
   case res.code
@@ -790,7 +789,7 @@ proc getRadarDnsTimeseriesGroupsIpVersion*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsMatchingAnswer*(client: CloudflareClient,
-                                                aggInterval: set[RadarDnAggIntervalOption] = {},
+                                                aggInterval: RadarDnAggIntervalOption,
                                                 name: seq[string] = @[],
                                                 dateRange: seq[string] = @[],
                                                 dateStart: seq[string] = @[],
@@ -803,11 +802,11 @@ proc getRadarDnsTimeseriesGroupsMatchingAnswer*(client: CloudflareClient,
                                                 protocol: seq[string] = default(seq[string]),
                                                 responseCode: seq[string] = default(seq[string]),
                                                 nodata: seq[string] = @[],
-                                                format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTimeseriesGroupsMatchingAnswerResponse] {.async.} =
+                                                format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsMatchingAnswerResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by matching answers over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -820,7 +819,7 @@ proc getRadarDnsTimeseriesGroupsMatchingAnswer*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/timeseries_groups/matching_answer", q)
   let body = await res.body
   case res.code
@@ -830,7 +829,7 @@ proc getRadarDnsTimeseriesGroupsMatchingAnswer*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsProtocol*(client: CloudflareClient,
-                                          aggInterval: set[RadarDnAggIntervalOption] = {},
+                                          aggInterval: RadarDnAggIntervalOption,
                                           name: seq[string] = @[],
                                           dateRange: seq[string] = @[],
                                           dateStart: seq[string] = @[],
@@ -842,11 +841,11 @@ proc getRadarDnsTimeseriesGroupsProtocol*(client: CloudflareClient,
                                           queryType: seq[string] = default(seq[string]),
                                           responseCode: seq[string] = default(seq[string]),
                                           nodata: seq[string] = @[],
-                                          format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTimeseriesGroupsProtocolResponse] {.async.} =
+                                          format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsProtocolResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by DNS transport protocol over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -858,7 +857,7 @@ proc getRadarDnsTimeseriesGroupsProtocol*(client: CloudflareClient,
   q["queryType"] = $queryType
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/timeseries_groups/protocol", q)
   let body = await res.body
   case res.code
@@ -868,7 +867,7 @@ proc getRadarDnsTimeseriesGroupsProtocol*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsQueryType*(client: CloudflareClient,
-                                           aggInterval: set[RadarDnAggIntervalOption] = {},
+                                           aggInterval: RadarDnAggIntervalOption,
                                            name: seq[string] = @[],
                                            dateRange: seq[string] = @[],
                                            dateStart: seq[string] = @[],
@@ -881,11 +880,11 @@ proc getRadarDnsTimeseriesGroupsQueryType*(client: CloudflareClient,
                                            responseCode: seq[string] = default(seq[string]),
                                            nodata: seq[string] = @[],
                                            limitPerGroup: int64 = default(int64),
-                                           format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTimeseriesGroupsQueryTypeResponse] {.async.} =
+                                           format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsQueryTypeResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by type over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -898,7 +897,7 @@ proc getRadarDnsTimeseriesGroupsQueryType*(client: CloudflareClient,
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/timeseries_groups/query_type", q)
   let body = await res.body
   case res.code
@@ -908,7 +907,7 @@ proc getRadarDnsTimeseriesGroupsQueryType*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsResponseCode*(client: CloudflareClient,
-                                              aggInterval: set[RadarDnAggIntervalOption] = {},
+                                              aggInterval: RadarDnAggIntervalOption,
                                               name: seq[string] = @[],
                                               dateRange: seq[string] = @[],
                                               dateStart: seq[string] = @[],
@@ -921,11 +920,11 @@ proc getRadarDnsTimeseriesGroupsResponseCode*(client: CloudflareClient,
                                               protocol: seq[string] = default(seq[string]),
                                               nodata: seq[string] = @[],
                                               limitPerGroup: int64 = default(int64),
-                                              format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTimeseriesGroupsResponseCodeResponse] {.async.} =
+                                              format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsResponseCodeResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by response code over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -938,7 +937,7 @@ proc getRadarDnsTimeseriesGroupsResponseCode*(client: CloudflareClient,
   q["protocol"] = $protocol
   for v in nodata: q["nodata"] = $v
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/timeseries_groups/response_code", q)
   let body = await res.body
   case res.code
@@ -948,7 +947,7 @@ proc getRadarDnsTimeseriesGroupsResponseCode*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsResponseTtl*(client: CloudflareClient,
-                                             aggInterval: set[RadarDnAggIntervalOption] = {},
+                                             aggInterval: RadarDnAggIntervalOption,
                                              name: seq[string] = @[],
                                              dateRange: seq[string] = @[],
                                              dateStart: seq[string] = @[],
@@ -961,11 +960,11 @@ proc getRadarDnsTimeseriesGroupsResponseTtl*(client: CloudflareClient,
                                              protocol: seq[string] = default(seq[string]),
                                              responseCode: seq[string] = default(seq[string]),
                                              nodata: seq[string] = @[],
-                                             format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTimeseriesGroupsResponseTtlResponse] {.async.} =
+                                             format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsResponseTtlResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by minimum answer TTL over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -978,7 +977,7 @@ proc getRadarDnsTimeseriesGroupsResponseTtl*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   for v in nodata: q["nodata"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/timeseries_groups/response_ttl", q)
   let body = await res.body
   case res.code
@@ -988,8 +987,8 @@ proc getRadarDnsTimeseriesGroupsResponseTtl*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsDimension*(client: CloudflareClient,
-                                           dimension: string,
-                                           aggInterval: set[RadarDnAggIntervalOption] = {},
+                                           dimension: Dimension,
+                                           aggInterval: RadarDnAggIntervalOption,
                                            name: seq[string] = @[],
                                            dateRange: seq[string] = @[],
                                            dateStart: seq[string] = @[],
@@ -1010,12 +1009,12 @@ proc getRadarDnsTimeseriesGroupsDimension*(client: CloudflareClient,
                                            limitPerGroup: int64 = default(int64),
                                            matchingAnswer: seq[string] = @[],
                                            tld: seq[string] = @[],
-                                           normalization: string = "PERCENTAGE",
-                                           format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTimeseriesGroupsDimensionResponse] {.async.} =
+                                           normalization: RadarDnNormalizationOption = normalizationPERCENTAGE,
+                                           format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of DNS queries grouped by dimension over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -1036,8 +1035,8 @@ proc getRadarDnsTimeseriesGroupsDimension*(client: CloudflareClient,
   q["limitPerGroup"] = $limitPerGroup
   for v in matchingAnswer: q["matchingAnswer"] = $v
   for v in tld: q["tld"] = $v
-  for v in normalization: q["normalization"] = $v
-  for v in format: q["format"] = $v
+  q["normalization"] = $normalization
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/dns/timeseries_groups/{dimension}", q)
   let body = await res.body
   case res.code
@@ -1062,7 +1061,7 @@ proc getRadarDnsTopAses*(client: CloudflareClient, limit: int64 = 5,
                          dnssecE2e: seq[string] = @[],
                          ipVersion: seq[string] = default(seq[string]),
                          matchingAnswer: seq[string] = @[],
-                         format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTopAsesResponse] {.async.} =
+                         format: RadarDnFormatOption): Future[GetRadarDnsTopAsesResponse] {.async.} =
   ## Retrieves the top autonomous systems by DNS queries made to 1.1.1.1 DNS
   ## resolver.
 
@@ -1087,7 +1086,7 @@ proc getRadarDnsTopAses*(client: CloudflareClient, limit: int64 = 5,
   for v in dnssecE2e: q["dnssecE2e"] = $v
   q["ipVersion"] = $ipVersion
   for v in matchingAnswer: q["matchingAnswer"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/top/ases", q)
   let body = await res.body
   case res.code
@@ -1116,7 +1115,7 @@ proc getRadarDnsTopLocations*(client: CloudflareClient, limit: int64 = 5,
                               ipVersion: seq[string] = default(seq[string]),
                               matchingAnswer: seq[string] = @[],
                               tld: seq[string] = @[],
-                              format: set[RadarDnFormatOption] = {}): Future[GetRadarDnsTopLocationsResponse] {.async.} =
+                              format: RadarDnFormatOption): Future[GetRadarDnsTopLocationsResponse] {.async.} =
   ## Retrieves the top locations by DNS queries made to 1.1.1.1 DNS resolver.
 
   var q = initOrderedTable[string, string]()
@@ -1141,7 +1140,7 @@ proc getRadarDnsTopLocations*(client: CloudflareClient, limit: int64 = 5,
   q["ipVersion"] = $ipVersion
   for v in matchingAnswer: q["matchingAnswer"] = $v
   for v in tld: q["tld"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/dns/top/locations", q)
   let body = await res.body
   case res.code

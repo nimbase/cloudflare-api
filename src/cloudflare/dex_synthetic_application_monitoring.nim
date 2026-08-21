@@ -29,7 +29,7 @@ type
 proc getAccountsAccountIdDexColos*(client: CloudflareClient,
                                    accountId: types.DigitalExperienceMonitoringAccountIdentifier,
                                    `from`: string, to: string,
-                                   sortBy: set[DexSyntheticApplicationMonitoringSortByOption] = {}): Future[JsonNode] {.async.} =
+                                   sortBy: DexSyntheticApplicationMonitoringSortByOption): Future[JsonNode] {.async.} =
   ## List Cloudflare colos that account's devices were connected to during a time
   ## period, sorted by usage starting from the most used colo. Colos without traffic
   ## are also returned and sorted alphabetically.
@@ -37,7 +37,7 @@ proc getAccountsAccountIdDexColos*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["from"] = $`from`
   q["to"] = $to
-  for v in sortBy: q["sortBy"] = $v
+  q["sortBy"] = $sortBy
   let res = await client.httpGET(fmt"/accounts/{accountId}/dex/colos", q)
   let body = await res.body
   case res.code
@@ -51,14 +51,14 @@ proc getAccountsAccountIdDexDevicesDexTests*(client: CloudflareClient,
                                              page: float64 = default(float64),
                                              perPage: float64 = default(float64),
                                              testName: string = default(string),
-                                             kind: set[DexSyntheticApplicationMonitoringKindOption] = {}): Future[types.DigitalExperienceMonitoringDexResponseCollection] {.async.} =
+                                             kind: DexSyntheticApplicationMonitoringKindOption): Future[types.DigitalExperienceMonitoringDexResponseCollection] {.async.} =
   ## Fetch all DEX tests.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
   q["testName"] = $testName
-  for v in kind: q["kind"] = $v
+  q["kind"] = $kind
   let res = await client.httpGET(fmt"/accounts/{accountId}/dex/devices/dex_tests", q)
   let body = await res.body
   case res.code
@@ -146,14 +146,14 @@ proc getAccountsAccountIdDexDevicesDeviceIdFleetStatusOverTime*(client: Cloudfla
                                                                 deviceId: types.DigitalExperienceMonitoringDeviceId,
                                                                 `from`: types.DigitalExperienceMonitoringTimestamp,
                                                                 to: types.DigitalExperienceMonitoringTimestamp,
-                                                                interval: set[DexSyntheticApplicationMonitoringIntervalOption] = {},
+                                                                interval: DexSyntheticApplicationMonitoringIntervalOption,
                                                                 colo: types.DigitalExperienceMonitoringColo = default(types.DigitalExperienceMonitoringColo)): Future[JsonNode] {.async.} =
   ## Get time-bucketed status metrics for a specific device.
 
   var q = initOrderedTable[string, string]()
   q["from"] = $`from`
   q["to"] = $to
-  for v in interval: q["interval"] = $v
+  q["interval"] = $interval
   q["colo"] = $colo
   let res = await client.httpGET(fmt"/accounts/{accountId}/dex/devices/{deviceId}/fleet-status/over-time", q)
   let body = await res.body
@@ -168,8 +168,8 @@ proc getAccountsAccountIdDexDevicesDeviceIdIsps*(client: CloudflareClient,
                                                  deviceId: types.DigitalExperienceMonitoringUuid,
                                                  page: int64 = 1, perPage: int64,
                                                  cursor: string = default(string),
-                                                 sortBy: string = "time_start",
-                                                 sortOrder: string = "DESC",
+                                                 sortBy: DexSyntheticApplicationMonitoringSortByOption = sortByTimeStart,
+                                                 sortOrder: DexSyntheticApplicationMonitoringSortOrderOption = sortOrderDESC,
                                                  `from`: string = default(string),
                                                  to: string = default(string)): Future[JsonNode] {.async.} =
   ## List ISP information observed for a specific device during traceroute tests.
@@ -178,8 +178,8 @@ proc getAccountsAccountIdDexDevicesDeviceIdIsps*(client: CloudflareClient,
   q["page"] = $page
   q["per_page"] = $perPage
   q["cursor"] = $cursor
-  for v in sortBy: q["sort_by"] = $v
-  for v in sortOrder: q["sort_order"] = $v
+  q["sort_by"] = $sortBy
+  q["sort_order"] = $sortOrder
   q["from"] = $`from`
   q["to"] = $to
   let res = await client.httpGET(fmt"/accounts/{accountId}/dex/devices/{deviceId}/isps", q)
@@ -268,7 +268,7 @@ proc getAccountsAccountIdDexHttpTestsTestId*(client: CloudflareClient,
                                              testId: types.DigitalExperienceMonitoringUuid,
                                              deviceId: seq[string] = @[],
                                              `from`: string, to: string,
-                                             interval: set[DexSyntheticApplicationMonitoringIntervalOption] = {},
+                                             interval: DexSyntheticApplicationMonitoringIntervalOption,
                                              colo: string = default(string)): Future[JsonNode] {.async.} =
   ## Get test details and aggregate performance metrics for an http test for a given
   ## time period between 1 hour and 7 days.
@@ -277,7 +277,7 @@ proc getAccountsAccountIdDexHttpTestsTestId*(client: CloudflareClient,
   for v in deviceId: q["deviceId"] = $v
   q["from"] = $`from`
   q["to"] = $to
-  for v in interval: q["interval"] = $v
+  q["interval"] = $interval
   q["colo"] = $colo
   let res = await client.httpGET(fmt"/accounts/{accountId}/dex/http-tests/{testId}", q)
   let body = await res.body
@@ -318,7 +318,7 @@ proc getAccountsAccountIdDexTestsOverview*(client: CloudflareClient,
                                            registrationId: string = default(string),
                                            page: float64 = default(float64),
                                            perPage: float64 = default(float64),
-                                           kind: set[DexSyntheticApplicationMonitoringKindOption] = {}): Future[JsonNode] {.async.} =
+                                           kind: DexSyntheticApplicationMonitoringKindOption): Future[JsonNode] {.async.} =
   ## List DEX tests with overview metrics.
 
   var q = initOrderedTable[string, string]()
@@ -328,7 +328,7 @@ proc getAccountsAccountIdDexTestsOverview*(client: CloudflareClient,
   q["registration_id"] = $registrationId
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in kind: q["kind"] = $v
+  q["kind"] = $kind
   let res = await client.httpGET(fmt"/accounts/{accountId}/dex/tests/overview", q)
   let body = await res.body
   case res.code
@@ -374,7 +374,7 @@ proc getAccountsAccountIdDexTracerouteTestsTestId*(client: CloudflareClient,
                                                    testId: types.DigitalExperienceMonitoringUuid,
                                                    deviceId: seq[string] = @[],
                                                    `from`: string, to: string,
-                                                   interval: set[DexSyntheticApplicationMonitoringIntervalOption] = {},
+                                                   interval: DexSyntheticApplicationMonitoringIntervalOption,
                                                    colo: string = default(string)): Future[JsonNode] {.async.} =
   ## Get test details and aggregate performance metrics for a traceroute test for a
   ## given time period between 1 hour and 7 days.
@@ -383,7 +383,7 @@ proc getAccountsAccountIdDexTracerouteTestsTestId*(client: CloudflareClient,
   for v in deviceId: q["deviceId"] = $v
   q["from"] = $`from`
   q["to"] = $to
-  for v in interval: q["interval"] = $v
+  q["interval"] = $interval
   q["colo"] = $colo
   let res = await client.httpGET(fmt"/accounts/{accountId}/dex/traceroute-tests/{testId}", q)
   let body = await res.body
@@ -399,14 +399,14 @@ proc getAccountsAccountIdDexTracerouteTestsTestIdNetworkPath*(client: Cloudflare
                                                               deviceId: string,
                                                               `from`: string,
                                                               to: string,
-                                                              interval: set[DexSyntheticApplicationMonitoringIntervalOption] = {}): Future[JsonNode] {.async.} =
+                                                              interval: DexSyntheticApplicationMonitoringIntervalOption): Future[JsonNode] {.async.} =
   ## Get a breakdown of metrics by hop for individual traceroute test runs.
 
   var q = initOrderedTable[string, string]()
   q["deviceId"] = $deviceId
   q["from"] = $`from`
   q["to"] = $to
-  for v in interval: q["interval"] = $v
+  q["interval"] = $interval
   let res = await client.httpGET(fmt"/accounts/{accountId}/dex/traceroute-tests/{testId}/network-path", q)
   let body = await res.body
   case res.code

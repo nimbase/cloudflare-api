@@ -41,18 +41,18 @@ type
 proc getRadarTlds*(client: CloudflareClient, limit: int64 = 5,
                    offset: int64 = default(int64),
                    tldManager: string = default(string),
-                   tldType: set[RadarTopLevelDomainTldTypeOption] = {},
+                   tldType: RadarTopLevelDomainTldTypeOption,
                    tld: string = default(string),
-                   format: set[RadarTopLevelDomainFormatOption] = {}): Future[GetRadarTldsResponse] {.async.} =
+                   format: RadarTopLevelDomainFormatOption): Future[GetRadarTldsResponse] {.async.} =
   ## Retrieves a list of TLDs.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
   q["offset"] = $offset
   q["tldManager"] = $tldManager
-  for v in tldType: q["tldType"] = $v
+  q["tldType"] = $tldType
   q["tld"] = $tld
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/tlds", q)
   let body = await res.body
   case res.code
@@ -62,7 +62,7 @@ proc getRadarTlds*(client: CloudflareClient, limit: int64 = 5,
     raise newException(CloudflareClientError, body)
 
 proc getRadarTldsPerformanceSummaryDimension*(client: CloudflareClient,
-                                              dimension: string,
+                                              dimension: Dimension,
                                               name: seq[string] = @[],
                                               dateRange: seq[string] = @[],
                                               dateStart: seq[string] = @[],
@@ -72,7 +72,7 @@ proc getRadarTldsPerformanceSummaryDimension*(client: CloudflareClient,
                                               tld: seq[string] = @[],
                                               nameserver: string = default(string),
                                               limitPerGroup: int64 = default(int64),
-                                              format: set[RadarTopLevelDomainFormatOption] = {}): Future[GetRadarTldsPerformanceSummaryDimensionResponse] {.async.} =
+                                              format: RadarTopLevelDomainFormatOption): Future[GetRadarTldsPerformanceSummaryDimensionResponse] {.async.} =
   ## Returns a summary of TLD authoritative nameserver performance grouped by the
   ## specified dimension.
 
@@ -86,7 +86,7 @@ proc getRadarTldsPerformanceSummaryDimension*(client: CloudflareClient,
   for v in tld: q["tld"] = $v
   q["nameserver"] = $nameserver
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/tlds/performance/summary/{dimension}", q)
   let body = await res.body
   case res.code
@@ -96,8 +96,8 @@ proc getRadarTldsPerformanceSummaryDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarTldsPerformanceTimeseriesGroupsDimension*(client: CloudflareClient,
-                                                       dimension: string,
-                                                       aggInterval: set[RadarTopLevelDomainAggIntervalOption] = {},
+                                                       dimension: Dimension,
+                                                       aggInterval: RadarTopLevelDomainAggIntervalOption,
                                                        name: seq[string] = @[],
                                                        dateRange: seq[string] = @[],
                                                        dateStart: seq[string] = @[],
@@ -107,12 +107,12 @@ proc getRadarTldsPerformanceTimeseriesGroupsDimension*(client: CloudflareClient,
                                                        tld: seq[string] = @[],
                                                        nameserver: string = default(string),
                                                        limitPerGroup: int64 = default(int64),
-                                                       format: set[RadarTopLevelDomainFormatOption] = {}): Future[GetRadarTldsPerformanceTimeseriesGroupsDimensionResponse] {.async.} =
+                                                       format: RadarTopLevelDomainFormatOption): Future[GetRadarTldsPerformanceTimeseriesGroupsDimensionResponse] {.async.} =
   ## Returns a timeseries of TLD authoritative nameserver performance grouped by the
   ## specified dimension.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -122,7 +122,7 @@ proc getRadarTldsPerformanceTimeseriesGroupsDimension*(client: CloudflareClient,
   for v in tld: q["tld"] = $v
   q["nameserver"] = $nameserver
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/tlds/performance/timeseries_groups/{dimension}", q)
   let body = await res.body
   case res.code
@@ -132,11 +132,11 @@ proc getRadarTldsPerformanceTimeseriesGroupsDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarTldsTld*(client: CloudflareClient, tld: string,
-                      format: set[RadarTopLevelDomainFormatOption] = {}): Future[GetRadarTldsTldResponse] {.async.} =
+                      format: RadarTopLevelDomainFormatOption): Future[GetRadarTldsTldResponse] {.async.} =
   ## Retrieves the requested TLD information.
 
   var q = initOrderedTable[string, string]()
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/tlds/{tld}", q)
   let body = await res.body
   case res.code

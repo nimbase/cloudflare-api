@@ -17,7 +17,7 @@ type
 proc getUserBillingHistory*(client: CloudflareClient,
                             page: float64 = default(float64),
                             perPage: float64 = default(float64),
-                            order: set[UserBillingHistoryOrderOption] = {},
+                            order: UserBillingHistoryOrderOption,
                             occurredAt: types.BillSubsApiOccurredAt = default(types.BillSubsApiOccurredAt),
                             `type`: string = default(string),
                             action: string = default(string)): Future[types.BillSubsApiBillingHistoryCollection] {.async.} =
@@ -26,7 +26,7 @@ proc getUserBillingHistory*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
+  q["order"] = $order
   q["occurred_at"] = $occurredAt
   q["type"] = $`type`
   q["action"] = $action

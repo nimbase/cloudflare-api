@@ -33,17 +33,17 @@ proc getAccountsAccountIdSecretsStoreQuota*(client: CloudflareClient,
 
 proc getAccountsAccountIdSecretsStoreStores*(client: CloudflareClient,
                                              accountId: string,
-                                             direction: string = "desc",
+                                             direction: SecretsStoreDirectionOption = directionDesc,
                                              page: int64 = default(int64),
                                              perPage: int64 = default(int64),
-                                             order: string = "created"): Future[types.SecretsStoreStoresResponseCollection] {.async.} =
+                                             order: SecretsStoreOrderOption = orderCreated): Future[types.SecretsStoreStoresResponseCollection] {.async.} =
   ## Lists all the stores in an account.
 
   var q = initOrderedTable[string, string]()
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
+  q["order"] = $order
   let res = await client.httpGET(fmt"/accounts/{accountId}/secrets_store/stores", q)
   let body = await res.body
   case res.code
@@ -100,20 +100,20 @@ proc deleteAccountsAccountIdSecretsStoreStoresStoreId*(client: CloudflareClient,
 proc getAccountsAccountIdSecretsStoreStoresStoreIdSecrets*(client: CloudflareClient,
                                                            accountId: string,
                                                            storeId: string,
-                                                           direction: string = "desc",
+                                                           direction: SecretsStoreDirectionOption = directionDesc,
                                                            page: int64 = default(int64),
                                                            perPage: int64 = default(int64),
                                                            search: string = default(string),
-                                                           order: string = "created",
+                                                           order: SecretsStoreOrderOption = orderCreated,
                                                            scopes: seq[string] = default(seq[string])): Future[types.SecretsStoreSecretsResponseCollection] {.async.} =
   ## Lists all store secrets.
 
   var q = initOrderedTable[string, string]()
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["page"] = $page
   q["per_page"] = $perPage
   q["search"] = $search
-  for v in order: q["order"] = $v
+  q["order"] = $order
   q["scopes"] = $scopes
   let res = await client.httpGET(fmt"/accounts/{accountId}/secrets_store/stores/{storeId}/secrets", q)
   let body = await res.body

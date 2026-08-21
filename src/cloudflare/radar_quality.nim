@@ -63,8 +63,8 @@ proc getRadarQualityIqiSummary*(client: CloudflareClient,
                                 asn: seq[string] = @[],
                                 location: seq[string] = @[],
                                 continent: seq[string] = @[],
-                                metric: set[RadarQualityMetricOption] = {},
-                                format: set[RadarQualityFormatOption] = {}): Future[GetRadarQualityIqiSummaryResponse] {.async.} =
+                                metric: RadarQualityMetricOption,
+                                format: RadarQualityFormatOption): Future[GetRadarQualityIqiSummaryResponse] {.async.} =
   ## Retrieves a summary (percentiles) of bandwidth, latency, or DNS response time
   ## from the Radar Internet Quality Index (IQI).
 
@@ -76,8 +76,8 @@ proc getRadarQualityIqiSummary*(client: CloudflareClient,
   for v in asn: q["asn"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
-  for v in metric: q["metric"] = $v
-  for v in format: q["format"] = $v
+  q["metric"] = $metric
+  q["format"] = $format
   let res = await client.httpGET("/radar/quality/iqi/summary", q)
   let body = await res.body
   case res.code
@@ -87,7 +87,7 @@ proc getRadarQualityIqiSummary*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarQualityIqiTimeseriesGroups*(client: CloudflareClient,
-                                         aggInterval: set[RadarQualityAggIntervalOption] = {},
+                                         aggInterval: RadarQualityAggIntervalOption,
                                          name: seq[string] = @[],
                                          dateRange: seq[string] = @[],
                                          dateStart: seq[string] = @[],
@@ -96,13 +96,13 @@ proc getRadarQualityIqiTimeseriesGroups*(client: CloudflareClient,
                                          location: seq[string] = @[],
                                          continent: seq[string] = @[],
                                          interpolation: bool = default(bool),
-                                         metric: set[RadarQualityMetricOption] = {},
-                                         format: set[RadarQualityFormatOption] = {}): Future[GetRadarQualityIqiTimeseriesGroupsResponse] {.async.} =
+                                         metric: RadarQualityMetricOption,
+                                         format: RadarQualityFormatOption): Future[GetRadarQualityIqiTimeseriesGroupsResponse] {.async.} =
   ## Retrieves a time series (percentiles) of bandwidth, latency, or DNS response
   ## time from the Radar Internet Quality Index (IQI).
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -111,8 +111,8 @@ proc getRadarQualityIqiTimeseriesGroups*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   q["interpolation"] = $interpolation
-  for v in metric: q["metric"] = $v
-  for v in format: q["format"] = $v
+  q["metric"] = $metric
+  q["format"] = $format
   let res = await client.httpGET("/radar/quality/iqi/timeseries_groups", q)
   let body = await res.body
   case res.code
@@ -128,8 +128,8 @@ proc getRadarQualitySpeedHistogram*(client: CloudflareClient,
                                     location: seq[string] = @[],
                                     continent: seq[string] = @[],
                                     bucketSize: int64 = default(int64),
-                                    metricGroup: string = "bandwidth",
-                                    format: set[RadarQualityFormatOption] = {}): Future[GetRadarQualitySpeedHistogramResponse] {.async.} =
+                                    metricGroup: RadarQualityMetricGroupOption = metricGroupBandwidth,
+                                    format: RadarQualityFormatOption): Future[GetRadarQualitySpeedHistogramResponse] {.async.} =
   ## Retrieves a histogram from the previous 90 days of Cloudflare Speed Test data,
   ## split into fixed bandwidth (Mbps), latency (ms), or jitter (ms) buckets.
 
@@ -140,8 +140,8 @@ proc getRadarQualitySpeedHistogram*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   q["bucketSize"] = $bucketSize
-  for v in metricGroup: q["metricGroup"] = $v
-  for v in format: q["format"] = $v
+  q["metricGroup"] = $metricGroup
+  q["format"] = $format
   let res = await client.httpGET("/radar/quality/speed/histogram", q)
   let body = await res.body
   case res.code
@@ -156,7 +156,7 @@ proc getRadarQualitySpeedSummary*(client: CloudflareClient,
                                   asn: seq[string] = @[],
                                   location: seq[string] = @[],
                                   continent: seq[string] = @[],
-                                  format: set[RadarQualityFormatOption] = {}): Future[GetRadarQualitySpeedSummaryResponse] {.async.} =
+                                  format: RadarQualityFormatOption): Future[GetRadarQualitySpeedSummaryResponse] {.async.} =
   ## Retrieves a summary of bandwidth, latency, jitter, and packet loss, from the
   ## previous 90 days of Cloudflare Speed Test data.
 
@@ -166,7 +166,7 @@ proc getRadarQualitySpeedSummary*(client: CloudflareClient,
   for v in asn: q["asn"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/quality/speed/summary", q)
   let body = await res.body
   case res.code
@@ -181,9 +181,9 @@ proc getRadarQualitySpeedTopAses*(client: CloudflareClient, limit: int64 = 5,
                                   asn: seq[string] = @[],
                                   location: seq[string] = @[],
                                   continent: seq[string] = @[],
-                                  orderBy: string = "BANDWIDTH_DOWNLOAD",
+                                  orderBy: RadarQualityOrderByOption = orderByBANDWIDTHDOWNLOAD,
                                   reverse: bool = default(bool),
-                                  format: set[RadarQualityFormatOption] = {}): Future[GetRadarQualitySpeedTopAsesResponse] {.async.} =
+                                  format: RadarQualityFormatOption): Future[GetRadarQualitySpeedTopAsesResponse] {.async.} =
   ## Retrieves the top autonomous systems by bandwidth, latency, jitter, or packet
   ## loss, from the previous 90 days of Cloudflare Speed Test data.
 
@@ -194,9 +194,9 @@ proc getRadarQualitySpeedTopAses*(client: CloudflareClient, limit: int64 = 5,
   for v in asn: q["asn"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
-  for v in orderBy: q["orderBy"] = $v
+  q["orderBy"] = $orderBy
   q["reverse"] = $reverse
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/quality/speed/top/ases", q)
   let body = await res.body
   case res.code
@@ -211,9 +211,9 @@ proc getRadarQualitySpeedTopLocations*(client: CloudflareClient,
                                        asn: seq[string] = @[],
                                        location: seq[string] = @[],
                                        continent: seq[string] = @[],
-                                       orderBy: string = "BANDWIDTH_DOWNLOAD",
+                                       orderBy: RadarQualityOrderByOption = orderByBANDWIDTHDOWNLOAD,
                                        reverse: bool = default(bool),
-                                       format: set[RadarQualityFormatOption] = {}): Future[GetRadarQualitySpeedTopLocationsResponse] {.async.} =
+                                       format: RadarQualityFormatOption): Future[GetRadarQualitySpeedTopLocationsResponse] {.async.} =
   ## Retrieves the top locations by bandwidth, latency, jitter, or packet loss, from
   ## the previous 90 days of Cloudflare Speed Test data.
 
@@ -224,9 +224,9 @@ proc getRadarQualitySpeedTopLocations*(client: CloudflareClient,
   for v in asn: q["asn"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
-  for v in orderBy: q["orderBy"] = $v
+  q["orderBy"] = $orderBy
   q["reverse"] = $reverse
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/quality/speed/top/locations", q)
   let body = await res.body
   case res.code

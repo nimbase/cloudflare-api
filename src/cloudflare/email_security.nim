@@ -55,9 +55,9 @@ proc getAccountsAccountIdEmailSecurityInvestigate*(client: CloudflareClient,
                                                    `end`: string = default(string),
                                                    query: string = default(string),
                                                    detectionsOnly: bool = true,
-                                                   finalDisposition: set[EmailSecurityFinalDispositionOption] = {},
+                                                   finalDisposition: EmailSecurityFinalDispositionOption,
                                                    metric: string = default(string),
-                                                   messageAction: set[EmailSecurityMessageActionOption] = {},
+                                                   messageAction: EmailSecurityMessageActionOption,
                                                    recipient: string = default(string),
                                                    sender: string = default(string),
                                                    alertId: string = default(string),
@@ -75,9 +75,9 @@ proc getAccountsAccountIdEmailSecurityInvestigate*(client: CloudflareClient,
   q["end"] = $`end`
   q["query"] = $query
   q["detections_only"] = $detectionsOnly
-  for v in finalDisposition: q["final_disposition"] = $v
+  q["final_disposition"] = $finalDisposition
   q["metric"] = $metric
-  for v in messageAction: q["message_action"] = $v
+  q["message_action"] = $messageAction
   q["recipient"] = $recipient
   q["sender"] = $sender
   q["alert_id"] = $alertId
@@ -99,15 +99,15 @@ proc getAccountsAccountIdEmailSecurityInvestigate*(client: CloudflareClient,
 proc getAccountsAccountIdEmailSecurityInvestigateBulk*(client: CloudflareClient,
                                                        page: int64 = 1,
                                                        perPage: int64 = 20,
-                                                       actionType: set[EmailSecurityActionTypeOption] = {},
-                                                       status: set[EmailSecurityStatusOption] = {}): Future[JsonNode] {.async.} =
+                                                       actionType: EmailSecurityActionTypeOption,
+                                                       status: EmailSecurityStatusOption): Future[JsonNode] {.async.} =
   ## Returns a paginated list of bulk action jobs for the account.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in actionType: q["action_type"] = $v
-  for v in status: q["status"] = $v
+  q["action_type"] = $actionType
+  q["status"] = $status
   let res = await client.httpGET("/accounts/{account_id}/email-security/investigate/bulk", q)
   let body = await res.body
   case res.code
@@ -169,14 +169,14 @@ proc postAccountsAccountIdEmailSecurityInvestigateBulkJobIdCancel*(client: Cloud
 proc getAccountsAccountIdEmailSecurityInvestigateBulkJobIdMessages*(client: CloudflareClient,
                                                                     page: int64 = 1,
                                                                     perPage: int64 = 20,
-                                                                    status: set[EmailSecurityStatusOption] = {}): Future[JsonNode] {.async.} =
+                                                                    status: EmailSecurityStatusOption): Future[JsonNode] {.async.} =
   ## Returns the individual messages associated with a bulk action job, including
   ## their processing status.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in status: q["status"] = $v
+  q["status"] = $status
   let res = await client.httpGET("/accounts/{account_id}/email-security/investigate/bulk/{job_id}/messages", q)
   let body = await res.body
   case res.code
@@ -352,7 +352,7 @@ proc getAccountsAccountIdEmailSecurityPhishguardReports*(client: CloudflareClien
 proc getAccountsAccountIdEmailSecuritySubmissions*(client: CloudflareClient,
                                                    start: string = default(string),
                                                    `end`: string = default(string),
-                                                   `type`: set[EmailSecurityTypeOption] = {},
+                                                   `type`: EmailSecurityTypeOption,
                                                    submissionId: string = default(string),
                                                    originalDisposition: types.EmailSecuritySubmissionDisposition = default(types.EmailSecuritySubmissionDisposition),
                                                    requestedDisposition: types.EmailSecuritySubmissionDisposition = default(types.EmailSecuritySubmissionDisposition),
@@ -369,7 +369,7 @@ proc getAccountsAccountIdEmailSecuritySubmissions*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["start"] = $start
   q["end"] = $`end`
-  for v in `type`: q["type"] = $v
+  q["type"] = $`type`
   q["submission_id"] = $submissionId
   q["original_disposition"] = $originalDisposition
   q["requested_disposition"] = $requestedDisposition

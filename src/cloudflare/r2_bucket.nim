@@ -99,8 +99,8 @@ proc getAccountsAccountIdR2Buckets*(client: CloudflareClient,
                                     nameContains: string = default(string),
                                     startAfter: string = default(string),
                                     perPage: float64 = default(float64),
-                                    order: set[R2BucketOrderOption] = {},
-                                    direction: set[R2BucketDirectionOption] = {},
+                                    order: R2BucketOrderOption,
+                                    direction: R2BucketDirectionOption,
                                     cursor: string = default(string)): Future[JsonNode] {.async.} =
   ## Lists all R2 buckets on your account.
 
@@ -108,8 +108,8 @@ proc getAccountsAccountIdR2Buckets*(client: CloudflareClient,
   q["name_contains"] = $nameContains
   q["start_after"] = $startAfter
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   q["cursor"] = $cursor
   let res = await client.httpGET(fmt"/accounts/{accountId}/r2/buckets", q)
   let body = await res.body
@@ -311,7 +311,7 @@ proc putAccountsAccountIdR2BucketsBucketNameDomainsManaged*(client: CloudflareCl
 proc getAccountsAccountIdR2BucketsBucketNameJobs*(client: CloudflareClient,
                                                   accountId: types.R2AccountIdentifier,
                                                   bucketName: types.R2BucketName,
-                                                  jobType: set[R2BucketJobTypeOption] = {},
+                                                  jobType: R2BucketJobTypeOption,
                                                   status: types.R2R2BucketJobStatus = default(types.R2R2BucketJobStatus),
                                                   maxKeys: int64 = default(int64),
                                                   continuationToken: string = default(string)): Future[JsonNode] {.async.} =
@@ -320,7 +320,7 @@ proc getAccountsAccountIdR2BucketsBucketNameJobs*(client: CloudflareClient,
   ## asynchronous operations such as deleting objects by prefix or emptying a bucket.
 
   var q = initOrderedTable[string, string]()
-  for v in jobType: q["jobType"] = $v
+  q["jobType"] = $jobType
   q["status"] = $status
   q["maxKeys"] = $maxKeys
   q["continuationToken"] = $continuationToken

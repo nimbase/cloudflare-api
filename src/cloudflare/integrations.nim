@@ -29,25 +29,25 @@ type
 proc getAccountsAccountIdOneIntegrations*(client: CloudflareClient,
                                           accountId: string,
                                           application: string = default(string),
-                                          direction: set[IntegrationDirectionOption] = {},
+                                          direction: IntegrationDirectionOption,
                                           dlpEnabled: bool = default(bool),
-                                          order: set[IntegrationOrderOption] = {},
+                                          order: IntegrationOrderOption,
                                           page: int64 = default(int64),
                                           pageSize: int64 = default(int64),
                                           search: string = default(string),
-                                          status: set[IntegrationStatusOption] = {},
+                                          status: IntegrationStatusOption,
                                           useCases: string = default(string)): Future[types.OnePaginatedIntegrationV2ListItemList] {.async.} =
   ## Returns a paginated list of integrations for the account.
 
   var q = initOrderedTable[string, string]()
   q["application"] = $application
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["dlp_enabled"] = $dlpEnabled
-  for v in order: q["order"] = $v
+  q["order"] = $order
   q["page"] = $page
   q["page_size"] = $pageSize
   q["search"] = $search
-  for v in status: q["status"] = $v
+  q["status"] = $status
   q["use_cases"] = $useCases
   let res = await client.httpGET(fmt"/accounts/{accountId}/one/integrations", q)
   let body = await res.body

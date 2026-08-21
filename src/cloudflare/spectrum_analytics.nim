@@ -46,7 +46,7 @@ proc getZonesZoneIdSpectrumAnalyticsEventsBytime*(client: CloudflareClient,
                                                   metrics: types.SpectrumAnalyticsMetrics = default(types.SpectrumAnalyticsMetrics),
                                                   filters: types.SpectrumAnalyticsFilters = default(types.SpectrumAnalyticsFilters),
                                                   since: types.SpectrumAnalyticsSince = default(types.SpectrumAnalyticsSince),
-                                                  timeDelta: set[SpectrumAnalyticTimeDeltaOption] = {}): Future[types.SpectrumAnalyticsQueryResponseSingle] {.async.} =
+                                                  timeDelta: SpectrumAnalyticTimeDeltaOption): Future[types.SpectrumAnalyticsQueryResponseSingle] {.async.} =
   ## Retrieves a list of aggregate metrics grouped by time interval.
 
   var q = initOrderedTable[string, string]()
@@ -56,7 +56,7 @@ proc getZonesZoneIdSpectrumAnalyticsEventsBytime*(client: CloudflareClient,
   q["metrics"] = $metrics
   q["filters"] = $filters
   q["since"] = $since
-  for v in timeDelta: q["time_delta"] = $v
+  q["time_delta"] = $timeDelta
   let res = await client.httpGET(fmt"/zones/{zoneId}/spectrum/analytics/events/bytime", q)
   let body = await res.body
   case res.code

@@ -61,8 +61,8 @@ proc getAccountsAccountIdAiSearchNamespacesNameInstancesIdItems*(client: Cloudfl
                                                                  page: int64 = 1,
                                                                  perPage: int64 = 20,
                                                                  search: string = default(string),
-                                                                 sortBy: string = "status",
-                                                                 status: set[AiSearchInstancesItemStatusOption] = {},
+                                                                 sortBy: AiSearchInstancesItemSortByOption = sortByStatus,
+                                                                 status: AiSearchInstancesItemStatusOption,
                                                                  source: string = default(string),
                                                                  metadataFilter: string = default(string),
                                                                  itemId: string = default(string),
@@ -74,8 +74,8 @@ proc getAccountsAccountIdAiSearchNamespacesNameInstancesIdItems*(client: Cloudfl
   q["page"] = $page
   q["per_page"] = $perPage
   q["search"] = $search
-  for v in sortBy: q["sort_by"] = $v
-  for v in status: q["status"] = $v
+  q["sort_by"] = $sortBy
+  q["status"] = $status
   q["source"] = $source
   q["metadata_filter"] = $metadataFilter
   q["item_id"] = $itemId

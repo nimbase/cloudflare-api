@@ -135,7 +135,7 @@ proc getAccountsAccountIdImagesV2*(client: CloudflareClient,
                                    accountId: types.ImagesAccountIdentifier,
                                    continuationToken: types.ImagesImagesListContinuationToken = default(types.ImagesImagesListContinuationToken),
                                    perPage: float64 = default(float64),
-                                   sortOrder: string = "desc",
+                                   sortOrder: CloudflareImageSortOrderOption = sortOrderDesc,
                                    creator: string = default(string),
                                    metaFieldOperator: string = default(string)): Future[types.ImagesImagesListResponseV2] {.async.} =
   ## List up to 10000 images from CF Images, with up to 1000 results per page. Use
@@ -202,7 +202,7 @@ proc getAccountsAccountIdImagesV2*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["continuation_token"] = $continuationToken
   q["per_page"] = $perPage
-  for v in sortOrder: q["sort_order"] = $v
+  q["sort_order"] = $sortOrder
   q["creator"] = $creator
   q["meta.<field>[<operator>]"] = $metaFieldOperator
   let res = await client.httpGET(fmt"/accounts/{accountId}/images/v2", q)

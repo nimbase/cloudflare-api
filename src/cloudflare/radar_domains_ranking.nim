@@ -29,11 +29,11 @@ type
 
 proc getRadarRankingDomainDomain*(client: CloudflareClient, domain: string,
                                   limit: int64 = 5,
-                                  rankingType: string = "POPULAR",
+                                  rankingType: RadarDomainsRankingRankingTypeOption = rankingTypePOPULAR,
                                   name: seq[string] = @[],
                                   includeTopLocations: bool = default(bool),
                                   date: seq[string] = @[],
-                                  format: set[RadarDomainsRankingFormatOption] = {}): Future[GetRadarRankingDomainDomainResponse] {.async.} =
+                                  format: RadarDomainsRankingFormatOption): Future[GetRadarRankingDomainDomainResponse] {.async.} =
   ## Retrieves domain rank details. Cloudflare provides an ordered rank for the top
   ## 100 domains, but for the remainder it only provides ranking buckets like top 200
   ## thousand, top one million, etc.. These are available through Radar datasets
@@ -41,11 +41,11 @@ proc getRadarRankingDomainDomain*(client: CloudflareClient, domain: string,
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
-  for v in rankingType: q["rankingType"] = $v
+  q["rankingType"] = $rankingType
   for v in name: q["name"] = $v
   q["includeTopLocations"] = $includeTopLocations
   for v in date: q["date"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/ranking/domain/{domain}", q)
   let body = await res.body
   case res.code
@@ -55,7 +55,7 @@ proc getRadarRankingDomainDomain*(client: CloudflareClient, domain: string,
     raise newException(CloudflareClientError, body)
 
 proc getRadarRankingTimeseriesGroups*(client: CloudflareClient, limit: int64 = 5,
-                                      rankingType: string = "POPULAR",
+                                      rankingType: RadarDomainsRankingRankingTypeOption = rankingTypePOPULAR,
                                       name: seq[string] = @[],
                                       location: seq[string] = @[],
                                       domains: seq[string] = @[],
@@ -63,12 +63,12 @@ proc getRadarRankingTimeseriesGroups*(client: CloudflareClient, limit: int64 = 5
                                       dateRange: seq[string] = @[],
                                       dateStart: seq[string] = @[],
                                       dateEnd: seq[string] = @[],
-                                      format: set[RadarDomainsRankingFormatOption] = {}): Future[GetRadarRankingTimeseriesGroupsResponse] {.async.} =
+                                      format: RadarDomainsRankingFormatOption): Future[GetRadarRankingTimeseriesGroupsResponse] {.async.} =
   ## Retrieves domains rank over time.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
-  for v in rankingType: q["rankingType"] = $v
+  q["rankingType"] = $rankingType
   for v in name: q["name"] = $v
   for v in location: q["location"] = $v
   for v in domains: q["domains"] = $v
@@ -76,7 +76,7 @@ proc getRadarRankingTimeseriesGroups*(client: CloudflareClient, limit: int64 = 5
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
   for v in dateEnd: q["dateEnd"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/ranking/timeseries_groups", q)
   let body = await res.body
   case res.code
@@ -89,8 +89,8 @@ proc getRadarRankingTop*(client: CloudflareClient, limit: int64 = default(int64)
                          name: seq[string] = @[], location: seq[string] = @[],
                          domainCategory: seq[string] = @[],
                          date: seq[string] = @[],
-                         rankingType: string = "POPULAR",
-                         format: set[RadarDomainsRankingFormatOption] = {}): Future[GetRadarRankingTopResponse] {.async.} =
+                         rankingType: RadarDomainsRankingRankingTypeOption = rankingTypePOPULAR,
+                         format: RadarDomainsRankingFormatOption): Future[GetRadarRankingTopResponse] {.async.} =
   ## Retrieves the top or trending domains based on their rank. Popular domains are
   ## domains of broad appeal based on how people use the Internet. Trending domains
   ## are domains that are generating a surge in interest. For more information on top
@@ -102,8 +102,8 @@ proc getRadarRankingTop*(client: CloudflareClient, limit: int64 = default(int64)
   for v in location: q["location"] = $v
   for v in domainCategory: q["domainCategory"] = $v
   for v in date: q["date"] = $v
-  for v in rankingType: q["rankingType"] = $v
-  for v in format: q["format"] = $v
+  q["rankingType"] = $rankingType
+  q["format"] = $format
   let res = await client.httpGET("/radar/ranking/top", q)
   let body = await res.body
   case res.code

@@ -26,15 +26,15 @@ proc getAccountsAccountIdStorageKvNamespaces*(client: CloudflareClient,
                                               accountId: types.WorkersKvIdentifier,
                                               page: float64 = default(float64),
                                               perPage: float64 = default(float64),
-                                              order: set[WorkersKvNamespaceOrderOption] = {},
-                                              direction: set[WorkersKvNamespaceDirectionOption] = {}): Future[JsonNode] {.async.} =
+                                              order: WorkersKvNamespaceOrderOption,
+                                              direction: WorkersKvNamespaceDirectionOption): Future[JsonNode] {.async.} =
   ## Returns the namespaces owned by an account.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/accounts/{accountId}/storage/kv/namespaces", q)
   let body = await res.body
   case res.code

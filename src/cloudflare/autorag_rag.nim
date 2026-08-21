@@ -27,14 +27,14 @@ proc getAccountsAccountIdAutoragRagsIdFiles*(client: CloudflareClient,
                                              page: int64 = 1,
                                              perPage: int64 = 20,
                                              search: string = default(string),
-                                             status: set[AutoragRagStatusOption] = {}): Future[GetAccountsAccountIdAutoragRagsIdFilesResponse] {.async.} =
+                                             status: AutoragRagStatusOption): Future[GetAccountsAccountIdAutoragRagsIdFilesResponse] {.async.} =
   ## Lists files indexed by an AutoRAG.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
   q["search"] = $search
-  for v in status: q["status"] = $v
+  q["status"] = $status
   let res = await client.httpGET(fmt"/accounts/{accountId}/autorag/rags/{id}/files", q)
   let body = await res.body
   case res.code

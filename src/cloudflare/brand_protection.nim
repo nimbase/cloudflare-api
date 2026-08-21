@@ -347,8 +347,8 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatches*(client: Cl
                                                                       includeDomainId: string = "false",
                                                                       includeDismissed: string = default(string),
                                                                       domainSearch: string = default(string),
-                                                                      orderBy: set[BrandProtectionOrderByOption] = {},
-                                                                      order: set[BrandProtectionOrderOption] = {}): Future[GetAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesResponse] {.async.} =
+                                                                      orderBy: BrandProtectionOrderByOption,
+                                                                      order: BrandProtectionOrderOption): Future[GetAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesResponse] {.async.} =
   ## Get paginated list of domain matches for one or more brand protection queries.
   ## When multiple query_ids are provided (comma-separated), matches are deduplicated
   ## across queries and each match includes a match_details array with per-match
@@ -361,8 +361,8 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatches*(client: Cl
   q["include_domain_id"] = $includeDomainId
   q["include_dismissed"] = $includeDismissed
   q["domain_search"] = $domainSearch
-  for v in orderBy: q["orderBy"] = $v
-  for v in order: q["order"] = $v
+  q["orderBy"] = $orderBy
+  q["order"] = $order
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/domain/matches", q)
   let body = await res.body
   case res.code
@@ -535,8 +535,8 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionLogoMatches*(client: Clou
                                                                     limit: string = "50",
                                                                     queryId: string,
                                                                     download: string = default(string),
-                                                                    orderBy: set[BrandProtectionOrderByOption] = {},
-                                                                    order: set[BrandProtectionOrderOption] = {}): Future[GetAccountsAccountIdCloudforceOneV2BrandProtectionLogoMatchesResponse] {.async.} =
+                                                                    orderBy: BrandProtectionOrderByOption,
+                                                                    order: BrandProtectionOrderOption): Future[GetAccountsAccountIdCloudforceOneV2BrandProtectionLogoMatchesResponse] {.async.} =
   ## Get paginated list of logo matches for a specific brand protection logo query
 
   var q = initOrderedTable[string, string]()
@@ -544,8 +544,8 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionLogoMatches*(client: Clou
   q["limit"] = $limit
   q["query_id"] = $queryId
   q["download"] = $download
-  for v in orderBy: q["orderBy"] = $v
-  for v in order: q["order"] = $v
+  q["orderBy"] = $orderBy
+  q["order"] = $order
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/logo/matches", q)
   let body = await res.body
   case res.code

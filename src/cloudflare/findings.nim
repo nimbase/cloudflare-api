@@ -43,19 +43,19 @@ type
 proc getAccountsAccountIdDataSecurityPostureFindings*(client: CloudflareClient,
                                                       accountId: string,
                                                       cursor: string = default(string),
-                                                      direction: set[FindingDirectionOption] = {},
+                                                      direction: FindingDirectionOption,
                                                       ignored: bool = default(bool),
                                                       integrationId: string = default(string),
                                                       maxAfflictionDate: string = default(string),
                                                       minAfflictionDate: string = default(string),
-                                                      observation: set[FindingObservationOption] = {},
-                                                      order: set[FindingOrderOption] = {},
+                                                      observation: FindingObservationOption,
+                                                      order: FindingOrderOption,
                                                       page: int64 = default(int64),
                                                       perPage: int64 = default(int64),
-                                                      product: set[FindingProductOption] = {},
+                                                      product: FindingProductOption,
                                                       search: string = default(string),
-                                                      severity: set[FindingSeverityOption] = {},
-                                                      `type`: set[FindingTypeOption] = {},
+                                                      severity: FindingSeverityOption,
+                                                      `type`: FindingTypeOption,
                                                       vendor: types.PostureApiVendorsEnum = default(types.PostureApiVendorsEnum),
                                                       findingTypeIds: string = default(string)): Future[types.PostureApiPaginatedFindingList] {.async.} =
   ## List all security findings that have been identified as being problematic.
@@ -63,19 +63,19 @@ proc getAccountsAccountIdDataSecurityPostureFindings*(client: CloudflareClient,
 
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["ignored"] = $ignored
   q["integration_id"] = $integrationId
   q["max_affliction_date"] = $maxAfflictionDate
   q["min_affliction_date"] = $minAfflictionDate
-  for v in observation: q["observation"] = $v
-  for v in order: q["order"] = $v
+  q["observation"] = $observation
+  q["order"] = $order
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in product: q["product"] = $v
+  q["product"] = $product
   q["search"] = $search
-  for v in severity: q["severity"] = $v
-  for v in `type`: q["type"] = $v
+  q["severity"] = $severity
+  q["type"] = $`type`
   q["vendor"] = $vendor
   q["finding_type_ids"] = $findingTypeIds
   let res = await client.httpGET(fmt"/accounts/{accountId}/data-security/posture/findings", q)
@@ -132,10 +132,10 @@ proc getAccountsAccountIdDataSecurityPostureFindingsFindingIdInstances*(client: 
                                                                         archived: bool = default(bool),
                                                                         findingId: string,
                                                                         cursor: string = default(string),
-                                                                        direction: set[FindingDirectionOption] = {},
+                                                                        direction: FindingDirectionOption,
                                                                         maxAfflictionDate: string = default(string),
                                                                         minAfflictionDate: string = default(string),
-                                                                        order: set[FindingOrderOption] = {},
+                                                                        order: FindingOrderOption,
                                                                         page: int64 = default(int64),
                                                                         perPage: int64 = default(int64),
                                                                         search: string = default(string),
@@ -147,10 +147,10 @@ proc getAccountsAccountIdDataSecurityPostureFindingsFindingIdInstances*(client: 
   var q = initOrderedTable[string, string]()
   q["archived"] = $archived
   q["cursor"] = $cursor
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["max_affliction_date"] = $maxAfflictionDate
   q["min_affliction_date"] = $minAfflictionDate
-  for v in order: q["order"] = $v
+  q["order"] = $order
   q["page"] = $page
   q["per_page"] = $perPage
   q["search"] = $search

@@ -33,20 +33,20 @@ proc getUserOrganizations*(client: CloudflareClient,
                            name: types.IamSchemasName = default(types.IamSchemasName),
                            page: float64 = default(float64),
                            perPage: float64 = default(float64),
-                           order: set[UserSOrganizationOrderOption] = {},
-                           direction: set[UserSOrganizationDirectionOption] = {},
-                           match: string = "all",
-                           status: set[UserSOrganizationStatusOption] = {}): Future[types.IamCollectionOrganizationResponse] {.async.} =
+                           order: UserSOrganizationOrderOption,
+                           direction: UserSOrganizationDirectionOption,
+                           match: UserSOrganizationMatchOption = matchAll,
+                           status: UserSOrganizationStatusOption): Future[types.IamCollectionOrganizationResponse] {.async.} =
   ## Lists organizations the user is associated with.
 
   var q = initOrderedTable[string, string]()
   q["name"] = $name
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
-  for v in match: q["match"] = $v
-  for v in status: q["status"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
+  q["match"] = $match
+  q["status"] = $status
   let res = await client.httpGET("/user/organizations", q)
   let body = await res.body
   case res.code

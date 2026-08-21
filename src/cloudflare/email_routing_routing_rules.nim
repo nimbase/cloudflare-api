@@ -18,13 +18,13 @@ proc getAccountsAccountIdEmailRoutingRules*(client: CloudflareClient,
                                             accountId: types.EmailIdentifier,
                                             page: float64 = default(float64),
                                             perPage: float64 = default(float64),
-                                            enabled: set[EmailRoutingRoutingRuleEnabledOption] = {}): Future[types.EmailAccountRulesResponseCollection] {.async.} =
+                                            enabled: EmailRoutingRoutingRuleEnabledOption): Future[types.EmailAccountRulesResponseCollection] {.async.} =
   ## Lists existing routing rules across all zones in the account.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in enabled: q["enabled"] = $v
+  q["enabled"] = $enabled
   let res = await client.httpGET(fmt"/accounts/{accountId}/email/routing/rules", q)
   let body = await res.body
   case res.code
@@ -52,13 +52,13 @@ proc getZonesZoneIdEmailRoutingRules*(client: CloudflareClient,
                                       zoneId: types.EmailIdentifier,
                                       page: float64 = default(float64),
                                       perPage: float64 = default(float64),
-                                      enabled: set[EmailRoutingRoutingRuleEnabledOption] = {}): Future[types.EmailRulesResponseCollection] {.async.} =
+                                      enabled: EmailRoutingRoutingRuleEnabledOption): Future[types.EmailRulesResponseCollection] {.async.} =
   ## Lists existing routing rules.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in enabled: q["enabled"] = $v
+  q["enabled"] = $enabled
   let res = await client.httpGET(fmt"/zones/{zoneId}/email/routing/rules", q)
   let body = await res.body
   case res.code

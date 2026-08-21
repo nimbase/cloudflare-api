@@ -62,12 +62,12 @@ proc getRadarAnnotations*(client: CloudflareClient, limit: int64 = 5,
                           dateRange: string = default(string),
                           dateStart: string = default(string),
                           dateEnd: string = default(string),
-                          dataSource: set[RadarAnnotationDataSourceOption] = {},
-                          eventType: set[RadarAnnotationEventTypeOption] = {},
+                          dataSource: RadarAnnotationDataSourceOption,
+                          eventType: RadarAnnotationEventTypeOption,
                           asn: int64 = default(int64),
                           location: string = default(string),
                           origin: string = default(string),
-                          format: set[RadarAnnotationFormatOption] = {}): Future[GetRadarAnnotationsResponse] {.async.} =
+                          format: RadarAnnotationFormatOption): Future[GetRadarAnnotationsResponse] {.async.} =
   ## Retrieves the latest annotations.
 
   var q = initOrderedTable[string, string]()
@@ -76,12 +76,12 @@ proc getRadarAnnotations*(client: CloudflareClient, limit: int64 = 5,
   q["dateRange"] = $dateRange
   q["dateStart"] = $dateStart
   q["dateEnd"] = $dateEnd
-  for v in dataSource: q["dataSource"] = $v
-  for v in eventType: q["eventType"] = $v
+  q["dataSource"] = $dataSource
+  q["eventType"] = $eventType
   q["asn"] = $asn
   q["location"] = $location
   q["origin"] = $origin
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/annotations", q)
   let body = await res.body
   case res.code
@@ -98,7 +98,7 @@ proc getRadarAnnotationsOutages*(client: CloudflareClient, limit: int64 = 5,
                                  asn: int64 = default(int64),
                                  location: string = default(string),
                                  origin: string = default(string),
-                                 format: set[RadarAnnotationFormatOption] = {}): Future[GetRadarAnnotationsOutagesResponse] {.async.} =
+                                 format: RadarAnnotationFormatOption): Future[GetRadarAnnotationsOutagesResponse] {.async.} =
   ## Retrieves the latest Internet outages and anomalies.
 
   var q = initOrderedTable[string, string]()
@@ -110,7 +110,7 @@ proc getRadarAnnotationsOutages*(client: CloudflareClient, limit: int64 = 5,
   q["asn"] = $asn
   q["location"] = $location
   q["origin"] = $origin
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/annotations/outages", q)
   let body = await res.body
   case res.code
@@ -124,7 +124,7 @@ proc getRadarAnnotationsOutagesLocations*(client: CloudflareClient,
                                           dateRange: string = default(string),
                                           dateStart: string = default(string),
                                           dateEnd: string = default(string),
-                                          format: set[RadarAnnotationFormatOption] = {}): Future[GetRadarAnnotationsOutagesLocationsResponse] {.async.} =
+                                          format: RadarAnnotationFormatOption): Future[GetRadarAnnotationsOutagesLocationsResponse] {.async.} =
   ## Retrieves the number of outages by location.
 
   var q = initOrderedTable[string, string]()
@@ -132,7 +132,7 @@ proc getRadarAnnotationsOutagesLocations*(client: CloudflareClient,
   q["dateRange"] = $dateRange
   q["dateStart"] = $dateStart
   q["dateEnd"] = $dateEnd
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/annotations/outages/locations", q)
   let body = await res.body
   case res.code

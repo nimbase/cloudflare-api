@@ -21,8 +21,8 @@ type
 
 proc getZonesZoneIdApiGatewayOperations*(client: CloudflareClient,
                                          page: int64 = 1, perPage: int64 = 20,
-                                         order: set[ApiShieldEndpointManagementOrderOption] = {},
-                                         direction: set[ApiShieldEndpointManagementDirectionOption] = {},
+                                         order: ApiShieldEndpointManagementOrderOption,
+                                         direction: ApiShieldEndpointManagementDirectionOption,
                                          host: seq[string] = @[],
                                          `method`: seq[string] = @[],
                                          endpoint: string = default(string),
@@ -33,8 +33,8 @@ proc getZonesZoneIdApiGatewayOperations*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   for v in host: q["host"] = $v
   for v in `method`: q["method"] = $v
   q["endpoint"] = $endpoint

@@ -43,8 +43,8 @@ proc getAccountsAccountIdRealtimeKitAppIdRecordings*(client: CloudflareClient,
                                                      perPage: float64 = default(float64),
                                                      expired: bool = default(bool),
                                                      search: string = default(string),
-                                                     sortBy: set[RecordingSortByOption] = {},
-                                                     sortOrder: set[RecordingSortOrderOption] = {},
+                                                     sortBy: RecordingSortByOption,
+                                                     sortOrder: RecordingSortOrderOption,
                                                      startTime: string = default(string),
                                                      endTime: string = default(string),
                                                      status: seq[string] = default(seq[string])): Future[JsonNode] {.async.} =
@@ -57,8 +57,8 @@ proc getAccountsAccountIdRealtimeKitAppIdRecordings*(client: CloudflareClient,
   q["per_page"] = $perPage
   q["expired"] = $expired
   q["search"] = $search
-  for v in sortBy: q["sort_by"] = $v
-  for v in sortOrder: q["sort_order"] = $v
+  q["sort_by"] = $sortBy
+  q["sort_order"] = $sortOrder
   q["start_time"] = $startTime
   q["end_time"] = $endTime
   q["status"] = $status

@@ -72,13 +72,13 @@ proc getZonesZoneIdPageShieldConnections*(client: CloudflareClient,
                                           hosts: string = default(string),
                                           page: string = default(string),
                                           perPage: float64 = default(float64),
-                                          orderBy: set[PageShieldOrderByOption] = {},
-                                          direction: set[PageShieldDirectionOption] = {},
+                                          orderBy: PageShieldOrderByOption,
+                                          direction: PageShieldDirectionOption,
                                           prioritizeMalicious: bool = default(bool),
                                           excludeCdnCgi: bool = default(bool),
                                           status: string = default(string),
                                           pageUrl: string = default(string),
-                                          `export`: set[PageShieldExportOption] = {}): Future[types.PageShieldListZoneConnectionsResponse] {.async.} =
+                                          `export`: PageShieldExportOption): Future[types.PageShieldListZoneConnectionsResponse] {.async.} =
   ## Lists all connections detected by Page Shield.
 
   var q = initOrderedTable[string, string]()
@@ -87,13 +87,13 @@ proc getZonesZoneIdPageShieldConnections*(client: CloudflareClient,
   q["hosts"] = $hosts
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in orderBy: q["order_by"] = $v
-  for v in direction: q["direction"] = $v
+  q["order_by"] = $orderBy
+  q["direction"] = $direction
   q["prioritize_malicious"] = $prioritizeMalicious
   q["exclude_cdn_cgi"] = $excludeCdnCgi
   q["status"] = $status
   q["page_url"] = $pageUrl
-  for v in `export`: q["export"] = $v
+  q["export"] = $`export`
   let res = await client.httpGET(fmt"/zones/{zoneId}/page_shield/connections", q)
   let body = await res.body
   case res.code
@@ -120,15 +120,15 @@ proc getZonesZoneIdPageShieldCookies*(client: CloudflareClient,
                                       hosts: string = default(string),
                                       page: string = default(string),
                                       perPage: float64 = default(float64),
-                                      orderBy: set[PageShieldOrderByOption] = {},
-                                      direction: set[PageShieldDirectionOption] = {},
+                                      orderBy: PageShieldOrderByOption,
+                                      direction: PageShieldDirectionOption,
                                       pageUrl: string = default(string),
-                                      `export`: set[PageShieldExportOption] = {},
+                                      `export`: PageShieldExportOption,
                                       name: string = default(string),
                                       secure: bool = default(bool),
                                       httpOnly: bool = default(bool),
-                                      sameSite: set[PageShieldSameSiteOption] = {},
-                                      `type`: set[PageShieldTypeOption] = {},
+                                      sameSite: PageShieldSameSiteOption,
+                                      `type`: PageShieldTypeOption,
                                       path: string = default(string),
                                       domain: string = default(string)): Future[types.PageShieldListZoneCookiesResponse] {.async.} =
   ## Lists all cookies collected by Page Shield.
@@ -137,15 +137,15 @@ proc getZonesZoneIdPageShieldCookies*(client: CloudflareClient,
   q["hosts"] = $hosts
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in orderBy: q["order_by"] = $v
-  for v in direction: q["direction"] = $v
+  q["order_by"] = $orderBy
+  q["direction"] = $direction
   q["page_url"] = $pageUrl
-  for v in `export`: q["export"] = $v
+  q["export"] = $`export`
   q["name"] = $name
   q["secure"] = $secure
   q["http_only"] = $httpOnly
-  for v in sameSite: q["same_site"] = $v
-  for v in `type`: q["type"] = $v
+  q["same_site"] = $sameSite
+  q["type"] = $`type`
   q["path"] = $path
   q["domain"] = $domain
   let res = await client.httpGET(fmt"/zones/{zoneId}/page_shield/cookies", q)
@@ -236,14 +236,14 @@ proc getZonesZoneIdPageShieldScripts*(client: CloudflareClient,
                                       hosts: string = default(string),
                                       page: string = default(string),
                                       perPage: float64 = default(float64),
-                                      orderBy: set[PageShieldOrderByOption] = {},
-                                      direction: set[PageShieldDirectionOption] = {},
+                                      orderBy: PageShieldOrderByOption,
+                                      direction: PageShieldDirectionOption,
                                       prioritizeMalicious: bool = default(bool),
                                       excludeCdnCgi: bool = true,
                                       excludeDuplicates: bool = true,
                                       status: string = default(string),
                                       pageUrl: string = default(string),
-                                      `export`: set[PageShieldExportOption] = {}): Future[types.PageShieldListZoneScriptsResponse] {.async.} =
+                                      `export`: PageShieldExportOption): Future[types.PageShieldListZoneScriptsResponse] {.async.} =
   ## Lists all scripts detected by Page Shield.
 
   var q = initOrderedTable[string, string]()
@@ -252,14 +252,14 @@ proc getZonesZoneIdPageShieldScripts*(client: CloudflareClient,
   q["hosts"] = $hosts
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in orderBy: q["order_by"] = $v
-  for v in direction: q["direction"] = $v
+  q["order_by"] = $orderBy
+  q["direction"] = $direction
   q["prioritize_malicious"] = $prioritizeMalicious
   q["exclude_cdn_cgi"] = $excludeCdnCgi
   q["exclude_duplicates"] = $excludeDuplicates
   q["status"] = $status
   q["page_url"] = $pageUrl
-  for v in `export`: q["export"] = $v
+  q["export"] = $`export`
   let res = await client.httpGET(fmt"/zones/{zoneId}/page_shield/scripts", q)
   let body = await res.body
   case res.code

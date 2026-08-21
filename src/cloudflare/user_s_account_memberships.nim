@@ -30,20 +30,20 @@ proc getMemberships*(client: CloudflareClient,
                      accountName: types.IamPropertiesName = default(types.IamPropertiesName),
                      page: float64 = default(float64),
                      perPage: float64 = default(float64),
-                     order: set[UserSAccountMembershipOrderOption] = {},
-                     direction: set[UserSAccountMembershipDirectionOption] = {},
+                     order: UserSAccountMembershipOrderOption,
+                     direction: UserSAccountMembershipDirectionOption,
                      name: types.IamPropertiesName = default(types.IamPropertiesName),
-                     status: set[UserSAccountMembershipStatusOption] = {}): Future[JsonNode] {.async.} =
+                     status: UserSAccountMembershipStatusOption): Future[JsonNode] {.async.} =
   ## List memberships of accounts the user can access.
 
   var q = initOrderedTable[string, string]()
   q["account.name"] = $accountName
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   q["name"] = $name
-  for v in status: q["status"] = $v
+  q["status"] = $status
   let res = await client.httpGET("/memberships", q)
   let body = await res.body
   case res.code

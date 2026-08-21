@@ -30,7 +30,7 @@ type
 proc getAccountsAccountIdDevicesClientVersions*(client: CloudflareClient,
                                                 accountId: string,
                                                 targetEnvironment: string,
-                                                releaseTrack: set[ClientVersionReleaseTrackOption] = {},
+                                                releaseTrack: ClientVersionReleaseTrackOption,
                                                 page: int64 = 1,
                                                 perPage: int64 = 20): Future[GetAccountsAccountIdDevicesClientVersionsResponse] {.async.} =
   ## Lists available WARP client versions for a specific target environment and
@@ -38,7 +38,7 @@ proc getAccountsAccountIdDevicesClientVersions*(client: CloudflareClient,
 
   var q = initOrderedTable[string, string]()
   q["target_environment"] = $targetEnvironment
-  for v in releaseTrack: q["release_track"] = $v
+  q["release_track"] = $releaseTrack
   q["page"] = $page
   q["per_page"] = $perPage
   let res = await client.httpGET(fmt"/accounts/{accountId}/devices/client-versions", q)

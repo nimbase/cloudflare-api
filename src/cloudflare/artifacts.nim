@@ -58,16 +58,16 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceRepos*(client: CloudflareCl
                                                             limit: int64 = 50,
                                                             cursor: string = default(string),
                                                             search: string = default(string),
-                                                            sort: string = "created_at",
-                                                            direction: string = "desc"): Future[JsonNode] {.async.} =
+                                                            sort: ArtifactSortOption = sortCreatedAt,
+                                                            direction: ArtifactDirectionOption = directionDesc): Future[JsonNode] {.async.} =
   ## Lists repositories in a namespace.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
   q["cursor"] = $cursor
   q["search"] = $search
-  for v in sort: q["sort"] = $v
-  for v in direction: q["direction"] = $v
+  q["sort"] = $sort
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/accounts/{account_id}/artifacts/namespaces/{namespace}/repos", q)
   let body = await res.body
   case res.code
@@ -217,13 +217,13 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameRawRefPath*(client
 proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameTokens*(client: CloudflareClient,
                                                                       namespace: string,
                                                                       name: string,
-                                                                      state: string = "active",
+                                                                      state: ArtifactStateOption = stateActive,
                                                                       page: int64 = 1,
                                                                       perPage: int64 = 30): Future[JsonNode] {.async.} =
   ## Lists tokens for a repository.
 
   var q = initOrderedTable[string, string]()
-  for v in state: q["state"] = $v
+  q["state"] = $state
   q["page"] = $page
   q["per_page"] = $perPage
   let res = await client.httpGET(fmt"/accounts/{account_id}/artifacts/namespaces/{namespace}/repos/{name}/tokens", q)

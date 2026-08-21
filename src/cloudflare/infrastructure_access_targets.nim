@@ -44,7 +44,7 @@ proc getAccountsAccountIdInfrastructureTargets*(client: CloudflareClient,
                                                 ipv6End: string = default(string),
                                                 page: int32 = 1,
                                                 perPage: int32 = 1000,
-                                                order: set[InfrastructureAccessTargetOrderOption] = {},
+                                                order: InfrastructureAccessTargetOrderOption,
                                                 direction: JsonNode = default(JsonNode)): Future[JsonNode] {.async.} =
   ## Lists and sorts an account's targets. Filters are optional and are ANDed
   ## together.
@@ -68,7 +68,7 @@ proc getAccountsAccountIdInfrastructureTargets*(client: CloudflareClient,
   q["ipv6_end"] = $ipv6End
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
+  q["order"] = $order
   q["direction"] = $direction
   let res = await client.httpGET(fmt"/accounts/{accountId}/infrastructure/targets", q)
   let body = await res.body

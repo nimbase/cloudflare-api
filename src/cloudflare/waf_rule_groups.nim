@@ -30,9 +30,9 @@ proc getZonesZoneIdFirewallWafPackagesPackageIdGroups*(client: CloudflareClient,
                                                        mode: JsonNode = default(JsonNode),
                                                        page: float64 = default(float64),
                                                        perPage: float64 = default(float64),
-                                                       order: set[WafRuleGroupOrderOption] = {},
-                                                       direction: set[WafRuleGroupDirectionOption] = {},
-                                                       match: string = "all",
+                                                       order: WafRuleGroupOrderOption,
+                                                       direction: WafRuleGroupDirectionOption,
+                                                       match: WafRuleGroupMatchOption = matchAll,
                                                        name: string = default(string),
                                                        rulesCount: float64 = default(float64)): Future[types.WafManagedRulesRuleGroupResponseCollection] {.async.} =
   ## Fetches the WAF rule groups in a WAF package.
@@ -45,9 +45,9 @@ proc getZonesZoneIdFirewallWafPackagesPackageIdGroups*(client: CloudflareClient,
   q["mode"] = $mode
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
-  for v in match: q["match"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
+  q["match"] = $match
   q["name"] = $name
   q["rules_count"] = $rulesCount
   let res = await client.httpGET(fmt"/zones/{zoneId}/firewall/waf/packages/{packageId}/groups", q)

@@ -20,14 +20,14 @@ proc getAccountsAccountIdIamUserGroupsUserGroupIdMembers*(client: CloudflareClie
                                                           page: float64 = default(float64),
                                                           perPage: float64 = default(float64),
                                                           fuzzyEmail: string = default(string),
-                                                          direction: string = "asc"): Future[JsonNode] {.async.} =
+                                                          direction: AccountUserGroupMemberDirectionOption = directionAsc): Future[JsonNode] {.async.} =
   ## List all the members attached to a user group.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
   q["fuzzyEmail"] = $fuzzyEmail
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/accounts/{accountId}/iam/user_groups/{userGroupId}/members", q)
   let body = await res.body
   case res.code

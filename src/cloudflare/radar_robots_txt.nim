@@ -29,17 +29,17 @@ type
 proc getRadarRobotsTxtTopDomainCategories*(client: CloudflareClient,
                                            limit: int64 = 5,
                                            name: seq[string] = @[],
-                                           userAgentCategory: string = "AI",
+                                           userAgentCategory: RadarRobotsTxtUserAgentCategoryOption = userAgentCategoryAI,
                                            date: seq[string] = @[],
-                                           format: set[RadarRobotsTxtFormatOption] = {}): Future[GetRadarRobotsTxtTopDomainCategoriesResponse] {.async.} =
+                                           format: RadarRobotsTxtFormatOption): Future[GetRadarRobotsTxtTopDomainCategoriesResponse] {.async.} =
   ## Retrieves the top domain categories by the number of robots.txt files parsed.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
   for v in name: q["name"] = $v
-  for v in userAgentCategory: q["userAgentCategory"] = $v
+  q["userAgentCategory"] = $userAgentCategory
   for v in date: q["date"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/robots_txt/top/domain_categories", q)
   let body = await res.body
   case res.code
@@ -51,21 +51,21 @@ proc getRadarRobotsTxtTopDomainCategories*(client: CloudflareClient,
 proc getRadarRobotsTxtTopUserAgentsDirective*(client: CloudflareClient,
                                               limit: int64 = 5,
                                               name: seq[string] = @[],
-                                              userAgentCategory: string = "AI",
+                                              userAgentCategory: RadarRobotsTxtUserAgentCategoryOption = userAgentCategoryAI,
                                               date: seq[string] = @[],
                                               domainCategory: seq[string] = @[],
-                                              directive: set[RadarRobotsTxtDirectiveOption] = {},
-                                              format: set[RadarRobotsTxtFormatOption] = {}): Future[GetRadarRobotsTxtTopUserAgentsDirectiveResponse] {.async.} =
+                                              directive: RadarRobotsTxtDirectiveOption,
+                                              format: RadarRobotsTxtFormatOption): Future[GetRadarRobotsTxtTopUserAgentsDirectiveResponse] {.async.} =
   ## Retrieves the top user agents on robots.txt files.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
   for v in name: q["name"] = $v
-  for v in userAgentCategory: q["userAgentCategory"] = $v
+  q["userAgentCategory"] = $userAgentCategory
   for v in date: q["date"] = $v
   for v in domainCategory: q["domainCategory"] = $v
-  for v in directive: q["directive"] = $v
-  for v in format: q["format"] = $v
+  q["directive"] = $directive
+  q["format"] = $format
   let res = await client.httpGET("/radar/robots_txt/top/user_agents/directive", q)
   let body = await res.body
   case res.code

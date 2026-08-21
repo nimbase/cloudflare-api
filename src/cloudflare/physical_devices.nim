@@ -63,14 +63,14 @@ type
 proc getAccountsAccountIdDevicesPhysicalDevices*(client: CloudflareClient,
                                                  accountId: string,
                                                  cursor: string = default(string),
-                                                 sortBy: set[PhysicalDeviceSortByOption] = {},
-                                                 sortOrder: set[PhysicalDeviceSortOrderOption] = {},
+                                                 sortBy: PhysicalDeviceSortByOption,
+                                                 sortOrder: PhysicalDeviceSortOrderOption,
                                                  lastSeenUserEmail: string = default(string),
                                                  seenAfter: string = default(string),
                                                  seenBefore: string = default(string),
                                                  perPage: int64 = default(int64),
                                                  search: string = default(string),
-                                                 activeRegistrations: set[PhysicalDeviceActiveRegistrationsOption] = {},
+                                                 activeRegistrations: PhysicalDeviceActiveRegistrationsOption,
                                                  id: seq[string] = @[],
                                                  lastSeenRegistrationPolicyId: string = default(string),
                                                  `include`: string = default(string)): Future[GetAccountsAccountIdDevicesPhysicalDevicesResponse] {.async.} =
@@ -78,14 +78,14 @@ proc getAccountsAccountIdDevicesPhysicalDevices*(client: CloudflareClient,
 
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor
-  for v in sortBy: q["sort_by"] = $v
-  for v in sortOrder: q["sort_order"] = $v
+  q["sort_by"] = $sortBy
+  q["sort_order"] = $sortOrder
   q["last_seen_user.email"] = $lastSeenUserEmail
   q["seen_after"] = $seenAfter
   q["seen_before"] = $seenBefore
   q["per_page"] = $perPage
   q["search"] = $search
-  for v in activeRegistrations: q["active_registrations"] = $v
+  q["active_registrations"] = $activeRegistrations
   for v in id: q["id"] = $v
   q["last_seen_registration.policy.id"] = $lastSeenRegistrationPolicyId
   q["include"] = $`include`

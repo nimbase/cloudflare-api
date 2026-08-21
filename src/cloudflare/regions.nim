@@ -18,13 +18,13 @@ proc getAccountsAccountIdDlsRegions*(client: CloudflareClient,
                                      accountId: types.DlsAccountIdentifier,
                                      cursor: string = default(string),
                                      perPage: int64 = 25,
-                                     `type`: set[RegionTypeOption] = {}): Future[types.DlsRegionPublicPaginatedListResponse] {.async.} =
+                                     `type`: RegionTypeOption): Future[types.DlsRegionPublicPaginatedListResponse] {.async.} =
   ## List the DLS regions (managed and custom) available to an account.
 
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor
   q["per_page"] = $perPage
-  for v in `type`: q["type"] = $v
+  q["type"] = $`type`
   let res = await client.httpGET(fmt"/accounts/{accountId}/dls/regions", q)
   let body = await res.body
   case res.code

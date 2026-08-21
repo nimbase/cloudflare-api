@@ -41,8 +41,8 @@ proc getZonesZoneIdApiGatewayDiscoveryOperations*(client: CloudflareClient,
                                                   host: seq[string] = @[],
                                                   `method`: seq[string] = @[],
                                                   endpoint: string = default(string),
-                                                  direction: set[ApiShieldApiDiscoveryDirectionOption] = {},
-                                                  order: set[ApiShieldApiDiscoveryOrderOption] = {},
+                                                  direction: ApiShieldApiDiscoveryDirectionOption,
+                                                  order: ApiShieldApiDiscoveryOrderOption,
                                                   diff: bool = default(bool),
                                                   origin: types.ApiShieldApiDiscoveryOrigin = default(types.ApiShieldApiDiscoveryOrigin),
                                                   state: types.ApiShieldApiDiscoveryState = default(types.ApiShieldApiDiscoveryState)): Future[JsonNode] {.async.} =
@@ -54,8 +54,8 @@ proc getZonesZoneIdApiGatewayDiscoveryOperations*(client: CloudflareClient,
   for v in host: q["host"] = $v
   for v in `method`: q["method"] = $v
   q["endpoint"] = $endpoint
-  for v in direction: q["direction"] = $v
-  for v in order: q["order"] = $v
+  q["direction"] = $direction
+  q["order"] = $order
   q["diff"] = $diff
   q["origin"] = $origin
   q["state"] = $state

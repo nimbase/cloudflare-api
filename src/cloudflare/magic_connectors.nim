@@ -16,11 +16,11 @@ type
 
 proc getAccountsAccountIdMagicConnectors*(client: CloudflareClient,
                                           accountId: types.MconnAccountId,
-                                          deviceType: set[MagicConnectorDeviceTypeOption] = {}): Future[types.MconnCustomerConnectorsListResponse] {.async.} =
+                                          deviceType: MagicConnectorDeviceTypeOption): Future[types.MconnCustomerConnectorsListResponse] {.async.} =
   ## Lists Magic WAN Connectors.
 
   var q = initOrderedTable[string, string]()
-  for v in deviceType: q["device_type"] = $v
+  q["device_type"] = $deviceType
   let res = await client.httpGET(fmt"/accounts/{accountId}/magic/connectors", q)
   let body = await res.body
   case res.code

@@ -17,11 +17,11 @@ type
 
 
 proc getRadarAgentReadinessSummaryDimension*(client: CloudflareClient,
-                                             dimension: string,
+                                             dimension: Dimension,
                                              date: string = default(string),
                                              domainCategory: seq[string] = @[],
                                              name: seq[string] = @[],
-                                             format: set[RadarAgentReadinesFormatOption] = {}): Future[GetRadarAgentReadinessSummaryDimensionResponse] {.async.} =
+                                             format: RadarAgentReadinesFormatOption): Future[GetRadarAgentReadinessSummaryDimensionResponse] {.async.} =
   ## Returns a summary of AI agent readiness scores across scanned domains, grouped
   ## by the specified dimension. Data is sourced from weekly bulk scans. All values
   ## are raw domain counts.
@@ -30,7 +30,7 @@ proc getRadarAgentReadinessSummaryDimension*(client: CloudflareClient,
   q["date"] = $date
   for v in domainCategory: q["domainCategory"] = $v
   for v in name: q["name"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/agent_readiness/summary/{dimension}", q)
   let body = await res.body
   case res.code

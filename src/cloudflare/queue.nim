@@ -57,15 +57,15 @@ proc getAccountsAccountIdEventSubscriptionsSubscriptions*(client: CloudflareClie
                                                           accountId: types.MqIdentifier,
                                                           page: int64 = 1,
                                                           perPage: int64 = 20,
-                                                          order: string = "name",
-                                                          direction: string = "asc"): Future[JsonNode] {.async.} =
+                                                          order: QueueOrderOption = orderName,
+                                                          direction: QueueDirectionOption = directionAsc): Future[JsonNode] {.async.} =
   ## Get a paginated list of event subscriptions with optional sorting and filtering
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/accounts/{accountId}/event_subscriptions/subscriptions", q)
   let body = await res.body
   case res.code

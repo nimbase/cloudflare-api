@@ -27,7 +27,7 @@ proc getRadarVerifiedBotsTopBots*(client: CloudflareClient, limit: int64 = 5,
                                   asn: seq[string] = @[],
                                   location: seq[string] = @[],
                                   continent: seq[string] = @[],
-                                  format: set[RadarVerifiedBotFormatOption] = {}): Future[GetRadarVerifiedBotsTopBotsResponse] {.async.} =
+                                  format: RadarVerifiedBotFormatOption): Future[GetRadarVerifiedBotsTopBotsResponse] {.async.} =
   ## Retrieves the top verified bots by HTTP requests, with owner and category.
 
   var q = initOrderedTable[string, string]()
@@ -39,7 +39,7 @@ proc getRadarVerifiedBotsTopBots*(client: CloudflareClient, limit: int64 = 5,
   for v in asn: q["asn"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/verified_bots/top/bots", q)
   let body = await res.body
   case res.code
@@ -57,7 +57,7 @@ proc getRadarVerifiedBotsTopCategories*(client: CloudflareClient,
                                         asn: seq[string] = @[],
                                         location: seq[string] = @[],
                                         continent: seq[string] = @[],
-                                        format: set[RadarVerifiedBotFormatOption] = {}): Future[GetRadarVerifiedBotsTopCategoriesResponse] {.async.} =
+                                        format: RadarVerifiedBotFormatOption): Future[GetRadarVerifiedBotsTopCategoriesResponse] {.async.} =
   ## Retrieves the top verified bot categories by HTTP requests, along with their
   ## corresponding percentage, over the total verified bot HTTP requests.
 
@@ -70,7 +70,7 @@ proc getRadarVerifiedBotsTopCategories*(client: CloudflareClient,
   for v in asn: q["asn"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/verified_bots/top/categories", q)
   let body = await res.body
   case res.code

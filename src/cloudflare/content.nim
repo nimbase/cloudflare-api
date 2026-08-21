@@ -22,12 +22,12 @@ type
 
 proc getAccountsAccountIdDataSecurityPostureContent*(client: CloudflareClient,
                                                      accountId: string,
-                                                     direction: set[ContentDirectionOption] = {},
+                                                     direction: ContentDirectionOption,
                                                      dlpProfileId: string = default(string),
                                                      integrationId: string = default(string),
                                                      maxAfflictionDate: string = default(string),
                                                      minAfflictionDate: string = default(string),
-                                                     order: set[ContentOrderOption] = {},
+                                                     order: ContentOrderOption,
                                                      page: int64 = default(int64),
                                                      perPage: int64 = default(int64),
                                                      search: string = default(string),
@@ -35,12 +35,12 @@ proc getAccountsAccountIdDataSecurityPostureContent*(client: CloudflareClient,
   ## List DLP content findings
 
   var q = initOrderedTable[string, string]()
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["dlp_profile_id"] = $dlpProfileId
   q["integration_id"] = $integrationId
   q["max_affliction_date"] = $maxAfflictionDate
   q["min_affliction_date"] = $minAfflictionDate
-  for v in order: q["order"] = $v
+  q["order"] = $order
   q["page"] = $page
   q["per_page"] = $perPage
   q["search"] = $search

@@ -72,12 +72,12 @@ proc getAccountsAccountIdRealtimeKitAppIdSessions*(client: CloudflareClient,
                                                    appId: types.RealtimekitAppId,
                                                    pageNo: float64 = default(float64),
                                                    perPage: float64 = default(float64),
-                                                   sortBy: set[SessionSortByOption] = {},
-                                                   sortOrder: set[SessionSortOrderOption] = {},
+                                                   sortBy: SessionSortByOption,
+                                                   sortOrder: SessionSortOrderOption,
                                                    startTime: string = default(string),
                                                    endTime: string = default(string),
                                                    participants: string = default(string),
-                                                   status: set[SessionStatusOption] = {},
+                                                   status: SessionStatusOption,
                                                    search: string = default(string),
                                                    associatedId: string = default(string)): Future[GetAccountsAccountIdRealtimeKitAppIdSessionsResponse] {.async.} =
   ## Returns details of all sessions of an App.
@@ -85,12 +85,12 @@ proc getAccountsAccountIdRealtimeKitAppIdSessions*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["page_no"] = $pageNo
   q["per_page"] = $perPage
-  for v in sortBy: q["sort_by"] = $v
-  for v in sortOrder: q["sort_order"] = $v
+  q["sort_by"] = $sortBy
+  q["sort_order"] = $sortOrder
   q["start_time"] = $startTime
   q["end_time"] = $endTime
   q["participants"] = $participants
-  for v in status: q["status"] = $v
+  q["status"] = $status
   q["search"] = $search
   q["associated_id"] = $associatedId
   let res = await client.httpGET(fmt"/accounts/{accountId}/realtime/kit/{appId}/sessions", q)
@@ -104,13 +104,13 @@ proc getAccountsAccountIdRealtimeKitAppIdSessions*(client: CloudflareClient,
 proc getAccountsAccountIdRealtimeKitAppIdSessionsPeerReportPeerId*(client: CloudflareClient,
                                                                    accountId: types.RealtimekitAccountIdentifier,
                                                                    appId: types.RealtimekitAppId,
-                                                                   filters: set[SessionFiltersOption] = {},
+                                                                   filters: SessionFiltersOption,
                                                                    includePeerEvents: bool = false,
                                                                    peerId: string): Future[GetAccountsAccountIdRealtimeKitAppIdSessionsPeerReportPeerIdResponse] {.async.} =
   ## Returns participant details for the given peer ID along with call statistics.
 
   var q = initOrderedTable[string, string]()
-  for v in filters: q["filters"] = $v
+  q["filters"] = $filters
   q["include_peer_events"] = $includePeerEvents
   let res = await client.httpGET(fmt"/accounts/{accountId}/realtime/kit/{appId}/sessions/peer-report/{peerId}", q)
   let body = await res.body
@@ -157,10 +157,10 @@ proc getAccountsAccountIdRealtimeKitAppIdSessionsSessionIdParticipants*(client: 
                                                                         search: string = default(string),
                                                                         pageNo: float64 = default(float64),
                                                                         perPage: float64 = default(float64),
-                                                                        sortOrder: set[SessionSortOrderOption] = {},
-                                                                        sortBy: set[SessionSortByOption] = {},
+                                                                        sortOrder: SessionSortOrderOption,
+                                                                        sortBy: SessionSortByOption,
                                                                         includePeerEvents: bool = false,
-                                                                        view: string = "raw",
+                                                                        view: SessionViewOption = viewRaw,
                                                                         sessionId: string): Future[GetAccountsAccountIdRealtimeKitAppIdSessionsSessionIdParticipantsResponse] {.async.} =
   ## Returns a list of participants for the given session ID.
 
@@ -168,10 +168,10 @@ proc getAccountsAccountIdRealtimeKitAppIdSessionsSessionIdParticipants*(client: 
   q["search"] = $search
   q["page_no"] = $pageNo
   q["per_page"] = $perPage
-  for v in sortOrder: q["sort_order"] = $v
-  for v in sortBy: q["sort_by"] = $v
+  q["sort_order"] = $sortOrder
+  q["sort_by"] = $sortBy
   q["include_peer_events"] = $includePeerEvents
-  for v in view: q["view"] = $v
+  q["view"] = $view
   let res = await client.httpGET(fmt"/accounts/{accountId}/realtime/kit/{appId}/sessions/{sessionId}/participants", q)
   let body = await res.body
   case res.code
@@ -232,11 +232,11 @@ proc getAccountsAccountIdRealtimeKitAppIdSessionsSessionIdTranscript*(client: Cl
                                                                       accountId: types.RealtimekitAccountIdentifier,
                                                                       appId: types.RealtimekitAppId,
                                                                       sessionId: string,
-                                                                      format: string = "CSV"): Future[GetAccountsAccountIdRealtimeKitAppIdSessionsSessionIdTranscriptResponse] {.async.} =
+                                                                      format: SessionFormatOption = formatCSV): Future[GetAccountsAccountIdRealtimeKitAppIdSessionsSessionIdTranscriptResponse] {.async.} =
   ## Returns a URL to download the transcript for the session ID in CSV format.
 
   var q = initOrderedTable[string, string]()
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/accounts/{accountId}/realtime/kit/{appId}/sessions/{sessionId}/transcript", q)
   let body = await res.body
   case res.code

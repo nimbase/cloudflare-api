@@ -17,12 +17,12 @@ type
 
 
 proc getRadarEntitiesIp*(client: CloudflareClient, ip: string,
-                         format: set[RadarIpFormatOption] = {}): Future[GetRadarEntitiesIpResponse] {.async.} =
+                         format: RadarIpFormatOption): Future[GetRadarEntitiesIpResponse] {.async.} =
   ## Retrieves IP address information.
 
   var q = initOrderedTable[string, string]()
   q["ip"] = $ip
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/entities/ip", q)
   let body = await res.body
   case res.code

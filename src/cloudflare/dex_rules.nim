@@ -22,16 +22,16 @@ type
 proc getAccountsAccountIdDexRules*(client: CloudflareClient,
                                    accountId: types.DigitalExperienceMonitoringAccountIdentifier,
                                    page: float64, perPage: float64,
-                                   sortOrder: string = "ASC",
-                                   sortBy: string = "name",
+                                   sortOrder: DexRuleSortOrderOption = sortOrderASC,
+                                   sortBy: DexRuleSortByOption = sortByName,
                                    name: string = default(string)): Future[JsonNode] {.async.} =
   ## List DEX Rules.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in sortOrder: q["sort_order"] = $v
-  for v in sortBy: q["sort_by"] = $v
+  q["sort_order"] = $sortOrder
+  q["sort_by"] = $sortBy
   q["name"] = $name
   let res = await client.httpGET(fmt"/accounts/{accountId}/dex/rules", q)
   let body = await res.body

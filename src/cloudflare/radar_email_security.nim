@@ -104,7 +104,7 @@ proc getRadarEmailSecuritySummaryArc*(client: CloudflareClient,
                                       dmarc: seq[string] = default(seq[string]),
                                       spf: seq[string] = default(seq[string]),
                                       tlsVersion: seq[string] = default(seq[string]),
-                                      format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecuritySummaryArcResponse] {.async.} =
+                                      format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecuritySummaryArcResponse] {.async.} =
   ## Retrieves the distribution of emails by ARC (Authenticated Received Chain)
   ## validation.
 
@@ -117,7 +117,7 @@ proc getRadarEmailSecuritySummaryArc*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/summary/arc", q)
   let body = await res.body
   case res.code
@@ -135,7 +135,7 @@ proc getRadarEmailSecuritySummaryDkim*(client: CloudflareClient,
                                        dmarc: seq[string] = default(seq[string]),
                                        spf: seq[string] = default(seq[string]),
                                        tlsVersion: seq[string] = default(seq[string]),
-                                       format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecuritySummaryDkimResponse] {.async.} =
+                                       format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecuritySummaryDkimResponse] {.async.} =
   ## Retrieves the distribution of emails by DKIM (DomainKeys Identified Mail)
   ## validation.
 
@@ -148,7 +148,7 @@ proc getRadarEmailSecuritySummaryDkim*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/summary/dkim", q)
   let body = await res.body
   case res.code
@@ -166,7 +166,7 @@ proc getRadarEmailSecuritySummaryDmarc*(client: CloudflareClient,
                                         dkim: seq[string] = default(seq[string]),
                                         spf: seq[string] = default(seq[string]),
                                         tlsVersion: seq[string] = default(seq[string]),
-                                        format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecuritySummaryDmarcResponse] {.async.} =
+                                        format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecuritySummaryDmarcResponse] {.async.} =
   ## Retrieves the distribution of emails by DMARC (Domain-based Message
   ## Authentication, Reporting and Conformance) validation.
 
@@ -179,7 +179,7 @@ proc getRadarEmailSecuritySummaryDmarc*(client: CloudflareClient,
   q["dkim"] = $dkim
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/summary/dmarc", q)
   let body = await res.body
   case res.code
@@ -198,7 +198,7 @@ proc getRadarEmailSecuritySummaryMalicious*(client: CloudflareClient,
                                             dmarc: seq[string] = default(seq[string]),
                                             spf: seq[string] = default(seq[string]),
                                             tlsVersion: seq[string] = default(seq[string]),
-                                            format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecuritySummaryMaliciousResponse] {.async.} =
+                                            format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecuritySummaryMaliciousResponse] {.async.} =
   ## Retrieves the distribution of emails by malicious classification.
 
   var q = initOrderedTable[string, string]()
@@ -211,7 +211,7 @@ proc getRadarEmailSecuritySummaryMalicious*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/summary/malicious", q)
   let body = await res.body
   case res.code
@@ -230,7 +230,7 @@ proc getRadarEmailSecuritySummarySpam*(client: CloudflareClient,
                                        dmarc: seq[string] = default(seq[string]),
                                        spf: seq[string] = default(seq[string]),
                                        tlsVersion: seq[string] = default(seq[string]),
-                                       format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecuritySummarySpamResponse] {.async.} =
+                                       format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecuritySummarySpamResponse] {.async.} =
   ## Retrieves the proportion of emails by spam classification (spam vs. non-spam).
 
   var q = initOrderedTable[string, string]()
@@ -243,7 +243,7 @@ proc getRadarEmailSecuritySummarySpam*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/summary/spam", q)
   let body = await res.body
   case res.code
@@ -261,7 +261,7 @@ proc getRadarEmailSecuritySummarySpf*(client: CloudflareClient,
                                       dkim: seq[string] = default(seq[string]),
                                       dmarc: seq[string] = default(seq[string]),
                                       tlsVersion: seq[string] = default(seq[string]),
-                                      format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecuritySummarySpfResponse] {.async.} =
+                                      format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecuritySummarySpfResponse] {.async.} =
   ## Retrieves the distribution of emails by SPF (Sender Policy Framework)
   ## validation.
 
@@ -274,7 +274,7 @@ proc getRadarEmailSecuritySummarySpf*(client: CloudflareClient,
   q["dkim"] = $dkim
   q["dmarc"] = $dmarc
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/summary/spf", q)
   let body = await res.body
   case res.code
@@ -293,7 +293,7 @@ proc getRadarEmailSecuritySummarySpoof*(client: CloudflareClient,
                                         dmarc: seq[string] = default(seq[string]),
                                         spf: seq[string] = default(seq[string]),
                                         tlsVersion: seq[string] = default(seq[string]),
-                                        format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecuritySummarySpoofResponse] {.async.} =
+                                        format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecuritySummarySpoofResponse] {.async.} =
   ## Retrieves the proportion of emails by spoof classification (spoof vs.
   ## non-spoof).
 
@@ -307,7 +307,7 @@ proc getRadarEmailSecuritySummarySpoof*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/summary/spoof", q)
   let body = await res.body
   case res.code
@@ -326,7 +326,7 @@ proc getRadarEmailSecuritySummaryThreatCategory*(client: CloudflareClient,
                                                  dmarc: seq[string] = default(seq[string]),
                                                  spf: seq[string] = default(seq[string]),
                                                  tlsVersion: seq[string] = default(seq[string]),
-                                                 format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecuritySummaryThreatCategoryResponse] {.async.} =
+                                                 format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecuritySummaryThreatCategoryResponse] {.async.} =
   ## Retrieves the distribution of emails by threat categories.
 
   var q = initOrderedTable[string, string]()
@@ -339,7 +339,7 @@ proc getRadarEmailSecuritySummaryThreatCategory*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/summary/threat_category", q)
   let body = await res.body
   case res.code
@@ -357,7 +357,7 @@ proc getRadarEmailSecuritySummaryTlsVersion*(client: CloudflareClient,
                                              dkim: seq[string] = default(seq[string]),
                                              dmarc: seq[string] = default(seq[string]),
                                              spf: seq[string] = default(seq[string]),
-                                             format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecuritySummaryTlsVersionResponse] {.async.} =
+                                             format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecuritySummaryTlsVersionResponse] {.async.} =
   ## Retrieves the distribution of emails by TLS version.
 
   var q = initOrderedTable[string, string]()
@@ -369,7 +369,7 @@ proc getRadarEmailSecuritySummaryTlsVersion*(client: CloudflareClient,
   q["dkim"] = $dkim
   q["dmarc"] = $dmarc
   q["spf"] = $spf
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/summary/tls_version", q)
   let body = await res.body
   case res.code
@@ -379,7 +379,7 @@ proc getRadarEmailSecuritySummaryTlsVersion*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailSecuritySummaryDimension*(client: CloudflareClient,
-                                            dimension: string,
+                                            dimension: Dimension,
                                             name: seq[string] = @[],
                                             dateRange: seq[string] = @[],
                                             dateStart: seq[string] = @[],
@@ -390,7 +390,7 @@ proc getRadarEmailSecuritySummaryDimension*(client: CloudflareClient,
                                             spf: seq[string] = default(seq[string]),
                                             tlsVersion: seq[string] = default(seq[string]),
                                             limitPerGroup: int64 = default(int64),
-                                            format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecuritySummaryDimensionResponse] {.async.} =
+                                            format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecuritySummaryDimensionResponse] {.async.} =
   ## Retrieves the distribution of email security metrics by the specified dimension.
 
   var q = initOrderedTable[string, string]()
@@ -404,7 +404,7 @@ proc getRadarEmailSecuritySummaryDimension*(client: CloudflareClient,
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/email/security/summary/{dimension}", q)
   let body = await res.body
   case res.code
@@ -414,7 +414,7 @@ proc getRadarEmailSecuritySummaryDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailSecurityTimeseriesGroupsArc*(client: CloudflareClient,
-                                               aggInterval: set[RadarEmailSecurityAggIntervalOption] = {},
+                                               aggInterval: RadarEmailSecurityAggIntervalOption,
                                                name: seq[string] = @[],
                                                dateRange: seq[string] = @[],
                                                dateStart: seq[string] = @[],
@@ -423,12 +423,12 @@ proc getRadarEmailSecurityTimeseriesGroupsArc*(client: CloudflareClient,
                                                dmarc: seq[string] = default(seq[string]),
                                                spf: seq[string] = default(seq[string]),
                                                tlsVersion: seq[string] = default(seq[string]),
-                                               format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTimeseriesGroupsArcResponse] {.async.} =
+                                               format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTimeseriesGroupsArcResponse] {.async.} =
   ## Retrieves the distribution of emails by ARC (Authenticated Received Chain)
   ## validation over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -437,7 +437,7 @@ proc getRadarEmailSecurityTimeseriesGroupsArc*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/timeseries_groups/arc", q)
   let body = await res.body
   case res.code
@@ -447,7 +447,7 @@ proc getRadarEmailSecurityTimeseriesGroupsArc*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailSecurityTimeseriesGroupsDkim*(client: CloudflareClient,
-                                                aggInterval: set[RadarEmailSecurityAggIntervalOption] = {},
+                                                aggInterval: RadarEmailSecurityAggIntervalOption,
                                                 name: seq[string] = @[],
                                                 dateRange: seq[string] = @[],
                                                 dateStart: seq[string] = @[],
@@ -456,12 +456,12 @@ proc getRadarEmailSecurityTimeseriesGroupsDkim*(client: CloudflareClient,
                                                 dmarc: seq[string] = default(seq[string]),
                                                 spf: seq[string] = default(seq[string]),
                                                 tlsVersion: seq[string] = default(seq[string]),
-                                                format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTimeseriesGroupsDkimResponse] {.async.} =
+                                                format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTimeseriesGroupsDkimResponse] {.async.} =
   ## Retrieves the distribution of emails by DKIM (DomainKeys Identified Mail)
   ## validation over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -470,7 +470,7 @@ proc getRadarEmailSecurityTimeseriesGroupsDkim*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/timeseries_groups/dkim", q)
   let body = await res.body
   case res.code
@@ -480,7 +480,7 @@ proc getRadarEmailSecurityTimeseriesGroupsDkim*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailSecurityTimeseriesGroupsDmarc*(client: CloudflareClient,
-                                                 aggInterval: set[RadarEmailSecurityAggIntervalOption] = {},
+                                                 aggInterval: RadarEmailSecurityAggIntervalOption,
                                                  name: seq[string] = @[],
                                                  dateRange: seq[string] = @[],
                                                  dateStart: seq[string] = @[],
@@ -489,12 +489,12 @@ proc getRadarEmailSecurityTimeseriesGroupsDmarc*(client: CloudflareClient,
                                                  dkim: seq[string] = default(seq[string]),
                                                  spf: seq[string] = default(seq[string]),
                                                  tlsVersion: seq[string] = default(seq[string]),
-                                                 format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTimeseriesGroupsDmarcResponse] {.async.} =
+                                                 format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTimeseriesGroupsDmarcResponse] {.async.} =
   ## Retrieves the distribution of emails by DMARC (Domain-based Message
   ## Authentication, Reporting and Conformance) validation over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -503,7 +503,7 @@ proc getRadarEmailSecurityTimeseriesGroupsDmarc*(client: CloudflareClient,
   q["dkim"] = $dkim
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/timeseries_groups/dmarc", q)
   let body = await res.body
   case res.code
@@ -513,7 +513,7 @@ proc getRadarEmailSecurityTimeseriesGroupsDmarc*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailSecurityTimeseriesGroupsMalicious*(client: CloudflareClient,
-                                                     aggInterval: set[RadarEmailSecurityAggIntervalOption] = {},
+                                                     aggInterval: RadarEmailSecurityAggIntervalOption,
                                                      name: seq[string] = @[],
                                                      dateRange: seq[string] = @[],
                                                      dateStart: seq[string] = @[],
@@ -523,11 +523,11 @@ proc getRadarEmailSecurityTimeseriesGroupsMalicious*(client: CloudflareClient,
                                                      dmarc: seq[string] = default(seq[string]),
                                                      spf: seq[string] = default(seq[string]),
                                                      tlsVersion: seq[string] = default(seq[string]),
-                                                     format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTimeseriesGroupsMaliciousResponse] {.async.} =
+                                                     format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTimeseriesGroupsMaliciousResponse] {.async.} =
   ## Retrieves the distribution of emails by malicious classification over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -537,7 +537,7 @@ proc getRadarEmailSecurityTimeseriesGroupsMalicious*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/timeseries_groups/malicious", q)
   let body = await res.body
   case res.code
@@ -547,7 +547,7 @@ proc getRadarEmailSecurityTimeseriesGroupsMalicious*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailSecurityTimeseriesGroupsSpam*(client: CloudflareClient,
-                                                aggInterval: set[RadarEmailSecurityAggIntervalOption] = {},
+                                                aggInterval: RadarEmailSecurityAggIntervalOption,
                                                 name: seq[string] = @[],
                                                 dateRange: seq[string] = @[],
                                                 dateStart: seq[string] = @[],
@@ -557,12 +557,12 @@ proc getRadarEmailSecurityTimeseriesGroupsSpam*(client: CloudflareClient,
                                                 dmarc: seq[string] = default(seq[string]),
                                                 spf: seq[string] = default(seq[string]),
                                                 tlsVersion: seq[string] = default(seq[string]),
-                                                format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTimeseriesGroupsSpamResponse] {.async.} =
+                                                format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTimeseriesGroupsSpamResponse] {.async.} =
   ## Retrieves the distribution of emails by spam classification (spam vs. non-spam)
   ## over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -572,7 +572,7 @@ proc getRadarEmailSecurityTimeseriesGroupsSpam*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/timeseries_groups/spam", q)
   let body = await res.body
   case res.code
@@ -582,7 +582,7 @@ proc getRadarEmailSecurityTimeseriesGroupsSpam*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailSecurityTimeseriesGroupsSpf*(client: CloudflareClient,
-                                               aggInterval: set[RadarEmailSecurityAggIntervalOption] = {},
+                                               aggInterval: RadarEmailSecurityAggIntervalOption,
                                                name: seq[string] = @[],
                                                dateRange: seq[string] = @[],
                                                dateStart: seq[string] = @[],
@@ -591,12 +591,12 @@ proc getRadarEmailSecurityTimeseriesGroupsSpf*(client: CloudflareClient,
                                                dkim: seq[string] = default(seq[string]),
                                                dmarc: seq[string] = default(seq[string]),
                                                tlsVersion: seq[string] = default(seq[string]),
-                                               format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTimeseriesGroupsSpfResponse] {.async.} =
+                                               format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTimeseriesGroupsSpfResponse] {.async.} =
   ## Retrieves the distribution of emails by SPF (Sender Policy Framework) validation
   ## over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -605,7 +605,7 @@ proc getRadarEmailSecurityTimeseriesGroupsSpf*(client: CloudflareClient,
   q["dkim"] = $dkim
   q["dmarc"] = $dmarc
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/timeseries_groups/spf", q)
   let body = await res.body
   case res.code
@@ -615,7 +615,7 @@ proc getRadarEmailSecurityTimeseriesGroupsSpf*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailSecurityTimeseriesGroupsSpoof*(client: CloudflareClient,
-                                                 aggInterval: set[RadarEmailSecurityAggIntervalOption] = {},
+                                                 aggInterval: RadarEmailSecurityAggIntervalOption,
                                                  name: seq[string] = @[],
                                                  dateRange: seq[string] = @[],
                                                  dateStart: seq[string] = @[],
@@ -625,12 +625,12 @@ proc getRadarEmailSecurityTimeseriesGroupsSpoof*(client: CloudflareClient,
                                                  dmarc: seq[string] = default(seq[string]),
                                                  spf: seq[string] = default(seq[string]),
                                                  tlsVersion: seq[string] = default(seq[string]),
-                                                 format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTimeseriesGroupsSpoofResponse] {.async.} =
+                                                 format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTimeseriesGroupsSpoofResponse] {.async.} =
   ## Retrieves the distribution of emails by spoof classification (spoof vs.
   ## non-spoof) over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -640,7 +640,7 @@ proc getRadarEmailSecurityTimeseriesGroupsSpoof*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/timeseries_groups/spoof", q)
   let body = await res.body
   case res.code
@@ -650,7 +650,7 @@ proc getRadarEmailSecurityTimeseriesGroupsSpoof*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailSecurityTimeseriesGroupsThreatCategory*(client: CloudflareClient,
-                                                          aggInterval: set[RadarEmailSecurityAggIntervalOption] = {},
+                                                          aggInterval: RadarEmailSecurityAggIntervalOption,
                                                           name: seq[string] = @[],
                                                           dateRange: seq[string] = @[],
                                                           dateStart: seq[string] = @[],
@@ -660,11 +660,11 @@ proc getRadarEmailSecurityTimeseriesGroupsThreatCategory*(client: CloudflareClie
                                                           dmarc: seq[string] = default(seq[string]),
                                                           spf: seq[string] = default(seq[string]),
                                                           tlsVersion: seq[string] = default(seq[string]),
-                                                          format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTimeseriesGroupsThreatCategoryResponse] {.async.} =
+                                                          format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTimeseriesGroupsThreatCategoryResponse] {.async.} =
   ## Retrieves the distribution of emails by threat category over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -674,7 +674,7 @@ proc getRadarEmailSecurityTimeseriesGroupsThreatCategory*(client: CloudflareClie
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/timeseries_groups/threat_category", q)
   let body = await res.body
   case res.code
@@ -684,7 +684,7 @@ proc getRadarEmailSecurityTimeseriesGroupsThreatCategory*(client: CloudflareClie
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailSecurityTimeseriesGroupsTlsVersion*(client: CloudflareClient,
-                                                      aggInterval: set[RadarEmailSecurityAggIntervalOption] = {},
+                                                      aggInterval: RadarEmailSecurityAggIntervalOption,
                                                       name: seq[string] = @[],
                                                       dateRange: seq[string] = @[],
                                                       dateStart: seq[string] = @[],
@@ -693,11 +693,11 @@ proc getRadarEmailSecurityTimeseriesGroupsTlsVersion*(client: CloudflareClient,
                                                       dkim: seq[string] = default(seq[string]),
                                                       dmarc: seq[string] = default(seq[string]),
                                                       spf: seq[string] = default(seq[string]),
-                                                      format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTimeseriesGroupsTlsVersionResponse] {.async.} =
+                                                      format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTimeseriesGroupsTlsVersionResponse] {.async.} =
   ## Retrieves the distribution of emails by TLS version over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -706,7 +706,7 @@ proc getRadarEmailSecurityTimeseriesGroupsTlsVersion*(client: CloudflareClient,
   q["dkim"] = $dkim
   q["dmarc"] = $dmarc
   q["spf"] = $spf
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/timeseries_groups/tls_version", q)
   let body = await res.body
   case res.code
@@ -716,8 +716,8 @@ proc getRadarEmailSecurityTimeseriesGroupsTlsVersion*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailSecurityTimeseriesGroupsDimension*(client: CloudflareClient,
-                                                     dimension: string,
-                                                     aggInterval: set[RadarEmailSecurityAggIntervalOption] = {},
+                                                     dimension: Dimension,
+                                                     aggInterval: RadarEmailSecurityAggIntervalOption,
                                                      name: seq[string] = @[],
                                                      dateRange: seq[string] = @[],
                                                      dateStart: seq[string] = @[],
@@ -728,12 +728,12 @@ proc getRadarEmailSecurityTimeseriesGroupsDimension*(client: CloudflareClient,
                                                      spf: seq[string] = default(seq[string]),
                                                      tlsVersion: seq[string] = default(seq[string]),
                                                      limitPerGroup: int64 = default(int64),
-                                                     format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTimeseriesGroupsDimensionResponse] {.async.} =
+                                                     format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of email security metrics grouped by dimension over
   ## time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -744,7 +744,7 @@ proc getRadarEmailSecurityTimeseriesGroupsDimension*(client: CloudflareClient,
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/email/security/timeseries_groups/{dimension}", q)
   let body = await res.body
   case res.code
@@ -763,8 +763,8 @@ proc getRadarEmailSecurityTopTlds*(client: CloudflareClient, limit: int64 = 5,
                                    dmarc: seq[string] = default(seq[string]),
                                    spf: seq[string] = default(seq[string]),
                                    tlsVersion: seq[string] = default(seq[string]),
-                                   tldCategory: set[RadarEmailSecurityTldCategoryOption] = {},
-                                   format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTopTldsResponse] {.async.} =
+                                   tldCategory: RadarEmailSecurityTldCategoryOption,
+                                   format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTopTldsResponse] {.async.} =
   ## Retrieves the top TLDs by number of email messages.
 
   var q = initOrderedTable[string, string]()
@@ -778,8 +778,8 @@ proc getRadarEmailSecurityTopTlds*(client: CloudflareClient, limit: int64 = 5,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in tldCategory: q["tldCategory"] = $v
-  for v in format: q["format"] = $v
+  q["tldCategory"] = $tldCategory
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/security/top/tlds", q)
   let body = await res.body
   case res.code
@@ -789,7 +789,7 @@ proc getRadarEmailSecurityTopTlds*(client: CloudflareClient, limit: int64 = 5,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailSecurityTopTldsMaliciousMalicious*(client: CloudflareClient,
-                                                     malicious: string,
+                                                     malicious: Malicious,
                                                      limit: int64 = 5,
                                                      name: seq[string] = @[],
                                                      dateRange: seq[string] = @[],
@@ -800,8 +800,8 @@ proc getRadarEmailSecurityTopTldsMaliciousMalicious*(client: CloudflareClient,
                                                      dmarc: seq[string] = default(seq[string]),
                                                      spf: seq[string] = default(seq[string]),
                                                      tlsVersion: seq[string] = default(seq[string]),
-                                                     tldCategory: set[RadarEmailSecurityTldCategoryOption] = {},
-                                                     format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTopTldsMaliciousMaliciousResponse] {.async.} =
+                                                     tldCategory: RadarEmailSecurityTldCategoryOption,
+                                                     format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTopTldsMaliciousMaliciousResponse] {.async.} =
   ## Retrieves the top TLDs by emails classified as malicious or not.
 
   var q = initOrderedTable[string, string]()
@@ -815,8 +815,8 @@ proc getRadarEmailSecurityTopTldsMaliciousMalicious*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in tldCategory: q["tldCategory"] = $v
-  for v in format: q["format"] = $v
+  q["tldCategory"] = $tldCategory
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/email/security/top/tlds/malicious/{malicious}", q)
   let body = await res.body
   case res.code
@@ -825,8 +825,8 @@ proc getRadarEmailSecurityTopTldsMaliciousMalicious*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc getRadarEmailSecurityTopTldsSpamSpam*(client: CloudflareClient,
-                                           spam: string, limit: int64 = 5,
+proc getRadarEmailSecurityTopTldsSpamSpam*(client: CloudflareClient, spam: Spam,
+                                           limit: int64 = 5,
                                            name: seq[string] = @[],
                                            dateRange: seq[string] = @[],
                                            dateStart: seq[string] = @[],
@@ -836,8 +836,8 @@ proc getRadarEmailSecurityTopTldsSpamSpam*(client: CloudflareClient,
                                            dmarc: seq[string] = default(seq[string]),
                                            spf: seq[string] = default(seq[string]),
                                            tlsVersion: seq[string] = default(seq[string]),
-                                           tldCategory: set[RadarEmailSecurityTldCategoryOption] = {},
-                                           format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTopTldsSpamSpamResponse] {.async.} =
+                                           tldCategory: RadarEmailSecurityTldCategoryOption,
+                                           format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTopTldsSpamSpamResponse] {.async.} =
   ## Retrieves the top TLDs by emails classified as spam or not.
 
   var q = initOrderedTable[string, string]()
@@ -851,8 +851,8 @@ proc getRadarEmailSecurityTopTldsSpamSpam*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in tldCategory: q["tldCategory"] = $v
-  for v in format: q["format"] = $v
+  q["tldCategory"] = $tldCategory
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/email/security/top/tlds/spam/{spam}", q)
   let body = await res.body
   case res.code
@@ -862,7 +862,7 @@ proc getRadarEmailSecurityTopTldsSpamSpam*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailSecurityTopTldsSpoofSpoof*(client: CloudflareClient,
-                                             spoof: string, limit: int64 = 5,
+                                             spoof: Spoof, limit: int64 = 5,
                                              name: seq[string] = @[],
                                              dateRange: seq[string] = @[],
                                              dateStart: seq[string] = @[],
@@ -872,8 +872,8 @@ proc getRadarEmailSecurityTopTldsSpoofSpoof*(client: CloudflareClient,
                                              dmarc: seq[string] = default(seq[string]),
                                              spf: seq[string] = default(seq[string]),
                                              tlsVersion: seq[string] = default(seq[string]),
-                                             tldCategory: set[RadarEmailSecurityTldCategoryOption] = {},
-                                             format: set[RadarEmailSecurityFormatOption] = {}): Future[GetRadarEmailSecurityTopTldsSpoofSpoofResponse] {.async.} =
+                                             tldCategory: RadarEmailSecurityTldCategoryOption,
+                                             format: RadarEmailSecurityFormatOption): Future[GetRadarEmailSecurityTopTldsSpoofSpoofResponse] {.async.} =
   ## Retrieves the top TLDs by emails classified as spoof or not.
 
   var q = initOrderedTable[string, string]()
@@ -887,8 +887,8 @@ proc getRadarEmailSecurityTopTldsSpoofSpoof*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["tlsVersion"] = $tlsVersion
-  for v in tldCategory: q["tldCategory"] = $v
-  for v in format: q["format"] = $v
+  q["tldCategory"] = $tldCategory
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/email/security/top/tlds/spoof/{spoof}", q)
   let body = await res.body
   case res.code

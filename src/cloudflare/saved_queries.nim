@@ -54,15 +54,15 @@ type
 proc getAccountsAccountIdWorkersObservabilityQueries*(client: CloudflareClient,
                                                       page: float64 = default(float64),
                                                       perPage: float64 = default(float64),
-                                                      order: string = "desc",
-                                                      orderBy: string = "updated"): Future[GetAccountsAccountIdWorkersObservabilityQueriesResponse] {.async.} =
+                                                      order: SavedQuerieOrderOption = orderDesc,
+                                                      orderBy: SavedQuerieOrderByOption = orderByUpdated): Future[GetAccountsAccountIdWorkersObservabilityQueriesResponse] {.async.} =
   ## List saved queries.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["perPage"] = $perPage
-  for v in order: q["order"] = $v
-  for v in orderBy: q["orderBy"] = $v
+  q["order"] = $order
+  q["orderBy"] = $orderBy
   let res = await client.httpGET("/accounts/{account_id}/workers/observability/queries", q)
   let body = await res.body
   case res.code

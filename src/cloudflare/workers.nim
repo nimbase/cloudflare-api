@@ -110,15 +110,15 @@ proc patchAccountsAccountIdBuildsWorkersScriptTag*(client: CloudflareClient,
 proc getAccountsAccountIdWorkersWorkers*(client: CloudflareClient,
                                          accountId: types.WorkersIdentifier,
                                          page: int64 = 1, perPage: int64 = 10,
-                                         orderBy: string = "deployed_on",
-                                         order: string = "desc"): Future[JsonNode] {.async.} =
+                                         orderBy: WorkerOrderByOption = orderByDeployedOn,
+                                         order: WorkerOrderOption = orderDesc): Future[JsonNode] {.async.} =
   ## List all Workers for an account.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in orderBy: q["order_by"] = $v
-  for v in order: q["order"] = $v
+  q["order_by"] = $orderBy
+  q["order"] = $order
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/workers", q)
   let body = await res.body
   case res.code

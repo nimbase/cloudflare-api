@@ -67,7 +67,7 @@ proc getAccountsAccountIdRealtimeKitAppIdMeetings*(client: CloudflareClient,
                                                    startTime: string = default(string),
                                                    endTime: string = default(string),
                                                    search: string = default(string),
-                                                   status: set[MeetingStatusOption] = {}): Future[JsonNode] {.async.} =
+                                                   status: MeetingStatusOption): Future[JsonNode] {.async.} =
   ## Returns all meetings for the given App ID.
 
   var q = initOrderedTable[string, string]()
@@ -76,7 +76,7 @@ proc getAccountsAccountIdRealtimeKitAppIdMeetings*(client: CloudflareClient,
   q["start_time"] = $startTime
   q["end_time"] = $endTime
   q["search"] = $search
-  for v in status: q["status"] = $v
+  q["status"] = $status
   let res = await client.httpGET(fmt"/accounts/{accountId}/realtime/kit/{appId}/meetings", q)
   let body = await res.body
   case res.code

@@ -34,8 +34,8 @@ proc getAccountsAccountIdDataSecurityPostureRemediationsJobs*(client: Cloudflare
                                                               status: types.PostureApiRemediationJobStatusEnum = default(types.PostureApiRemediationJobStatusEnum),
                                                               triggeredByActor: seq[string] = @[],
                                                               integrationId: string = default(string),
-                                                              order: set[RemediationOrderOption] = {},
-                                                              direction: set[RemediationDirectionOption] = {}): Future[types.PostureApiPaginatedRemediationJobList] {.async.} =
+                                                              order: RemediationOrderOption,
+                                                              direction: RemediationDirectionOption): Future[types.PostureApiPaginatedRemediationJobList] {.async.} =
   ## List all remediation jobs tied to a specific Cloudflare Account. Note that
   ## `cursor` and `page` are mutually exclusive.
 
@@ -49,8 +49,8 @@ proc getAccountsAccountIdDataSecurityPostureRemediationsJobs*(client: Cloudflare
   q["status"] = $status
   for v in triggeredByActor: q["triggered_by_actor"] = $v
   q["integration_id"] = $integrationId
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/accounts/{accountId}/data-security/posture/remediations/jobs", q)
   let body = await res.body
   case res.code

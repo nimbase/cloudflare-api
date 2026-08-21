@@ -45,11 +45,11 @@ proc getAccountsAccountIdAiGatewayBillingCreditBalance*(client: CloudflareClient
 
 proc getAccountsAccountIdAiGatewayBillingInvoiceHistory*(client: CloudflareClient,
                                                          accountId: string,
-                                                         `type`: string = "all"): Future[types.AigBillingGetInvoiceHistoryResponse] {.async.} =
+                                                         `type`: AiGatewayTypeOption = typeAll): Future[types.AigBillingGetInvoiceHistoryResponse] {.async.} =
   ## Retrieve a list of past invoices with pagination, optionally filtered by type.
 
   var q = initOrderedTable[string, string]()
-  for v in `type`: q["type"] = $v
+  q["type"] = $`type`
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/billing/invoice-history", q)
   let body = await res.body
   case res.code
@@ -189,13 +189,13 @@ proc postAccountsAccountIdAiGatewayBillingTopupStatus*(client: CloudflareClient,
 
 proc getAccountsAccountIdAiGatewayBillingUsageHistory*(client: CloudflareClient,
                                                        accountId: string,
-                                                       valueGroupingWindow: set[AiGatewayValueGroupingWindowOption] = {},
+                                                       valueGroupingWindow: AiGatewayValueGroupingWindowOption,
                                                        startTime: float64 = default(float64),
                                                        endTime: float64 = default(float64)): Future[types.AigBillingGetUsageHistoryResponse] {.async.} =
   ## Retrieve aggregated usage meter event summaries for the given time range.
 
   var q = initOrderedTable[string, string]()
-  for v in valueGroupingWindow: q["value_grouping_window"] = $v
+  q["value_grouping_window"] = $valueGroupingWindow
   q["start_time"] = $startTime
   q["end_time"] = $endTime
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/billing/usage-history", q)

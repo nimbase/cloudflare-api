@@ -512,11 +512,11 @@ proc getAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
                                               page: float64 = default(float64),
                                               pageSize: float64 = default(float64),
                                               orderBy: string = default(string),
-                                              order: set[EventOrderOption] = {},
+                                              order: EventOrderOption,
                                               datasetId: seq[string] = @[],
                                               forceRefresh: bool = default(bool),
-                                              format: set[EventFormatOption] = {},
-                                              cache: set[EventCacheOption] = {}): Future[seq[JsonNode]] {.async.} =
+                                              format: EventFormatOption,
+                                              cache: EventCacheOption): Future[seq[JsonNode]] {.async.} =
   ## Use `datasetId=all` or `datasetId=*` to query all event datasets for the account
   ## (limited to 50). When `datasetId` is unspecified, events are listed from the
   ## default Cloudforce One Threat Events dataset. To list existing datasets, use the
@@ -529,11 +529,11 @@ proc getAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
   q["page"] = $page
   q["pageSize"] = $pageSize
   q["orderBy"] = $orderBy
-  for v in order: q["order"] = $v
+  q["order"] = $order
   for v in datasetId: q["datasetId"] = $v
   q["forceRefresh"] = $forceRefresh
-  for v in format: q["format"] = $v
-  for v in cache: q["cache"] = $v
+  q["format"] = $format
+  q["cache"] = $cache
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events", q)
   let body = await res.body
   case res.code
@@ -955,7 +955,7 @@ proc patchAccountsAccountIdCloudforceOneEventsEventIdRawRawId*(client: Cloudflar
 proc getAccountsAccountIdCloudforceOneEventsEventIdRelationships*(client: CloudflareClient,
                                                                   accountId: string,
                                                                   eventId: string,
-                                                                  direction: string = "both",
+                                                                  direction: EventDirectionOption = directionBoth,
                                                                   maxDepth: float64 = default(float64),
                                                                   relationshipTypes: JsonNode = default(JsonNode),
                                                                   indicatorTypeIds: seq[string] = @[],
@@ -969,7 +969,7 @@ proc getAccountsAccountIdCloudforceOneEventsEventIdRelationships*(client: Cloudf
   ## provide query parameters.
 
   var q = initOrderedTable[string, string]()
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["maxDepth"] = $maxDepth
   q["relationshipTypes"] = $relationshipTypes
   for v in indicatorTypeIds: q["indicatorTypeIds"] = $v

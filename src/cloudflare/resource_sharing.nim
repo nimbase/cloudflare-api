@@ -24,9 +24,9 @@ proc getAccountsAccountIdShares*(client: CloudflareClient,
                                  kind: types.ResourceSharingShareKind = default(types.ResourceSharingShareKind),
                                  targetType: types.ResourceSharingShareTargetType = default(types.ResourceSharingShareTargetType),
                                  resourceTypes: seq[string] = @[],
-                                 order: string = "created",
-                                 direction: string = "asc", page: int64 = 1,
-                                 perPage: int64 = 20,
+                                 order: ResourceSharingOrderOption = orderCreated,
+                                 direction: ResourceSharingDirectionOption = directionAsc,
+                                 page: int64 = 1, perPage: int64 = 20,
                                  includeResources: bool = default(bool),
                                  includeRecipientCounts: bool = default(bool),
                                  tag: seq[string] = @[]): Future[types.ResourceSharingShareResponseCollection] {.async.} =
@@ -37,8 +37,8 @@ proc getAccountsAccountIdShares*(client: CloudflareClient,
   q["kind"] = $kind
   q["target_type"] = $targetType
   for v in resourceTypes: q["resource_types"] = $v
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   q["page"] = $page
   q["per_page"] = $perPage
   q["include_resources"] = $includeResources
@@ -386,8 +386,8 @@ proc getOrganizationsOrganizationIdShares*(client: CloudflareClient,
                                            kind: types.ResourceSharingShareKind = default(types.ResourceSharingShareKind),
                                            targetType: types.ResourceSharingShareTargetType = default(types.ResourceSharingShareTargetType),
                                            resourceTypes: seq[string] = @[],
-                                           order: string = "created",
-                                           direction: string = "asc",
+                                           order: ResourceSharingOrderOption = orderCreated,
+                                           direction: ResourceSharingDirectionOption = directionAsc,
                                            page: int64 = 1, perPage: int64 = 20): Future[types.ResourceSharingShareResponseCollection] {.async.} =
   ## Lists all organization shares.
 
@@ -396,8 +396,8 @@ proc getOrganizationsOrganizationIdShares*(client: CloudflareClient,
   q["kind"] = $kind
   q["target_type"] = $targetType
   for v in resourceTypes: q["resource_types"] = $v
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   q["page"] = $page
   q["per_page"] = $perPage
   let res = await client.httpGET(fmt"/organizations/{organizationId}/shares", q)

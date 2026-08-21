@@ -26,17 +26,17 @@ type
 
 proc getRadarDatasets*(client: CloudflareClient, limit: int64 = 5,
                        offset: int64 = default(int64),
-                       datasetType: string = "RANKING_BUCKET",
+                       datasetType: RadarDatasetDatasetTypeOption = datasetTypeRANKINGBUCKET,
                        date: string = default(string),
-                       format: set[RadarDatasetFormatOption] = {}): Future[GetRadarDatasetsResponse] {.async.} =
+                       format: RadarDatasetFormatOption): Future[GetRadarDatasetsResponse] {.async.} =
   ## Retrieves a list of datasets.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
   q["offset"] = $offset
-  for v in datasetType: q["datasetType"] = $v
+  q["datasetType"] = $datasetType
   q["date"] = $date
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/datasets", q)
   let body = await res.body
   case res.code
@@ -46,12 +46,12 @@ proc getRadarDatasets*(client: CloudflareClient, limit: int64 = 5,
     raise newException(CloudflareClientError, body)
 
 proc postRadarDatasetsDownload*(client: CloudflareClient,
-                                format: set[RadarDatasetFormatOption] = {},
+                                format: RadarDatasetFormatOption,
                                 body: PostRadarDatasetsDownloadRequest): Future[PostRadarDatasetsDownloadResponse] {.async.} =
   ## Retrieves an URL to download a single dataset.
 
   var q = initOrderedTable[string, string]()
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpPOST("/radar/datasets/download", q)
   let body = await res.body
   case res.code

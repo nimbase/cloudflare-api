@@ -61,21 +61,21 @@ type
 
 proc getRadarBots*(client: CloudflareClient, limit: int64 = 5,
                    offset: int64 = default(int64),
-                   botCategory: set[RadarBotBotCategoryOption] = {},
+                   botCategory: RadarBotBotCategoryOption,
                    botOperator: string = default(string),
-                   kind: set[RadarBotKindOption] = {},
-                   botVerificationStatus: set[RadarBotBotVerificationStatusOption] = {},
-                   format: set[RadarBotFormatOption] = {}): Future[GetRadarBotsResponse] {.async.} =
+                   kind: RadarBotKindOption,
+                   botVerificationStatus: RadarBotBotVerificationStatusOption,
+                   format: RadarBotFormatOption): Future[GetRadarBotsResponse] {.async.} =
   ## Retrieves a list of bots.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
   q["offset"] = $offset
-  for v in botCategory: q["botCategory"] = $v
+  q["botCategory"] = $botCategory
   q["botOperator"] = $botOperator
-  for v in kind: q["kind"] = $v
-  for v in botVerificationStatus: q["botVerificationStatus"] = $v
-  for v in format: q["format"] = $v
+  q["kind"] = $kind
+  q["botVerificationStatus"] = $botVerificationStatus
+  q["format"] = $format
   let res = await client.httpGET("/radar/bots", q)
   let body = await res.body
   case res.code
@@ -84,8 +84,8 @@ proc getRadarBots*(client: CloudflareClient, limit: int64 = 5,
   else:
     raise newException(CloudflareClientError, body)
 
-proc getRadarBotsSummaryDimension*(client: CloudflareClient, dimension: string,
-                                   name: seq[string] = @[],
+proc getRadarBotsSummaryDimension*(client: CloudflareClient,
+                                   dimension: Dimension, name: seq[string] = @[],
                                    dateRange: seq[string] = @[],
                                    dateStart: seq[string] = @[],
                                    dateEnd: seq[string] = @[],
@@ -98,7 +98,7 @@ proc getRadarBotsSummaryDimension*(client: CloudflareClient, dimension: string,
                                    botCategory: seq[string] = default(seq[string]),
                                    botKind: seq[string] = default(seq[string]),
                                    botVerificationStatus: seq[string] = default(seq[string]),
-                                   format: set[RadarBotFormatOption] = {}): Future[GetRadarBotsSummaryDimensionResponse] {.async.} =
+                                   format: RadarBotFormatOption): Future[GetRadarBotsSummaryDimensionResponse] {.async.} =
   ## Retrieves an aggregated summary of bots HTTP requests grouped by the specified
   ## dimension.
 
@@ -116,7 +116,7 @@ proc getRadarBotsSummaryDimension*(client: CloudflareClient, dimension: string,
   q["botCategory"] = $botCategory
   q["botKind"] = $botKind
   q["botVerificationStatus"] = $botVerificationStatus
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/bots/summary/{dimension}", q)
   let body = await res.body
   case res.code
@@ -126,7 +126,7 @@ proc getRadarBotsSummaryDimension*(client: CloudflareClient, dimension: string,
     raise newException(CloudflareClientError, body)
 
 proc getRadarBotsTimeseries*(client: CloudflareClient,
-                             aggInterval: set[RadarBotAggIntervalOption] = {},
+                             aggInterval: RadarBotAggIntervalOption,
                              name: seq[string] = @[],
                              dateRange: seq[string] = @[],
                              dateStart: seq[string] = @[],
@@ -138,11 +138,11 @@ proc getRadarBotsTimeseries*(client: CloudflareClient,
                              botCategory: seq[string] = default(seq[string]),
                              botKind: seq[string] = default(seq[string]),
                              botVerificationStatus: seq[string] = default(seq[string]),
-                             format: set[RadarBotFormatOption] = {}): Future[GetRadarBotsTimeseriesResponse] {.async.} =
+                             format: RadarBotFormatOption): Future[GetRadarBotsTimeseriesResponse] {.async.} =
   ## Retrieves bots HTTP request volume over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -155,7 +155,7 @@ proc getRadarBotsTimeseries*(client: CloudflareClient,
   q["botCategory"] = $botCategory
   q["botKind"] = $botKind
   q["botVerificationStatus"] = $botVerificationStatus
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/bots/timeseries", q)
   let body = await res.body
   case res.code
@@ -165,8 +165,8 @@ proc getRadarBotsTimeseries*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarBotsTimeseriesGroupsDimension*(client: CloudflareClient,
-                                            dimension: string,
-                                            aggInterval: set[RadarBotAggIntervalOption] = {},
+                                            dimension: Dimension,
+                                            aggInterval: RadarBotAggIntervalOption,
                                             name: seq[string] = @[],
                                             dateRange: seq[string] = @[],
                                             dateStart: seq[string] = @[],
@@ -180,12 +180,12 @@ proc getRadarBotsTimeseriesGroupsDimension*(client: CloudflareClient,
                                             botCategory: seq[string] = default(seq[string]),
                                             botKind: seq[string] = default(seq[string]),
                                             botVerificationStatus: seq[string] = default(seq[string]),
-                                            format: set[RadarBotFormatOption] = {}): Future[GetRadarBotsTimeseriesGroupsDimensionResponse] {.async.} =
+                                            format: RadarBotFormatOption): Future[GetRadarBotsTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of HTTP requests from bots, grouped by the specified
   ## dimension over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -199,7 +199,7 @@ proc getRadarBotsTimeseriesGroupsDimension*(client: CloudflareClient,
   q["botCategory"] = $botCategory
   q["botKind"] = $botKind
   q["botVerificationStatus"] = $botVerificationStatus
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/bots/timeseries_groups/{dimension}", q)
   let body = await res.body
   case res.code
@@ -209,11 +209,11 @@ proc getRadarBotsTimeseriesGroupsDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarBotsBotSlug*(client: CloudflareClient, botSlug: string,
-                          format: set[RadarBotFormatOption] = {}): Future[GetRadarBotsBotSlugResponse] {.async.} =
+                          format: RadarBotFormatOption): Future[GetRadarBotsBotSlugResponse] {.async.} =
   ## Retrieves the requested bot information.
 
   var q = initOrderedTable[string, string]()
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/bots/{botSlug}", q)
   let body = await res.body
   case res.code

@@ -26,14 +26,14 @@ proc getRadarRankingInternetServicesCategories*(client: CloudflareClient,
                                                 limit: int64 = default(int64),
                                                 name: seq[string] = @[],
                                                 date: seq[string] = @[],
-                                                format: set[RadarInternetServicesRankingFormatOption] = {}): Future[GetRadarRankingInternetServicesCategoriesResponse] {.async.} =
+                                                format: RadarInternetServicesRankingFormatOption): Future[GetRadarRankingInternetServicesCategoriesResponse] {.async.} =
   ## Retrieves the list of Internet services categories.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
   for v in name: q["name"] = $v
   for v in date: q["date"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/ranking/internet_services/categories", q)
   let body = await res.body
   case res.code
@@ -49,7 +49,7 @@ proc getRadarRankingInternetServicesTimeseriesGroups*(client: CloudflareClient,
                                                       dateRange: seq[string] = @[],
                                                       dateStart: seq[string] = @[],
                                                       dateEnd: seq[string] = @[],
-                                                      format: set[RadarInternetServicesRankingFormatOption] = {}): Future[GetRadarRankingInternetServicesTimeseriesGroupsResponse] {.async.} =
+                                                      format: RadarInternetServicesRankingFormatOption): Future[GetRadarRankingInternetServicesTimeseriesGroupsResponse] {.async.} =
   ## Retrieves Internet Services rank update changes over time.
 
   var q = initOrderedTable[string, string]()
@@ -59,7 +59,7 @@ proc getRadarRankingInternetServicesTimeseriesGroups*(client: CloudflareClient,
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
   for v in dateEnd: q["dateEnd"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/ranking/internet_services/timeseries_groups", q)
   let body = await res.body
   case res.code
@@ -73,7 +73,7 @@ proc getRadarRankingInternetServicesTop*(client: CloudflareClient,
                                          limit: int64 = default(int64),
                                          name: seq[string] = @[],
                                          date: seq[string] = @[],
-                                         format: set[RadarInternetServicesRankingFormatOption] = {}): Future[GetRadarRankingInternetServicesTopResponse] {.async.} =
+                                         format: RadarInternetServicesRankingFormatOption): Future[GetRadarRankingInternetServicesTopResponse] {.async.} =
   ## Retrieves top Internet services based on their rank.
 
   var q = initOrderedTable[string, string]()
@@ -81,7 +81,7 @@ proc getRadarRankingInternetServicesTop*(client: CloudflareClient,
   q["limit"] = $limit
   for v in name: q["name"] = $v
   for v in date: q["date"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/ranking/internet_services/top", q)
   let body = await res.body
   case res.code

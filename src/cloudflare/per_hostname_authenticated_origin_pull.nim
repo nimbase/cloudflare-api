@@ -28,14 +28,14 @@ proc getZonesZoneIdOriginTlsClientAuthHostnames*(client: CloudflareClient,
                                                  zoneId: types.TlsCertificatesAndHostnamesIdentifier,
                                                  page: float64 = default(float64),
                                                  perPage: float64 = default(float64),
-                                                 status: set[PerHostnameAuthenticatedOriginPullStatusOption] = {}): Future[types.TlsCertificatesAndHostnamesHostnameAssocResponseCollection] {.async.} =
+                                                 status: PerHostnameAuthenticatedOriginPullStatusOption): Future[types.TlsCertificatesAndHostnamesHostnameAssocResponseCollection] {.async.} =
   ## List certificate ID - hostname associations for the given zone. Shows which
   ## hostnames are associated to which certificates for authenticated origin pulls.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in status: q["status"] = $v
+  q["status"] = $status
   let res = await client.httpGET(fmt"/zones/{zoneId}/origin_tls_client_auth/hostnames", q)
   let body = await res.body
   case res.code

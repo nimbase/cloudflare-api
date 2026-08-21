@@ -48,13 +48,13 @@ type
 
 proc getRadarOrigins*(client: CloudflareClient, limit: int64 = 5,
                       offset: int64 = default(int64),
-                      format: set[RadarOriginFormatOption] = {}): Future[GetRadarOriginsResponse] {.async.} =
+                      format: RadarOriginFormatOption): Future[GetRadarOriginsResponse] {.async.} =
   ## Retrieves a list of origins with their regions.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
   q["offset"] = $offset
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/origins", q)
   let body = await res.body
   case res.code
@@ -64,15 +64,16 @@ proc getRadarOrigins*(client: CloudflareClient, limit: int64 = 5,
     raise newException(CloudflareClientError, body)
 
 proc getRadarOriginsSummaryDimension*(client: CloudflareClient,
-                                      dimension: string, name: seq[string] = @[],
+                                      dimension: Dimension,
+                                      name: seq[string] = @[],
                                       dateRange: seq[string] = @[],
                                       dateStart: seq[string] = @[],
                                       dateEnd: seq[string] = @[],
                                       limitPerGroup: int64 = default(int64),
                                       origin: seq[string] = default(seq[string]),
-                                      metric: set[RadarOriginMetricOption] = {},
+                                      metric: RadarOriginMetricOption,
                                       region: seq[string] = @[],
-                                      format: set[RadarOriginFormatOption] = {}): Future[GetRadarOriginsSummaryDimensionResponse] {.async.} =
+                                      format: RadarOriginFormatOption): Future[GetRadarOriginsSummaryDimensionResponse] {.async.} =
   ## Retrieves an aggregated summary of origin metrics grouped by the specified
   ## dimension.
 
@@ -83,9 +84,9 @@ proc getRadarOriginsSummaryDimension*(client: CloudflareClient,
   for v in dateEnd: q["dateEnd"] = $v
   q["limitPerGroup"] = $limitPerGroup
   q["origin"] = $origin
-  for v in metric: q["metric"] = $v
+  q["metric"] = $metric
   for v in region: q["region"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/origins/summary/{dimension}", q)
   let body = await res.body
   case res.code
@@ -95,26 +96,26 @@ proc getRadarOriginsSummaryDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarOriginsTimeseries*(client: CloudflareClient,
-                                aggInterval: set[RadarOriginAggIntervalOption] = {},
+                                aggInterval: RadarOriginAggIntervalOption,
                                 name: seq[string] = @[],
                                 dateRange: seq[string] = @[],
                                 dateStart: seq[string] = @[],
                                 dateEnd: seq[string] = @[], origin: seq[string],
-                                metric: set[RadarOriginMetricOption] = {},
+                                metric: RadarOriginMetricOption,
                                 region: seq[string] = @[],
-                                format: set[RadarOriginFormatOption] = {}): Future[GetRadarOriginsTimeseriesResponse] {.async.} =
+                                format: RadarOriginFormatOption): Future[GetRadarOriginsTimeseriesResponse] {.async.} =
   ## Retrieves the time series of origin metrics for the specified origin.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
   for v in dateEnd: q["dateEnd"] = $v
   q["origin"] = $origin
-  for v in metric: q["metric"] = $v
+  q["metric"] = $metric
   for v in region: q["region"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/origins/timeseries", q)
   let body = await res.body
   case res.code
@@ -124,33 +125,33 @@ proc getRadarOriginsTimeseries*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarOriginsTimeseriesGroupsDimension*(client: CloudflareClient,
-                                               dimension: string,
-                                               aggInterval: set[RadarOriginAggIntervalOption] = {},
+                                               dimension: Dimension,
+                                               aggInterval: RadarOriginAggIntervalOption,
                                                name: seq[string] = @[],
                                                dateRange: seq[string] = @[],
                                                dateStart: seq[string] = @[],
                                                dateEnd: seq[string] = @[],
                                                limitPerGroup: int64 = default(int64),
                                                origin: seq[string] = default(seq[string]),
-                                               metric: set[RadarOriginMetricOption] = {},
+                                               metric: RadarOriginMetricOption,
                                                region: seq[string] = @[],
-                                               normalization: string = "PERCENTAGE",
-                                               format: set[RadarOriginFormatOption] = {}): Future[GetRadarOriginsTimeseriesGroupsDimensionResponse] {.async.} =
+                                               normalization: RadarOriginNormalizationOption = normalizationPERCENTAGE,
+                                               format: RadarOriginFormatOption): Future[GetRadarOriginsTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of origin metrics grouped by the specified dimension
   ## over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
   for v in dateEnd: q["dateEnd"] = $v
   q["limitPerGroup"] = $limitPerGroup
   q["origin"] = $origin
-  for v in metric: q["metric"] = $v
+  q["metric"] = $metric
   for v in region: q["region"] = $v
-  for v in normalization: q["normalization"] = $v
-  for v in format: q["format"] = $v
+  q["normalization"] = $normalization
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/origins/timeseries_groups/{dimension}", q)
   let body = await res.body
   case res.code
@@ -159,12 +160,12 @@ proc getRadarOriginsTimeseriesGroupsDimension*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc getRadarOriginsSlug*(client: CloudflareClient, slug: string,
-                          format: set[RadarOriginFormatOption] = {}): Future[GetRadarOriginsSlugResponse] {.async.} =
+proc getRadarOriginsSlug*(client: CloudflareClient, slug: Slug,
+                          format: RadarOriginFormatOption): Future[GetRadarOriginsSlugResponse] {.async.} =
   ## Retrieves the requested origin information with its regions.
 
   var q = initOrderedTable[string, string]()
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/origins/{slug}", q)
   let body = await res.body
   case res.code

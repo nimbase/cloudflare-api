@@ -48,15 +48,15 @@ type
 proc getAccountsAccountIdWorkersObservabilityDestinations*(client: CloudflareClient,
                                                            page: float64 = default(float64),
                                                            perPage: float64 = default(float64),
-                                                           order: string = "desc",
-                                                           orderBy: string = "updated"): Future[GetAccountsAccountIdWorkersObservabilityDestinationsResponse] {.async.} =
+                                                           order: DestinationOrderOption = orderDesc,
+                                                           orderBy: DestinationOrderByOption = orderByUpdated): Future[GetAccountsAccountIdWorkersObservabilityDestinationsResponse] {.async.} =
   ## List your Workers Observability Telemetry Destinations.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["perPage"] = $perPage
-  for v in order: q["order"] = $v
-  for v in orderBy: q["orderBy"] = $v
+  q["order"] = $order
+  q["orderBy"] = $orderBy
   let res = await client.httpGET("/accounts/{account_id}/workers/observability/destinations", q)
   let body = await res.body
   case res.code

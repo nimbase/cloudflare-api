@@ -26,11 +26,11 @@ proc getAccountsAccountIdDexWarpChangeEvents*(client: CloudflareClient,
                                               accountId: types.DigitalExperienceMonitoringAccountIdentifier,
                                               page: float64, perPage: float64,
                                               `from`: string, to: string,
-                                              `type`: set[WarpChangeEventTypeOption] = {},
-                                              toggle: set[WarpChangeEventToggleOption] = {},
+                                              `type`: WarpChangeEventTypeOption,
+                                              toggle: WarpChangeEventToggleOption,
                                               configName: string = default(string),
                                               accountName: string = default(string),
-                                              sortOrder: string = "ASC"): Future[JsonNode] {.async.} =
+                                              sortOrder: WarpChangeEventSortOrderOption = sortOrderASC): Future[JsonNode] {.async.} =
   ## List WARP configuration and enablement toggle change events by device.
 
   var q = initOrderedTable[string, string]()
@@ -38,11 +38,11 @@ proc getAccountsAccountIdDexWarpChangeEvents*(client: CloudflareClient,
   q["per_page"] = $perPage
   q["from"] = $`from`
   q["to"] = $to
-  for v in `type`: q["type"] = $v
-  for v in toggle: q["toggle"] = $v
+  q["type"] = $`type`
+  q["toggle"] = $toggle
   q["config_name"] = $configName
   q["account_name"] = $accountName
-  for v in sortOrder: q["sort_order"] = $v
+  q["sort_order"] = $sortOrder
   let res = await client.httpGET(fmt"/accounts/{accountId}/dex/warp-change-events", q)
   let body = await res.body
   case res.code

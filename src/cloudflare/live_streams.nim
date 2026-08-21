@@ -105,10 +105,10 @@ proc getAccountsAccountIdRealtimeKitAppIdLivestreams*(client: CloudflareClient,
                                                       excludeMeetings: bool = false,
                                                       perPage: int64 = default(int64),
                                                       pageNo: int64 = default(int64),
-                                                      status: set[LiveStreamStatusOption] = {},
+                                                      status: LiveStreamStatusOption,
                                                       startTime: string = default(string),
                                                       endTime: string = default(string),
-                                                      sortOrder: set[LiveStreamSortOrderOption] = {}): Future[GetAccountsAccountIdRealtimeKitAppIdLivestreamsResponse] {.async.} =
+                                                      sortOrder: LiveStreamSortOrderOption): Future[GetAccountsAccountIdRealtimeKitAppIdLivestreamsResponse] {.async.} =
   ## Returns details of livestreams associated with the given App ID. It includes
   ## livestreams created by your App and RealtimeKit meetings that are livestreamed
   ## by your App. If you only want details of livestreams created by your App and not
@@ -118,10 +118,10 @@ proc getAccountsAccountIdRealtimeKitAppIdLivestreams*(client: CloudflareClient,
   q["exclude_meetings"] = $excludeMeetings
   q["per_page"] = $perPage
   q["page_no"] = $pageNo
-  for v in status: q["status"] = $v
+  q["status"] = $status
   q["start_time"] = $startTime
   q["end_time"] = $endTime
-  for v in sortOrder: q["sort_order"] = $v
+  q["sort_order"] = $sortOrder
   let res = await client.httpGET("/accounts/{account_id}/realtime/kit/{app_id}/livestreams", q)
   let body = await res.body
   case res.code

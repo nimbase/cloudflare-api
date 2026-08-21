@@ -24,8 +24,8 @@ proc getAccountsAccountIdRegistrarSandboxExtensions*(client: CloudflareClient,
                                                      name: string = default(string),
                                                      cursor: string = default(string),
                                                      perPage: int64 = 20,
-                                                     direction: string = "asc",
-                                                     sortBy: string = "name"): Future[types.RegistrarApiSandboxExtensionResponseCollection] {.async.} =
+                                                     direction: ExtensionDirectionOption = directionAsc,
+                                                     sortBy: ExtensionSortByOption = sortByName): Future[types.RegistrarApiSandboxExtensionResponseCollection] {.async.} =
   ## Returns metadata and JSON Schema documents describing the expected input
   ## structure for registration operations on each supported
   ## extension (TLD).
@@ -44,8 +44,8 @@ proc getAccountsAccountIdRegistrarSandboxExtensions*(client: CloudflareClient,
   q["name"] = $name
   q["cursor"] = $cursor
   q["per_page"] = $perPage
-  for v in direction: q["direction"] = $v
-  for v in sortBy: q["sort_by"] = $v
+  q["direction"] = $direction
+  q["sort_by"] = $sortBy
   let res = await client.httpGET(fmt"/accounts/{accountId}/registrar-sandbox/extensions", q)
   let body = await res.body
   case res.code
@@ -78,8 +78,8 @@ proc getAccountsAccountIdRegistrarExtensions*(client: CloudflareClient,
                                               name: string = default(string),
                                               cursor: string = default(string),
                                               perPage: int64 = 20,
-                                              direction: string = "asc",
-                                              sortBy: string = "name"): Future[types.RegistrarApiExtensionResponseCollection] {.async.} =
+                                              direction: ExtensionDirectionOption = directionAsc,
+                                              sortBy: ExtensionSortByOption = sortByName): Future[types.RegistrarApiExtensionResponseCollection] {.async.} =
   ## Returns metadata and JSON Schema documents describing the expected input
   ## structure for registration operations on each supported
   ## extension (TLD).
@@ -98,8 +98,8 @@ proc getAccountsAccountIdRegistrarExtensions*(client: CloudflareClient,
   q["name"] = $name
   q["cursor"] = $cursor
   q["per_page"] = $perPage
-  for v in direction: q["direction"] = $v
-  for v in sortBy: q["sort_by"] = $v
+  q["direction"] = $direction
+  q["sort_by"] = $sortBy
   let res = await client.httpGET(fmt"/accounts/{accountId}/registrar/extensions", q)
   let body = await res.body
   case res.code

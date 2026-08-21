@@ -55,14 +55,14 @@ proc getAccountsAccountIdV1Images*(client: CloudflareClient, accountId: string,
                                    perPage: int64 = 1000,
                                    continuationToken: string = default(string),
                                    creator: string = default(string),
-                                   sortOrder: string = "desc"): Future[GetAccountsAccountIdV1ImagesResponse] {.async.} =
+                                   sortOrder: ImageSortOrderOption = sortOrderDesc): Future[GetAccountsAccountIdV1ImagesResponse] {.async.} =
   ## List images for an account.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
   q["continuation_token"] = $continuationToken
   q["creator"] = $creator
-  for v in sortOrder: q["sort_order"] = $v
+  q["sort_order"] = $sortOrder
   let res = await client.httpGET(fmt"/accounts/{accountId}/v1/images", q)
   let body = await res.body
   case res.code
@@ -142,14 +142,14 @@ proc getAccountsAccountIdV2Images*(client: CloudflareClient, accountId: string,
                                    perPage: int64 = 1000,
                                    continuationToken: string = default(string),
                                    creator: string = default(string),
-                                   sortOrder: string = "desc"): Future[GetAccountsAccountIdV2ImagesResponse] {.async.} =
+                                   sortOrder: ImageSortOrderOption = sortOrderDesc): Future[GetAccountsAccountIdV2ImagesResponse] {.async.} =
   ## List images for an account.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
   q["continuation_token"] = $continuationToken
   q["creator"] = $creator
-  for v in sortOrder: q["sort_order"] = $v
+  q["sort_order"] = $sortOrder
   let res = await client.httpGET(fmt"/accounts/{accountId}/v2/images", q)
   let body = await res.body
   case res.code

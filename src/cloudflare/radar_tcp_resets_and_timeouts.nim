@@ -33,7 +33,7 @@ proc getRadarTcpResetsTimeoutsSummary*(client: CloudflareClient,
                                        asn: seq[string] = @[],
                                        location: seq[string] = @[],
                                        continent: seq[string] = @[],
-                                       format: set[RadarTcpResetsAndTimeoutFormatOption] = {}): Future[GetRadarTcpResetsTimeoutsSummaryResponse] {.async.} =
+                                       format: RadarTcpResetsAndTimeoutFormatOption): Future[GetRadarTcpResetsTimeoutsSummaryResponse] {.async.} =
   ## Retrieves the distribution of connection stage by TCP connections terminated
   ## within the first 10 packets by a reset or timeout.
 
@@ -45,7 +45,7 @@ proc getRadarTcpResetsTimeoutsSummary*(client: CloudflareClient,
   for v in asn: q["asn"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/tcp_resets_timeouts/summary", q)
   let body = await res.body
   case res.code
@@ -55,7 +55,7 @@ proc getRadarTcpResetsTimeoutsSummary*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarTcpResetsTimeoutsTimeseriesGroups*(client: CloudflareClient,
-                                                aggInterval: set[RadarTcpResetsAndTimeoutAggIntervalOption] = {},
+                                                aggInterval: RadarTcpResetsAndTimeoutAggIntervalOption,
                                                 name: seq[string] = @[],
                                                 dateRange: seq[string] = @[],
                                                 dateStart: seq[string] = @[],
@@ -63,12 +63,12 @@ proc getRadarTcpResetsTimeoutsTimeseriesGroups*(client: CloudflareClient,
                                                 asn: seq[string] = @[],
                                                 location: seq[string] = @[],
                                                 continent: seq[string] = @[],
-                                                format: set[RadarTcpResetsAndTimeoutFormatOption] = {}): Future[GetRadarTcpResetsTimeoutsTimeseriesGroupsResponse] {.async.} =
+                                                format: RadarTcpResetsAndTimeoutFormatOption): Future[GetRadarTcpResetsTimeoutsTimeseriesGroupsResponse] {.async.} =
   ## Retrieves the distribution of connection stage by TCP connections terminated
   ## within the first 10 packets by a reset or timeout over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -76,7 +76,7 @@ proc getRadarTcpResetsTimeoutsTimeseriesGroups*(client: CloudflareClient,
   for v in asn: q["asn"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/tcp_resets_timeouts/timeseries_groups", q)
   let body = await res.body
   case res.code

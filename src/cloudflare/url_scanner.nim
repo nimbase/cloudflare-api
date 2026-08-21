@@ -126,11 +126,11 @@ proc postAccountsAccountIdUrlscannerV2Scan*(client: CloudflareClient,
 proc getAccountsAccountIdUrlscannerV2ScreenshotsScanIdPng*(client: CloudflareClient,
                                                            scanId: string,
                                                            accountId: string,
-                                                           resolution: string = "desktop"): Future[AsyncResponse] {.async.} =
+                                                           resolution: UrlScannerResolutionOption = resolutionDesktop): Future[AsyncResponse] {.async.} =
   ## Get scan's screenshot by resolution (desktop/mobile/tablet).
 
   var q = initOrderedTable[string, string]()
-  for v in resolution: q["resolution"] = $v
+  q["resolution"] = $resolution
   let res = await client.httpGET(fmt"/accounts/{accountId}/urlscanner/v2/screenshots/{scanId}.png", q)
   return res
 

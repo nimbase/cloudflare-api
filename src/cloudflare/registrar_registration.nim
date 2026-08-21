@@ -23,8 +23,8 @@ proc getAccountsAccountIdRegistrarSandboxRegistrations*(client: CloudflareClient
                                                         accountId: types.RegistrarApiSandboxIdentifier,
                                                         cursor: string = default(string),
                                                         perPage: int64 = 20,
-                                                        direction: string = "asc",
-                                                        sortBy: string = "registry_created_at"): Future[types.RegistrarApiSandboxRegistrationResponseCollection] {.async.} =
+                                                        direction: RegistrarRegistrationDirectionOption = directionAsc,
+                                                        sortBy: RegistrarRegistrationSortByOption = sortByRegistryCreatedAt): Future[types.RegistrarApiSandboxRegistrationResponseCollection] {.async.} =
   ## Returns a paginated list of domain registrations owned by the account.
   ##
   ## This endpoint uses cursor-based pagination. Results are ordered by registration
@@ -36,8 +36,8 @@ proc getAccountsAccountIdRegistrarSandboxRegistrations*(client: CloudflareClient
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor
   q["per_page"] = $perPage
-  for v in direction: q["direction"] = $v
-  for v in sortBy: q["sort_by"] = $v
+  q["direction"] = $direction
+  q["sort_by"] = $sortBy
   let res = await client.httpGET(fmt"/accounts/{accountId}/registrar-sandbox/registrations", q)
   let body = await res.body
   case res.code
@@ -218,8 +218,8 @@ proc getAccountsAccountIdRegistrarRegistrations*(client: CloudflareClient,
                                                  accountId: types.RegistrarApiIdentifier,
                                                  cursor: string = default(string),
                                                  perPage: int64 = 20,
-                                                 direction: string = "asc",
-                                                 sortBy: string = "registry_created_at"): Future[types.RegistrarApiRegistrationResponseCollection] {.async.} =
+                                                 direction: RegistrarRegistrationDirectionOption = directionAsc,
+                                                 sortBy: RegistrarRegistrationSortByOption = sortByRegistryCreatedAt): Future[types.RegistrarApiRegistrationResponseCollection] {.async.} =
   ## Returns a paginated list of domain registrations owned by the account.
   ##
   ## This endpoint uses cursor-based pagination. Results are ordered by registration
@@ -231,8 +231,8 @@ proc getAccountsAccountIdRegistrarRegistrations*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor
   q["per_page"] = $perPage
-  for v in direction: q["direction"] = $v
-  for v in sortBy: q["sort_by"] = $v
+  q["direction"] = $direction
+  q["sort_by"] = $sortBy
   let res = await client.httpGET(fmt"/accounts/{accountId}/registrar/registrations", q)
   let body = await res.body
   case res.code

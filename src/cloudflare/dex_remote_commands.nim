@@ -30,8 +30,8 @@ proc getAccountsAccountIdDexCommands*(client: CloudflareClient,
                                       to: string = default(string),
                                       deviceId: string = default(string),
                                       userEmail: string = default(string),
-                                      commandType: set[DexRemoteCommandCommandTypeOption] = {},
-                                      status: set[DexRemoteCommandStatusOption] = {}): Future[JsonNode] {.async.} =
+                                      commandType: DexRemoteCommandCommandTypeOption,
+                                      status: DexRemoteCommandStatusOption): Future[JsonNode] {.async.} =
   ## Retrieves a paginated list of commands issued to devices under the specified
   ## account, optionally filtered by time range, device, or other parameters
 
@@ -42,8 +42,8 @@ proc getAccountsAccountIdDexCommands*(client: CloudflareClient,
   q["to"] = $to
   q["device_id"] = $deviceId
   q["user_email"] = $userEmail
-  for v in commandType: q["command_type"] = $v
-  for v in status: q["status"] = $v
+  q["command_type"] = $commandType
+  q["status"] = $status
   let res = await client.httpGET(fmt"/accounts/{accountId}/dex/commands", q)
   let body = await res.body
   case res.code

@@ -29,13 +29,13 @@ type
 
 proc postAccountsAccountIdWorkersAssetsUpload*(client: CloudflareClient,
                                                accountId: types.WorkersIdentifier,
-                                               base64: set[WorkerScriptBase64Option] = {}): Future[types.WorkersCompletedUploadAssetsResponse] {.async.} =
+                                               base64: WorkerScriptBase64Option): Future[types.WorkersCompletedUploadAssetsResponse] {.async.} =
   ## Upload assets ahead of creating a Worker version.  To learn more about the
   ## direct uploads of assets, see
   ## https://developers.cloudflare.com/workers/static-assets/direct-upload/.
 
   var q = initOrderedTable[string, string]()
-  for v in base64: q["base64"] = $v
+  q["base64"] = $base64
   let res = await client.httpPOST(fmt"/accounts/{accountId}/workers/assets/upload", q)
   let body = await res.body
   case res.code
@@ -63,7 +63,7 @@ proc getAccountsAccountIdWorkersScriptsSearch*(client: CloudflareClient,
                                                accountId: types.WorkersIdentifier,
                                                name: string = default(string),
                                                id: string = default(string),
-                                               orderBy: string = "name",
+                                               orderBy: WorkerScriptOrderByOption = orderByName,
                                                page: int64 = 1,
                                                perPage: int64 = 10): Future[JsonNode] {.async.} =
   ## Search for Workers in an account.
@@ -71,7 +71,7 @@ proc getAccountsAccountIdWorkersScriptsSearch*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["name"] = $name
   q["id"] = $id
-  for v in orderBy: q["order_by"] = $v
+  q["order_by"] = $orderBy
   q["page"] = $page
   q["per_page"] = $perPage
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts-search", q)
@@ -94,13 +94,13 @@ proc getAccountsAccountIdWorkersScriptsScriptName*(client: CloudflareClient,
 proc putAccountsAccountIdWorkersScriptsScriptName*(client: CloudflareClient,
                                                    accountId: types.WorkersIdentifier,
                                                    scriptName: types.WorkersScriptName,
-                                                   bindingsInherit: set[WorkerScriptBindingsInheritOption] = {}): Future[JsonNode] {.async.} =
+                                                   bindingsInherit: WorkerScriptBindingsInheritOption): Future[JsonNode] {.async.} =
   ## Upload a worker module. You can find more about the multipart metadata on our
   ## docs:https://developers.cloudflare.com/workers/configuration/multipart-upload-m
   ## etadata/.
 
   var q = initOrderedTable[string, string]()
-  for v in bindingsInherit: q["bindings_inherit"] = $v
+  q["bindings_inherit"] = $bindingsInherit
   let res = await client.httpPUT(fmt"/accounts/{accountId}/workers/scripts/{scriptName}", q)
   let body = await res.body
   case res.code

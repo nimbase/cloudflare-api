@@ -34,13 +34,13 @@ type
 proc getZonesZoneIdFirewallWafPackagesPackageIdRules*(client: CloudflareClient,
                                                       packageId: types.WafManagedRulesIdentifier,
                                                       zoneId: types.WafManagedRulesSchemasIdentifier,
-                                                      mode: set[WafRuleModeOption] = {},
+                                                      mode: WafRuleModeOption,
                                                       groupId: JsonNode = default(JsonNode),
                                                       page: float64 = default(float64),
                                                       perPage: float64 = default(float64),
-                                                      order: set[WafRuleOrderOption] = {},
-                                                      direction: set[WafRuleDirectionOption] = {},
-                                                      match: string = "all",
+                                                      order: WafRuleOrderOption,
+                                                      direction: WafRuleDirectionOption,
+                                                      match: WafRuleMatchOption = matchAll,
                                                       description: string = default(string),
                                                       priority: string = default(string)): Future[types.WafManagedRulesRuleResponseCollection] {.async.} =
   ## Fetches WAF rules in a WAF package.
@@ -50,13 +50,13 @@ proc getZonesZoneIdFirewallWafPackagesPackageIdRules*(client: CloudflareClient,
   ## waf/understanding-waf-managed-rules-web-application-firewall/).
 
   var q = initOrderedTable[string, string]()
-  for v in mode: q["mode"] = $v
+  q["mode"] = $mode
   q["group_id"] = $groupId
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
-  for v in match: q["match"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
+  q["match"] = $match
   q["description"] = $description
   q["priority"] = $priority
   let res = await client.httpGET(fmt"/zones/{zoneId}/firewall/waf/packages/{packageId}/rules", q)

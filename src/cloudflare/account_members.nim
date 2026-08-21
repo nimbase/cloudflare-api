@@ -27,19 +27,19 @@ type
 
 proc getAccountsAccountIdMembers*(client: CloudflareClient,
                                   accountId: types.IamAccountIdentifier,
-                                  order: set[AccountMemberOrderOption] = {},
-                                  status: set[AccountMemberStatusOption] = {},
+                                  order: AccountMemberOrderOption,
+                                  status: AccountMemberStatusOption,
                                   page: float64 = default(float64),
                                   perPage: float64 = default(float64),
-                                  direction: set[AccountMemberDirectionOption] = {}): Future[types.IamCollectionMemberResponseWithPolicies] {.async.} =
+                                  direction: AccountMemberDirectionOption): Future[types.IamCollectionMemberResponseWithPolicies] {.async.} =
   ## List all members of an account.
 
   var q = initOrderedTable[string, string]()
-  for v in order: q["order"] = $v
-  for v in status: q["status"] = $v
+  q["order"] = $order
+  q["status"] = $status
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/accounts/{accountId}/members", q)
   let body = await res.body
   case res.code

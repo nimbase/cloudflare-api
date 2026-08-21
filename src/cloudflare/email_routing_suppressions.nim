@@ -50,15 +50,15 @@ proc getAccountsAccountIdEmailRoutingSuppression*(client: CloudflareClient,
                                                   accountId: string,
                                                   page: int64 = 1,
                                                   perPage: int64 = 100,
-                                                  order: string = "created_at",
-                                                  direction: string = "desc"): Future[GetAccountsAccountIdEmailRoutingSuppressionResponse] {.async.} =
+                                                  order: EmailRoutingSuppressionOrderOption = orderCreatedAt,
+                                                  direction: EmailRoutingSuppressionDirectionOption = directionDesc): Future[GetAccountsAccountIdEmailRoutingSuppressionResponse] {.async.} =
   ## Lists email suppressions for the specified account.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/accounts/{accountId}/email/routing/suppression", q)
   let body = await res.body
   case res.code
@@ -109,15 +109,15 @@ proc deleteAccountsAccountIdEmailRoutingSuppressionSuppressionId*(client: Cloudf
 proc getZonesZoneIdEmailRoutingSuppression*(client: CloudflareClient,
                                             zoneId: string, page: int64 = 1,
                                             perPage: int64 = 100,
-                                            order: string = "created_at",
-                                            direction: string = "desc"): Future[GetZonesZoneIdEmailRoutingSuppressionResponse] {.async.} =
+                                            order: EmailRoutingSuppressionOrderOption = orderCreatedAt,
+                                            direction: EmailRoutingSuppressionDirectionOption = directionDesc): Future[GetZonesZoneIdEmailRoutingSuppressionResponse] {.async.} =
   ## Lists email suppressions for the specified zone.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/zones/{zoneId}/email/routing/suppression", q)
   let body = await res.body
   case res.code

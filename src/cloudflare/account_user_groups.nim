@@ -21,7 +21,7 @@ proc getAccountsAccountIdIamUserGroups*(client: CloudflareClient,
                                         fuzzyName: string = default(string),
                                         page: float64 = default(float64),
                                         perPage: float64 = default(float64),
-                                        direction: string = "asc"): Future[JsonNode] {.async.} =
+                                        direction: AccountUserGroupDirectionOption = directionAsc): Future[JsonNode] {.async.} =
   ## List all the user groups for an account.
 
   var q = initOrderedTable[string, string]()
@@ -30,7 +30,7 @@ proc getAccountsAccountIdIamUserGroups*(client: CloudflareClient,
   q["fuzzyName"] = $fuzzyName
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/accounts/{accountId}/iam/user_groups", q)
   let body = await res.body
   case res.code

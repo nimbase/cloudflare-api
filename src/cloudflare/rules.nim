@@ -78,9 +78,9 @@ proc getAccountsAccountIdCloudforceOneRules*(client: CloudflareClient,
                                              accountId: string,
                                              namespace: JsonNode = default(JsonNode),
                                              path: JsonNode = default(JsonNode),
-                                             recursive: set[RuleRecursiveOption] = {},
+                                             recursive: RuleRecursiveOption,
                                              search: string = default(string),
-                                             isPublic: set[RuleIsPublicOption] = {},
+                                             isPublic: RuleIsPublicOption,
                                              limit: float64 = default(float64),
                                              offset: float64 = default(float64)): Future[types.CloudforceOneRulesListResponse] {.async.} =
   ## List all rules for an account with optional filtering.
@@ -88,9 +88,9 @@ proc getAccountsAccountIdCloudforceOneRules*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["namespace"] = $namespace
   q["path"] = $path
-  for v in recursive: q["recursive"] = $v
+  q["recursive"] = $recursive
   q["search"] = $search
-  for v in isPublic: q["is_public"] = $v
+  q["is_public"] = $isPublic
   q["limit"] = $limit
   q["offset"] = $offset
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/rules", q)
@@ -197,28 +197,28 @@ proc getAccountsAccountIdCloudforceOneRulesSearch*(client: CloudflareClient,
                                                    accountId: string,
                                                    namespace: JsonNode = default(JsonNode),
                                                    path: JsonNode = default(JsonNode),
-                                                   recursive: set[RuleRecursiveOption] = {},
+                                                   recursive: RuleRecursiveOption,
                                                    search: string = default(string),
-                                                   isPublic: set[RuleIsPublicOption] = {},
+                                                   isPublic: RuleIsPublicOption,
                                                    limit: float64 = default(float64),
                                                    offset: float64 = default(float64),
                                                    query: string,
-                                                   mode: string = "hybrid",
-                                                   language: set[RuleLanguageOption] = {}): Future[types.CloudforceOneRulesSearchResponse] {.async.} =
+                                                   mode: RuleModeOption = modeHybrid,
+                                                   language: RuleLanguageOption): Future[types.CloudforceOneRulesSearchResponse] {.async.} =
   ## Search rules using hybrid, vector, keyword, or exact retrieval, backed by AI
   ## Search with a SQL fallback.
 
   var q = initOrderedTable[string, string]()
   q["namespace"] = $namespace
   q["path"] = $path
-  for v in recursive: q["recursive"] = $v
+  q["recursive"] = $recursive
   q["search"] = $search
-  for v in isPublic: q["is_public"] = $v
+  q["is_public"] = $isPublic
   q["limit"] = $limit
   q["offset"] = $offset
   q["query"] = $query
-  for v in mode: q["mode"] = $v
-  for v in language: q["language"] = $v
+  q["mode"] = $mode
+  q["language"] = $language
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/rules/search", q)
   let body = await res.body
   case res.code
@@ -274,13 +274,13 @@ proc postAccountsAccountIdCloudforceOneRulesStructured*(client: CloudflareClient
 proc postAccountsAccountIdCloudforceOneRulesStructuredApprovalsIdResubmit*(client: CloudflareClient,
                                                                            accountId: string,
                                                                            id: string,
-                                                                           module: string = "eml",
+                                                                           module: RuleModuleOption = moduleEml,
                                                                            body: PostAccountsAccountIdCloudforceOneRulesStructuredApprovalsIdResubmitRequest): Future[types.CloudforceOneResubmitApprovalResponse] {.async.} =
   ## Validate and compile a complete structured email rule, then create an immutable
   ## pending revision of its rejected approval.
 
   var q = initOrderedTable[string, string]()
-  for v in module: q["module"] = $v
+  q["module"] = $module
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/rules/structured/approvals/{id}/resubmit", q)
   let body = await res.body
   case res.code

@@ -36,13 +36,13 @@ proc getAccountsAccountIdWorkersScriptsScriptNameVersions*(client: CloudflareCli
 proc postAccountsAccountIdWorkersScriptsScriptNameVersions*(client: CloudflareClient,
                                                             accountId: types.WorkersIdentifier,
                                                             scriptName: types.WorkersScriptName2,
-                                                            bindingsInherit: set[WorkerVersionBindingsInheritOption] = {}): Future[types.WorkersVersionsUploadResponse] {.async.} =
+                                                            bindingsInherit: WorkerVersionBindingsInheritOption): Future[types.WorkersVersionsUploadResponse] {.async.} =
   ## Upload a Worker Version without deploying to Cloudflare's network. You can find
   ## more about the multipart metadata on our docs:https://developers.cloudflare.com
   ## /workers/configuration/multipart-upload-metadata/.
 
   var q = initOrderedTable[string, string]()
-  for v in bindingsInherit: q["bindings_inherit"] = $v
+  q["bindings_inherit"] = $bindingsInherit
   let res = await client.httpPOST(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/versions", q)
   let body = await res.body
   case res.code

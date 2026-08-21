@@ -86,7 +86,7 @@ proc getRadarAs112SummaryDnssec*(client: CloudflareClient,
                                  queryType: seq[string] = default(seq[string]),
                                  protocol: seq[string] = default(seq[string]),
                                  responseCode: seq[string] = default(seq[string]),
-                                 format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112SummaryDnssecResponse] {.async.} =
+                                 format: RadarAs112FormatOption): Future[GetRadarAs112SummaryDnssecResponse] {.async.} =
   ## Retrieves the distribution of DNS queries to AS112 by DNSSEC (DNS Security
   ## Extensions) support.
 
@@ -100,7 +100,7 @@ proc getRadarAs112SummaryDnssec*(client: CloudflareClient,
   q["queryType"] = $queryType
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/summary/dnssec", q)
   let body = await res.body
   case res.code
@@ -118,7 +118,7 @@ proc getRadarAs112SummaryEdns*(client: CloudflareClient, name: seq[string] = @[]
                                queryType: seq[string] = default(seq[string]),
                                protocol: seq[string] = default(seq[string]),
                                responseCode: seq[string] = default(seq[string]),
-                               format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112SummaryEdnsResponse] {.async.} =
+                               format: RadarAs112FormatOption): Future[GetRadarAs112SummaryEdnsResponse] {.async.} =
   ## Retrieves the distribution of DNS queries to AS112 by EDNS (Extension Mechanisms
   ## for DNS) support.
 
@@ -132,7 +132,7 @@ proc getRadarAs112SummaryEdns*(client: CloudflareClient, name: seq[string] = @[]
   q["queryType"] = $queryType
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/summary/edns", q)
   let body = await res.body
   case res.code
@@ -151,7 +151,7 @@ proc getRadarAs112SummaryIpVersion*(client: CloudflareClient,
                                     queryType: seq[string] = default(seq[string]),
                                     protocol: seq[string] = default(seq[string]),
                                     responseCode: seq[string] = default(seq[string]),
-                                    format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112SummaryIpVersionResponse] {.async.} =
+                                    format: RadarAs112FormatOption): Future[GetRadarAs112SummaryIpVersionResponse] {.async.} =
   ## Retrieves the distribution of DNS queries to AS112 by IP version.
 
   var q = initOrderedTable[string, string]()
@@ -164,7 +164,7 @@ proc getRadarAs112SummaryIpVersion*(client: CloudflareClient,
   q["queryType"] = $queryType
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/summary/ip_version", q)
   let body = await res.body
   case res.code
@@ -182,7 +182,7 @@ proc getRadarAs112SummaryProtocol*(client: CloudflareClient,
                                    continent: seq[string] = @[],
                                    queryType: seq[string] = default(seq[string]),
                                    responseCode: seq[string] = default(seq[string]),
-                                   format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112SummaryProtocolResponse] {.async.} =
+                                   format: RadarAs112FormatOption): Future[GetRadarAs112SummaryProtocolResponse] {.async.} =
   ## Retrieves the distribution of DNS queries to AS112 by protocol.
 
   var q = initOrderedTable[string, string]()
@@ -194,7 +194,7 @@ proc getRadarAs112SummaryProtocol*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["queryType"] = $queryType
   q["responseCode"] = $responseCode
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/summary/protocol", q)
   let body = await res.body
   case res.code
@@ -213,7 +213,7 @@ proc getRadarAs112SummaryQueryType*(client: CloudflareClient,
                                     protocol: seq[string] = default(seq[string]),
                                     responseCode: seq[string] = default(seq[string]),
                                     limitPerGroup: int64 = default(int64),
-                                    format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112SummaryQueryTypeResponse] {.async.} =
+                                    format: RadarAs112FormatOption): Future[GetRadarAs112SummaryQueryTypeResponse] {.async.} =
   ## Retrieves the distribution of DNS queries to AS112 by type.
 
   var q = initOrderedTable[string, string]()
@@ -226,7 +226,7 @@ proc getRadarAs112SummaryQueryType*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/summary/query_type", q)
   let body = await res.body
   case res.code
@@ -245,7 +245,7 @@ proc getRadarAs112SummaryResponseCodes*(client: CloudflareClient,
                                         queryType: seq[string] = default(seq[string]),
                                         protocol: seq[string] = default(seq[string]),
                                         limitPerGroup: int64 = default(int64),
-                                        format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112SummaryResponseCodesResponse] {.async.} =
+                                        format: RadarAs112FormatOption): Future[GetRadarAs112SummaryResponseCodesResponse] {.async.} =
   ## Retrieves the distribution of AS112 DNS requests classified by response code.
 
   var q = initOrderedTable[string, string]()
@@ -258,7 +258,7 @@ proc getRadarAs112SummaryResponseCodes*(client: CloudflareClient,
   q["queryType"] = $queryType
   q["protocol"] = $protocol
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/summary/response_codes", q)
   let body = await res.body
   case res.code
@@ -267,7 +267,8 @@ proc getRadarAs112SummaryResponseCodes*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc getRadarAs112SummaryDimension*(client: CloudflareClient, dimension: string,
+proc getRadarAs112SummaryDimension*(client: CloudflareClient,
+                                    dimension: Dimension,
                                     name: seq[string] = @[],
                                     dateRange: seq[string] = @[],
                                     dateStart: seq[string] = @[],
@@ -278,7 +279,7 @@ proc getRadarAs112SummaryDimension*(client: CloudflareClient, dimension: string,
                                     protocol: seq[string] = default(seq[string]),
                                     responseCode: seq[string] = default(seq[string]),
                                     limitPerGroup: int64 = default(int64),
-                                    format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112SummaryDimensionResponse] {.async.} =
+                                    format: RadarAs112FormatOption): Future[GetRadarAs112SummaryDimensionResponse] {.async.} =
   ## Retrieves the distribution of AS112 queries by the specified dimension.
 
   var q = initOrderedTable[string, string]()
@@ -292,7 +293,7 @@ proc getRadarAs112SummaryDimension*(client: CloudflareClient, dimension: string,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/as112/summary/{dimension}", q)
   let body = await res.body
   case res.code
@@ -302,7 +303,7 @@ proc getRadarAs112SummaryDimension*(client: CloudflareClient, dimension: string,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAs112Timeseries*(client: CloudflareClient,
-                              aggInterval: set[RadarAs112AggIntervalOption] = {},
+                              aggInterval: RadarAs112AggIntervalOption,
                               name: seq[string] = @[],
                               dateRange: seq[string] = @[],
                               dateStart: seq[string] = @[],
@@ -312,11 +313,11 @@ proc getRadarAs112Timeseries*(client: CloudflareClient,
                               queryType: seq[string] = default(seq[string]),
                               protocol: seq[string] = default(seq[string]),
                               responseCode: seq[string] = default(seq[string]),
-                              format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112TimeseriesResponse] {.async.} =
+                              format: RadarAs112FormatOption): Future[GetRadarAs112TimeseriesResponse] {.async.} =
   ## Retrieves the AS112 DNS queries over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -326,7 +327,7 @@ proc getRadarAs112Timeseries*(client: CloudflareClient,
   q["queryType"] = $queryType
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/timeseries", q)
   let body = await res.body
   case res.code
@@ -336,7 +337,7 @@ proc getRadarAs112Timeseries*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAs112TimeseriesGroupsDnssec*(client: CloudflareClient,
-                                          aggInterval: set[RadarAs112AggIntervalOption] = {},
+                                          aggInterval: RadarAs112AggIntervalOption,
                                           name: seq[string] = @[],
                                           dateRange: seq[string] = @[],
                                           dateStart: seq[string] = @[],
@@ -346,12 +347,12 @@ proc getRadarAs112TimeseriesGroupsDnssec*(client: CloudflareClient,
                                           queryType: seq[string] = default(seq[string]),
                                           protocol: seq[string] = default(seq[string]),
                                           responseCode: seq[string] = default(seq[string]),
-                                          format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112TimeseriesGroupsDnssecResponse] {.async.} =
+                                          format: RadarAs112FormatOption): Future[GetRadarAs112TimeseriesGroupsDnssecResponse] {.async.} =
   ## Retrieves the distribution of AS112 DNS queries by DNSSEC (DNS Security
   ## Extensions) support over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -361,7 +362,7 @@ proc getRadarAs112TimeseriesGroupsDnssec*(client: CloudflareClient,
   q["queryType"] = $queryType
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/timeseries_groups/dnssec", q)
   let body = await res.body
   case res.code
@@ -371,7 +372,7 @@ proc getRadarAs112TimeseriesGroupsDnssec*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAs112TimeseriesGroupsEdns*(client: CloudflareClient,
-                                        aggInterval: set[RadarAs112AggIntervalOption] = {},
+                                        aggInterval: RadarAs112AggIntervalOption,
                                         name: seq[string] = @[],
                                         dateRange: seq[string] = @[],
                                         dateStart: seq[string] = @[],
@@ -381,12 +382,12 @@ proc getRadarAs112TimeseriesGroupsEdns*(client: CloudflareClient,
                                         queryType: seq[string] = default(seq[string]),
                                         protocol: seq[string] = default(seq[string]),
                                         responseCode: seq[string] = default(seq[string]),
-                                        format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112TimeseriesGroupsEdnsResponse] {.async.} =
+                                        format: RadarAs112FormatOption): Future[GetRadarAs112TimeseriesGroupsEdnsResponse] {.async.} =
   ## Retrieves the distribution of AS112 DNS queries by EDNS (Extension Mechanisms
   ## for DNS) support over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -396,7 +397,7 @@ proc getRadarAs112TimeseriesGroupsEdns*(client: CloudflareClient,
   q["queryType"] = $queryType
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/timeseries_groups/edns", q)
   let body = await res.body
   case res.code
@@ -406,7 +407,7 @@ proc getRadarAs112TimeseriesGroupsEdns*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAs112TimeseriesGroupsIpVersion*(client: CloudflareClient,
-                                             aggInterval: set[RadarAs112AggIntervalOption] = {},
+                                             aggInterval: RadarAs112AggIntervalOption,
                                              name: seq[string] = @[],
                                              dateRange: seq[string] = @[],
                                              dateStart: seq[string] = @[],
@@ -416,11 +417,11 @@ proc getRadarAs112TimeseriesGroupsIpVersion*(client: CloudflareClient,
                                              queryType: seq[string] = default(seq[string]),
                                              protocol: seq[string] = default(seq[string]),
                                              responseCode: seq[string] = default(seq[string]),
-                                             format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112TimeseriesGroupsIpVersionResponse] {.async.} =
+                                             format: RadarAs112FormatOption): Future[GetRadarAs112TimeseriesGroupsIpVersionResponse] {.async.} =
   ## Retrieves the distribution of AS112 DNS queries by IP version over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -430,7 +431,7 @@ proc getRadarAs112TimeseriesGroupsIpVersion*(client: CloudflareClient,
   q["queryType"] = $queryType
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/timeseries_groups/ip_version", q)
   let body = await res.body
   case res.code
@@ -440,7 +441,7 @@ proc getRadarAs112TimeseriesGroupsIpVersion*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAs112TimeseriesGroupsProtocol*(client: CloudflareClient,
-                                            aggInterval: set[RadarAs112AggIntervalOption] = {},
+                                            aggInterval: RadarAs112AggIntervalOption,
                                             name: seq[string] = @[],
                                             dateRange: seq[string] = @[],
                                             dateStart: seq[string] = @[],
@@ -449,12 +450,12 @@ proc getRadarAs112TimeseriesGroupsProtocol*(client: CloudflareClient,
                                             continent: seq[string] = @[],
                                             queryType: seq[string] = default(seq[string]),
                                             responseCode: seq[string] = default(seq[string]),
-                                            format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112TimeseriesGroupsProtocolResponse] {.async.} =
+                                            format: RadarAs112FormatOption): Future[GetRadarAs112TimeseriesGroupsProtocolResponse] {.async.} =
   ## Retrieves the distribution of AS112 DNS requests classified by protocol over
   ## time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -463,7 +464,7 @@ proc getRadarAs112TimeseriesGroupsProtocol*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   q["queryType"] = $queryType
   q["responseCode"] = $responseCode
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/timeseries_groups/protocol", q)
   let body = await res.body
   case res.code
@@ -473,7 +474,7 @@ proc getRadarAs112TimeseriesGroupsProtocol*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAs112TimeseriesGroupsQueryType*(client: CloudflareClient,
-                                             aggInterval: set[RadarAs112AggIntervalOption] = {},
+                                             aggInterval: RadarAs112AggIntervalOption,
                                              name: seq[string] = @[],
                                              dateRange: seq[string] = @[],
                                              dateStart: seq[string] = @[],
@@ -483,11 +484,11 @@ proc getRadarAs112TimeseriesGroupsQueryType*(client: CloudflareClient,
                                              protocol: seq[string] = default(seq[string]),
                                              responseCode: seq[string] = default(seq[string]),
                                              limitPerGroup: int64 = default(int64),
-                                             format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112TimeseriesGroupsQueryTypeResponse] {.async.} =
+                                             format: RadarAs112FormatOption): Future[GetRadarAs112TimeseriesGroupsQueryTypeResponse] {.async.} =
   ## Retrieves the distribution of AS112 DNS queries by type over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -497,7 +498,7 @@ proc getRadarAs112TimeseriesGroupsQueryType*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/timeseries_groups/query_type", q)
   let body = await res.body
   case res.code
@@ -507,7 +508,7 @@ proc getRadarAs112TimeseriesGroupsQueryType*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAs112TimeseriesGroupsResponseCodes*(client: CloudflareClient,
-                                                 aggInterval: set[RadarAs112AggIntervalOption] = {},
+                                                 aggInterval: RadarAs112AggIntervalOption,
                                                  name: seq[string] = @[],
                                                  dateRange: seq[string] = @[],
                                                  dateStart: seq[string] = @[],
@@ -517,12 +518,12 @@ proc getRadarAs112TimeseriesGroupsResponseCodes*(client: CloudflareClient,
                                                  queryType: seq[string] = default(seq[string]),
                                                  protocol: seq[string] = default(seq[string]),
                                                  limitPerGroup: int64 = default(int64),
-                                                 format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112TimeseriesGroupsResponseCodesResponse] {.async.} =
+                                                 format: RadarAs112FormatOption): Future[GetRadarAs112TimeseriesGroupsResponseCodesResponse] {.async.} =
   ## Retrieves the distribution of AS112 DNS requests classified by response code
   ## over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -532,7 +533,7 @@ proc getRadarAs112TimeseriesGroupsResponseCodes*(client: CloudflareClient,
   q["queryType"] = $queryType
   q["protocol"] = $protocol
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/timeseries_groups/response_codes", q)
   let body = await res.body
   case res.code
@@ -542,8 +543,8 @@ proc getRadarAs112TimeseriesGroupsResponseCodes*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAs112TimeseriesGroupsDimension*(client: CloudflareClient,
-                                             dimension: string,
-                                             aggInterval: set[RadarAs112AggIntervalOption] = {},
+                                             dimension: Dimension,
+                                             aggInterval: RadarAs112AggIntervalOption,
                                              name: seq[string] = @[],
                                              dateRange: seq[string] = @[],
                                              dateStart: seq[string] = @[],
@@ -554,11 +555,11 @@ proc getRadarAs112TimeseriesGroupsDimension*(client: CloudflareClient,
                                              protocol: seq[string] = default(seq[string]),
                                              responseCode: seq[string] = default(seq[string]),
                                              limitPerGroup: int64 = default(int64),
-                                             format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112TimeseriesGroupsDimensionResponse] {.async.} =
+                                             format: RadarAs112FormatOption): Future[GetRadarAs112TimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of AS112 queries grouped by dimension over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -569,7 +570,7 @@ proc getRadarAs112TimeseriesGroupsDimension*(client: CloudflareClient,
   q["protocol"] = $protocol
   q["responseCode"] = $responseCode
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/as112/timeseries_groups/{dimension}", q)
   let body = await res.body
   case res.code
@@ -585,7 +586,7 @@ proc getRadarAs112TopLocations*(client: CloudflareClient, limit: int64 = 5,
                                 dateEnd: seq[string] = @[],
                                 location: seq[string] = @[],
                                 continent: seq[string] = @[],
-                                format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112TopLocationsResponse] {.async.} =
+                                format: RadarAs112FormatOption): Future[GetRadarAs112TopLocationsResponse] {.async.} =
   ## Retrieves the top locations by AS112 DNS queries.
 
   var q = initOrderedTable[string, string]()
@@ -596,7 +597,7 @@ proc getRadarAs112TopLocations*(client: CloudflareClient, limit: int64 = 5,
   for v in dateEnd: q["dateEnd"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/as112/top/locations", q)
   let body = await res.body
   case res.code
@@ -606,14 +607,14 @@ proc getRadarAs112TopLocations*(client: CloudflareClient, limit: int64 = 5,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAs112TopLocationsDnssecDnssec*(client: CloudflareClient,
-                                            dnssec: string, limit: int64 = 5,
+                                            dnssec: Dnssec, limit: int64 = 5,
                                             name: seq[string] = @[],
                                             dateRange: seq[string] = @[],
                                             dateStart: seq[string] = @[],
                                             dateEnd: seq[string] = @[],
                                             location: seq[string] = @[],
                                             continent: seq[string] = @[],
-                                            format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112TopLocationsDnssecDnssecResponse] {.async.} =
+                                            format: RadarAs112FormatOption): Future[GetRadarAs112TopLocationsDnssecDnssecResponse] {.async.} =
   ## Retrieves the top locations of DNS queries to AS112 with DNSSEC (DNS Security
   ## Extensions) support.
 
@@ -625,7 +626,7 @@ proc getRadarAs112TopLocationsDnssecDnssec*(client: CloudflareClient,
   for v in dateEnd: q["dateEnd"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/as112/top/locations/dnssec/{dnssec}", q)
   let body = await res.body
   case res.code
@@ -634,7 +635,7 @@ proc getRadarAs112TopLocationsDnssecDnssec*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc getRadarAs112TopLocationsEdnsEdns*(client: CloudflareClient, edns: string,
+proc getRadarAs112TopLocationsEdnsEdns*(client: CloudflareClient, edns: Edns,
                                         limit: int64 = 5,
                                         name: seq[string] = @[],
                                         dateRange: seq[string] = @[],
@@ -642,7 +643,7 @@ proc getRadarAs112TopLocationsEdnsEdns*(client: CloudflareClient, edns: string,
                                         dateEnd: seq[string] = @[],
                                         location: seq[string] = @[],
                                         continent: seq[string] = @[],
-                                        format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112TopLocationsEdnsEdnsResponse] {.async.} =
+                                        format: RadarAs112FormatOption): Future[GetRadarAs112TopLocationsEdnsEdnsResponse] {.async.} =
   ## Retrieves the top locations of DNS queries to AS112 with EDNS (Extension
   ## Mechanisms for DNS) support.
 
@@ -654,7 +655,7 @@ proc getRadarAs112TopLocationsEdnsEdns*(client: CloudflareClient, edns: string,
   for v in dateEnd: q["dateEnd"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/as112/top/locations/edns/{edns}", q)
   let body = await res.body
   case res.code
@@ -664,7 +665,7 @@ proc getRadarAs112TopLocationsEdnsEdns*(client: CloudflareClient, edns: string,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAs112TopLocationsIpVersionIpVersion*(client: CloudflareClient,
-                                                  ipVersion: string,
+                                                  ipVersion: IpVersion,
                                                   limit: int64 = 5,
                                                   name: seq[string] = @[],
                                                   dateRange: seq[string] = @[],
@@ -672,7 +673,7 @@ proc getRadarAs112TopLocationsIpVersionIpVersion*(client: CloudflareClient,
                                                   dateEnd: seq[string] = @[],
                                                   location: seq[string] = @[],
                                                   continent: seq[string] = @[],
-                                                  format: set[RadarAs112FormatOption] = {}): Future[GetRadarAs112TopLocationsIpVersionIpVersionResponse] {.async.} =
+                                                  format: RadarAs112FormatOption): Future[GetRadarAs112TopLocationsIpVersionIpVersionResponse] {.async.} =
   ## Retrieves the top locations of DNS queries to AS112 for an IP version.
 
   var q = initOrderedTable[string, string]()
@@ -683,7 +684,7 @@ proc getRadarAs112TopLocationsIpVersionIpVersion*(client: CloudflareClient,
   for v in dateEnd: q["dateEnd"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/as112/top/locations/ip_version/{ipVersion}", q)
   let body = await res.body
   case res.code

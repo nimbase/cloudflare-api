@@ -28,12 +28,12 @@ proc getRadarTrafficAnomalies*(client: CloudflareClient, limit: int64 = 5,
                                dateRange: string = default(string),
                                dateStart: string = default(string),
                                dateEnd: string = default(string),
-                               status: set[RadarTrafficAnomalieStatusOption] = {},
+                               status: RadarTrafficAnomalieStatusOption,
                                `type`: seq[string] = default(seq[string]),
                                asn: int64 = default(int64),
                                location: string = default(string),
                                origin: string = default(string),
-                               format: set[RadarTrafficAnomalieFormatOption] = {}): Future[GetRadarTrafficAnomaliesResponse] {.async.} =
+                               format: RadarTrafficAnomalieFormatOption): Future[GetRadarTrafficAnomaliesResponse] {.async.} =
   ## Retrieves the latest Internet traffic anomalies, which are signals that might
   ## indicate an outage. These alerts are automatically detected by Radar and
   ## manually verified by our team.
@@ -44,12 +44,12 @@ proc getRadarTrafficAnomalies*(client: CloudflareClient, limit: int64 = 5,
   q["dateRange"] = $dateRange
   q["dateStart"] = $dateStart
   q["dateEnd"] = $dateEnd
-  for v in status: q["status"] = $v
+  q["status"] = $status
   q["type"] = $`type`
   q["asn"] = $asn
   q["location"] = $location
   q["origin"] = $origin
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/traffic_anomalies", q)
   let body = await res.body
   case res.code
@@ -63,8 +63,8 @@ proc getRadarTrafficAnomaliesLocations*(client: CloudflareClient,
                                         dateRange: string = default(string),
                                         dateStart: string = default(string),
                                         dateEnd: string = default(string),
-                                        status: set[RadarTrafficAnomalieStatusOption] = {},
-                                        format: set[RadarTrafficAnomalieFormatOption] = {}): Future[GetRadarTrafficAnomaliesLocationsResponse] {.async.} =
+                                        status: RadarTrafficAnomalieStatusOption,
+                                        format: RadarTrafficAnomalieFormatOption): Future[GetRadarTrafficAnomaliesLocationsResponse] {.async.} =
   ## Retrieves the sum of Internet traffic anomalies, grouped by location. These
   ## anomalies are signals that might indicate an outage, automatically detected by
   ## Radar and manually verified by our team.
@@ -74,8 +74,8 @@ proc getRadarTrafficAnomaliesLocations*(client: CloudflareClient,
   q["dateRange"] = $dateRange
   q["dateStart"] = $dateStart
   q["dateEnd"] = $dateEnd
-  for v in status: q["status"] = $v
-  for v in format: q["format"] = $v
+  q["status"] = $status
+  q["format"] = $format
   let res = await client.httpGET("/radar/traffic_anomalies/locations", q)
   let body = await res.body
   case res.code

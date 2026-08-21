@@ -196,7 +196,7 @@ proc getAccountsAccountIdCloudforceOneEventsTags*(client: CloudflareClient,
                                                   search: string = default(string),
                                                   categoryUuid: string = default(string),
                                                   filters: seq[string] = @[],
-                                                  cache: set[TagCacheOption] = {}): Future[GetAccountsAccountIdCloudforceOneEventsTagsResponse] {.async.} =
+                                                  cache: TagCacheOption): Future[GetAccountsAccountIdCloudforceOneEventsTagsResponse] {.async.} =
   ## Returns all Source-of-Truth tags for an account. Supports legacy free-text
   ## `search` on tag value and `categoryUuid` exact match, plus a structured
   ## `filters` JSON array for filtering by metadata fields (originCountryISO,
@@ -209,7 +209,7 @@ proc getAccountsAccountIdCloudforceOneEventsTags*(client: CloudflareClient,
   q["search"] = $search
   q["categoryUuid"] = $categoryUuid
   for v in filters: q["filters"] = $v
-  for v in cache: q["cache"] = $v
+  q["cache"] = $cache
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/tags", q)
   let body = await res.body
   case res.code

@@ -47,11 +47,11 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdLogs*(client: CloudflareClien
                                                          search: string = default(string),
                                                          page: int64 = 1,
                                                          perPage: int64 = 20,
-                                                         orderBy: string = "created_at",
-                                                         orderByDirection: string = "desc",
+                                                         orderBy: AiGatewayLogOrderByOption = orderByCreatedAt,
+                                                         orderByDirection: AiGatewayLogOrderByDirectionOption = orderByDirectionDesc,
                                                          filters: seq[string] = @[],
                                                          metaInfo: bool = default(bool),
-                                                         direction: set[AiGatewayLogDirectionOption] = {},
+                                                         direction: AiGatewayLogDirectionOption,
                                                          startDate: string = default(string),
                                                          endDate: string = default(string),
                                                          minCost: float64 = default(float64),
@@ -79,11 +79,11 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdLogs*(client: CloudflareClien
   q["search"] = $search
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in orderBy: q["order_by"] = $v
-  for v in orderByDirection: q["order_by_direction"] = $v
+  q["order_by"] = $orderBy
+  q["order_by_direction"] = $orderByDirection
   for v in filters: q["filters"] = $v
   q["meta_info"] = $metaInfo
-  for v in direction: q["direction"] = $v
+  q["direction"] = $direction
   q["start_date"] = $startDate
   q["end_date"] = $endDate
   q["min_cost"] = $minCost
@@ -115,15 +115,15 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdLogs*(client: CloudflareClien
 proc deleteAccountsAccountIdAiGatewayGatewaysGatewayIdLogs*(client: CloudflareClient,
                                                             accountId: string,
                                                             gatewayId: string,
-                                                            orderBy: string = "created_at",
-                                                            orderByDirection: string = "asc",
+                                                            orderBy: AiGatewayLogOrderByOption = orderByCreatedAt,
+                                                            orderByDirection: AiGatewayLogOrderByDirectionOption = orderByDirectionAsc,
                                                             filters: seq[string] = @[],
                                                             limit: int64 = 10000): Future[DeleteAccountsAccountIdAiGatewayGatewaysGatewayIdLogsResponse] {.async.} =
   ## Deletes gateway log entries matching the specified criteria.
 
   var q = initOrderedTable[string, string]()
-  for v in orderBy: q["order_by"] = $v
-  for v in orderByDirection: q["order_by_direction"] = $v
+  q["order_by"] = $orderBy
+  q["order_by_direction"] = $orderByDirection
   for v in filters: q["filters"] = $v
   q["limit"] = $limit
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/logs", q)

@@ -25,15 +25,15 @@ proc getZonesZoneIdSpectrumApps*(client: CloudflareClient,
                                  zoneId: types.SpectrumConfigZoneIdentifier,
                                  page: float64 = default(float64),
                                  perPage: float64 = default(float64),
-                                 direction: string = "asc",
-                                 order: string = "dns"): Future[types.SpectrumConfigAppConfigCollection] {.async.} =
+                                 direction: SpectrumApplicationDirectionOption = directionAsc,
+                                 order: SpectrumApplicationOrderOption = orderDns): Future[types.SpectrumConfigAppConfigCollection] {.async.} =
   ## Retrieves a list of currently existing Spectrum applications inside a zone.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in direction: q["direction"] = $v
-  for v in order: q["order"] = $v
+  q["direction"] = $direction
+  q["order"] = $order
   let res = await client.httpGET(fmt"/zones/{zoneId}/spectrum/apps", q)
   let body = await res.body
   case res.code

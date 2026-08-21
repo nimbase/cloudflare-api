@@ -150,11 +150,11 @@ proc getAccountsAccountIdUrlscannerScanScanIdHar*(client: CloudflareClient,
 proc getAccountsAccountIdUrlscannerScanScanIdScreenshot*(client: CloudflareClient,
                                                          scanId: string,
                                                          accountId: string,
-                                                         resolution: string = "desktop"): Future[GetAccountsAccountIdUrlscannerScanScanIdScreenshotResponse] {.async.} =
+                                                         resolution: UrlScannerDeprecatedResolutionOption = resolutionDesktop): Future[GetAccountsAccountIdUrlscannerScanScanIdScreenshotResponse] {.async.} =
   ## Get scan's screenshot by resolution (desktop/mobile/tablet).
 
   var q = initOrderedTable[string, string]()
-  for v in resolution: q["resolution"] = $v
+  q["resolution"] = $resolution
   let res = await client.httpGET(fmt"/accounts/{accountId}/urlscanner/scan/{scanId}/screenshot", q)
   let body = await res.body
   case res.code

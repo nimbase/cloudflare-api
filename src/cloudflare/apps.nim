@@ -123,14 +123,14 @@ proc deleteAccountsAccountIdFlagshipAppsAppId*(client: CloudflareClient,
 proc getAccountsAccountIdRealtimeKitApps*(client: CloudflareClient,
                                           pageNo: int64 = 1, perPage: int64 = 20,
                                           search: string = default(string),
-                                          sortOrder: string = "DESC"): Future[GetAccountsAccountIdRealtimeKitAppsResponse] {.async.} =
+                                          sortOrder: AppSortOrderOption = sortOrderDESC): Future[GetAccountsAccountIdRealtimeKitAppsResponse] {.async.} =
   ## Fetch all apps for your account
 
   var q = initOrderedTable[string, string]()
   q["page_no"] = $pageNo
   q["per_page"] = $perPage
   q["search"] = $search
-  for v in sortOrder: q["sort_order"] = $v
+  q["sort_order"] = $sortOrder
   let res = await client.httpGET("/accounts/{account_id}/realtime/kit/apps", q)
   let body = await res.body
   case res.code

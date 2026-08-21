@@ -116,7 +116,7 @@ proc getAccountsAccountIdOneApplications*(client: CloudflareClient,
 
 proc getAccountsAccountIdOneApplicationsApplicationId*(client: CloudflareClient,
                                                        accountId: string,
-                                                       applicationId: string): Future[types.OneApplicationDetailResponse] {.async.} =
+                                                       applicationId: ApplicationId): Future[types.OneApplicationDetailResponse] {.async.} =
   ## Returns full application details including auth methods, use cases, and
   ## permissions.
 
@@ -130,7 +130,7 @@ proc getAccountsAccountIdOneApplicationsApplicationId*(client: CloudflareClient,
 
 proc getAccountsAccountIdOneApplicationsApplicationIdAuthMethods*(client: CloudflareClient,
                                                                   accountId: string,
-                                                                  applicationId: string,
+                                                                  applicationId: ApplicationId,
                                                                   page: int64 = default(int64),
                                                                   pageSize: int64 = default(int64)): Future[types.OnePaginatedAuthMethodDetailList] {.async.} =
   ## Returns available auth methods for the specified vendor, including credential
@@ -150,16 +150,16 @@ proc getAccountsAccountIdOneApplicationsApplicationIdAuthMethods*(client: Cloudf
 
 proc getAccountsAccountIdOneApplicationsApplicationIdSetupFlows*(client: CloudflareClient,
                                                                  accountId: string,
-                                                                 applicationId: string,
+                                                                 applicationId: ApplicationId,
                                                                  authMethod: string = default(string),
-                                                                 environment: set[ApplicationEnvironmentOption] = {},
+                                                                 environment: ApplicationEnvironmentOption,
                                                                  page: int64 = default(int64),
                                                                  pageSize: int64 = default(int64)): Future[types.OnePaginatedSetupFlowList] {.async.} =
   ## Returns all available setup flows for the application, one per auth method.
 
   var q = initOrderedTable[string, string]()
   q["auth_method"] = $authMethod
-  for v in environment: q["environment"] = $v
+  q["environment"] = $environment
   q["page"] = $page
   q["page_size"] = $pageSize
   let res = await client.httpGET(fmt"/accounts/{accountId}/one/applications/{applicationId}/setup-flows", q)

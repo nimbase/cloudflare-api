@@ -15,11 +15,11 @@ type
 
 proc getZonesZoneIdSslVerification*(client: CloudflareClient,
                                     zoneId: types.TlsCertificatesAndHostnamesIdentifier,
-                                    retry: set[SslVerificationRetryOption] = {}): Future[types.TlsCertificatesAndHostnamesSslVerificationResponseCollection] {.async.} =
+                                    retry: SslVerificationRetryOption): Future[types.TlsCertificatesAndHostnamesSslVerificationResponseCollection] {.async.} =
   ## Get SSL Verification Info for a Zone.
 
   var q = initOrderedTable[string, string]()
-  for v in retry: q["retry"] = $v
+  q["retry"] = $retry
   let res = await client.httpGET(fmt"/zones/{zoneId}/ssl/verification", q)
   let body = await res.body
   case res.code

@@ -223,8 +223,8 @@ proc getAccountsAccountIdAiSearchInstances*(client: CloudflareClient,
                                             perPage: int64 = 20,
                                             search: string = default(string),
                                             namespace: string = default(string),
-                                            orderBy: string = "created_at",
-                                            orderByDirection: string = "desc"): Future[GetAccountsAccountIdAiSearchInstancesResponse] {.async.} =
+                                            orderBy: AiSearchInstanceOrderByOption = orderByCreatedAt,
+                                            orderByDirection: AiSearchInstanceOrderByDirectionOption = orderByDirectionDesc): Future[GetAccountsAccountIdAiSearchInstancesResponse] {.async.} =
   ## List all AI Search instances in the account.
 
   var q = initOrderedTable[string, string]()
@@ -232,8 +232,8 @@ proc getAccountsAccountIdAiSearchInstances*(client: CloudflareClient,
   q["per_page"] = $perPage
   q["search"] = $search
   q["namespace"] = $namespace
-  for v in orderBy: q["order_by"] = $v
-  for v in orderByDirection: q["order_by_direction"] = $v
+  q["order_by"] = $orderBy
+  q["order_by_direction"] = $orderByDirection
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/instances", q)
   let body = await res.body
   case res.code
@@ -340,8 +340,8 @@ proc getAccountsAccountIdAiSearchNamespacesNameInstances*(client: CloudflareClie
                                                           perPage: int64 = 20,
                                                           search: string = default(string),
                                                           namespace: string = default(string),
-                                                          orderBy: string = "created_at",
-                                                          orderByDirection: string = "desc",
+                                                          orderBy: AiSearchInstanceOrderByOption = orderByCreatedAt,
+                                                          orderByDirection: AiSearchInstanceOrderByDirectionOption = orderByDirectionDesc,
                                                           name: string): Future[GetAccountsAccountIdAiSearchNamespacesNameInstancesResponse] {.async.} =
   ## List all AI Search instances in the account.
 
@@ -350,8 +350,8 @@ proc getAccountsAccountIdAiSearchNamespacesNameInstances*(client: CloudflareClie
   q["per_page"] = $perPage
   q["search"] = $search
   q["namespace"] = $namespace
-  for v in orderBy: q["order_by"] = $v
-  for v in orderByDirection: q["order_by_direction"] = $v
+  q["order_by"] = $orderBy
+  q["order_by_direction"] = $orderByDirection
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances", q)
   let body = await res.body
   case res.code

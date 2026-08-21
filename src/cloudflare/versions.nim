@@ -70,11 +70,11 @@ proc getAccountsAccountIdWorkersWorkersWorkerIdVersionsVersionId*(client: Cloudf
                                                                   accountId: types.WorkersIdentifier,
                                                                   workerId: string,
                                                                   versionId: string,
-                                                                  `include`: set[VersionIncludeOption] = {}): Future[JsonNode] {.async.} =
+                                                                  `include`: VersionIncludeOption): Future[JsonNode] {.async.} =
   ## Get details about a specific version.
 
   var q = initOrderedTable[string, string]()
-  for v in `include`: q["include"] = $v
+  q["include"] = $`include`
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/workers/{workerId}/versions/{versionId}", q)
   let body = await res.body
   case res.code

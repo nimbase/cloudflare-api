@@ -28,9 +28,9 @@ proc getZonesZoneIdFirewallWafPackages*(client: CloudflareClient,
                                         zoneId: types.FirewallIdentifier,
                                         page: float64 = default(float64),
                                         perPage: float64 = default(float64),
-                                        order: set[WafPackageOrderOption] = {},
-                                        direction: set[WafPackageDirectionOption] = {},
-                                        match: string = "all",
+                                        order: WafPackageOrderOption,
+                                        direction: WafPackageDirectionOption,
+                                        match: WafPackageMatchOption = matchAll,
                                         name: string = default(string)): Future[types.FirewallPackageResponseCollection] {.async.} =
   ## Fetches WAF packages for a zone.
   ##
@@ -41,9 +41,9 @@ proc getZonesZoneIdFirewallWafPackages*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
-  for v in match: q["match"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
+  q["match"] = $match
   q["name"] = $name
   let res = await client.httpGET(fmt"/zones/{zoneId}/firewall/waf/packages", q)
   let body = await res.body

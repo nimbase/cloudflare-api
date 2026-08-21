@@ -18,7 +18,7 @@ type
 
 proc getZonesZoneIdRateLimitAnalytics*(client: CloudflareClient, zoneId: string,
                                        since: string, until: string,
-                                       timeDelta: set[RateLimitingAnalyticTimeDeltaOption] = {}): Future[types.RlanalyticsRateLimitAnalytics] {.async.} =
+                                       timeDelta: RateLimitingAnalyticTimeDeltaOption): Future[types.RlanalyticsRateLimitAnalytics] {.async.} =
   ## Returns rate limiting analytics for a zone over the specified time period.
   ## The time period divides into time segments of a given length. Each segment
   ## contains total action counts and action counts broken down by colo.
@@ -26,7 +26,7 @@ proc getZonesZoneIdRateLimitAnalytics*(client: CloudflareClient, zoneId: string,
   var q = initOrderedTable[string, string]()
   q["since"] = $since
   q["until"] = $until
-  for v in timeDelta: q["time_delta"] = $v
+  q["time_delta"] = $timeDelta
   let res = await client.httpGET(fmt"/zones/{zoneId}/rate_limit_analytics", q)
   let body = await res.body
   case res.code

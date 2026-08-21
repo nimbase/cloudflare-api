@@ -23,15 +23,15 @@ proc getAccountsAccountIdCustomCsrs*(client: CloudflareClient,
                                      accountId: types.TlsCertificatesAndHostnamesIdentifier,
                                      page: float64 = default(float64),
                                      perPage: float64 = default(float64),
-                                     order: string = "created_at",
-                                     direction: string = "asc"): Future[types.TlsCertificatesAndHostnamesCustomCsrResponseCollection2] {.async.} =
+                                     order: CustomCsrsForAnAccountOrderOption = orderCreatedAt,
+                                     direction: CustomCsrsForAnAccountDirectionOption = directionAsc): Future[types.TlsCertificatesAndHostnamesCustomCsrResponseCollection2] {.async.} =
   ## List all custom Certificate Signing Requests (CSRs) for an account.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/accounts/{accountId}/custom_csrs", q)
   let body = await res.body
   case res.code

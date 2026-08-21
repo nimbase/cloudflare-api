@@ -36,27 +36,27 @@ type
 proc getAccountsAccountIdFirewallAccessRulesRules*(client: CloudflareClient,
                                                    accountId: types.FirewallAccountIdentifier,
                                                    mode: types.FirewallSchemasMode = default(types.FirewallSchemasMode),
-                                                   configurationTarget: set[IpAccessRulesForAnAccountConfigurationTargetOption] = {},
+                                                   configurationTarget: IpAccessRulesForAnAccountConfigurationTargetOption,
                                                    configurationValue: string = default(string),
                                                    notes: string = default(string),
-                                                   match: string = "all",
+                                                   match: IpAccessRulesForAnAccountMatchOption = matchAll,
                                                    page: float64 = default(float64),
                                                    perPage: float64 = default(float64),
-                                                   order: set[IpAccessRulesForAnAccountOrderOption] = {},
-                                                   direction: set[IpAccessRulesForAnAccountDirectionOption] = {}): Future[types.FirewallResponseCollection] {.async.} =
+                                                   order: IpAccessRulesForAnAccountOrderOption,
+                                                   direction: IpAccessRulesForAnAccountDirectionOption): Future[types.FirewallResponseCollection] {.async.} =
   ## Fetches IP Access rules of an account. These rules apply to all the zones in the
   ## account. You can filter the results using several optional parameters.
 
   var q = initOrderedTable[string, string]()
   q["mode"] = $mode
-  for v in configurationTarget: q["configuration.target"] = $v
+  q["configuration.target"] = $configurationTarget
   q["configuration.value"] = $configurationValue
   q["notes"] = $notes
-  for v in match: q["match"] = $v
+  q["match"] = $match
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/accounts/{accountId}/firewall/access_rules/rules", q)
   let body = await res.body
   case res.code

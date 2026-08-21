@@ -41,29 +41,28 @@ type
 
 
 proc getZones*(client: CloudflareClient, name: string = default(string),
-               status: set[ZoneStatusOption] = {},
+               status: ZoneStatusOption,
                `type`: seq[string] = default(seq[string]),
                accountId: string = default(string),
                accountName: string = default(string),
                page: float64 = default(float64),
-               perPage: float64 = default(float64),
-               order: set[ZoneOrderOption] = {},
-               direction: set[ZoneDirectionOption] = {}, match: string = "all"): Future[JsonNode] {.async.} =
+               perPage: float64 = default(float64), order: ZoneOrderOption,
+               direction: ZoneDirectionOption, match: ZoneMatchOption = matchAll): Future[JsonNode] {.async.} =
   ## Lists, searches, sorts, and filters your zones. Listing zones across more than
   ## 500 accounts
   ## is currently not allowed.
 
   var q = initOrderedTable[string, string]()
   q["name"] = $name
-  for v in status: q["status"] = $v
+  q["status"] = $status
   q["type"] = $`type`
   q["account.id"] = $accountId
   q["account.name"] = $accountName
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
-  for v in match: q["match"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
+  q["match"] = $match
   let res = await client.httpGET("/zones", q)
   let body = await res.body
   case res.code

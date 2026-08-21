@@ -44,8 +44,8 @@ proc getZonesZoneIdCustomCertificates*(client: CloudflareClient,
                                        zoneId: types.TlsCertificatesAndHostnamesIdentifier,
                                        page: float64 = default(float64),
                                        perPage: float64 = default(float64),
-                                       match: string = "all",
-                                       status: set[CustomSslForAZoneStatusOption] = {}): Future[types.TlsCertificatesAndHostnamesCertificateResponseCollection] {.async.} =
+                                       match: CustomSslForAZoneMatchOption = matchAll,
+                                       status: CustomSslForAZoneStatusOption): Future[types.TlsCertificatesAndHostnamesCertificateResponseCollection] {.async.} =
   ## List, search, and filter all of your custom SSL certificates. The higher
   ## priority will break ties across overlapping 'legacy_custom' certificates, but
   ## 'legacy_custom' certificates will always supercede 'sni_custom' certificates.
@@ -53,8 +53,8 @@ proc getZonesZoneIdCustomCertificates*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in match: q["match"] = $v
-  for v in status: q["status"] = $v
+  q["match"] = $match
+  q["status"] = $status
   let res = await client.httpGET(fmt"/zones/{zoneId}/custom_certificates", q)
   let body = await res.body
   case res.code

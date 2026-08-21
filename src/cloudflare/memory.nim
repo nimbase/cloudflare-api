@@ -135,14 +135,14 @@ proc getAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameMe
                                                                                         perPage: int64 = default(int64),
                                                                                         cursor: string = default(string),
                                                                                         sessionId: string = default(string),
-                                                                                        `type`: set[MemoryTypeOption] = {}): Future[GetAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameMemoriesResponse] {.async.} =
+                                                                                        `type`: MemoryTypeOption): Future[GetAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameMemoriesResponse] {.async.} =
   ## List memories stored in a profile.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
   q["cursor"] = $cursor
   q["session_id"] = $sessionId
-  for v in `type`: q["type"] = $v
+  q["type"] = $`type`
   let res = await client.httpGET(fmt"/accounts/{account_id}/agent-memory/namespaces/{namespaceName}/profiles/{profileName}/memories", q)
   let body = await res.body
   case res.code

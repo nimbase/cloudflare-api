@@ -92,14 +92,14 @@ proc getZonesZoneIdCustomHostnames*(client: CloudflareClient,
                                     id: string = default(string),
                                     page: float64 = default(float64),
                                     perPage: float64 = default(float64),
-                                    order: string = "ssl",
-                                    direction: set[CustomHostnameForAZoneDirectionOption] = {},
-                                    sslStatus: set[CustomHostnameForAZoneSslStatusOption] = {},
-                                    hostnameStatus: set[CustomHostnameForAZoneHostnameStatusOption] = {},
-                                    certificateAuthority: set[CustomHostnameForAZoneCertificateAuthorityOption] = {},
+                                    order: CustomHostnameForAZoneOrderOption = orderSsl,
+                                    direction: CustomHostnameForAZoneDirectionOption,
+                                    sslStatus: CustomHostnameForAZoneSslStatusOption,
+                                    hostnameStatus: CustomHostnameForAZoneHostnameStatusOption,
+                                    certificateAuthority: CustomHostnameForAZoneCertificateAuthorityOption,
                                     wildcard: bool = default(bool),
                                     customOriginServer: string = default(string),
-                                    ssl: set[CustomHostnameForAZoneSslOption] = {}): Future[types.TlsCertificatesAndHostnamesCustomHostnameResponseCollection] {.async.} =
+                                    ssl: CustomHostnameForAZoneSslOption): Future[types.TlsCertificatesAndHostnamesCustomHostnameResponseCollection] {.async.} =
   ## List, search, sort, and filter all of your custom hostnames.
 
   var q = initOrderedTable[string, string]()
@@ -110,14 +110,14 @@ proc getZonesZoneIdCustomHostnames*(client: CloudflareClient,
   q["id"] = $id
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
-  for v in sslStatus: q["ssl_status"] = $v
-  for v in hostnameStatus: q["hostname_status"] = $v
-  for v in certificateAuthority: q["certificate_authority"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
+  q["ssl_status"] = $sslStatus
+  q["hostname_status"] = $hostnameStatus
+  q["certificate_authority"] = $certificateAuthority
   q["wildcard"] = $wildcard
   q["custom_origin_server"] = $customOriginServer
-  for v in ssl: q["ssl"] = $v
+  q["ssl"] = $ssl
   let res = await client.httpGET(fmt"/zones/{zoneId}/custom_hostnames", q)
   let body = await res.body
   case res.code

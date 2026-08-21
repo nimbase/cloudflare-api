@@ -38,14 +38,14 @@ proc getAccountsAccountIdAiGatewayEvaluationTypes*(client: CloudflareClient,
                                                    page: int64 = 1,
                                                    perPage: int64 = 20,
                                                    orderBy: string = "mandatory",
-                                                   orderByDirection: string = "desc"): Future[GetAccountsAccountIdAiGatewayEvaluationTypesResponse] {.async.} =
+                                                   orderByDirection: AiGatewayEvaluationOrderByDirectionOption = orderByDirectionDesc): Future[GetAccountsAccountIdAiGatewayEvaluationTypesResponse] {.async.} =
   ## Lists all available evaluator types for scoring AI gateway responses.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
   q["order_by"] = $orderBy
-  for v in orderByDirection: q["order_by_direction"] = $v
+  q["order_by_direction"] = $orderByDirection
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/evaluation-types", q)
   let body = await res.body
   case res.code

@@ -55,12 +55,12 @@ proc postAccountsAccountIdWorkersObservabilitySharedQuery*(client: CloudflareCli
 
 proc getAccountsAccountIdWorkersObservabilitySharedQueryId*(client: CloudflareClient,
                                                             id: string,
-                                                            view: set[SharedViewOption] = {}): Future[GetAccountsAccountIdWorkersObservabilitySharedQueryIdResponse] {.async.} =
+                                                            view: SharedViewOption): Future[GetAccountsAccountIdWorkersObservabilitySharedQueryIdResponse] {.async.} =
   ## Shared queries store the results of a previously run query, allowing you to
   ## share the results with others.
 
   var q = initOrderedTable[string, string]()
-  for v in view: q["view"] = $v
+  q["view"] = $view
   let res = await client.httpGET(fmt"/accounts/{account_id}/workers/observability/shared/query/{id}", q)
   let body = await res.body
   case res.code

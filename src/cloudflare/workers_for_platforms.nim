@@ -153,13 +153,13 @@ proc putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                       accountId: types.WorkersIdentifier,
                                                                                       dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                       scriptName: types.WorkersScriptName,
-                                                                                      bindingsInherit: set[WorkersForPlatformBindingsInheritOption] = {}): Future[JsonNode] {.async.} =
+                                                                                      bindingsInherit: WorkersForPlatformBindingsInheritOption): Future[JsonNode] {.async.} =
   ## Upload a worker module to a Workers for Platforms namespace. You can find more
   ## about the multipart metadata on our docs:https://developers.cloudflare.com/work
   ## ers/configuration/multipart-upload-metadata/.
 
   var q = initOrderedTable[string, string]()
-  for v in bindingsInherit: q["bindings_inherit"] = $v
+  q["bindings_inherit"] = $bindingsInherit
   let res = await client.httpPUT(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}", q)
   let body = await res.body
   case res.code

@@ -19,13 +19,13 @@ type
 proc getAccountsAccountIdPagesProjectsProjectNameDeployments*(client: CloudflareClient,
                                                               projectName: types.PagesProjectName,
                                                               accountId: types.PagesIdentifier,
-                                                              env: set[PagesDeploymentEnvOption] = {},
+                                                              env: PagesDeploymentEnvOption,
                                                               page: int64 = default(int64),
                                                               perPage: int64 = default(int64)): Future[JsonNode] {.async.} =
   ## Fetch a list of project deployments.
 
   var q = initOrderedTable[string, string]()
-  for v in env: q["env"] = $v
+  q["env"] = $env
   q["page"] = $page
   q["per_page"] = $perPage
   let res = await client.httpGET(fmt"/accounts/{accountId}/pages/projects/{projectName}/deployments", q)

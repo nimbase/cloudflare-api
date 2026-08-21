@@ -21,7 +21,7 @@ proc getRadarSearchGlobal*(client: CloudflareClient, limit: int64 = 5,
                            query: string,
                            `include`: seq[string] = default(seq[string]),
                            exclude: seq[string] = default(seq[string]),
-                           format: set[RadarSearchFormatOption] = {}): Future[GetRadarSearchGlobalResponse] {.async.} =
+                           format: RadarSearchFormatOption): Future[GetRadarSearchGlobalResponse] {.async.} =
   ## Searches for locations, autonomous systems, reports, bots, certificate logs,
   ## certificate authorities, industries and verticals. Location names can be
   ## localized by sending an `Accept-Language` HTTP header with a BCP 47 language tag
@@ -34,7 +34,7 @@ proc getRadarSearchGlobal*(client: CloudflareClient, limit: int64 = 5,
   q["query"] = $query
   q["include"] = $`include`
   q["exclude"] = $exclude
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/search/global", q)
   let body = await res.body
   case res.code

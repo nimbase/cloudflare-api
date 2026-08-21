@@ -71,7 +71,7 @@ proc getRadarEmailRoutingSummaryArc*(client: CloudflareClient,
                                      spf: seq[string] = default(seq[string]),
                                      ipVersion: seq[string] = default(seq[string]),
                                      encrypted: seq[string] = default(seq[string]),
-                                     format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingSummaryArcResponse] {.async.} =
+                                     format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummaryArcResponse] {.async.} =
   ## Retrieves the distribution of emails by ARC (Authenticated Received Chain)
   ## validation.
 
@@ -85,7 +85,7 @@ proc getRadarEmailRoutingSummaryArc*(client: CloudflareClient,
   q["spf"] = $spf
   q["ipVersion"] = $ipVersion
   q["encrypted"] = $encrypted
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/routing/summary/arc", q)
   let body = await res.body
   case res.code
@@ -104,7 +104,7 @@ proc getRadarEmailRoutingSummaryDkim*(client: CloudflareClient,
                                       spf: seq[string] = default(seq[string]),
                                       ipVersion: seq[string] = default(seq[string]),
                                       encrypted: seq[string] = default(seq[string]),
-                                      format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingSummaryDkimResponse] {.async.} =
+                                      format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummaryDkimResponse] {.async.} =
   ## Retrieves the distribution of emails by DKIM (DomainKeys Identified Mail)
   ## validation.
 
@@ -118,7 +118,7 @@ proc getRadarEmailRoutingSummaryDkim*(client: CloudflareClient,
   q["spf"] = $spf
   q["ipVersion"] = $ipVersion
   q["encrypted"] = $encrypted
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/routing/summary/dkim", q)
   let body = await res.body
   case res.code
@@ -137,7 +137,7 @@ proc getRadarEmailRoutingSummaryDmarc*(client: CloudflareClient,
                                        spf: seq[string] = default(seq[string]),
                                        ipVersion: seq[string] = default(seq[string]),
                                        encrypted: seq[string] = default(seq[string]),
-                                       format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingSummaryDmarcResponse] {.async.} =
+                                       format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummaryDmarcResponse] {.async.} =
   ## Retrieves the distribution of emails by DMARC (Domain-based Message
   ## Authentication, Reporting and Conformance) validation.
 
@@ -151,7 +151,7 @@ proc getRadarEmailRoutingSummaryDmarc*(client: CloudflareClient,
   q["spf"] = $spf
   q["ipVersion"] = $ipVersion
   q["encrypted"] = $encrypted
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/routing/summary/dmarc", q)
   let body = await res.body
   case res.code
@@ -170,7 +170,7 @@ proc getRadarEmailRoutingSummaryEncrypted*(client: CloudflareClient,
                                            dmarc: seq[string] = default(seq[string]),
                                            spf: seq[string] = default(seq[string]),
                                            ipVersion: seq[string] = default(seq[string]),
-                                           format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingSummaryEncryptedResponse] {.async.} =
+                                           format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummaryEncryptedResponse] {.async.} =
   ## Retrieves the distribution of emails by encryption status (encrypted vs.
   ## not-encrypted).
 
@@ -184,7 +184,7 @@ proc getRadarEmailRoutingSummaryEncrypted*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["ipVersion"] = $ipVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/routing/summary/encrypted", q)
   let body = await res.body
   case res.code
@@ -203,7 +203,7 @@ proc getRadarEmailRoutingSummaryIpVersion*(client: CloudflareClient,
                                            dmarc: seq[string] = default(seq[string]),
                                            spf: seq[string] = default(seq[string]),
                                            encrypted: seq[string] = default(seq[string]),
-                                           format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingSummaryIpVersionResponse] {.async.} =
+                                           format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummaryIpVersionResponse] {.async.} =
   ## Retrieves the distribution of emails by IP version.
 
   var q = initOrderedTable[string, string]()
@@ -216,7 +216,7 @@ proc getRadarEmailRoutingSummaryIpVersion*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["encrypted"] = $encrypted
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/routing/summary/ip_version", q)
   let body = await res.body
   case res.code
@@ -235,7 +235,7 @@ proc getRadarEmailRoutingSummarySpf*(client: CloudflareClient,
                                      dmarc: seq[string] = default(seq[string]),
                                      ipVersion: seq[string] = default(seq[string]),
                                      encrypted: seq[string] = default(seq[string]),
-                                     format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingSummarySpfResponse] {.async.} =
+                                     format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummarySpfResponse] {.async.} =
   ## Retrieves the distribution of emails by SPF (Sender Policy Framework)
   ## validation.
 
@@ -249,7 +249,7 @@ proc getRadarEmailRoutingSummarySpf*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["ipVersion"] = $ipVersion
   q["encrypted"] = $encrypted
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/routing/summary/spf", q)
   let body = await res.body
   case res.code
@@ -259,7 +259,7 @@ proc getRadarEmailRoutingSummarySpf*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingSummaryDimension*(client: CloudflareClient,
-                                           dimension: string,
+                                           dimension: Dimension,
                                            name: seq[string] = @[],
                                            dateRange: seq[string] = @[],
                                            dateStart: seq[string] = @[],
@@ -271,7 +271,7 @@ proc getRadarEmailRoutingSummaryDimension*(client: CloudflareClient,
                                            ipVersion: seq[string] = default(seq[string]),
                                            encrypted: seq[string] = default(seq[string]),
                                            limitPerGroup: int64 = default(int64),
-                                           format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingSummaryDimensionResponse] {.async.} =
+                                           format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummaryDimensionResponse] {.async.} =
   ## Retrieves the distribution of email routing metrics by the specified dimension.
 
   var q = initOrderedTable[string, string]()
@@ -286,7 +286,7 @@ proc getRadarEmailRoutingSummaryDimension*(client: CloudflareClient,
   q["ipVersion"] = $ipVersion
   q["encrypted"] = $encrypted
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/email/routing/summary/{dimension}", q)
   let body = await res.body
   case res.code
@@ -296,7 +296,7 @@ proc getRadarEmailRoutingSummaryDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingTimeseriesGroupsArc*(client: CloudflareClient,
-                                              aggInterval: set[RadarEmailRoutingAggIntervalOption] = {},
+                                              aggInterval: RadarEmailRoutingAggIntervalOption,
                                               name: seq[string] = @[],
                                               dateRange: seq[string] = @[],
                                               dateStart: seq[string] = @[],
@@ -306,12 +306,12 @@ proc getRadarEmailRoutingTimeseriesGroupsArc*(client: CloudflareClient,
                                               spf: seq[string] = default(seq[string]),
                                               ipVersion: seq[string] = default(seq[string]),
                                               encrypted: seq[string] = default(seq[string]),
-                                              format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingTimeseriesGroupsArcResponse] {.async.} =
+                                              format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsArcResponse] {.async.} =
   ## Retrieves the distribution of emails by ARC (Authenticated Received Chain)
   ## validation over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -321,7 +321,7 @@ proc getRadarEmailRoutingTimeseriesGroupsArc*(client: CloudflareClient,
   q["spf"] = $spf
   q["ipVersion"] = $ipVersion
   q["encrypted"] = $encrypted
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/routing/timeseries_groups/arc", q)
   let body = await res.body
   case res.code
@@ -331,7 +331,7 @@ proc getRadarEmailRoutingTimeseriesGroupsArc*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingTimeseriesGroupsDkim*(client: CloudflareClient,
-                                               aggInterval: set[RadarEmailRoutingAggIntervalOption] = {},
+                                               aggInterval: RadarEmailRoutingAggIntervalOption,
                                                name: seq[string] = @[],
                                                dateRange: seq[string] = @[],
                                                dateStart: seq[string] = @[],
@@ -341,12 +341,12 @@ proc getRadarEmailRoutingTimeseriesGroupsDkim*(client: CloudflareClient,
                                                spf: seq[string] = default(seq[string]),
                                                ipVersion: seq[string] = default(seq[string]),
                                                encrypted: seq[string] = default(seq[string]),
-                                               format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingTimeseriesGroupsDkimResponse] {.async.} =
+                                               format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsDkimResponse] {.async.} =
   ## Retrieves the distribution of emails by DKIM (DomainKeys Identified Mail)
   ## validation over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -356,7 +356,7 @@ proc getRadarEmailRoutingTimeseriesGroupsDkim*(client: CloudflareClient,
   q["spf"] = $spf
   q["ipVersion"] = $ipVersion
   q["encrypted"] = $encrypted
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/routing/timeseries_groups/dkim", q)
   let body = await res.body
   case res.code
@@ -366,7 +366,7 @@ proc getRadarEmailRoutingTimeseriesGroupsDkim*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingTimeseriesGroupsDmarc*(client: CloudflareClient,
-                                                aggInterval: set[RadarEmailRoutingAggIntervalOption] = {},
+                                                aggInterval: RadarEmailRoutingAggIntervalOption,
                                                 name: seq[string] = @[],
                                                 dateRange: seq[string] = @[],
                                                 dateStart: seq[string] = @[],
@@ -376,12 +376,12 @@ proc getRadarEmailRoutingTimeseriesGroupsDmarc*(client: CloudflareClient,
                                                 spf: seq[string] = default(seq[string]),
                                                 ipVersion: seq[string] = default(seq[string]),
                                                 encrypted: seq[string] = default(seq[string]),
-                                                format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingTimeseriesGroupsDmarcResponse] {.async.} =
+                                                format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsDmarcResponse] {.async.} =
   ## Retrieves the distribution of emails by DMARC (Domain-based Message
   ## Authentication, Reporting and Conformance) validation over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -391,7 +391,7 @@ proc getRadarEmailRoutingTimeseriesGroupsDmarc*(client: CloudflareClient,
   q["spf"] = $spf
   q["ipVersion"] = $ipVersion
   q["encrypted"] = $encrypted
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/routing/timeseries_groups/dmarc", q)
   let body = await res.body
   case res.code
@@ -401,7 +401,7 @@ proc getRadarEmailRoutingTimeseriesGroupsDmarc*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingTimeseriesGroupsEncrypted*(client: CloudflareClient,
-                                                    aggInterval: set[RadarEmailRoutingAggIntervalOption] = {},
+                                                    aggInterval: RadarEmailRoutingAggIntervalOption,
                                                     name: seq[string] = @[],
                                                     dateRange: seq[string] = @[],
                                                     dateStart: seq[string] = @[],
@@ -411,12 +411,12 @@ proc getRadarEmailRoutingTimeseriesGroupsEncrypted*(client: CloudflareClient,
                                                     dmarc: seq[string] = default(seq[string]),
                                                     spf: seq[string] = default(seq[string]),
                                                     ipVersion: seq[string] = default(seq[string]),
-                                                    format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingTimeseriesGroupsEncryptedResponse] {.async.} =
+                                                    format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsEncryptedResponse] {.async.} =
   ## Retrieves the distribution of emails by encryption status (encrypted vs.
   ## not-encrypted) over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -426,7 +426,7 @@ proc getRadarEmailRoutingTimeseriesGroupsEncrypted*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["ipVersion"] = $ipVersion
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/routing/timeseries_groups/encrypted", q)
   let body = await res.body
   case res.code
@@ -436,7 +436,7 @@ proc getRadarEmailRoutingTimeseriesGroupsEncrypted*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingTimeseriesGroupsIpVersion*(client: CloudflareClient,
-                                                    aggInterval: set[RadarEmailRoutingAggIntervalOption] = {},
+                                                    aggInterval: RadarEmailRoutingAggIntervalOption,
                                                     name: seq[string] = @[],
                                                     dateRange: seq[string] = @[],
                                                     dateStart: seq[string] = @[],
@@ -446,11 +446,11 @@ proc getRadarEmailRoutingTimeseriesGroupsIpVersion*(client: CloudflareClient,
                                                     dmarc: seq[string] = default(seq[string]),
                                                     spf: seq[string] = default(seq[string]),
                                                     encrypted: seq[string] = default(seq[string]),
-                                                    format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingTimeseriesGroupsIpVersionResponse] {.async.} =
+                                                    format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsIpVersionResponse] {.async.} =
   ## Retrieves the distribution of emails by IP version over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -460,7 +460,7 @@ proc getRadarEmailRoutingTimeseriesGroupsIpVersion*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["spf"] = $spf
   q["encrypted"] = $encrypted
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/routing/timeseries_groups/ip_version", q)
   let body = await res.body
   case res.code
@@ -470,7 +470,7 @@ proc getRadarEmailRoutingTimeseriesGroupsIpVersion*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingTimeseriesGroupsSpf*(client: CloudflareClient,
-                                              aggInterval: set[RadarEmailRoutingAggIntervalOption] = {},
+                                              aggInterval: RadarEmailRoutingAggIntervalOption,
                                               name: seq[string] = @[],
                                               dateRange: seq[string] = @[],
                                               dateStart: seq[string] = @[],
@@ -480,12 +480,12 @@ proc getRadarEmailRoutingTimeseriesGroupsSpf*(client: CloudflareClient,
                                               dmarc: seq[string] = default(seq[string]),
                                               ipVersion: seq[string] = default(seq[string]),
                                               encrypted: seq[string] = default(seq[string]),
-                                              format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingTimeseriesGroupsSpfResponse] {.async.} =
+                                              format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsSpfResponse] {.async.} =
   ## Retrieves the distribution of emails by SPF (Sender Policy Framework) validation
   ## over time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -495,7 +495,7 @@ proc getRadarEmailRoutingTimeseriesGroupsSpf*(client: CloudflareClient,
   q["dmarc"] = $dmarc
   q["ipVersion"] = $ipVersion
   q["encrypted"] = $encrypted
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET("/radar/email/routing/timeseries_groups/spf", q)
   let body = await res.body
   case res.code
@@ -505,8 +505,8 @@ proc getRadarEmailRoutingTimeseriesGroupsSpf*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingTimeseriesGroupsDimension*(client: CloudflareClient,
-                                                    dimension: string,
-                                                    aggInterval: set[RadarEmailRoutingAggIntervalOption] = {},
+                                                    dimension: Dimension,
+                                                    aggInterval: RadarEmailRoutingAggIntervalOption,
                                                     name: seq[string] = @[],
                                                     dateRange: seq[string] = @[],
                                                     dateStart: seq[string] = @[],
@@ -518,12 +518,12 @@ proc getRadarEmailRoutingTimeseriesGroupsDimension*(client: CloudflareClient,
                                                     ipVersion: seq[string] = default(seq[string]),
                                                     encrypted: seq[string] = default(seq[string]),
                                                     limitPerGroup: int64 = default(int64),
-                                                    format: set[RadarEmailRoutingFormatOption] = {}): Future[GetRadarEmailRoutingTimeseriesGroupsDimensionResponse] {.async.} =
+                                                    format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of email routing metrics grouped by dimension over
   ## time.
 
   var q = initOrderedTable[string, string]()
-  for v in aggInterval: q["aggInterval"] = $v
+  q["aggInterval"] = $aggInterval
   for v in name: q["name"] = $v
   for v in dateRange: q["dateRange"] = $v
   for v in dateStart: q["dateStart"] = $v
@@ -535,7 +535,7 @@ proc getRadarEmailRoutingTimeseriesGroupsDimension*(client: CloudflareClient,
   q["ipVersion"] = $ipVersion
   q["encrypted"] = $encrypted
   q["limitPerGroup"] = $limitPerGroup
-  for v in format: q["format"] = $v
+  q["format"] = $format
   let res = await client.httpGET(fmt"/radar/email/routing/timeseries_groups/{dimension}", q)
   let body = await res.body
   case res.code

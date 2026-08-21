@@ -38,27 +38,27 @@ type
 
 proc getUserFirewallAccessRulesRules*(client: CloudflareClient,
                                       mode: types.FirewallSchemasMode = default(types.FirewallSchemasMode),
-                                      configurationTarget: set[IpAccessRulesForAUserConfigurationTargetOption] = {},
+                                      configurationTarget: IpAccessRulesForAUserConfigurationTargetOption,
                                       configurationValue: string = default(string),
                                       notes: string = default(string),
-                                      match: string = "all",
+                                      match: IpAccessRulesForAUserMatchOption = matchAll,
                                       page: float64 = default(float64),
                                       perPage: float64 = default(float64),
-                                      order: set[IpAccessRulesForAUserOrderOption] = {},
-                                      direction: set[IpAccessRulesForAUserDirectionOption] = {}): Future[types.FirewallRuleCollectionResponse] {.async.} =
+                                      order: IpAccessRulesForAUserOrderOption,
+                                      direction: IpAccessRulesForAUserDirectionOption): Future[types.FirewallRuleCollectionResponse] {.async.} =
   ## Fetches IP Access rules of the user. You can filter the results using several
   ## optional parameters.
 
   var q = initOrderedTable[string, string]()
   q["mode"] = $mode
-  for v in configurationTarget: q["configuration.target"] = $v
+  q["configuration.target"] = $configurationTarget
   q["configuration.value"] = $configurationValue
   q["notes"] = $notes
-  for v in match: q["match"] = $v
+  q["match"] = $match
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   let res = await client.httpGET("/user/firewall/access_rules/rules", q)
   let body = await res.body
   case res.code

@@ -23,8 +23,8 @@ type
 
 proc getZonesZoneIdApiGatewayLabels*(client: CloudflareClient, page: int64 = 1,
                                      perPage: int64 = 20,
-                                     order: set[ApiShieldLabelOrderOption] = {},
-                                     direction: set[ApiShieldLabelDirectionOption] = {},
+                                     order: ApiShieldLabelOrderOption,
+                                     direction: ApiShieldLabelDirectionOption,
                                      source: types.ApiShieldLabelSource = default(types.ApiShieldLabelSource),
                                      filter: string = default(string),
                                      withMappedResourceCounts: bool = false): Future[JsonNode] {.async.} =
@@ -33,8 +33,8 @@ proc getZonesZoneIdApiGatewayLabels*(client: CloudflareClient, page: int64 = 1,
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   q["source"] = $source
   q["filter"] = $filter
   q["with_mapped_resource_counts"] = $withMappedResourceCounts

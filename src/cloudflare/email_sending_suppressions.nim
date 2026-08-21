@@ -97,15 +97,15 @@ proc getAccountsAccountIdEmailSendingSuppression*(client: CloudflareClient,
                                                   accountId: string,
                                                   page: int64 = 1,
                                                   perPage: int64 = 100,
-                                                  order: string = "created_at",
-                                                  direction: string = "desc"): Future[GetAccountsAccountIdEmailSendingSuppressionResponse] {.async.} =
+                                                  order: EmailSendingSuppressionOrderOption = orderCreatedAt,
+                                                  direction: EmailSendingSuppressionDirectionOption = directionDesc): Future[GetAccountsAccountIdEmailSendingSuppressionResponse] {.async.} =
   ## Lists email suppressions for the specified account.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/accounts/{accountId}/email/sending/suppression", q)
   let body = await res.body
   case res.code
@@ -159,7 +159,7 @@ proc getAccountsAccountIdEmailSendingSuppressions*(client: CloudflareClient,
                                                    cursor: string = default(string),
                                                    email: string = default(string),
                                                    search: string = default(string),
-                                                   reason: set[EmailSendingSuppressionReasonOption] = {}): Future[GetAccountsAccountIdEmailSendingSuppressionsResponse] {.async.} =
+                                                   reason: EmailSendingSuppressionReasonOption): Future[GetAccountsAccountIdEmailSendingSuppressionsResponse] {.async.} =
   ## Lists every active Email Sending suppression owned by the account, including
   ## legacy rows with internal zone memberships.
 
@@ -168,7 +168,7 @@ proc getAccountsAccountIdEmailSendingSuppressions*(client: CloudflareClient,
   q["cursor"] = $cursor
   q["email"] = $email
   q["search"] = $search
-  for v in reason: q["reason"] = $v
+  q["reason"] = $reason
   let res = await client.httpGET(fmt"/accounts/{accountId}/email/sending/suppressions", q)
   let body = await res.body
   case res.code
@@ -249,15 +249,15 @@ proc patchAccountsAccountIdEmailSendingSuppressionsSuppressionId*(client: Cloudf
 proc getZonesZoneIdEmailSendingSuppression*(client: CloudflareClient,
                                             zoneId: string, page: int64 = 1,
                                             perPage: int64 = 100,
-                                            order: string = "created_at",
-                                            direction: string = "desc"): Future[GetZonesZoneIdEmailSendingSuppressionResponse] {.async.} =
+                                            order: EmailSendingSuppressionOrderOption = orderCreatedAt,
+                                            direction: EmailSendingSuppressionDirectionOption = directionDesc): Future[GetZonesZoneIdEmailSendingSuppressionResponse] {.async.} =
   ## Lists email suppressions for the specified zone.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/zones/{zoneId}/email/sending/suppression", q)
   let body = await res.body
   case res.code

@@ -43,16 +43,17 @@ type
 
 proc getZonesZoneIdPagerules*(client: CloudflareClient,
                               zoneId: types.ZonesIdentifier2,
-                              order: string = "priority",
-                              direction: string = "desc", match: string = "all",
-                              status: string = "disabled"): Future[JsonNode] {.async.} =
+                              order: PageRuleOrderOption = orderPriority,
+                              direction: PageRuleDirectionOption = directionDesc,
+                              match: PageRuleMatchOption = matchAll,
+                              status: PageRuleStatusOption = statusDisabled): Future[JsonNode] {.async.} =
   ## Fetches Page Rules in a zone.
 
   var q = initOrderedTable[string, string]()
-  for v in order: q["order"] = $v
-  for v in direction: q["direction"] = $v
-  for v in match: q["match"] = $v
-  for v in status: q["status"] = $v
+  q["order"] = $order
+  q["direction"] = $direction
+  q["match"] = $match
+  q["status"] = $status
   let res = await client.httpGET(fmt"/zones/{zoneId}/pagerules", q)
   let body = await res.body
   case res.code

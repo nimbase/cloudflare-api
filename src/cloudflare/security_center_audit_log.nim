@@ -22,22 +22,22 @@ proc getAccountsAccountIdSecurityCenterInsightsAuditLog*(client: CloudflareClien
                                                          accountId: types.SecurityCenterIdentifier,
                                                          perPage: int64 = 25,
                                                          cursor: string = default(string),
-                                                         fieldChanged: set[SecurityCenterAuditLogFieldChangedOption] = {},
+                                                         fieldChanged: SecurityCenterAuditLogFieldChangedOption,
                                                          changedBy: string = default(string),
                                                          since: string = default(string),
                                                          before: string = default(string),
-                                                         order: string = "desc"): Future[types.SecurityCenterAuditLogResponse] {.async.} =
+                                                         order: SecurityCenterAuditLogOrderOption = orderDesc): Future[types.SecurityCenterAuditLogResponse] {.async.} =
   ## Lists audit log entries for all Security Center insights in the account, showing
   ## changes to insight status and classification.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
   q["cursor"] = $cursor
-  for v in fieldChanged: q["field_changed"] = $v
+  q["field_changed"] = $fieldChanged
   q["changed_by"] = $changedBy
   q["since"] = $since
   q["before"] = $before
-  for v in order: q["order"] = $v
+  q["order"] = $order
   let res = await client.httpGET(fmt"/accounts/{accountId}/security-center/insights/audit-log", q)
   let body = await res.body
   case res.code
@@ -51,22 +51,22 @@ proc getAccountsAccountIdSecurityCenterInsightsIssueIdAuditLog*(client: Cloudfla
                                                                 issueId: string,
                                                                 perPage: int64 = 25,
                                                                 cursor: string = default(string),
-                                                                fieldChanged: set[SecurityCenterAuditLogFieldChangedOption] = {},
+                                                                fieldChanged: SecurityCenterAuditLogFieldChangedOption,
                                                                 changedBy: string = default(string),
                                                                 since: string = default(string),
                                                                 before: string = default(string),
-                                                                order: string = "desc"): Future[types.SecurityCenterAuditLogResponse] {.async.} =
+                                                                order: SecurityCenterAuditLogOrderOption = orderDesc): Future[types.SecurityCenterAuditLogResponse] {.async.} =
   ## Lists audit log entries for a specific Security Center insight, showing changes
   ## to its status and classification over time.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
   q["cursor"] = $cursor
-  for v in fieldChanged: q["field_changed"] = $v
+  q["field_changed"] = $fieldChanged
   q["changed_by"] = $changedBy
   q["since"] = $since
   q["before"] = $before
-  for v in order: q["order"] = $v
+  q["order"] = $order
   let res = await client.httpGET(fmt"/accounts/{accountId}/security-center/insights/{issueId}/audit-log", q)
   let body = await res.body
   case res.code
@@ -79,22 +79,22 @@ proc getZonesZoneIdSecurityCenterInsightsAuditLog*(client: CloudflareClient,
                                                    zoneId: types.SecurityCenterIdentifier,
                                                    perPage: int64 = 25,
                                                    cursor: string = default(string),
-                                                   fieldChanged: set[SecurityCenterAuditLogFieldChangedOption] = {},
+                                                   fieldChanged: SecurityCenterAuditLogFieldChangedOption,
                                                    changedBy: string = default(string),
                                                    since: string = default(string),
                                                    before: string = default(string),
-                                                   order: string = "desc"): Future[types.SecurityCenterAuditLogResponse] {.async.} =
+                                                   order: SecurityCenterAuditLogOrderOption = orderDesc): Future[types.SecurityCenterAuditLogResponse] {.async.} =
   ## Lists audit log entries for all Security Center insights in a specific zone,
   ## showing changes to insight status and classification.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
   q["cursor"] = $cursor
-  for v in fieldChanged: q["field_changed"] = $v
+  q["field_changed"] = $fieldChanged
   q["changed_by"] = $changedBy
   q["since"] = $since
   q["before"] = $before
-  for v in order: q["order"] = $v
+  q["order"] = $order
   let res = await client.httpGET(fmt"/zones/{zoneId}/security-center/insights/audit-log", q)
   let body = await res.body
   case res.code
@@ -108,22 +108,22 @@ proc getZonesZoneIdSecurityCenterInsightsIssueIdAuditLog*(client: CloudflareClie
                                                           issueId: string,
                                                           perPage: int64 = 25,
                                                           cursor: string = default(string),
-                                                          fieldChanged: set[SecurityCenterAuditLogFieldChangedOption] = {},
+                                                          fieldChanged: SecurityCenterAuditLogFieldChangedOption,
                                                           changedBy: string = default(string),
                                                           since: string = default(string),
                                                           before: string = default(string),
-                                                          order: string = "desc"): Future[types.SecurityCenterAuditLogResponse] {.async.} =
+                                                          order: SecurityCenterAuditLogOrderOption = orderDesc): Future[types.SecurityCenterAuditLogResponse] {.async.} =
   ## Lists audit log entries for a specific Security Center insight within a zone,
   ## showing changes to its status and classification over time.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
   q["cursor"] = $cursor
-  for v in fieldChanged: q["field_changed"] = $v
+  q["field_changed"] = $fieldChanged
   q["changed_by"] = $changedBy
   q["since"] = $since
   q["before"] = $before
-  for v in order: q["order"] = $v
+  q["order"] = $order
   let res = await client.httpGET(fmt"/zones/{zoneId}/security-center/insights/{issueId}/audit-log", q)
   let body = await res.body
   case res.code

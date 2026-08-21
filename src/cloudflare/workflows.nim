@@ -346,8 +346,8 @@ proc getAccountsAccountIdWorkflowsWorkflowNameInstances*(client: CloudflareClien
                                                          page: float64 = default(float64),
                                                          perPage: float64 = default(float64),
                                                          cursor: string = default(string),
-                                                         direction: set[WorkflowDirectionOption] = {},
-                                                         status: set[WorkflowStatusOption] = {},
+                                                         direction: WorkflowDirectionOption,
+                                                         status: WorkflowStatusOption,
                                                          dateStart: string = default(string),
                                                          dateEnd: string = default(string),
                                                          accountId: string): Future[GetAccountsAccountIdWorkflowsWorkflowNameInstancesResponse] {.async.} =
@@ -357,8 +357,8 @@ proc getAccountsAccountIdWorkflowsWorkflowNameInstances*(client: CloudflareClien
   q["page"] = $page
   q["per_page"] = $perPage
   q["cursor"] = $cursor
-  for v in direction: q["direction"] = $v
-  for v in status: q["status"] = $v
+  q["direction"] = $direction
+  q["status"] = $status
   q["date_start"] = $dateStart
   q["date_end"] = $dateEnd
   let res = await client.httpGET(fmt"/accounts/{accountId}/workflows/{workflowName}/instances", q)
@@ -439,14 +439,14 @@ proc getAccountsAccountIdWorkflowsWorkflowNameInstancesTerminate*(client: Cloudf
 proc getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceId*(client: CloudflareClient,
                                                                    workflowName: string,
                                                                    instanceId: string,
-                                                                   simple: string = "false",
-                                                                   order: string = "asc",
+                                                                   simple: WorkflowSimpleOption = simpleFalse,
+                                                                   order: WorkflowOrderOption = orderAsc,
                                                                    accountId: string): Future[GetAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdResponse] {.async.} =
   ## Retrieves logs and execution status for a specific workflow instance.
 
   var q = initOrderedTable[string, string]()
-  for v in simple: q["simple"] = $v
-  for v in order: q["order"] = $v
+  q["simple"] = $simple
+  q["order"] = $order
   let res = await client.httpGET(fmt"/accounts/{accountId}/workflows/{workflowName}/instances/{instanceId}", q)
   let body = await res.body
   case res.code
@@ -503,7 +503,7 @@ proc getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdStep*(client: C
                                                                        workflowName: string,
                                                                        instanceId: string,
                                                                        name: string,
-                                                                       `type`: set[WorkflowTypeOption] = {},
+                                                                       `type`: WorkflowTypeOption,
                                                                        attempt: int64 = default(int64),
                                                                        accountId: string): Future[GetAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdStepResponse] {.async.} =
   ## Retrieves the full, untruncated output for a specific step on a workflow
@@ -517,7 +517,7 @@ proc getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdStep*(client: C
 
   var q = initOrderedTable[string, string]()
   q["name"] = $name
-  for v in `type`: q["type"] = $v
+  q["type"] = $`type`
   q["attempt"] = $attempt
   let res = await client.httpGET(fmt"/accounts/{accountId}/workflows/{workflowName}/instances/{instanceId}/step", q)
   let body = await res.body
