@@ -236,13 +236,10 @@ proc getAccountsAccountIdPipelinesV1SinksSinkId*(client: CloudflareClient,
 
 proc deleteAccountsAccountIdPipelinesV1SinksSinkId*(client: CloudflareClient,
                                                     accountId: types.CloudflarePipelinesWorkersPipelinesAccountId,
-                                                    sinkId: types.CloudflarePipelinesWorkersPipelinesSinkId,
-                                                    force: string = default(string)): Future[DeleteAccountsAccountIdPipelinesV1SinksSinkIdResponse] {.async.} =
+                                                    sinkId: types.CloudflarePipelinesWorkersPipelinesSinkId): Future[DeleteAccountsAccountIdPipelinesV1SinksSinkIdResponse] {.async.} =
   ## Delete Sink in Account.
 
-  var q = initOrderedTable[string, string]()
-  q["force"] = $force
-  let res = await client.httpDELETE(fmt"/accounts/{accountId}/pipelines/v1/sinks/{sinkId}", q)
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/pipelines/v1/sinks/{sinkId}")
   let body = await res.body
   case res.code
   of Http200:
@@ -298,14 +295,11 @@ proc getAccountsAccountIdPipelinesV1StreamsStreamId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteAccountsAccountIdPipelinesV1StreamsStreamId*(client: CloudflareClient,
-                                                        force: string = default(string),
                                                         accountId: types.CloudflarePipelinesWorkersPipelinesAccountId,
                                                         streamId: types.CloudflarePipelinesWorkersPipelinesStreamId): Future[DeleteAccountsAccountIdPipelinesV1StreamsStreamIdResponse] {.async.} =
   ## Delete Stream in Account.
 
-  var q = initOrderedTable[string, string]()
-  q["force"] = $force
-  let res = await client.httpDELETE(fmt"/accounts/{accountId}/pipelines/v1/streams/{streamId}", q)
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/pipelines/v1/streams/{streamId}")
   let body = await res.body
   case res.code
   of Http200:

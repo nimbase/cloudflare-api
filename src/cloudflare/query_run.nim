@@ -13,6 +13,7 @@ type
     chart: Option[bool]
     chart_type: Option[string]
     compare: Option[bool]
+    distribution_scale: Option[string]
     dry: Option[bool]
     granularity: Option[float64]
     ignore_series: Option[bool]

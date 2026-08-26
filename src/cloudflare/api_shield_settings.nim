@@ -9,8 +9,8 @@ import ./private/types
 
 
 proc getZonesZoneIdApiGatewayConfiguration*(client: CloudflareClient): Future[types.ApiShieldConfigurationSingleResponse] {.async.} =
-  ## Gets the current API Shield configuration settings for a zone, including
-  ## validation behavior and enforcement mode.
+  ## Returns the authentication identifier characteristics configured for the zone.
+  ## Header, cookie, or JWT claim values identify distinct API sessions.
 
   let res = await client.httpGET("/zones/{zone_id}/api_gateway/configuration")
   let body = await res.body
@@ -22,8 +22,8 @@ proc getZonesZoneIdApiGatewayConfiguration*(client: CloudflareClient): Future[ty
 
 proc putZonesZoneIdApiGatewayConfiguration*(client: CloudflareClient,
                                             body: types.ApiShieldConfiguration): Future[types.ApiShieldConfigurationSingleResponse] {.async.} =
-  ## Updates API Shield configuration settings for a zone. Can modify validation
-  ## strictness, enforcement mode, and other global settings.
+  ## Replaces the zone's authentication identifier characteristics used to identify
+  ## distinct API sessions.
 
   let res = await client.httpPUT("/zones/{zone_id}/api_gateway/configuration", body)
   let body = await res.body

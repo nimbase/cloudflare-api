@@ -20,6 +20,24 @@ type
     timeDeltaMinute = "minute"
 
 
+proc getUserSpectrumAnalyticsZonesReport*(client: CloudflareClient,
+                                          since: types.SpectrumAnalyticsSince = default(types.SpectrumAnalyticsSince),
+                                          until: types.SpectrumAnalyticsUntil = default(types.SpectrumAnalyticsUntil),
+                                          cdnTraffic: bool = true): Future[types.SpectrumAnalyticsZonesReportResponse] {.async.} =
+  ## Retrieves a list of total bandwidth by zone over a given time period.
+
+  var q = initOrderedTable[string, string]()
+  q["since"] = $since
+  q["until"] = $until
+  q["cdn_traffic"] = $cdnTraffic
+  let res = await client.httpGET("/user/spectrum_analytics/zones/report", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.SpectrumAnalyticsZonesReportResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getZonesZoneIdSpectrumAnalyticsAggregateCurrent*(client: CloudflareClient,
                                                       zoneId: types.SpectrumAnalyticsIdentifier,
                                                       appID: types.SpectrumAnalyticsAppIdParam = default(types.SpectrumAnalyticsAppIdParam),

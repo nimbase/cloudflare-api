@@ -28,7 +28,7 @@ proc getAccountsAccountIdContainersApplicationsApplicationIdInstances*(client: C
 
 proc getAccountsAccountIdContainersApplicationsApplicationIdInstancesInstanceId*(client: CloudflareClient,
                                                                                  applicationId: types.CcApplicationID,
-                                                                                 instanceId: types.CcContainersContainerInstanceID): Future[JsonNode] {.async.} =
+                                                                                 instanceId: types.CcContainerInstanceID): Future[JsonNode] {.async.} =
   ## Returns a container instance belonging to an application.
 
   let res = await client.httpGET(fmt"/accounts/{account_id}/containers/applications/{applicationId}/instances/{instanceId}")

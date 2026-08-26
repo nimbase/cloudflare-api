@@ -43,6 +43,10 @@ suite "workers_kv_namespace serialization":
     let obj = newWorkersKvApiResponseCommon()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersKvApiResponseCommon)) == openjson.toJson(obj)
 
+  test "round-trips WorkersKvCreateNamespaceBody":
+    let obj = newWorkersKvCreateNamespaceBody()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersKvCreateNamespaceBody)) == openjson.toJson(obj)
+
   test "round-trips WorkersKvBulkResult":
     let obj = newWorkersKvBulkResult()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersKvBulkResult)) == openjson.toJson(obj)
@@ -68,7 +72,7 @@ suite "workers_kv_namespace endpoints":
   test "POST /accounts/{account_id}/storage/kv/namespaces":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdStorageKvNamespaces("test", newWorkersKvCreateRenameNamespaceBody())
+    discard waitFor client.postAccountsAccountIdStorageKvNamespaces("test", newWorkersKvCreateNamespaceBody())
 
   test "GET /accounts/{account_id}/storage/kv/namespaces/{namespace_id}":
     let client = initCloudflareClient("test-key")

@@ -19,10 +19,6 @@ suite "schema_validation_settings serialization":
     let obj = newApiShieldPerOperationSettingChangeBase()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ApiShieldPerOperationSettingChangeBase)) == openjson.toJson(obj)
 
-  test "round-trips ApiShieldPerOperationBulkSettings":
-    let obj = newApiShieldPerOperationBulkSettings()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ApiShieldPerOperationBulkSettings)) == openjson.toJson(obj)
-
   test "round-trips ApiShieldApiResponseCommon":
     let obj = newApiShieldApiResponseCommon()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ApiShieldApiResponseCommon)) == openjson.toJson(obj)

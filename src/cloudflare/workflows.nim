@@ -527,6 +527,20 @@ proc getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdStep*(client: C
   else:
     raise newException(CloudflareClientError, body)
 
+proc getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribe*(client: CloudflareClient,
+                                                                            workflowName: string,
+                                                                            instanceId: string,
+                                                                            cursor: int64 = default(int64),
+                                                                            filter: string = default(string),
+                                                                            accountId: string): Future[AsyncResponse] {.async.} =
+  ## Upgrades the request to a WebSocket that streams workflow instance events.
+
+  var q = initOrderedTable[string, string]()
+  q["cursor"] = $cursor
+  q["filter"] = $filter
+  let res = await client.httpGET(fmt"/accounts/{accountId}/workflows/{workflowName}/instances/{instanceId}/subscribe", q)
+  return res
+
 proc getAccountsAccountIdWorkflowsWorkflowNameVersions*(client: CloudflareClient,
                                                         workflowName: string,
                                                         perPage: float64 = default(float64),

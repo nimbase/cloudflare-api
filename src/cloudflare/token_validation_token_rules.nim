@@ -18,7 +18,8 @@ proc getZonesZoneIdTokenValidationRules*(client: CloudflareClient,
                                          ruleId: types.ApiShieldUuid2 = default(types.ApiShieldUuid2),
                                          host: types.ApiShieldHost = default(types.ApiShieldHost),
                                          hostname: types.ApiShieldHost = default(types.ApiShieldHost)): Future[JsonNode] {.async.} =
-  ## List token validation rules
+  ## Lists token validation rules for the zone, with filters for configuration,
+  ## action, state, ID, and host.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
@@ -40,7 +41,7 @@ proc getZonesZoneIdTokenValidationRules*(client: CloudflareClient,
 
 proc postZonesZoneIdTokenValidationRules*(client: CloudflareClient,
                                           body: types.ApiShieldCreateSingleRuleRequest): Future[JsonNode] {.async.} =
-  ## Create a token validation rule.
+  ## Creates a token validation rule for the zone.
 
   let res = await client.httpPOST("/zones/{zone_id}/token_validation/rules", body)
   let body = await res.body
@@ -51,9 +52,7 @@ proc postZonesZoneIdTokenValidationRules*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc postZonesZoneIdTokenValidationRulesBulk*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Create zone token validation rules.
-  ##
-  ## A request can create multiple Token Validation Rules.
+  ## Creates multiple token validation rules for the zone in one request.
 
   let res = await client.httpPOST("/zones/{zone_id}/token_validation/rules/bulk", body)
   let body = await res.body
@@ -64,13 +63,8 @@ proc postZonesZoneIdTokenValidationRulesBulk*(client: CloudflareClient): Future[
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdTokenValidationRulesBulk*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Edit token validation rules.
-  ##
-  ## A request can update multiple Token Validation Rules.
-  ##
-  ## Rules can be re-ordered using the `position` field.
-  ##
-  ## Returns all updated rules.
+  ## Updates and reorders multiple token validation rules in one request, then
+  ## returns the updated rules.
 
   let res = await client.httpPATCH("/zones/{zone_id}/token_validation/rules/bulk", body)
   let body = await res.body
@@ -89,12 +83,8 @@ proc postZonesZoneIdTokenValidationRulesPreview*(client: CloudflareClient,
                                                  `method`: seq[string] = @[],
                                                  endpoint: seq[string] = @[],
                                                  body: types.ApiShieldSelector): Future[JsonNode] {.async.} =
-  ## Preview operations covered by a Token Validation rule.
-  ##
-  ## The API will return all operations on a zone annotated with an additional
-  ## `state` field.
-  ## Operations with an `included` `state` will be covered by a Token Validation
-  ## Rule.
+  ## Returns zone operations annotated as included or excluded to preview the rule's
+  ## coverage before creation.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
@@ -113,7 +103,7 @@ proc postZonesZoneIdTokenValidationRulesPreview*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdTokenValidationRulesRuleId*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Get a zone token validation rule.
+  ## Returns a token validation rule by ID.
 
   let res = await client.httpGET("/zones/{zone_id}/token_validation/rules/{rule_id}")
   let body = await res.body
@@ -124,7 +114,7 @@ proc getZonesZoneIdTokenValidationRulesRuleId*(client: CloudflareClient): Future
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdTokenValidationRulesRuleId*(client: CloudflareClient): Future[types.ApiShieldApiResponseSingleObj] {.async.} =
-  ## Delete a zone token validation rule.
+  ## Deletes a token validation rule from the zone.
 
   let res = await client.httpDELETE("/zones/{zone_id}/token_validation/rules/{rule_id}")
   let body = await res.body
@@ -136,7 +126,7 @@ proc deleteZonesZoneIdTokenValidationRulesRuleId*(client: CloudflareClient): Fut
 
 proc patchZonesZoneIdTokenValidationRulesRuleId*(client: CloudflareClient,
                                                  body: types.ApiShieldEditSingleRuleRequest): Future[JsonNode] {.async.} =
-  ## Edit a zone token validation rule.
+  ## Updates only the supplied fields on a token validation rule.
 
   let res = await client.httpPATCH("/zones/{zone_id}/token_validation/rules/{rule_id}", body)
   let body = await res.body

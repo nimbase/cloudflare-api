@@ -75,6 +75,10 @@ suite "email_security_settings serialization":
     let obj = newEmailSecurityDeletedTrustedDomain()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityDeletedTrustedDomain)) == openjson.toJson(obj)
 
+  test "round-trips EmailSecurityUpdateContentPolicy":
+    let obj = newEmailSecurityUpdateContentPolicy()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityUpdateContentPolicy)) == openjson.toJson(obj)
+
   test "round-trips EmailSecurityDeletedAllowPolicy":
     let obj = newEmailSecurityDeletedAllowPolicy()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityDeletedAllowPolicy)) == openjson.toJson(obj)
@@ -83,13 +87,17 @@ suite "email_security_settings serialization":
     let obj = newEmailSecurityApiResponseSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityApiResponseSingle)) == openjson.toJson(obj)
 
+  test "round-trips EmailSecurityDeletedContentPolicy":
+    let obj = newEmailSecurityDeletedContentPolicy()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityDeletedContentPolicy)) == openjson.toJson(obj)
+
   test "round-trips EmailSecurityUrlIgnorePattern":
     let obj = newEmailSecurityUrlIgnorePattern()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityUrlIgnorePattern)) == openjson.toJson(obj)
 
-  test "round-trips EmailSecurityUpdateTrustedDomain":
-    let obj = newEmailSecurityUpdateTrustedDomain()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityUpdateTrustedDomain)) == openjson.toJson(obj)
+  test "round-trips EmailSecurityCreateContentPolicy":
+    let obj = newEmailSecurityCreateContentPolicy()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityCreateContentPolicy)) == openjson.toJson(obj)
 
   test "round-trips EmailSecurityDeletedImpersonationRegistry":
     let obj = newEmailSecurityDeletedImpersonationRegistry()
@@ -99,17 +107,21 @@ suite "email_security_settings serialization":
     let obj = newEmailSecurityUpdateDomain()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityUpdateDomain)) == openjson.toJson(obj)
 
+  test "round-trips EmailSecurityUpdateTrustedDomain":
+    let obj = newEmailSecurityUpdateTrustedDomain()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityUpdateTrustedDomain)) == openjson.toJson(obj)
+
   test "round-trips EmailSecurityUpdateUrlIgnorePattern":
     let obj = newEmailSecurityUpdateUrlIgnorePattern()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityUpdateUrlIgnorePattern)) == openjson.toJson(obj)
 
-  test "round-trips EmailSecurityApiResponseCommon":
-    let obj = newEmailSecurityApiResponseCommon()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityApiResponseCommon)) == openjson.toJson(obj)
-
   test "round-trips EmailSecurityUpdateImpersonationRegistry":
     let obj = newEmailSecurityUpdateImpersonationRegistry()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityUpdateImpersonationRegistry)) == openjson.toJson(obj)
+
+  test "round-trips EmailSecurityApiResponseCommon":
+    let obj = newEmailSecurityApiResponseCommon()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityApiResponseCommon)) == openjson.toJson(obj)
 
   test "round-trips EmailSecurityCreateTrustedDomain":
     let obj = newEmailSecurityCreateTrustedDomain()
@@ -122,6 +134,10 @@ suite "email_security_settings serialization":
   test "round-trips EmailSecurityApiResponseCollection":
     let obj = newEmailSecurityApiResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityApiResponseCollection)) == openjson.toJson(obj)
+
+  test "round-trips EmailSecurityContentPolicy":
+    let obj = newEmailSecurityContentPolicy()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityContentPolicy)) == openjson.toJson(obj)
 
   test "round-trips EmailSecurityReplaceDomain":
     let obj = newEmailSecurityReplaceDomain()
@@ -163,6 +179,11 @@ suite "email_security_settings endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdEmailSecuritySettingsAllowPoliciesPolicyId()
 
+  test "PUT /accounts/{account_id}/email-security/settings/allow_policies/{policy_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.putAccountsAccountIdEmailSecuritySettingsAllowPoliciesPolicyId(newEmailSecurityCreateAllowPolicy())
+
   test "DELETE /accounts/{account_id}/email-security/settings/allow_policies/{policy_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -188,6 +209,11 @@ suite "email_security_settings endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdEmailSecuritySettingsBlockSendersPatternId()
 
+  test "PUT /accounts/{account_id}/email-security/settings/block_senders/{pattern_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.putAccountsAccountIdEmailSecuritySettingsBlockSendersPatternId(newEmailSecurityCreateBlockedSender())
+
   test "DELETE /accounts/{account_id}/email-security/settings/block_senders/{pattern_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -197,6 +223,31 @@ suite "email_security_settings endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.patchAccountsAccountIdEmailSecuritySettingsBlockSendersPatternId(newEmailSecurityUpdateBlockedSender())
+
+  test "GET /accounts/{account_id}/email-security/settings/content_policies":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdEmailSecuritySettingsContentPolicies(1, 1, "test", {}, {}, true, "test")
+
+  test "POST /accounts/{account_id}/email-security/settings/content_policies":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdEmailSecuritySettingsContentPolicies(newEmailSecurityCreateContentPolicy())
+
+  test "GET /accounts/{account_id}/email-security/settings/content_policies/{policy_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdEmailSecuritySettingsContentPoliciesPolicyId()
+
+  test "DELETE /accounts/{account_id}/email-security/settings/content_policies/{policy_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdEmailSecuritySettingsContentPoliciesPolicyId()
+
+  test "PATCH /accounts/{account_id}/email-security/settings/content_policies/{policy_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.patchAccountsAccountIdEmailSecuritySettingsContentPoliciesPolicyId(newEmailSecurityUpdateContentPolicy())
 
   test "POST /accounts/{account_id}/email-security/settings/domains":
     let client = initCloudflareClient("test-key")
@@ -292,6 +343,11 @@ suite "email_security_settings endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdEmailSecuritySettingsTrustedDomainsTrustedDomainId()
+
+  test "PUT /accounts/{account_id}/email-security/settings/trusted_domains/{trusted_domain_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.putAccountsAccountIdEmailSecuritySettingsTrustedDomainsTrustedDomainId(newEmailSecurityCreateTrustedDomain())
 
   test "DELETE /accounts/{account_id}/email-security/settings/trusted_domains/{trusted_domain_id}":
     let client = initCloudflareClient("test-key")

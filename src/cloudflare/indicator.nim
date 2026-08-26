@@ -58,6 +58,28 @@ type
     updated_at: string
     uuid: string
     value: string
+  GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsResponse* = object
+    result: JsonNode
+    success: bool
+  PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRequest = object
+    confidence: Option[int64]
+    metadata: Option[JsonNode]
+    target_id: string
+    target_type: string
+    `type`: string
+  PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsResponse* = object
+    result: JsonNode
+    success: bool
+  DeleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRelUuidResponse* = object
+    result: JsonNode
+    success: bool
+  PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRelUuidRequest = object
+    confidence: Option[int64]
+    metadata: Option[JsonNode]
+    `type`: Option[string]
+  PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRelUuidResponse* = object
+    result: JsonNode
+    success: bool
   GetAccountsAccountIdCloudforceOneEventsIndicatorsResponse* = object
     properties: JsonNode
     `type`: string
@@ -192,6 +214,77 @@ proc patchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicato
   case res.code
   of Http200:
     result = fromJson(body, PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationships*(client: CloudflareClient,
+                                                                                                accountId: string,
+                                                                                                datasetId: string,
+                                                                                                indicatorId: string,
+                                                                                                search: seq[string] = @[],
+                                                                                                expand: seq[string] = @[],
+                                                                                                cursor: string = default(string),
+                                                                                                pageSize: int64 = 25): Future[GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsResponse] {.async.} =
+  ## Returns sparse relationship edges. Optionally hydrate related entities via
+  ## `expand`.
+
+  var q = initOrderedTable[string, string]()
+  for v in search: q["search"] = $v
+  for v in expand: q["expand"] = $v
+  q["cursor"] = $cursor
+  q["pageSize"] = $pageSize
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators/{indicatorId}/relationships", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationships*(client: CloudflareClient,
+                                                                                                 accountId: string,
+                                                                                                 datasetId: string,
+                                                                                                 indicatorId: string,
+                                                                                                 body: PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRequest): Future[PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsResponse] {.async.} =
+  ## Creates a new relationship with the indicator as the source entity.
+  ## Indicator↔indicator relationships are not supported.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators/{indicatorId}/relationships", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRelUuid*(client: CloudflareClient,
+                                                                                                          accountId: string,
+                                                                                                          datasetId: string,
+                                                                                                          indicatorId: string,
+                                                                                                          relUuid: string): Future[DeleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRelUuidResponse] {.async.} =
+  ## Deletes a relationship by UUID. Idempotent: returns deleted=false if not found.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators/{indicatorId}/relationships/{relUuid}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, DeleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRelUuidResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRelUuid*(client: CloudflareClient,
+                                                                                                         accountId: string,
+                                                                                                         datasetId: string,
+                                                                                                         indicatorId: string,
+                                                                                                         relUuid: string,
+                                                                                                         body: PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRelUuidRequest): Future[PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRelUuidResponse] {.async.} =
+  ## Partially updates a relationship by UUID. Only provided fields are changed.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators/{indicatorId}/relationships/{relUuid}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRelUuidResponse)
   else:
     raise newException(CloudflareClientError, body)
 

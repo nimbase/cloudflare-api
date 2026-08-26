@@ -11,7 +11,7 @@ type
   PostAccountsAccountIdAiSearchNamespacesNameChatCompletionsRequest = object
     ai_search_options: JsonNode
     messages: seq[JsonNode]
-    model: Option[JsonNode]
+    model: Option[string]
     stream: Option[bool]
   PostAccountsAccountIdAiSearchNamespacesNameChatCompletionsResponse* = object
     choices: seq[JsonNode]

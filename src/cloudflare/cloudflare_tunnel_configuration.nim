@@ -15,7 +15,7 @@ type
 proc getAccountsAccountIdCfdTunnelTunnelIdConfigurations*(client: CloudflareClient,
                                                           accountId: types.TunnelIdentifier,
                                                           tunnelId: types.TunnelTunnelId2): Future[types.TunnelConfigurationResponse] {.async.} =
-  ## Gets the configuration for a remotely-managed tunnel
+  ## Retrieves the configuration for a remotely managed Cloudflare Tunnel.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cfd_tunnel/{tunnelId}/configurations")
   let body = await res.body
@@ -29,7 +29,8 @@ proc putAccountsAccountIdCfdTunnelTunnelIdConfigurations*(client: CloudflareClie
                                                           accountId: types.TunnelIdentifier,
                                                           tunnelId: types.TunnelTunnelId2,
                                                           body: PutAccountsAccountIdCfdTunnelTunnelIdConfigurationsRequest): Future[types.TunnelConfigurationResponse] {.async.} =
-  ## Adds or updates the configuration for a remotely-managed tunnel.
+  ## Replaces the configuration for a remotely managed Cloudflare Tunnel, including
+  ## its ingress rules and origin request settings.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/cfd_tunnel/{tunnelId}/configurations", body)
   let body = await res.body

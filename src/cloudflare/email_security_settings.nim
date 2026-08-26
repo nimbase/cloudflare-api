@@ -19,6 +19,11 @@ type
     patches: seq[JsonNode]
     posts: seq[types.EmailSecurityCreateBlockedSender]
     puts: seq[JsonNode]
+  PostAccountsAccountIdEmailSecuritySettingsContentPoliciesBatchRequest = object
+    deletes: seq[JsonNode]
+    patches: seq[JsonNode]
+    posts: seq[types.EmailSecurityCreateContentPolicy]
+    puts: seq[JsonNode]
   PostAccountsAccountIdEmailSecuritySettingsDomainsBatchRequest = object
     deletes: seq[JsonNode]
     patches: seq[JsonNode]
@@ -121,6 +126,20 @@ proc getAccountsAccountIdEmailSecuritySettingsAllowPoliciesPolicyId*(client: Clo
   else:
     raise newException(CloudflareClientError, body)
 
+proc putAccountsAccountIdEmailSecuritySettingsAllowPoliciesPolicyId*(client: CloudflareClient,
+                                                                     body: types.EmailSecurityCreateAllowPolicy): Future[JsonNode] {.async.} =
+  ## Replaces an existing allow policy in full. Unlike PATCH, every field is taken
+  ## from the request body, so optional fields that are omitted are reset rather than
+  ## left untouched. Use this when managing policies declaratively.
+
+  let res = await client.httpPUT("/accounts/{account_id}/email-security/settings/allow_policies/{policy_id}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc deleteAccountsAccountIdEmailSecuritySettingsAllowPoliciesPolicyId*(client: CloudflareClient): Future[JsonNode] {.async.} =
   ## Removes an allow policy. After deletion, emails matching this pattern will be
   ## subject to normal security scanning and disposition actions.
@@ -214,6 +233,21 @@ proc getAccountsAccountIdEmailSecuritySettingsBlockSendersPatternId*(client: Clo
   else:
     raise newException(CloudflareClientError, body)
 
+proc putAccountsAccountIdEmailSecuritySettingsBlockSendersPatternId*(client: CloudflareClient,
+                                                                     body: types.EmailSecurityCreateBlockedSender): Future[JsonNode] {.async.} =
+  ## Replaces an existing blocked sender pattern in full. Unlike PATCH, every field
+  ## is taken from the request body, so optional fields that are omitted are reset
+  ## rather than left untouched. Use this when managing blocked senders
+  ## declaratively.
+
+  let res = await client.httpPUT("/accounts/{account_id}/email-security/settings/block_senders/{pattern_id}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc deleteAccountsAccountIdEmailSecuritySettingsBlockSendersPatternId*(client: CloudflareClient): Future[JsonNode] {.async.} =
   ## Removes a blocked sender pattern. After deletion, emails from this sender will
   ## no longer be automatically blocked based on this rule.
@@ -232,6 +266,97 @@ proc patchAccountsAccountIdEmailSecuritySettingsBlockSendersPatternId*(client: C
   ## modified. The pattern will continue blocking emails until deleted.
 
   let res = await client.httpPATCH("/accounts/{account_id}/email-security/settings/block_senders/{pattern_id}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdEmailSecuritySettingsContentPolicies*(client: CloudflareClient,
+                                                               page: int64 = 1,
+                                                               perPage: int64 = 20,
+                                                               search: string = default(string),
+                                                               order: EmailSecuritySettingOrderOption,
+                                                               direction: EmailSecuritySettingDirectionOption,
+                                                               enabled: bool = default(bool),
+                                                               name: string = default(string)): Future[JsonNode] {.async.} =
+  ## Returns a paginated list of content policies. These policies match against the
+  ## subject or body of emails using a pattern. Supports filtering by name or enabled
+  ## status, and searching across name and pattern fields.
+
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  q["search"] = $search
+  q["order"] = $order
+  q["direction"] = $direction
+  q["enabled"] = $enabled
+  q["name"] = $name
+  let res = await client.httpGET("/accounts/{account_id}/email-security/settings/content_policies", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdEmailSecuritySettingsContentPolicies*(client: CloudflareClient,
+                                                                body: types.EmailSecurityCreateContentPolicy): Future[JsonNode] {.async.} =
+  ## Creates a new content policy. Emails whose subject or body matches the pattern
+  ## will be subject to the configured action.
+
+  let res = await client.httpPOST("/accounts/{account_id}/email-security/settings/content_policies", body)
+  let body = await res.body
+  case res.code
+  of Http201:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdEmailSecuritySettingsContentPoliciesBatch*(client: CloudflareClient,
+                                                                     body: PostAccountsAccountIdEmailSecuritySettingsContentPoliciesBatchRequest): Future[JsonNode] {.async.} =
+  ## Executes multiple operations atomically. All four operation arrays
+  ## (deletes, patches, puts, posts) are required and executed in order.
+  ## Send empty arrays for unused operations.
+
+  let res = await client.httpPOST("/accounts/{account_id}/email-security/settings/content_policies/batch", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdEmailSecuritySettingsContentPoliciesPolicyId*(client: CloudflareClient): Future[JsonNode] {.async.} =
+  ## Retrieves details for a specific content policy including its pattern, targets,
+  ## and metadata.
+
+  let res = await client.httpGET("/accounts/{account_id}/email-security/settings/content_policies/{policy_id}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdEmailSecuritySettingsContentPoliciesPolicyId*(client: CloudflareClient): Future[JsonNode] {.async.} =
+  ## Removes a content policy. After deletion, emails will no longer be evaluated
+  ## against this pattern.
+
+  let res = await client.httpDELETE("/accounts/{account_id}/email-security/settings/content_policies/{policy_id}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdEmailSecuritySettingsContentPoliciesPolicyId*(client: CloudflareClient,
+                                                                         body: types.EmailSecurityUpdateContentPolicy): Future[JsonNode] {.async.} =
+  ## Updates an existing content policy. Only provided fields will be modified.
+
+  let res = await client.httpPATCH("/accounts/{account_id}/email-security/settings/content_policies/{policy_id}", body)
   let body = await res.body
   case res.code
   of Http200:
@@ -617,6 +742,20 @@ proc getAccountsAccountIdEmailSecuritySettingsTrustedDomainsTrustedDomainId*(cli
   ## value, whether it uses regex matching, and which detection types it affects.
 
   let res = await client.httpGET("/accounts/{account_id}/email-security/settings/trusted_domains/{trusted_domain_id}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountsAccountIdEmailSecuritySettingsTrustedDomainsTrustedDomainId*(client: CloudflareClient,
+                                                                             body: types.EmailSecurityCreateTrustedDomain): Future[JsonNode] {.async.} =
+  ## Replaces an existing trusted domain in full. Unlike PATCH, every field is taken
+  ## from the request body, so optional fields that are omitted are reset rather than
+  ## left untouched. Use this when managing trusted domains declaratively.
+
+  let res = await client.httpPUT("/accounts/{account_id}/email-security/settings/trusted_domains/{trusted_domain_id}", body)
   let body = await res.body
   case res.code
   of Http200:

@@ -55,6 +55,10 @@ suite "ai_gateway serialization":
     let obj = newAigBillingTopupStatusResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AigBillingTopupStatusResponse)) == openjson.toJson(obj)
 
+  test "round-trips AigBillingGetTopupEligibilityResponse":
+    let obj = newAigBillingGetTopupEligibilityResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AigBillingGetTopupEligibilityResponse)) == openjson.toJson(obj)
+
   test "round-trips AigBillingSetSpendingLimitResponse":
     let obj = newAigBillingSetSpendingLimitResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AigBillingSetSpendingLimitResponse)) == openjson.toJson(obj)

@@ -88,3 +88,15 @@ proc deleteMembershipsMembershipId*(client: CloudflareClient,
     result = fromJson(body, JsonNode)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getUserMembershipsMembershipId*(client: CloudflareClient,
+                                     membershipId: types.IamMembershipComponentsSchemasIdentifier): Future[types.IamSingleMembershipResponseWithPolicies] {.async.} =
+  ## Get a specific membership for the currently authenticated user.
+
+  let res = await client.httpGET(fmt"/user/memberships/{membershipId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.IamSingleMembershipResponseWithPolicies)
+  else:
+    raise newException(CloudflareClientError, body)

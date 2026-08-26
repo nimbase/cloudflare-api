@@ -110,8 +110,8 @@ proc getAccountsAccountIdVulnScannerScans*(client: CloudflareClient,
 
 proc postAccountsAccountIdVulnScannerScans*(client: CloudflareClient,
                                             body: types.VulnScannerCreateScanRequest): Future[JsonNode] {.async.} =
-  ## Creates and starts a new vulnerability scan. The response may include
-  ## non-fatal warnings in the `messages` array.
+  ## Creates and starts a new vulnerability scan. The response may include non-fatal
+  ## warnings in the `messages` array.
 
   let res = await client.httpPOST("/accounts/{account_id}/vuln_scanner/scans", body)
   let body = await res.body
@@ -133,11 +133,10 @@ proc getAccountsAccountIdVulnScannerScansScanId*(client: CloudflareClient): Futu
     raise newException(CloudflareClientError, body)
 
 proc deleteAccountsAccountIdVulnScannerScansScanId*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Deletes a scan and all associated data.
-  ##
-  ## Only scans in a terminal state (`finished`, `failed`) may be deleted.
-  ## Attempting to delete a scan that is still being created or executed
-  ## (`created`, `scheduled`, `planning`, `running`) returns `400`.
+  ## Deletes a scan and all associated data. Only scans in a terminal state
+  ## (`finished`, `failed`) may be deleted. Attempting to delete a scan that is still
+  ## being created or executed (`created`, `scheduled`, `planning`, `running`)
+  ## returns `400`.
 
   let res = await client.httpDELETE("/accounts/{account_id}/vuln_scanner/scans/{scan_id}")
   let body = await res.body

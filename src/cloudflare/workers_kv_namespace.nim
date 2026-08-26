@@ -45,7 +45,7 @@ proc getAccountsAccountIdStorageKvNamespaces*(client: CloudflareClient,
 
 proc postAccountsAccountIdStorageKvNamespaces*(client: CloudflareClient,
                                                accountId: types.WorkersKvIdentifier,
-                                               body: types.WorkersKvCreateRenameNamespaceBody): Future[JsonNode] {.async.} =
+                                               body: types.WorkersKvCreateNamespaceBody): Future[JsonNode] {.async.} =
   ## Creates a namespace under the given title. A `400` is returned if the account
   ## already owns a namespace with this title. A namespace must be explicitly deleted
   ## to be replaced.

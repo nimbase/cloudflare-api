@@ -24,8 +24,8 @@ type
 
 
 proc getZonesZoneIdApiGatewayDiscovery*(client: CloudflareClient): Future[types.ApiShieldSchemaResponseDiscovery] {.async.} =
-  ## Retrieve the most up to date view of discovered operations, rendered as OpenAPI
-  ## schemas
+  ## Returns the latest API operations discovered from zone traffic, rendered as
+  ## OpenAPI schemas.
 
   let res = await client.httpGET("/zones/{zone_id}/api_gateway/discovery")
   let body = await res.body
@@ -46,7 +46,7 @@ proc getZonesZoneIdApiGatewayDiscoveryOperations*(client: CloudflareClient,
                                                   diff: bool = default(bool),
                                                   origin: types.ApiShieldApiDiscoveryOrigin = default(types.ApiShieldApiDiscoveryOrigin),
                                                   state: types.ApiShieldApiDiscoveryState = default(types.ApiShieldApiDiscoveryState)): Future[JsonNode] {.async.} =
-  ## Retrieve the most up to date view of discovered operations
+  ## Returns the latest web and API operations discovered from zone traffic.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -69,7 +69,7 @@ proc getZonesZoneIdApiGatewayDiscoveryOperations*(client: CloudflareClient,
 
 proc patchZonesZoneIdApiGatewayDiscoveryOperations*(client: CloudflareClient,
                                                     body: types.ApiShieldApiDiscoveryPatchMultipleRequest): Future[types.ApiShieldPatchDiscoveriesResponse] {.async.} =
-  ## Update the `state` on one or more discovered operations
+  ## Updates the state of one or more discovered web and API operations.
 
   let res = await client.httpPATCH("/zones/{zone_id}/api_gateway/discovery/operations", body)
   let body = await res.body
@@ -80,7 +80,7 @@ proc patchZonesZoneIdApiGatewayDiscoveryOperations*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdApiGatewayDiscoveryOperationsDiscoveryId*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Retrieve a single discovered operation by ID
+  ## Returns a discovered web or API operation by discovery ID.
 
   let res = await client.httpGET("/zones/{zone_id}/api_gateway/discovery/operations/{discovery_id}")
   let body = await res.body
@@ -92,7 +92,7 @@ proc getZonesZoneIdApiGatewayDiscoveryOperationsDiscoveryId*(client: CloudflareC
 
 proc patchZonesZoneIdApiGatewayDiscoveryOperationsDiscoveryId*(client: CloudflareClient,
                                                                body: PatchZonesZoneIdApiGatewayDiscoveryOperationsDiscoveryIdRequest): Future[types.ApiShieldPatchDiscoveryResponse] {.async.} =
-  ## Update the `state` on a discovered operation
+  ## Updates the state of a discovered web or API operation.
 
   let res = await client.httpPATCH("/zones/{zone_id}/api_gateway/discovery/operations/{discovery_id}", body)
   let body = await res.body

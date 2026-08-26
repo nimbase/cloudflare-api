@@ -11,7 +11,11 @@ import ./private/types
 
 proc getZonesZoneIdAiSecurityCustomTopics*(client: CloudflareClient,
                                            zoneId: types.WafProductApiBundleZoneId): Future[types.WafProductApiBundleResponseCustomTopics] {.async.} =
-  ## Get the AI Security for Apps custom topic categories for a zone.
+  ## Get the custom topic categories defined for the zone. While AI Security for Apps
+  ## is enabled, it scores every incoming prompt against these topics and writes the
+  ## scores to the `cf.llm.prompt.custom_topic_categories` field, keyed by topic
+  ## label. Topics can be configured while the detection is disabled, but no prompt
+  ## is scored until you enable it.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/ai-security/custom-topics")
   let body = await res.body
@@ -24,14 +28,21 @@ proc getZonesZoneIdAiSecurityCustomTopics*(client: CloudflareClient,
 proc putZonesZoneIdAiSecurityCustomTopics*(client: CloudflareClient,
                                            zoneId: types.WafProductApiBundleZoneId,
                                            body: types.WafProductApiBundleCustomTopics): Future[types.WafProductApiBundleResponseCustomTopics] {.async.} =
-  ## Set the AI Security for Apps custom topic categories for a zone.
+  ## Update the custom topic list of the zone, overwriting it entirely with the
+  ## topics in the request, so include
+  ## every topic you want to keep. Changes can take up to a minute to propagate.
   ##
-  ## A maximum of 20 custom topics can be configured per zone.
-  ## Each topic label must be 2–20 characters using only lowercase letters (a–z),
-  ## digits (0–9), and hyphens.
-  ## Each topic description must be 2–50 printable ASCII characters.
+  ## Each entry has a `label`, used to reference the topic in rule expressions and
+  ## analytics, and a `topic`
+  ## description, which the classifier scores prompts against while AI Security for
+  ## Apps is enabled. The following
+  ## rules apply:
   ##
-  ## Changes can take up to a minute to propagate to the zone.
+  ## - A zone can hold at most 20 topics.
+  ## - `label` must be 2–20 characters, using only lowercase letters (a–z), digits
+  ## (0–9), and hyphens.
+  ## - `topic` must be 2–50 printable ASCII characters.
+  ## - Labels must be unique within the zone, and so must topic descriptions.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/ai-security/custom-topics", body)
   let body = await res.body
@@ -43,7 +54,9 @@ proc putZonesZoneIdAiSecurityCustomTopics*(client: CloudflareClient,
 
 proc getZonesZoneIdAiSecuritySettings*(client: CloudflareClient,
                                        zoneId: types.WafProductApiBundleZoneId): Future[types.WafProductApiBundleResponseSettings] {.async.} =
-  ## Get whether AI Security for Apps is enabled or disabled for a zone.
+  ## Get the current AI Security for Apps status for the zone. While enabled,
+  ## Cloudflare scans prompts sent to endpoints labeled `cf-llm` for personally
+  ## identifiable information, unsafe topics, and prompt injection attempts.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/ai-security/settings")
   let body = await res.body
@@ -56,9 +69,10 @@ proc getZonesZoneIdAiSecuritySettings*(client: CloudflareClient,
 proc putZonesZoneIdAiSecuritySettings*(client: CloudflareClient,
                                        zoneId: types.WafProductApiBundleZoneId,
                                        body: types.WafProductApiBundleSettings): Future[types.WafProductApiBundleResponseSettings] {.async.} =
-  ## Enable or disable AI Security for Apps for a zone.
-  ##
-  ## Changes can take up to a minute to propagate to the zone.
+  ## Update the AI Security for Apps status for the zone, enabling or disabling the
+  ## detection. The detection results are exposed as `cf.llm.prompt.*` fields for use
+  ## in custom rules and rate limiting rules; changes can take up to a minute to
+  ## propagate.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/ai-security/settings", body)
   let body = await res.body

@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "container_instances serialization":
+  test "round-trips CcContainerInstance":
+    let obj = newCcContainerInstance()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcContainerInstance)) == openjson.toJson(obj)
+
   test "round-trips CcV4BaseResponse":
     let obj = newCcV4BaseResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcV4BaseResponse)) == openjson.toJson(obj)
@@ -26,10 +30,6 @@ suite "container_instances serialization":
   test "round-trips CcV4BasePaginatedResponse":
     let obj = newCcV4BasePaginatedResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcV4BasePaginatedResponse)) == openjson.toJson(obj)
-
-  test "round-trips CcContainersContainerInstance":
-    let obj = newCcContainersContainerInstance()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcContainersContainerInstance)) == openjson.toJson(obj)
 
 suite "container_instances endpoints":
   test "GET /accounts/{account_id}/containers/applications/{application_id}/instances":

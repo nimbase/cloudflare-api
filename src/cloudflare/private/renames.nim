@@ -440,6 +440,20 @@ proc renameHook*(v: CcPlacementEvent, fieldName: var string) {.inline.} =
   elif fieldName == "status_change":
     fieldName = "statusChange"
 
+proc renameHook*(v: CloudforceOneEventsFieldDefinition, fieldName: var string) {.inline.} =
+  if fieldName == "allowedValues":
+    fieldName = "allowed_values"
+  elif fieldName == "allowed_values":
+    fieldName = "allowedValues"
+  elif fieldName == "maxLength":
+    fieldName = "max_length"
+  elif fieldName == "max_length":
+    fieldName = "maxLength"
+  elif fieldName == "numberConstraint":
+    fieldName = "number_constraint"
+  elif fieldName == "number_constraint":
+    fieldName = "numberConstraint"
+
 proc renameHook*(v: CpsCommunicationPreferences, fieldName: var string) {.inline.} =
   if fieldName == "language-locale":
     fieldName = "language_locale"

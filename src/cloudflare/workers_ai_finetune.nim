@@ -75,8 +75,8 @@ proc getAccountsAccountIdAiFinetunesPublic*(client: CloudflareClient,
 proc deleteAccountsAccountIdAiFinetunesFinetuneId*(client: CloudflareClient,
                                                    accountId: string,
                                                    finetuneId: string): Future[DeleteAccountsAccountIdAiFinetunesFinetuneIdResponse] {.async.} =
-  ## Permanently deletes a finetune. D1 rows are removed immediately and R2 objects
-  ## are moved to a trash bucket with a 30-day lifecycle rule for recovery.
+  ## Delete a finetune. Any in-flight requests referencing the lora will fail after
+  ## the files are deleted.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai/finetunes/{finetuneId}")
   let body = await res.body

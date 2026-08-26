@@ -23,6 +23,10 @@ suite "tag serialization":
     let obj = cloudflare.PostAccountsAccountIdCloudforceOneEventsTagsCreateResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneEventsTagsCreateResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse)) == openjson.toJson(obj)
+
   test "round-trips DeleteAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse":
     let obj = cloudflare.DeleteAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse)) == openjson.toJson(obj)
@@ -35,6 +39,22 @@ suite "tag serialization":
     let obj = cloudflare.GetAccountsAccountIdCloudforceOneEventsTagsTagUuidIndicatorsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneEventsTagsTagUuidIndicatorsResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse)) == openjson.toJson(obj)
+
+  test "round-trips PostAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse":
+    let obj = cloudflare.PostAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse)) == openjson.toJson(obj)
+
+  test "round-trips DeleteAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse":
+    let obj = cloudflare.DeleteAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse)) == openjson.toJson(obj)
+
+  test "round-trips PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse":
+    let obj = cloudflare.PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse)) == openjson.toJson(obj)
+
 suite "tag endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/events/dataset/{dataset_id}/tags/{tag_uuid}/indicators":
     let client = initCloudflareClient("test-key")
@@ -46,6 +66,11 @@ suite "tag endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdCloudforceOneEventsTags("test", 1.0, 1.0, "test", "test", @["test"], {})
 
+  test "GET /accounts/{account_id}/cloudforce-one/events/tags/{tag_uuid}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneEventsTagsTagUuid("test", "test")
+
   test "DELETE /accounts/{account_id}/cloudforce-one/events/tags/{tag_uuid}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -55,4 +80,14 @@ suite "tag endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdCloudforceOneEventsTagsTagUuidIndicators("test", "test", @["test"], 1.0, 1.0, "test", @["test"], @["test"])
+
+  test "GET /accounts/{account_id}/cloudforce-one/events/tags/{tag_uuid}/relationships":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationships("test", "test", @["test"], @["test"], @["test"], "test", 1)
+
+  test "DELETE /accounts/{account_id}/cloudforce-one/events/tags/{tag_uuid}/relationships/{rel_uuid}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuid("test", "test", "test", "test")
 

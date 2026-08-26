@@ -15,148 +15,228 @@ type
     pagination: JsonNode
     tags: seq[JsonNode]
   PostAccountsAccountIdCloudforceOneEventsTagsCreateRequest = object
-    active_duration: Option[string]
-    actor_category: Option[string]
-    actor_category_confidence: Option[int64]
+    active_duration: Option[JsonNode]
+    actor_category: Option[JsonNode]
     alias_group_names: Option[seq[string]]
     alias_group_names_internal: Option[seq[string]]
     aliases: Option[seq[JsonNode]]
-    analytic_priority: Option[float64]
-    attribution_confidence: Option[string]
-    attribution_confidence_score: Option[int64]
-    attribution_organization: Option[string]
+    attribution_organization: Option[JsonNode]
     category_uuid: Option[string]
+    confidence: Option[int64]
     date_of_discovery: Option[string]
+    description: Option[string]
     external_reference_links: Option[seq[string]]
     external_references: Option[seq[JsonNode]]
     internal_aliases: Option[seq[JsonNode]]
     internal_description: Option[string]
-    motive: Option[string]
-    motive_confidence: Option[int64]
-    opsec_level: Option[string]
-    origin_country_confidence: Option[int64]
-    origin_country_i_s_o: Option[string]
-    origin_country_tlp: Option[string]
-    priority: Option[float64]
-    sophistication_level: Option[string]
+    last_seen: Option[string]
+    motive: Option[JsonNode]
+    opsec_level: Option[JsonNode]
+    origin_country_i_s_o: Option[JsonNode]
+    priority: Option[JsonNode]
+    properties: Option[JsonNode]
+    sophistication_level: Option[JsonNode]
+    tlp: Option[string]
     value: string
   PostAccountsAccountIdCloudforceOneEventsTagsCreateResponse* = object
     active_duration: string
+    active_duration_annotated: JsonNode
     actor_category: string
-    actor_category_confidence: int64
-      ## Confidence (1-10) in the actor variety (actorCategory). CFONE-only: stripped
-      ## from responses to non-CFONE accounts.
+    actor_category_annotated: JsonNode
     alias_group_names: seq[string]
     alias_group_names_internal: seq[string]
     aliases: seq[JsonNode]
       ## Structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: stripped from
       ## responses to non-CFONE accounts.
-    analytic_priority: float64
-    attribution_confidence: string
-    attribution_confidence_score: int64
     attribution_organization: string
+    attribution_organization_annotated: JsonNode
     category_name: string
     category_uuid: string
+    confidence: int64
+      ## Overall tag confidence (1-10).
+    created_at: string
     date_of_discovery: string
+    description: string
     external_reference_links: seq[string]
     external_references: seq[JsonNode]
       ## Structured external references ({ url, description }). Public: returned to all
       ## accounts.
+    external_references_annotated: seq[JsonNode]
     internal_aliases: seq[JsonNode]
       ## Internal structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: never
       ## returned to non-CFONE accounts.
     internal_description: string
+    last_seen: string
     motive: string
-    motive_confidence: int64
-      ## Confidence (1-10) in the actor motive. CFONE-only: stripped from responses to
-      ## non-CFONE accounts.
+    motive_annotated: JsonNode
     opsec_level: string
-    origin_country_confidence: int64
-      ## Confidence (1-10) in the origin-country attribution. CFONE-only: stripped from
-      ## responses to non-CFONE accounts.
+    opsec_level_annotated: JsonNode
     origin_country_i_s_o: string
-    origin_country_i_s_o_alpha3: string
-    origin_country_tlp: string
-      ## TLP marking for the origin-country attribution. CFONE-only: stripped from
-      ## responses to non-CFONE accounts.
+      ## ISO country code (alpha-2 or alpha-3). Normalized to uppercase on read. Null
+      ## when stored value is blank/whitespace.
+    origin_country_i_s_o_annotated: JsonNode
     priority: float64
+    priority_annotated: JsonNode
+    properties: JsonNode
+      ## Parsed custom field values. Null when the tag has no custom fields.
     sophistication_level: string
+    sophistication_level_annotated: JsonNode
+    tlp: string
+      ## Tag-level TLP handling marking.
+    updated_at: string
     uuid: string
     value: string
+    version: float64
+  GetAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse* = object
+    active_duration: string
+    active_duration_annotated: JsonNode
+    actor_category: string
+    actor_category_annotated: JsonNode
+    alias_group_names: seq[string]
+    alias_group_names_internal: seq[string]
+    aliases: seq[JsonNode]
+      ## Structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: stripped from
+      ## responses to non-CFONE accounts.
+    attribution_organization: string
+    attribution_organization_annotated: JsonNode
+    category_name: string
+    category_uuid: string
+    confidence: int64
+      ## Overall tag confidence (1-10).
+    created_at: string
+    date_of_discovery: string
+    description: string
+    external_reference_links: seq[string]
+    external_references: seq[JsonNode]
+      ## Structured external references ({ url, description }). Public: returned to all
+      ## accounts.
+    external_references_annotated: seq[JsonNode]
+    internal_aliases: seq[JsonNode]
+      ## Internal structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: never
+      ## returned to non-CFONE accounts.
+    internal_description: string
+    last_seen: string
+    motive: string
+    motive_annotated: JsonNode
+    opsec_level: string
+    opsec_level_annotated: JsonNode
+    origin_country_i_s_o: string
+      ## ISO country code (alpha-2 or alpha-3). Normalized to uppercase on read. Null
+      ## when stored value is blank/whitespace.
+    origin_country_i_s_o_annotated: JsonNode
+    priority: float64
+    priority_annotated: JsonNode
+    properties: JsonNode
+      ## Parsed custom field values. Null when the tag has no custom fields.
+    sophistication_level: string
+    sophistication_level_annotated: JsonNode
+    tlp: string
+      ## Tag-level TLP handling marking.
+    updated_at: string
+    uuid: string
+    value: string
+    version: float64
   DeleteAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse* = object
     uuid: string
   PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidRequest = object
-    active_duration: Option[string]
-    actor_category: Option[string]
-    actor_category_confidence: Option[int64]
+    active_duration: Option[JsonNode]
+    actor_category: Option[JsonNode]
     alias_group_names: Option[seq[string]]
     alias_group_names_internal: Option[seq[string]]
     aliases: Option[seq[JsonNode]]
-    analytic_priority: Option[float64]
-    attribution_confidence: Option[string]
-    attribution_confidence_score: Option[int64]
-    attribution_organization: Option[string]
+    attribution_organization: Option[JsonNode]
     category_uuid: Option[string]
+    confidence: Option[int64]
     date_of_discovery: Option[string]
+    description: Option[string]
     external_reference_links: Option[seq[string]]
     external_references: Option[seq[JsonNode]]
     internal_aliases: Option[seq[JsonNode]]
     internal_description: Option[string]
-    motive: Option[string]
-    motive_confidence: Option[int64]
-    opsec_level: Option[string]
-    origin_country_confidence: Option[int64]
-    origin_country_i_s_o: Option[string]
-    origin_country_tlp: Option[string]
-    priority: Option[float64]
-    sophistication_level: Option[string]
+    last_seen: Option[string]
+    motive: Option[JsonNode]
+    opsec_level: Option[JsonNode]
+    origin_country_i_s_o: Option[JsonNode]
+    priority: Option[JsonNode]
+    properties: Option[JsonNode]
+    sophistication_level: Option[JsonNode]
+    tlp: Option[string]
     value: Option[string]
   PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse* = object
     active_duration: string
+    active_duration_annotated: JsonNode
     actor_category: string
-    actor_category_confidence: int64
-      ## Confidence (1-10) in the actor variety (actorCategory). CFONE-only: stripped
-      ## from responses to non-CFONE accounts.
+    actor_category_annotated: JsonNode
     alias_group_names: seq[string]
     alias_group_names_internal: seq[string]
     aliases: seq[JsonNode]
       ## Structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: stripped from
       ## responses to non-CFONE accounts.
-    analytic_priority: float64
-    attribution_confidence: string
-    attribution_confidence_score: int64
     attribution_organization: string
+    attribution_organization_annotated: JsonNode
     category_name: string
     category_uuid: string
+    confidence: int64
+      ## Overall tag confidence (1-10).
+    created_at: string
     date_of_discovery: string
+    description: string
     external_reference_links: seq[string]
     external_references: seq[JsonNode]
       ## Structured external references ({ url, description }). Public: returned to all
       ## accounts.
+    external_references_annotated: seq[JsonNode]
     internal_aliases: seq[JsonNode]
       ## Internal structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: never
       ## returned to non-CFONE accounts.
     internal_description: string
+    last_seen: string
     motive: string
-    motive_confidence: int64
-      ## Confidence (1-10) in the actor motive. CFONE-only: stripped from responses to
-      ## non-CFONE accounts.
+    motive_annotated: JsonNode
     opsec_level: string
-    origin_country_confidence: int64
-      ## Confidence (1-10) in the origin-country attribution. CFONE-only: stripped from
-      ## responses to non-CFONE accounts.
+    opsec_level_annotated: JsonNode
     origin_country_i_s_o: string
-    origin_country_i_s_o_alpha3: string
-    origin_country_tlp: string
-      ## TLP marking for the origin-country attribution. CFONE-only: stripped from
-      ## responses to non-CFONE accounts.
+      ## ISO country code (alpha-2 or alpha-3). Normalized to uppercase on read. Null
+      ## when stored value is blank/whitespace.
+    origin_country_i_s_o_annotated: JsonNode
     priority: float64
+    priority_annotated: JsonNode
+    properties: JsonNode
+      ## Parsed custom field values. Null when the tag has no custom fields.
     sophistication_level: string
+    sophistication_level_annotated: JsonNode
+    tlp: string
+      ## Tag-level TLP handling marking.
+    updated_at: string
     uuid: string
     value: string
+    version: float64
   GetAccountsAccountIdCloudforceOneEventsTagsTagUuidIndicatorsResponse* = object
     indicators: seq[JsonNode]
     pagination: JsonNode
+  GetAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse* = object
+    result: JsonNode
+    success: bool
+  PostAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRequest = object
+    confidence: Option[int64]
+    dataset_id: string
+    metadata: Option[JsonNode]
+    target_id: string
+    target_type: string
+    `type`: string
+  PostAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse* = object
+    result: JsonNode
+    success: bool
+  DeleteAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse* = object
+    result: JsonNode
+    success: bool
+  PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidRequest = object
+    confidence: Option[int64]
+    metadata: Option[JsonNode]
+    `type`: Option[string]
+  PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse* = object
+    result: JsonNode
+    success: bool
   TagCacheOption* = enum
     cacheFromGraph = "from-graph"
 
@@ -231,6 +311,20 @@ proc postAccountsAccountIdCloudforceOneEventsTagsCreate*(client: CloudflareClien
   else:
     raise newException(CloudflareClientError, body)
 
+proc getAccountsAccountIdCloudforceOneEventsTagsTagUuid*(client: CloudflareClient,
+                                                         accountId: string,
+                                                         tagUuid: string): Future[GetAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse] {.async.} =
+  ## Returns a single Source-of-Truth tag by UUID, including custom fields
+  ## (properties).
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/tags/{tagUuid}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc deleteAccountsAccountIdCloudforceOneEventsTagsTagUuid*(client: CloudflareClient,
                                                             accountId: string,
                                                             tagUuid: string): Future[DeleteAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse] {.async.} =
@@ -283,5 +377,81 @@ proc getAccountsAccountIdCloudforceOneEventsTagsTagUuidIndicators*(client: Cloud
   case res.code
   of Http200:
     result = fromJson(body, GetAccountsAccountIdCloudforceOneEventsTagsTagUuidIndicatorsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationships*(client: CloudflareClient,
+                                                                      accountId: string,
+                                                                      tagUuid: string,
+                                                                      datasets: seq[string] = @[],
+                                                                      search: seq[string] = @[],
+                                                                      expand: seq[string] = @[],
+                                                                      cursor: string = default(string),
+                                                                      pageSize: int64 = 25): Future[GetAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse] {.async.} =
+  ## Returns sparse relationship edges. Optionally hydrate related entities via
+  ## `expand`. Fans out across all accessible indicator dataset shards.
+
+  var q = initOrderedTable[string, string]()
+  for v in datasets: q["datasets"] = $v
+  for v in search: q["search"] = $v
+  for v in expand: q["expand"] = $v
+  q["cursor"] = $cursor
+  q["pageSize"] = $pageSize
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/tags/{tagUuid}/relationships", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationships*(client: CloudflareClient,
+                                                                       accountId: string,
+                                                                       tagUuid: string,
+                                                                       body: PostAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRequest): Future[PostAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse] {.async.} =
+  ## Creates a new relationship with the tag as the source entity. Requires a
+  ## datasetId to locate the Indicators DO.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/tags/{tagUuid}/relationships", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuid*(client: CloudflareClient,
+                                                                                accountId: string,
+                                                                                tagUuid: string,
+                                                                                relUuid: string,
+                                                                                datasetId: string): Future[DeleteAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse] {.async.} =
+  ## Deletes a relationship by UUID. Idempotent: returns deleted=false if not found.
+  ## Requires datasetId query param.
+
+  var q = initOrderedTable[string, string]()
+  q["datasetId"] = $datasetId
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/tags/{tagUuid}/relationships/{relUuid}", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, DeleteAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuid*(client: CloudflareClient,
+                                                                               accountId: string,
+                                                                               tagUuid: string,
+                                                                               relUuid: string,
+                                                                               datasetId: string,
+                                                                               body: PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidRequest): Future[PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse] {.async.} =
+  ## Partially updates a relationship by UUID. Requires datasetId query param.
+
+  var q = initOrderedTable[string, string]()
+  q["datasetId"] = $datasetId
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/tags/{tagUuid}/relationships/{relUuid}", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse)
   else:
     raise newException(CloudflareClientError, body)

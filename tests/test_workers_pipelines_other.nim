@@ -133,7 +133,7 @@ suite "workers_pipelines_other endpoints":
   test "DELETE /accounts/{account_id}/pipelines/v1/sinks/{sink_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdPipelinesV1SinksSinkId("test", "test", "test")
+    discard waitFor client.deleteAccountsAccountIdPipelinesV1SinksSinkId("test", "test")
 
   test "GET /accounts/{account_id}/pipelines/v1/streams":
     let client = initCloudflareClient("test-key")
@@ -148,7 +148,7 @@ suite "workers_pipelines_other endpoints":
   test "DELETE /accounts/{account_id}/pipelines/v1/streams/{stream_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdPipelinesV1StreamsStreamId("test", "test", "test")
+    discard waitFor client.deleteAccountsAccountIdPipelinesV1StreamsStreamId("test", "test")
 
   test "GET /accounts/{account_id}/pipelines/{pipeline_name}":
     let client = initCloudflareClient("test-key")

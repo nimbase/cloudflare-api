@@ -22,8 +22,14 @@ proc getAccountsAccountIdContainersRegistries*(client: CloudflareClient): Future
 
 proc postAccountsAccountIdContainersRegistries*(client: CloudflareClient,
                                                 body: types.CcContainersCreateImageRegistryRequestBody): Future[JsonNode] {.async.} =
-  ## Add an authenticated external image registry to the account so Containers can
-  ## pull images from it.
+  ## Registers credentials for a supported private external image registry so
+  ## Containers can pull images from it. This endpoint does not create a registry
+  ## or upload an image. Public Docker Hub images and images in the Cloudflare
+  ## managed registry do not require this configuration.
+  ##
+  ## Refer to [Imagemanagement](https://developers.cloudflare.com/containers/platfor
+  ## m-details/image-management/)
+  ## for supported registries and instructions for storing registry credentials.
 
   let res = await client.httpPOST("/accounts/{account_id}/containers/registries", body)
   let body = await res.body

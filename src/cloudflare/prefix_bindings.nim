@@ -13,7 +13,7 @@ proc getAccountsAccountIdDlsRegionalServicesPrefixBindings*(client: CloudflareCl
                                                             accountId: types.DlsAccountIdentifier,
                                                             cursor: string = default(string),
                                                             perPage: int64 = 25): Future[types.DlsPrefixBindingPaginatedListResponse] {.async.} =
-  ## List the BYOIP prefix bindings configured for an account.
+  ## List DLS prefix bindings for an account
 
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor
@@ -29,10 +29,7 @@ proc getAccountsAccountIdDlsRegionalServicesPrefixBindings*(client: CloudflareCl
 proc postAccountsAccountIdDlsRegionalServicesPrefixBindings*(client: CloudflareClient,
                                                              accountId: types.DlsAccountIdentifier,
                                                              body: types.DlsCreatePrefixBindingInput): Future[types.DlsPrefixBindingResponse] {.async.} =
-  ## Bind a CIDR from a BYOIP prefix to a region.
-  ##
-  ## This requires the **IP Prefixes Write** permission in addition to **DLS Write**,
-  ## because the binding is created against a BYOIP prefix in Addressing.
+  ## Create a DLS prefix binding
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/dls/regional_services/prefix_bindings", body)
   let body = await res.body
@@ -45,7 +42,7 @@ proc postAccountsAccountIdDlsRegionalServicesPrefixBindings*(client: CloudflareC
 proc getAccountsAccountIdDlsRegionalServicesPrefixBindingsBindingId*(client: CloudflareClient,
                                                                      accountId: types.DlsAccountIdentifier,
                                                                      bindingId: string): Future[types.DlsPrefixBindingResponse] {.async.} =
-  ## Retrieve a single BYOIP prefix binding by ID.
+  ## Get a DLS prefix binding
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/dls/regional_services/prefix_bindings/{bindingId}")
   let body = await res.body
@@ -58,10 +55,7 @@ proc getAccountsAccountIdDlsRegionalServicesPrefixBindingsBindingId*(client: Clo
 proc deleteAccountsAccountIdDlsRegionalServicesPrefixBindingsBindingId*(client: CloudflareClient,
                                                                         accountId: types.DlsAccountIdentifier,
                                                                         bindingId: string): Future[types.DlsGoodResponse] {.async.} =
-  ## Delete a BYOIP prefix binding.
-  ##
-  ## Like creating a binding, this requires **IP Prefixes Write** in addition to
-  ## **DLS Write**.
+  ## Delete a DLS prefix binding
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/dls/regional_services/prefix_bindings/{bindingId}")
   let body = await res.body
@@ -75,10 +69,7 @@ proc patchAccountsAccountIdDlsRegionalServicesPrefixBindingsBindingId*(client: C
                                                                        accountId: types.DlsAccountIdentifier,
                                                                        bindingId: string,
                                                                        body: types.DlsUpdatePrefixBindingInput): Future[types.DlsPrefixBindingResponse] {.async.} =
-  ## Update the region of an existing BYOIP prefix binding.
-  ##
-  ## Like creating a binding, this requires **IP Prefixes Write** in addition to
-  ## **DLS Write**.
+  ## Update a DLS prefix binding
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/dls/regional_services/prefix_bindings/{bindingId}", body)
   let body = await res.body

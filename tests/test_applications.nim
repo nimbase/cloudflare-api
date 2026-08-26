@@ -11,10 +11,6 @@ import cloudflare
 import ./common
 
 suite "applications serialization":
-  test "round-trips CcCreateApplicationRequest":
-    let obj = newCcCreateApplicationRequest()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcCreateApplicationRequest)) == openjson.toJson(obj)
-
   test "round-trips AlexandriaCreateApplicationRequest":
     let obj = newAlexandriaCreateApplicationRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AlexandriaCreateApplicationRequest)) == openjson.toJson(obj)
@@ -34,6 +30,10 @@ suite "applications serialization":
   test "round-trips OnePaginatedAuthMethodDetailList":
     let obj = newOnePaginatedAuthMethodDetailList()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OnePaginatedAuthMethodDetailList)) == openjson.toJson(obj)
+
+  test "round-trips AlexandriaDeleteApplicationConflictResponse":
+    let obj = newAlexandriaDeleteApplicationConflictResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AlexandriaDeleteApplicationConflictResponse)) == openjson.toJson(obj)
 
   test "round-trips OneApplicationDetailResponse":
     let obj = newOneApplicationDetailResponse()
@@ -71,6 +71,10 @@ suite "applications serialization":
     let obj = newAlexandriaGetApplicationsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AlexandriaGetApplicationsResponse)) == openjson.toJson(obj)
 
+  test "round-trips CcContainersCreateApplicationRequest":
+    let obj = newCcContainersCreateApplicationRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcContainersCreateApplicationRequest)) == openjson.toJson(obj)
+
   test "round-trips AlexandriaUpdateApplicationRequest":
     let obj = newAlexandriaUpdateApplicationRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AlexandriaUpdateApplicationRequest)) == openjson.toJson(obj)
@@ -83,12 +87,12 @@ suite "applications endpoints":
   test "GET /accounts/{account_id}/containers/applications":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdContainersApplications("test", "test", @["test"])
+    discard waitFor client.getAccountsAccountIdContainersApplications("test", "test")
 
   test "POST /accounts/{account_id}/containers/applications":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdContainersApplications(newCcCreateApplicationRequest())
+    discard waitFor client.postAccountsAccountIdContainersApplications(newCcContainersCreateApplicationRequest())
 
   test "GET /accounts/{account_id}/containers/applications/{application_id}":
     let client = initCloudflareClient("test-key")
@@ -118,7 +122,7 @@ suite "applications endpoints":
   test "GET /accounts/{account_id}/resource-library/applications":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdResourceLibraryApplications("test", "test", 1, 1, "test", "test")
+    discard waitFor client.getAccountsAccountIdResourceLibraryApplications("test", "test", 1, 1, "test", "test", "test")
 
   test "POST /accounts/{account_id}/resource-library/applications":
     let client = initCloudflareClient("test-key")

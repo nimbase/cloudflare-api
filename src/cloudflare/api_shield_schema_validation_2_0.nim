@@ -18,7 +18,9 @@ type
 
 proc patchZonesZoneIdApiGatewayOperationsSchemaValidation*(client: CloudflareClient,
                                                            body: types.ApiShieldOldOperationSchemaValidationSettingsMultipleRequest): Future[JsonNode] {.async.} =
-  ## Updates multiple operation-level schema validation settings on the zone
+  ## Updates multiple operation-level schema validation settings on the zone.
+  ## Deprecated; use `/zones/{zone_id}/schema_validation/settings/operations`
+  ## instead.
 
   let res = await client.httpPATCH("/zones/{zone_id}/api_gateway/operations/schema_validation", body)
   let body = await res.body
@@ -29,7 +31,9 @@ proc patchZonesZoneIdApiGatewayOperationsSchemaValidation*(client: CloudflareCli
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdApiGatewayOperationsOperationIdSchemaValidation*(client: CloudflareClient): Future[types.ApiShieldOldOperationSchemaValidationSettings] {.async.} =
-  ## Retrieves operation-level schema validation settings on the zone
+  ## Retrieves operation-level schema validation settings on the zone. Deprecated;
+  ## use `/zones/{zone_id}/schema_validation/settings/operations/{operation_id}`
+  ## instead.
 
   let res = await client.httpGET("/zones/{zone_id}/api_gateway/operations/{operation_id}/schema_validation")
   let body = await res.body
@@ -41,7 +45,8 @@ proc getZonesZoneIdApiGatewayOperationsOperationIdSchemaValidation*(client: Clou
 
 proc putZonesZoneIdApiGatewayOperationsOperationIdSchemaValidation*(client: CloudflareClient,
                                                                     body: types.ApiShieldOldOperationSchemaValidationSettingsModifyRequest): Future[types.ApiShieldOldOperationSchemaValidationSettings] {.async.} =
-  ## Updates operation-level schema validation settings on the zone
+  ## Updates operation-level schema validation settings on the zone. Deprecated; use
+  ## `/zones/{zone_id}/schema_validation/settings/operations/{operation_id}` instead.
 
   let res = await client.httpPUT("/zones/{zone_id}/api_gateway/operations/{operation_id}/schema_validation", body)
   let body = await res.body
@@ -52,7 +57,8 @@ proc putZonesZoneIdApiGatewayOperationsOperationIdSchemaValidation*(client: Clou
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdApiGatewaySettingsSchemaValidation*(client: CloudflareClient): Future[types.ApiShieldOldZoneSchemaValidationSettings] {.async.} =
-  ## Retrieves zone level schema validation settings currently set on the zone
+  ## Retrieves zone level schema validation settings currently set on the zone.
+  ## Deprecated; use `/zones/{zone_id}/schema_validation/settings` instead.
 
   let res = await client.httpGET("/zones/{zone_id}/api_gateway/settings/schema_validation")
   let body = await res.body
@@ -64,7 +70,8 @@ proc getZonesZoneIdApiGatewaySettingsSchemaValidation*(client: CloudflareClient)
 
 proc putZonesZoneIdApiGatewaySettingsSchemaValidation*(client: CloudflareClient,
                                                        body: types.ApiShieldOldZoneSchemaValidationSettingsPut): Future[types.ApiShieldOldZoneSchemaValidationSettings] {.async.} =
-  ## Updates zone level schema validation settings on the zone
+  ## Updates zone level schema validation settings on the zone. Deprecated; use
+  ## `/zones/{zone_id}/schema_validation/settings` instead.
 
   let res = await client.httpPUT("/zones/{zone_id}/api_gateway/settings/schema_validation", body)
   let body = await res.body
@@ -76,7 +83,8 @@ proc putZonesZoneIdApiGatewaySettingsSchemaValidation*(client: CloudflareClient,
 
 proc patchZonesZoneIdApiGatewaySettingsSchemaValidation*(client: CloudflareClient,
                                                          body: types.ApiShieldOldZoneSchemaValidationSettingsPatch): Future[types.ApiShieldOldZoneSchemaValidationSettings] {.async.} =
-  ## Updates zone level schema validation settings on the zone
+  ## Updates zone level schema validation settings on the zone. Deprecated; use
+  ## `/zones/{zone_id}/schema_validation/settings` instead.
 
   let res = await client.httpPATCH("/zones/{zone_id}/api_gateway/settings/schema_validation", body)
   let body = await res.body
@@ -91,7 +99,8 @@ proc getZonesZoneIdApiGatewayUserSchemas*(client: CloudflareClient,
                                           omitSource: bool = false,
                                           validationEnabled: types.ApiShieldOldValidationEnabled = default(types.ApiShieldOldValidationEnabled)): Future[JsonNode] {.async.} =
   ## Lists all OpenAPI schemas uploaded to API Shield for the zone, including their
-  ## validation status and associated operations.
+  ## validation status and associated operations. Deprecated; use
+  ## `/zones/{zone_id}/schema_validation/schemas` instead.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -107,8 +116,8 @@ proc getZonesZoneIdApiGatewayUserSchemas*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc postZonesZoneIdApiGatewayUserSchemas*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Uploads a new OpenAPI schema for API Shield schema validation. The schema
-  ## defines expected request/response formats for API endpoints.
+  ## Uploads an OpenAPI schema that defines expected request formats for API
+  ## endpoints. Deprecated; use `/zones/{zone_id}/schema_validation/schemas` instead.
 
   let res = await client.httpPOST("/zones/{zone_id}/api_gateway/user_schemas")
   let body = await res.body
@@ -120,7 +129,8 @@ proc postZonesZoneIdApiGatewayUserSchemas*(client: CloudflareClient): Future[Jso
 
 proc getZonesZoneIdApiGatewayUserSchemasHosts*(client: CloudflareClient): Future[JsonNode] {.async.} =
   ## Lists all unique hosts found in uploaded OpenAPI schemas for the zone. Useful
-  ## for understanding which domains have schema coverage.
+  ## for understanding which domains have schema coverage. Deprecated; use
+  ## `/zones/{zone_id}/schema_validation/schemas/hosts` instead.
 
   let res = await client.httpGET("/zones/{zone_id}/api_gateway/user_schemas/hosts")
   let body = await res.body
@@ -133,7 +143,8 @@ proc getZonesZoneIdApiGatewayUserSchemasHosts*(client: CloudflareClient): Future
 proc getZonesZoneIdApiGatewayUserSchemasSchemaId*(client: CloudflareClient,
                                                   omitSource: bool = false): Future[JsonNode] {.async.} =
   ## Gets detailed information about a specific uploaded OpenAPI schema, including
-  ## its contents and validation configuration.
+  ## its contents and validation configuration. Deprecated; use
+  ## `/zones/{zone_id}/schema_validation/schemas/{schema_id}` instead.
 
   var q = initOrderedTable[string, string]()
   q["omit_source"] = $omitSource
@@ -148,6 +159,8 @@ proc getZonesZoneIdApiGatewayUserSchemasSchemaId*(client: CloudflareClient,
 proc deleteZonesZoneIdApiGatewayUserSchemasSchemaId*(client: CloudflareClient): Future[types.ApiShieldApiResponseSingle] {.async.} =
   ## Permanently removes an uploaded OpenAPI schema from API Shield schema
   ## validation. Operations using this schema will lose their validation rules.
+  ## Deprecated; use `/zones/{zone_id}/schema_validation/schemas/{schema_id}`
+  ## instead.
 
   let res = await client.httpDELETE("/zones/{zone_id}/api_gateway/user_schemas/{schema_id}")
   let body = await res.body
@@ -160,7 +173,8 @@ proc deleteZonesZoneIdApiGatewayUserSchemasSchemaId*(client: CloudflareClient): 
 proc patchZonesZoneIdApiGatewayUserSchemasSchemaId*(client: CloudflareClient,
                                                     body: PatchZonesZoneIdApiGatewayUserSchemasSchemaIdRequest): Future[JsonNode] {.async.} =
   ## Activates schema validation for an uploaded OpenAPI schema. Requests to matching
-  ## endpoints will be validated against the schema definitions.
+  ## endpoints will be validated against the schema definitions. Deprecated; use
+  ## `/zones/{zone_id}/schema_validation/schemas/{schema_id}` instead.
 
   let res = await client.httpPATCH("/zones/{zone_id}/api_gateway/user_schemas/{schema_id}", body)
   let body = await res.body
@@ -179,7 +193,8 @@ proc getZonesZoneIdApiGatewayUserSchemasSchemaIdOperations*(client: CloudflareCl
                                                             perPage: int64 = 20,
                                                             operationStatus: ApiShieldSchemaValidation20OperationStatusOption): Future[JsonNode] {.async.} =
   ## Retrieves all operations from the schema. Operations that already exist in API
-  ## Shield Endpoint Management will be returned as full operations.
+  ## Shield Endpoint Management will be returned as full operations. Deprecated; use
+  ## `/zones/{zone_id}/schema_validation/schemas/{schema_id}/operations` instead.
 
   var q = initOrderedTable[string, string]()
   q["feature"] = $feature

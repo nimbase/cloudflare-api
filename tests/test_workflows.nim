@@ -197,6 +197,11 @@ suite "workflows endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdStep("test", "test", "test", {}, 1, "test")
 
+  test "GET /accounts/{account_id}/workflows/{workflow_name}/instances/{instance_id}/subscribe":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribe("test", "test", 1, "test", "test")
+
   test "GET /accounts/{account_id}/workflows/{workflow_name}/versions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

@@ -145,6 +145,19 @@ type
       ## WebKit version.
     web_socket_debugger_url: string
       ## WebSocket URL for debugging the browser.
+  PostAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionIdLiveViewRequest = object
+    expires_in_ms: Option[float64]
+    guardrails: Option[JsonNode]
+    mode: Option[string]
+    target_id: Option[string]
+  PostAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionIdLiveViewResponse* = object
+    devtools_frontend_url: string
+      ## URL to open the live view in a browser
+    id: string
+      ## Target ID
+    options: JsonNode
+    web_socket_debugger_url: string
+      ## WebSocket URL for CDP connection
   GetAccountsAccountIdBrowserRenderingDevtoolsSessionSessionIdResponse* = object
     close_reason: string
       ## Reason for session closure.
@@ -649,6 +662,21 @@ proc getAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionIdJsonVersion*(cl
   case res.code
   of Http200:
     result = fromJson(body, GetAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionIdJsonVersionResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionIdLiveView*(client: CloudflareClient,
+                                                                            accountId: string,
+                                                                            sessionId: string,
+                                                                            body: PostAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionIdLiveViewRequest): Future[PostAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionIdLiveViewResponse] {.async.} =
+  ## Generates time-limited URLs to view a remote browser session. Set `guardrails: {
+  ## mode: 'readonly' }` to create a view-only link.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/browser-rendering/devtools/browser/{sessionId}/live_view", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionIdLiveViewResponse)
   else:
     raise newException(CloudflareClientError, body)
 

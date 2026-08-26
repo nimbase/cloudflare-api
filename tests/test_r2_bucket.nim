@@ -140,6 +140,11 @@ suite "r2_bucket endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdR2BucketsBucketName("test", "test")
 
+  test "PUT /accounts/{account_id}/r2/buckets/{bucket_name}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.putAccountsAccountIdR2BucketsBucketName("test", "test")
+
   test "DELETE /accounts/{account_id}/r2/buckets/{bucket_name}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

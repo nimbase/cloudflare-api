@@ -96,3 +96,15 @@ proc deleteZonesZoneIdSpectrumAppsAppId*(client: CloudflareClient,
     result = fromJson(body, types.SpectrumConfigApiResponseSingleId)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getZonesZoneIdSpectrumProtocols*(client: CloudflareClient,
+                                      zoneId: types.SpectrumConfigZoneIdentifier): Future[types.SpectrumConfigProtocolCollection] {.async.} =
+  ## Retrieves a list of Spectrum application protocols available for a zone.
+
+  let res = await client.httpGET(fmt"/zones/{zoneId}/spectrum/protocols")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.SpectrumConfigProtocolCollection)
+  else:
+    raise newException(CloudflareClientError, body)

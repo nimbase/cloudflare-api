@@ -25,7 +25,7 @@ proc getZonesZoneIdSchemaValidationSchemas*(client: CloudflareClient,
                                             page: int64 = 1, perPage: int64 = 20,
                                             omitSource: bool = false,
                                             validationEnabled: bool = default(bool)): Future[JsonNode] {.async.} =
-  ## Lists all OpenAPI schemas uploaded to API Shield with pagination support.
+  ## Lists all OpenAPI schemas uploaded to API Security.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -42,8 +42,8 @@ proc getZonesZoneIdSchemaValidationSchemas*(client: CloudflareClient,
 
 proc postZonesZoneIdSchemaValidationSchemas*(client: CloudflareClient,
                                              body: PostZonesZoneIdSchemaValidationSchemasRequest): Future[JsonNode] {.async.} =
-  ## Uploads a new OpenAPI schema for API Shield schema validation. The schema
-  ## defines expected request/response formats for API endpoints.
+  ## Uploads an OpenAPI schema that defines expected request formats for API
+  ## operations.
 
   let res = await client.httpPOST("/zones/{zone_id}/schema_validation/schemas", body)
   let body = await res.body
@@ -72,7 +72,7 @@ proc getZonesZoneIdSchemaValidationSchemasHosts*(client: CloudflareClient,
 proc getZonesZoneIdSchemaValidationSchemasSchemaId*(client: CloudflareClient,
                                                     omitSource: bool = false): Future[types.ApiShieldPublicSchemaSuccessResult] {.async.} =
   ## Gets the contents and metadata of a specific OpenAPI schema uploaded to API
-  ## Shield.
+  ## Security.
 
   var q = initOrderedTable[string, string]()
   q["omit_source"] = $omitSource
@@ -85,8 +85,8 @@ proc getZonesZoneIdSchemaValidationSchemasSchemaId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdSchemaValidationSchemasSchemaId*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Permanently removes an uploaded OpenAPI schema from API Shield. Operations using
-  ## this schema will lose their validation rules.
+  ## Permanently removes an uploaded OpenAPI schema from API Security. Operations
+  ## using this schema will lose their validation rules.
 
   let res = await client.httpDELETE("/zones/{zone_id}/schema_validation/schemas/{schema_id}")
   let body = await res.body
@@ -98,8 +98,8 @@ proc deleteZonesZoneIdSchemaValidationSchemasSchemaId*(client: CloudflareClient)
 
 proc patchZonesZoneIdSchemaValidationSchemasSchemaId*(client: CloudflareClient,
                                                       body: PatchZonesZoneIdSchemaValidationSchemasSchemaIdRequest): Future[types.ApiShieldPublicSchemaSuccessResult] {.async.} =
-  ## Modifies an existing OpenAPI schema in API Shield, updating the validation rules
-  ## for associated API operations.
+  ## Enables or disables validation for an uploaded OpenAPI schema without changing
+  ## the schema document.
 
   let res = await client.httpPATCH("/zones/{zone_id}/schema_validation/schemas/{schema_id}", body)
   let body = await res.body

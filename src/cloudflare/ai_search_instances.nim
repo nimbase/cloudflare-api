@@ -90,7 +90,7 @@ type
   PostAccountsAccountIdAiSearchInstancesIdChatCompletionsRequest = object
     ai_search_options: Option[JsonNode]
     messages: seq[JsonNode]
-    model: Option[JsonNode]
+    model: Option[string]
     stream: Option[bool]
   PostAccountsAccountIdAiSearchInstancesIdChatCompletionsResponse* = object
     choices: seq[JsonNode]
@@ -190,7 +190,7 @@ type
   PostAccountsAccountIdAiSearchNamespacesNameInstancesIdChatCompletionsRequest = object
     ai_search_options: Option[JsonNode]
     messages: seq[JsonNode]
-    model: Option[JsonNode]
+    model: Option[string]
     stream: Option[bool]
   PostAccountsAccountIdAiSearchNamespacesNameInstancesIdChatCompletionsResponse* = object
     choices: seq[JsonNode]

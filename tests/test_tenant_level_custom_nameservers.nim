@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "tenant_level_custom_nameservers serialization":
+  test "round-trips DnsCustomNameserversEmptyResponse3":
+    let obj = newDnsCustomNameserversEmptyResponse3()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsCustomNameserversEmptyResponse3)) == openjson.toJson(obj)
+
   test "round-trips DnsCustomNameserversCustomNSInput":
     let obj = newDnsCustomNameserversCustomNSInput()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsCustomNameserversCustomNSInput)) == openjson.toJson(obj)
@@ -22,10 +26,6 @@ suite "tenant_level_custom_nameservers serialization":
   test "round-trips DnsCustomNameserversTcnsResponseSingle":
     let obj = newDnsCustomNameserversTcnsResponseSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsCustomNameserversTcnsResponseSingle)) == openjson.toJson(obj)
-
-  test "round-trips DnsCustomNameserversEmptyResponse":
-    let obj = newDnsCustomNameserversEmptyResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsCustomNameserversEmptyResponse)) == openjson.toJson(obj)
 
   test "round-trips DnsCustomNameserversTcnsResponseCollection":
     let obj = newDnsCustomNameserversTcnsResponseCollection()

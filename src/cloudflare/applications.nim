@@ -16,14 +16,12 @@ type
 
 proc getAccountsAccountIdContainersApplications*(client: CloudflareClient,
                                                  name: types.CcApplicationName = default(types.CcApplicationName),
-                                                 image: types.CcImage = default(types.CcImage),
-                                                 label: seq[string] = @[]): Future[JsonNode] {.async.} =
+                                                 image: types.CcImage = default(types.CcImage)): Future[JsonNode] {.async.} =
   ## Lists all the applications that are associated with your account.
 
   var q = initOrderedTable[string, string]()
   q["name"] = $name
   q["image"] = $image
-  for v in label: q["label"] = $v
   let res = await client.httpGET("/accounts/{account_id}/containers/applications", q)
   let body = await res.body
   case res.code
@@ -33,7 +31,7 @@ proc getAccountsAccountIdContainersApplications*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdContainersApplications*(client: CloudflareClient,
-                                                  body: types.CcCreateApplicationRequest): Future[JsonNode] {.async.} =
+                                                  body: types.CcContainersCreateApplicationRequest): Future[JsonNode] {.async.} =
   ## Create a new application. An Application represents an intent to run one or more
   ## containers, with the same image, dynamically scheduled based on constraints.
 
@@ -176,8 +174,17 @@ proc getAccountsAccountIdResourceLibraryApplications*(client: CloudflareClient,
                                                       limit: int64 = 25,
                                                       offset: int64 = 0,
                                                       orderBy: string = default(string),
-                                                      search: string = default(string)): Future[types.AlexandriaGetApplicationsResponse] {.async.} =
-  ## List applications with different filters.
+                                                      search: string = default(string),
+                                                      fields: string = default(string)): Future[types.AlexandriaGetApplicationsResponse] {.async.} =
+  ## List the applications available to an account, both the applications Cloudflare
+  ## curates and the custom applications the account has defined.
+  ##
+  ## Results are paginated. Use `filter` and `search` to narrow the list, `order_by`
+  ## to
+  ## sort it, and `fields` to reduce each result to only the properties you need.
+  ##
+  ## The authenticated principal must have access to the account identified by
+  ## `account_id`.
 
   var q = initOrderedTable[string, string]()
   q["filter"] = $filter
@@ -185,6 +192,7 @@ proc getAccountsAccountIdResourceLibraryApplications*(client: CloudflareClient,
   q["offset"] = $offset
   q["order_by"] = $orderBy
   q["search"] = $search
+  q["fields"] = $fields
   let res = await client.httpGET(fmt"/accounts/{accountId}/resource-library/applications", q)
   let body = await res.body
   case res.code
@@ -222,7 +230,8 @@ proc getAccountsAccountIdResourceLibraryApplicationsId*(client: CloudflareClient
 proc deleteAccountsAccountIdResourceLibraryApplicationsId*(client: CloudflareClient,
                                                            accountId: string,
                                                            id: types.AlexandriaApplicationId): Future[types.AlexandriaDeleteApplicationResponse] {.async.} =
-  ## Delete a custom application and all of its versions.
+  ## Delete a custom application and all of its versions. Deletion is rejected when
+  ## other resources reference the application.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/resource-library/applications/{id}")
   let body = await res.body

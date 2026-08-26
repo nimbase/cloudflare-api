@@ -54,7 +54,9 @@ proc putAccountsAccountIdIntelSinkholesSinkholeId*(client: CloudflareClient,
                                                    accountId: types.IntelSinkholesIdentifier,
                                                    sinkholeId: string,
                                                    body: types.IntelSinkholesSinkholeCreateParams): Future[types.IntelSinkholesApiResponseSingleEmpty] {.async.} =
-  ## Update the name or R2 configuration of the specified sinkhole.
+  ## Replaces the name or R2 configuration of the specified sinkhole. This is a full
+  ## replacement. All fields, including r2_secret, must be re-supplied. Omitting
+  ## r2_secret overwrites the stored value with an empty string.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/intel/sinkholes/{sinkholeId}", body)
   let body = await res.body
@@ -81,7 +83,7 @@ proc deleteAccountsAccountIdIntelSinkholesSinkholeId*(client: CloudflareClient,
 proc getAccountsAccountIdIntelSinkholesSinkholeIdIngresses*(client: CloudflareClient,
                                                             accountId: types.IntelSinkholesIdentifier,
                                                             sinkholeId: string): Future[types.IntelSinkholesIngressCollectionResponse] {.async.} =
-  ## List all ingress rules associated with the specified sinkhole.
+  ## Returns all ingress rules associated with the specified sinkhole.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/intel/sinkholes/{sinkholeId}/ingresses")
   let body = await res.body
@@ -128,8 +130,8 @@ proc putZonesZoneIdIntelSinkholesSinkholeIdIngressesIngressId*(client: Cloudflar
                                                                sinkholeId: string,
                                                                ingressId: string,
                                                                body: types.IntelSinkholesIngressCreateParams): Future[types.IntelSinkholesApiResponseSingleEmpty] {.async.} =
-  ## Update the specified ingress rule. The sinkhole must belong to the same account
-  ## as the zone.
+  ## Replaces the specified ingress rule. The sinkhole must belong to the same
+  ## account as the zone.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/intel/sinkholes/{sinkholeId}/ingresses/{ingressId}", body)
   let body = await res.body

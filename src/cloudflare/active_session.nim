@@ -13,8 +13,8 @@ type
     data: types.RealtimekitActiveSession
     success: bool
   PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionKickRequest = object
-    custom_participant_ids: seq[string]
-    participant_ids: seq[string]
+    custom_participant_ids: Option[seq[string]]
+    participant_ids: Option[seq[string]]
   PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionKickResponse* = object
     data: JsonNode
     success: bool
@@ -22,13 +22,13 @@ type
     data: JsonNode
     success: bool
   PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionMuteRequest = object
-    custom_participant_ids: seq[string]
-    participant_ids: seq[string]
+    custom_participant_ids: Option[seq[string]]
+    participant_ids: Option[seq[string]]
   PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionMuteResponse* = object
     data: JsonNode
     success: bool
   PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionMuteAllRequest = object
-    allow_unmute: bool
+    allow_unmute: Option[bool]
   PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionMuteAllResponse* = object
     data: JsonNode
     success: bool

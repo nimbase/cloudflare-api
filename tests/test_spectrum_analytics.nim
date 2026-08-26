@@ -27,11 +27,20 @@ suite "spectrum_analytics serialization":
     let obj = newSpectrumAnalyticsApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpectrumAnalyticsApiResponseCommonFailure)) == openjson.toJson(obj)
 
+  test "round-trips SpectrumAnalyticsZonesReportResponse":
+    let obj = newSpectrumAnalyticsZonesReportResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpectrumAnalyticsZonesReportResponse)) == openjson.toJson(obj)
+
   test "round-trips SpectrumAnalyticsQueryResponseSingle":
     let obj = newSpectrumAnalyticsQueryResponseSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpectrumAnalyticsQueryResponseSingle)) == openjson.toJson(obj)
 
 suite "spectrum_analytics endpoints":
+  test "GET /user/spectrum_analytics/zones/report":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getUserSpectrumAnalyticsZonesReport(newSpectrumAnalyticsSince(), newSpectrumAnalyticsUntil(), true)
+
   test "GET /zones/{zone_id}/spectrum/analytics/aggregate/current":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

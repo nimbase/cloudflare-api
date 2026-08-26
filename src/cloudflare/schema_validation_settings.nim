@@ -48,7 +48,7 @@ proc patchZonesZoneIdSchemaValidationSettings*(client: CloudflareClient,
 proc getZonesZoneIdSchemaValidationSettingsOperations*(client: CloudflareClient,
                                                        page: int64 = 1,
                                                        perPage: int64 = 20): Future[JsonNode] {.async.} =
-  ## Lists all per-operation schema validation settings configured for the zone.
+  ## Lists per-operation schema validation settings configured for the zone.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page

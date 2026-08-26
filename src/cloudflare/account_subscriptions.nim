@@ -14,6 +14,8 @@ type
     payment_hold_id: Option[int64]
     subscriptions: Option[seq[types.BillSubsApiSubscriptionV2]]
     user_is_on_session: Option[bool]
+  PostAccountsAccountIdSubscriptionsCancelDowngradeRequest = object
+    subscription_ids: Option[seq[string]]
 
 proc postAccountsAccountIdBulkSubscriptions*(client: CloudflareClient,
                                              accountId: types.BillSubsApiIdentifier,
@@ -49,6 +51,32 @@ proc postAccountsAccountIdSubscriptions*(client: CloudflareClient,
   ## Creates an account subscription.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/subscriptions", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.BillSubsApiAccountSubscriptionResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdSubscriptionsCancelDowngrade*(client: CloudflareClient,
+                                                        accountId: types.BillSubsApiIdentifier,
+                                                        body: PostAccountsAccountIdSubscriptionsCancelDowngradeRequest): Future[types.BillSubsApiApiResponseSingle] {.async.} =
+  ## Cancels pending delayed downgrades for the specified subscriptions.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/subscriptions/cancel-downgrade", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.BillSubsApiApiResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdSubscriptionsSubscriptionIdentifier*(client: CloudflareClient,
+                                                              subscriptionIdentifier: types.BillSubsApiSchemasIdentifier,
+                                                              accountId: types.BillSubsApiIdentifier): Future[types.BillSubsApiAccountSubscriptionResponseSingle] {.async.} =
+  ## Gets an account subscription by identifier.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/subscriptions/{subscriptionIdentifier}")
   let body = await res.body
   case res.code
   of Http200:
@@ -95,5 +123,32 @@ proc postAccountsAccountIdSubscriptionsSubscriptionIdentifierActionAppend*(clien
   case res.code
   of Http200:
     result = fromJson(body, types.BillSubsApiAccountSubscriptionResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdSubscriptionsSubscriptionIdentifierCancelReason*(client: CloudflareClient,
+                                                                          subscriptionIdentifier: types.BillSubsApiSchemasIdentifier,
+                                                                          accountId: types.BillSubsApiIdentifier): Future[types.BillSubsApiCancelReasonResponseSingle] {.async.} =
+  ## Gets the cancellation reason for an account subscription.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/subscriptions/{subscriptionIdentifier}/cancel-reason")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.BillSubsApiCancelReasonResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdSubscriptionsSubscriptionIdentifierCancelReason*(client: CloudflareClient,
+                                                                           subscriptionIdentifier: types.BillSubsApiSchemasIdentifier,
+                                                                           accountId: types.BillSubsApiIdentifier,
+                                                                           body: types.BillSubsApiCancelReasonRequest): Future[types.BillSubsApiCancelReasonResponseSingle] {.async.} =
+  ## Records a cancellation reason for an account subscription.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/subscriptions/{subscriptionIdentifier}/cancel-reason", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.BillSubsApiCancelReasonResponseSingle)
   else:
     raise newException(CloudflareClientError, body)

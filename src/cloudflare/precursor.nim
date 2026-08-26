@@ -40,6 +40,8 @@ proc putZonesZoneIdPrecursor*(client: CloudflareClient,
   ## - Rule `id` is read-only (assigned by Cloudflare) and ignored on input.
   ## - Rule `mode` must be `min-friction` or `max-security` (`off` is not a
   ## valid rule mode; use `default_mode` to disable enforcement).
+  ## - Rule `expression` is limited to 4000 characters. The limit applies to
+  ## each rule individually, not to the combined size of all rules.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/precursor", body)
   let body = await res.body

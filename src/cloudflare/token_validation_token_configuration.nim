@@ -22,7 +22,7 @@ type
 
 proc getZonesZoneIdTokenValidationConfig*(client: CloudflareClient,
                                           page: int64 = 1, perPage: int64 = 20): Future[JsonNode] {.async.} =
-  ## Lists all token validation configurations for this zone
+  ## Lists the JWT validation configurations defined for the zone.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -37,7 +37,7 @@ proc getZonesZoneIdTokenValidationConfig*(client: CloudflareClient,
 
 proc postZonesZoneIdTokenValidationConfig*(client: CloudflareClient,
                                            body: PostZonesZoneIdTokenValidationConfigRequest): Future[JsonNode] {.async.} =
-  ## Create a new Token Validation configuration
+  ## Creates a JWT validation configuration for the zone.
 
   let res = await client.httpPOST("/zones/{zone_id}/token_validation/config", body)
   let body = await res.body
@@ -48,7 +48,7 @@ proc postZonesZoneIdTokenValidationConfig*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdTokenValidationConfigConfigId*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Get a single Token Configuration
+  ## Returns a JWT validation configuration by ID.
 
   let res = await client.httpGET("/zones/{zone_id}/token_validation/config/{config_id}")
   let body = await res.body
@@ -59,7 +59,7 @@ proc getZonesZoneIdTokenValidationConfigConfigId*(client: CloudflareClient): Fut
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdTokenValidationConfigConfigId*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Delete Token Configuration
+  ## Deletes a JWT validation configuration from the zone.
 
   let res = await client.httpDELETE("/zones/{zone_id}/token_validation/config/{config_id}")
   let body = await res.body
@@ -71,7 +71,7 @@ proc deleteZonesZoneIdTokenValidationConfigConfigId*(client: CloudflareClient): 
 
 proc patchZonesZoneIdTokenValidationConfigConfigId*(client: CloudflareClient,
                                                     body: PatchZonesZoneIdTokenValidationConfigConfigIdRequest): Future[JsonNode] {.async.} =
-  ## Edit fields of an existing Token Configuration
+  ## Updates only the supplied fields on a JWT validation configuration.
 
   let res = await client.httpPATCH("/zones/{zone_id}/token_validation/config/{config_id}", body)
   let body = await res.body
@@ -83,9 +83,8 @@ proc patchZonesZoneIdTokenValidationConfigConfigId*(client: CloudflareClient,
 
 proc putZonesZoneIdTokenValidationConfigConfigIdCredentials*(client: CloudflareClient,
                                                              body: types.ApiShieldCredentialsRequest): Future[JsonNode] {.async.} =
-  ## Update Token Configuration credentials with full replacement semantics. Key
-  ## identities (`{alg,kid}`) must be unique within the request. Symmetric keys
-  ## (`kty: "oct"`) require `k`; `k: null` is invalid.
+  ## Replaces the configuration's complete key set. Symmetric keys must include their
+  ## key material.
 
   let res = await client.httpPUT("/zones/{zone_id}/token_validation/config/{config_id}/credentials", body)
   let body = await res.body
@@ -97,13 +96,8 @@ proc putZonesZoneIdTokenValidationConfigConfigIdCredentials*(client: CloudflareC
 
 proc patchZonesZoneIdTokenValidationConfigConfigIdCredentials*(client: CloudflareClient,
                                                                body: types.ApiShieldCredentialsPatchRequest): Future[JsonNode] {.async.} =
-  ## Edit Token Configuration credentials. The provided `keys` array defines the full
-  ## resulting key set (stored keys omitted from payload are removed). For each
-  ## provided key identity (`{alg,kid}`), payload fields overwrite the stored key
-  ## before validation and omitted fields inherit from the stored key. Key identities
-  ## must be unique within the request. Existing symmetric keys (`kty: "oct"`)
-  ## preserve stored key material when `k` is omitted; send `k` to rotate. `k: null`
-  ## is invalid.
+  ## Updates the configuration's complete key set while allowing omitted fields on
+  ## existing keys to retain stored values. Omitted key identities are removed.
 
   let res = await client.httpPATCH("/zones/{zone_id}/token_validation/config/{config_id}/credentials", body)
   let body = await res.body

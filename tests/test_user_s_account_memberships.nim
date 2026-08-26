@@ -39,3 +39,8 @@ suite "user_s_account_memberships endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteMembershipsMembershipId("test")
 
+  test "GET /user/memberships/{membership_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getUserMembershipsMembershipId("test")
+

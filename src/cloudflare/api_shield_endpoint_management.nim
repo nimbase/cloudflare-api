@@ -27,8 +27,8 @@ proc getZonesZoneIdApiGatewayOperations*(client: CloudflareClient,
                                          `method`: seq[string] = @[],
                                          endpoint: string = default(string),
                                          feature: seq[string] = default(seq[string])): Future[types.ApiShieldMultipleOperationResponsePaginated] {.async.} =
-  ## Lists all API operations tracked by API Shield for a zone with pagination.
-  ## Returns operation details including method, path, and feature configurations.
+  ## Lists web and API operations tracked for the zone, including each operation's
+  ## method, path, and feature configuration.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -48,11 +48,8 @@ proc getZonesZoneIdApiGatewayOperations*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc postZonesZoneIdApiGatewayOperations*(client: CloudflareClient): Future[types.ApiShieldMultipleOperationResponse] {.async.} =
-  ## Add one or more operations to a zone. Endpoints can contain path variables.
-  ## Host, method, endpoint will be normalized to a canoncial form when creating an
-  ## operation and must be unique on the zone. Inserting an operation that matches an
-  ## existing one will return the record of the already existing operation and update
-  ## its last_updated date.
+  ## Creates one or more web or API operations. Hosts, methods, and paths are
+  ## normalized; an existing matching operation is returned instead of duplicated.
 
   let res = await client.httpPOST("/zones/{zone_id}/api_gateway/operations", body)
   let body = await res.body
@@ -63,8 +60,7 @@ proc postZonesZoneIdApiGatewayOperations*(client: CloudflareClient): Future[type
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdApiGatewayOperations*(client: CloudflareClient): Future[types.ApiShieldApiResponseCommon] {.async.} =
-  ## Bulk removes multiple API operations from API Shield endpoint management in a
-  ## single request. Efficient for cleaning up unused endpoints.
+  ## Deletes multiple web or API operations from endpoint management in one request.
 
   let res = await client.httpDELETE("/zones/{zone_id}/api_gateway/operations", body)
   let body = await res.body
@@ -76,11 +72,8 @@ proc deleteZonesZoneIdApiGatewayOperations*(client: CloudflareClient): Future[ty
 
 proc postZonesZoneIdApiGatewayOperationsItem*(client: CloudflareClient,
                                               body: types.ApiShieldBasicOperation): Future[types.ApiShieldSingleOperationResponse] {.async.} =
-  ## Add one operation to a zone. Endpoints can contain path variables. Host, method,
-  ## endpoint will be normalized to a canoncial form when creating an operation and
-  ## must be unique on the zone. Inserting an operation that matches an existing one
-  ## will return the record of the already existing operation and update its
-  ## last_updated date.
+  ## Creates one web or API operation. The host, method, and path are normalized; an
+  ## existing matching operation is returned instead of duplicated.
 
   let res = await client.httpPOST("/zones/{zone_id}/api_gateway/operations/item", body)
   let body = await res.body
@@ -93,8 +86,8 @@ proc postZonesZoneIdApiGatewayOperationsItem*(client: CloudflareClient,
 proc getZonesZoneIdApiGatewayOperationsOperationId*(client: CloudflareClient,
                                                     feature: seq[string] = default(seq[string]),
                                                     withSchemas: bool = false): Future[types.ApiShieldSingleOperationResponse] {.async.} =
-  ## Gets detailed information about a specific API operation in API Shield,
-  ## including its schema validation settings and traffic statistics.
+  ## Returns a web or API operation, including its schema validation settings and
+  ## requested feature data.
 
   var q = initOrderedTable[string, string]()
   q["feature"] = $feature
@@ -108,8 +101,8 @@ proc getZonesZoneIdApiGatewayOperationsOperationId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdApiGatewayOperationsOperationId*(client: CloudflareClient): Future[types.ApiShieldApiResponseCommon] {.async.} =
-  ## Removes a single API operation from API Shield endpoint management. The
-  ## operation will no longer be tracked or protected by API Shield rules.
+  ## Deletes a web or API operation from endpoint management so its feature
+  ## configuration is no longer tracked.
 
   let res = await client.httpDELETE("/zones/{zone_id}/api_gateway/operations/{operation_id}")
   let body = await res.body
@@ -123,7 +116,8 @@ proc getZonesZoneIdApiGatewaySchemas*(client: CloudflareClient,
                                       host: seq[string] = @[],
                                       feature: seq[string] = default(seq[string]),
                                       includeSchemaKind: seq[string] = default(seq[string])): Future[types.ApiShieldSchemaResponseWithThresholds] {.async.} =
-  ## Retrieves API operations and their features exported as OpenAPI schemas.
+  ## Returns tracked web and API operations and their feature configuration rendered
+  ## as OpenAPI schemas.
 
   var q = initOrderedTable[string, string]()
   for v in host: q["host"] = $v

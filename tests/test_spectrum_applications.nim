@@ -35,6 +35,10 @@ suite "spectrum_applications serialization":
     let obj = newSpectrumConfigUpdateAppConfig()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpectrumConfigUpdateAppConfig)) == openjson.toJson(obj)
 
+  test "round-trips SpectrumConfigProtocolCollection":
+    let obj = newSpectrumConfigProtocolCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpectrumConfigProtocolCollection)) == openjson.toJson(obj)
+
   test "round-trips SpectrumConfigApiResponseSingleId":
     let obj = newSpectrumConfigApiResponseSingleId()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpectrumConfigApiResponseSingleId)) == openjson.toJson(obj)
@@ -64,4 +68,9 @@ suite "spectrum_applications endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteZonesZoneIdSpectrumAppsAppId(newSpectrumConfigAppIdentifier(), newSpectrumConfigZoneIdentifier())
+
+  test "GET /zones/{zone_id}/spectrum/protocols":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getZonesZoneIdSpectrumProtocols(newSpectrumConfigZoneIdentifier())
 

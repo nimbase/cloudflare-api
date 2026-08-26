@@ -65,7 +65,9 @@ proc getAccountsAccountIdCfdTunnel*(client: CloudflareClient,
 proc postAccountsAccountIdCfdTunnel*(client: CloudflareClient,
                                      accountId: types.TunnelAccountId,
                                      body: PostAccountsAccountIdCfdTunnelRequest): Future[types.TunnelCfdTunnelResponseSingle] {.async.} =
-  ## Creates a new Cloudflare Tunnel in an account.
+  ## Creates a remotely or locally managed Cloudflare Tunnel in an account. After
+  ## creation, retrieve its token and run cloudflared to establish the connector
+  ## connection.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cfd_tunnel", body)
   let body = await res.body
@@ -91,7 +93,8 @@ proc getAccountsAccountIdCfdTunnelTunnelId*(client: CloudflareClient,
 proc deleteAccountsAccountIdCfdTunnelTunnelId*(client: CloudflareClient,
                                                accountId: types.TunnelAccountId,
                                                tunnelId: types.TunnelTunnelId): Future[types.TunnelCfdTunnelResponseSingle] {.async.} =
-  ## Deletes a Cloudflare Tunnel from an account.
+  ## Permanently deletes a Cloudflare Tunnel from an account. The tunnel must have no
+  ## active connections.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cfd_tunnel/{tunnelId}", body)
   let body = await res.body
@@ -105,7 +108,7 @@ proc patchAccountsAccountIdCfdTunnelTunnelId*(client: CloudflareClient,
                                               tunnelId: types.TunnelTunnelId,
                                               accountId: types.TunnelAccountId,
                                               body: PatchAccountsAccountIdCfdTunnelTunnelIdRequest): Future[types.TunnelCfdTunnelResponseSingle] {.async.} =
-  ## Updates an existing Cloudflare Tunnel.
+  ## Updates the name or secret of an existing Cloudflare Tunnel.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cfd_tunnel/{tunnelId}", body)
   let body = await res.body
@@ -118,7 +121,8 @@ proc patchAccountsAccountIdCfdTunnelTunnelId*(client: CloudflareClient,
 proc getAccountsAccountIdCfdTunnelTunnelIdConnections*(client: CloudflareClient,
                                                        accountId: types.TunnelAccountId,
                                                        tunnelId: types.TunnelTunnelId): Future[types.TunnelTunnelConnectionsResponse] {.async.} =
-  ## Fetches connection details for a Cloudflare Tunnel.
+  ## Lists the connections for a Cloudflare Tunnel, including connector IDs,
+  ## cloudflared versions, and Cloudflare locations.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cfd_tunnel/{tunnelId}/connections")
   let body = await res.body
@@ -151,7 +155,9 @@ proc getAccountsAccountIdCfdTunnelTunnelIdConnectorsConnectorId*(client: Cloudfl
                                                                  accountId: types.TunnelAccountId,
                                                                  tunnelId: types.TunnelTunnelId,
                                                                  connectorId: types.TunnelClientId): Future[types.TunnelTunnelClientResponse] {.async.} =
-  ## Fetches connector and connection details for a Cloudflare Tunnel.
+  ## Retrieves a connector and its connection details for a Cloudflare Tunnel,
+  ## including its cloudflared version, architecture, and connected Cloudflare
+  ## locations.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cfd_tunnel/{tunnelId}/connectors/{connectorId}")
   let body = await res.body
@@ -165,8 +171,8 @@ proc postAccountsAccountIdCfdTunnelTunnelIdManagement*(client: CloudflareClient,
                                                        accountId: types.TunnelAccountId,
                                                        tunnelId: types.TunnelTunnelId,
                                                        body: PostAccountsAccountIdCfdTunnelTunnelIdManagementRequest): Future[types.TunnelTunnelResponseToken] {.async.} =
-  ## Gets a management token used to access the management resources (i.e. Streaming
-  ## Logs) of a tunnel.
+  ## Creates a short-lived management token for the requested Tunnel management
+  ## resources, such as streaming logs. Treat the token as a secret.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cfd_tunnel/{tunnelId}/management", body)
   let body = await res.body
@@ -179,7 +185,8 @@ proc postAccountsAccountIdCfdTunnelTunnelIdManagement*(client: CloudflareClient,
 proc getAccountsAccountIdCfdTunnelTunnelIdToken*(client: CloudflareClient,
                                                  accountId: types.TunnelAccountId,
                                                  tunnelId: types.TunnelTunnelId): Future[types.TunnelTunnelResponseToken] {.async.} =
-  ## Gets the token used to associate cloudflared with a specific tunnel.
+  ## Retrieves the token used to run cloudflared and associate it with a specific
+  ## Cloudflare Tunnel. Treat the token as a secret.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cfd_tunnel/{tunnelId}/token")
   let body = await res.body

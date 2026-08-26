@@ -4,7 +4,7 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[strformat]
+import std/[strformat, options, json]
 import ./private/metaclient
 import ./private/types
 
@@ -18,6 +18,8 @@ type
   PostAccountsAccountIdAiGatewayBillingTopupConfigRequest = object
     amount: int64
     threshold: int64
+  PostAccountsAccountIdAiGatewayBillingTopupEligibilityRequest = object
+    payment_methods: Option[seq[JsonNode]]
   PostAccountsAccountIdAiGatewayBillingTopupStatusRequest = object
     payment_intent_id: string
   AiGatewayTypeOption* = enum
@@ -158,6 +160,21 @@ proc deleteAccountsAccountIdAiGatewayBillingTopupConfig*(client: CloudflareClien
   case res.code
   of Http200:
     result = fromJson(body, types.AigBillingDeleteTopupConfigResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdAiGatewayBillingTopupEligibility*(client: CloudflareClient,
+                                                            accountId: string,
+                                                            body: PostAccountsAccountIdAiGatewayBillingTopupEligibilityRequest): Future[types.AigBillingGetTopupEligibilityResponse] {.async.} =
+  ## Determine whether an account can self-serve a credit top-up, and if not, why.
+  ## The dashboard forwards the account's payment-method list in the body; the reason
+  ## logic is owned here.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/billing/topup/eligibility", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AigBillingGetTopupEligibilityResponse)
   else:
     raise newException(CloudflareClientError, body)
 

@@ -11,8 +11,9 @@ import ./private/types
 
 proc postZonesZoneIdApiGatewayExpressionTemplateFallthrough*(client: CloudflareClient,
                                                              body: types.ApiShieldRequestExpressionTemplatesFallthrough): Future[JsonNode] {.async.} =
-  ## Creates an expression template fallthrough rule for API Shield. Used for
-  ## configuring default behavior when no other expression templates match.
+  ## Generates a WAF expression template that matches fallthrough traffic for the
+  ## supplied API hosts. This operation is deprecated and should not be used for new
+  ## integrations.
 
   let res = await client.httpPOST("/zones/{zone_id}/api_gateway/expression-template/fallthrough", body)
   let body = await res.body

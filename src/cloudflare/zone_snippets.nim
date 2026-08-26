@@ -95,7 +95,8 @@ proc putZonesZoneIdSnippetsSnippetName*(client: CloudflareClient,
 proc deleteZonesZoneIdSnippetsSnippetName*(client: CloudflareClient,
                                            zoneId: types.SnippetsZoneId,
                                            snippetName: types.SnippetsSnippetName): Future[JsonNode] {.async.} =
-  ## Deletes a snippet belonging to the zone.
+  ## Deletes a snippet belonging to the zone. Returns a 4XX response if the zone or
+  ## snippet no longer exists.
 
   let res = await client.httpDELETE(fmt"/zones/{zoneId}/snippets/{snippetName}")
   let body = await res.body

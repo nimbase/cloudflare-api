@@ -145,6 +145,24 @@ proc getAccountsAccountIdR2BucketsBucketName*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc putAccountsAccountIdR2BucketsBucketName*(client: CloudflareClient,
+                                              accountId: types.R2AccountIdentifier,
+                                              bucketName: types.R2BucketName): Future[JsonNode] {.async.} =
+  ## Creates a new R2 bucket using the name from the URL path. Similar to
+  ## `r2-create-bucket` (POST), but the bucket name comes from the path and the
+  ## optional storage class is supplied via the `cf-r2-storage-class` header. There
+  ## is no request body. Unlike the POST variant, this endpoint does not accept a
+  ## location hint — the bucket is placed in the R2 region for the caller's edge
+  ## colo. Use the POST variant if you need to set a `locationHint`.
+
+  let res = await client.httpPUT(fmt"/accounts/{accountId}/r2/buckets/{bucketName}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc deleteAccountsAccountIdR2BucketsBucketName*(client: CloudflareClient,
                                                  bucketName: types.R2BucketName,
                                                  accountId: types.R2AccountIdentifier): Future[types.R2V4Response] {.async.} =

@@ -28,7 +28,8 @@ proc getZonesZoneIdApiGatewayLabels*(client: CloudflareClient, page: int64 = 1,
                                      source: types.ApiShieldLabelSource = default(types.ApiShieldLabelSource),
                                      filter: string = default(string),
                                      withMappedResourceCounts: bool = false): Future[JsonNode] {.async.} =
-  ## Retrieve all labels
+  ## Returns all managed and user-defined labels available for web and API operations
+  ## in the zone.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -48,7 +49,7 @@ proc getZonesZoneIdApiGatewayLabels*(client: CloudflareClient, page: int64 = 1,
 
 proc getZonesZoneIdApiGatewayLabelsManagedName*(client: CloudflareClient,
                                                 withMappedResourceCounts: bool = false): Future[JsonNode] {.async.} =
-  ## Retrieve managed label
+  ## Returns a managed label and the web and API operations associated with it.
 
   var q = initOrderedTable[string, string]()
   q["with_mapped_resource_counts"] = $withMappedResourceCounts
@@ -62,7 +63,8 @@ proc getZonesZoneIdApiGatewayLabelsManagedName*(client: CloudflareClient,
 
 proc putZonesZoneIdApiGatewayLabelsManagedNameResourcesOperation*(client: CloudflareClient,
                                                                   body: types.ApiShieldReplaceOperationsAttachedToLabelRequest): Future[JsonNode] {.async.} =
-  ## Replace all operations(s) attached to a managed label
+  ## Replaces the complete set of web and API operations attached to the managed
+  ## label.
 
   let res = await client.httpPUT("/zones/{zone_id}/api_gateway/labels/managed/{name}/resources/operation", body)
   let body = await res.body
@@ -73,7 +75,7 @@ proc putZonesZoneIdApiGatewayLabelsManagedNameResourcesOperation*(client: Cloudf
     raise newException(CloudflareClientError, body)
 
 proc postZonesZoneIdApiGatewayLabelsUser*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Create user labels
+  ## Creates one or more user-defined labels for classifying web and API operations.
 
   let res = await client.httpPOST("/zones/{zone_id}/api_gateway/labels/user", body)
   let body = await res.body
@@ -84,7 +86,8 @@ proc postZonesZoneIdApiGatewayLabelsUser*(client: CloudflareClient): Future[Json
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdApiGatewayLabelsUser*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Delete user labels
+  ## Deletes one or more user-defined labels and removes their associations with web
+  ## and API operations.
 
   let res = await client.httpDELETE("/zones/{zone_id}/api_gateway/labels/user", body)
   let body = await res.body
@@ -96,7 +99,7 @@ proc deleteZonesZoneIdApiGatewayLabelsUser*(client: CloudflareClient): Future[Js
 
 proc getZonesZoneIdApiGatewayLabelsUserName*(client: CloudflareClient,
                                              withMappedResourceCounts: bool = false): Future[JsonNode] {.async.} =
-  ## Retrieve user label
+  ## Returns a user-defined label and the web and API operations associated with it.
 
   var q = initOrderedTable[string, string]()
   q["with_mapped_resource_counts"] = $withMappedResourceCounts
@@ -110,7 +113,7 @@ proc getZonesZoneIdApiGatewayLabelsUserName*(client: CloudflareClient,
 
 proc putZonesZoneIdApiGatewayLabelsUserName*(client: CloudflareClient,
                                              body: types.ApiShieldPutLabelRequest): Future[JsonNode] {.async.} =
-  ## Update all fields on a label
+  ## Replaces all editable fields on a user-defined label.
 
   let res = await client.httpPUT("/zones/{zone_id}/api_gateway/labels/user/{name}", body)
   let body = await res.body
@@ -121,7 +124,8 @@ proc putZonesZoneIdApiGatewayLabelsUserName*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdApiGatewayLabelsUserName*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Delete user label
+  ## Deletes a user-defined label and removes its associations with web and API
+  ## operations.
 
   let res = await client.httpDELETE("/zones/{zone_id}/api_gateway/labels/user/{name}")
   let body = await res.body
@@ -133,7 +137,7 @@ proc deleteZonesZoneIdApiGatewayLabelsUserName*(client: CloudflareClient): Futur
 
 proc patchZonesZoneIdApiGatewayLabelsUserName*(client: CloudflareClient,
                                                body: types.ApiShieldPatchLabelRequest): Future[JsonNode] {.async.} =
-  ## Update certain fields on a label
+  ## Updates only the supplied fields on a user-defined label.
 
   let res = await client.httpPATCH("/zones/{zone_id}/api_gateway/labels/user/{name}", body)
   let body = await res.body
@@ -145,7 +149,8 @@ proc patchZonesZoneIdApiGatewayLabelsUserName*(client: CloudflareClient,
 
 proc putZonesZoneIdApiGatewayLabelsUserNameResourcesOperation*(client: CloudflareClient,
                                                                body: types.ApiShieldReplaceOperationsAttachedToLabelRequest): Future[JsonNode] {.async.} =
-  ## Replace all operations(s) attached to a user label
+  ## Replaces the complete set of web and API operations attached to the user-defined
+  ## label.
 
   let res = await client.httpPUT("/zones/{zone_id}/api_gateway/labels/user/{name}/resources/operation", body)
   let body = await res.body
@@ -157,7 +162,7 @@ proc putZonesZoneIdApiGatewayLabelsUserNameResourcesOperation*(client: Cloudflar
 
 proc postZonesZoneIdApiGatewayOperationsLabels*(client: CloudflareClient,
                                                 body: types.ApiShieldBulkPostLabelsOnOperationRequest): Future[JsonNode] {.async.} =
-  ## Bulk attach label(s) on operation(s) in endpoint management
+  ## Attaches labels to multiple web or API operations in one request.
 
   let res = await client.httpPOST("/zones/{zone_id}/api_gateway/operations/labels", body)
   let body = await res.body
@@ -169,7 +174,8 @@ proc postZonesZoneIdApiGatewayOperationsLabels*(client: CloudflareClient,
 
 proc putZonesZoneIdApiGatewayOperationsLabels*(client: CloudflareClient,
                                                body: types.ApiShieldBulkPutLabelsOnOperationRequest): Future[JsonNode] {.async.} =
-  ## Bulk replace label(s) on operation(s) in endpoint management
+  ## Replaces the complete label sets on multiple web or API operations in one
+  ## request.
 
   let res = await client.httpPUT("/zones/{zone_id}/api_gateway/operations/labels", body)
   let body = await res.body
@@ -181,7 +187,7 @@ proc putZonesZoneIdApiGatewayOperationsLabels*(client: CloudflareClient,
 
 proc deleteZonesZoneIdApiGatewayOperationsLabels*(client: CloudflareClient,
                                                   body: types.ApiShieldBulkDeleteLabelsOnOperationRequest): Future[JsonNode] {.async.} =
-  ## Bulk remove label(s) on operation(s) in endpoint management
+  ## Removes labels from multiple web or API operations in one request.
 
   let res = await client.httpDELETE("/zones/{zone_id}/api_gateway/operations/labels", body)
   let body = await res.body
@@ -193,7 +199,7 @@ proc deleteZonesZoneIdApiGatewayOperationsLabels*(client: CloudflareClient,
 
 proc postZonesZoneIdApiGatewayOperationsOperationIdLabels*(client: CloudflareClient,
                                                            body: types.ApiShieldPostLabelsOnOperationRequest): Future[JsonNode] {.async.} =
-  ## Attach label(s) on an operation in endpoint management
+  ## Attaches one or more labels to a web or API operation.
 
   let res = await client.httpPOST("/zones/{zone_id}/api_gateway/operations/{operation_id}/labels", body)
   let body = await res.body
@@ -205,7 +211,7 @@ proc postZonesZoneIdApiGatewayOperationsOperationIdLabels*(client: CloudflareCli
 
 proc putZonesZoneIdApiGatewayOperationsOperationIdLabels*(client: CloudflareClient,
                                                           body: types.ApiShieldPutLabelsOnOperationRequest): Future[JsonNode] {.async.} =
-  ## Replace label(s) on an operation in endpoint management
+  ## Replaces the complete label set on a web or API operation.
 
   let res = await client.httpPUT("/zones/{zone_id}/api_gateway/operations/{operation_id}/labels", body)
   let body = await res.body
@@ -217,7 +223,7 @@ proc putZonesZoneIdApiGatewayOperationsOperationIdLabels*(client: CloudflareClie
 
 proc deleteZonesZoneIdApiGatewayOperationsOperationIdLabels*(client: CloudflareClient,
                                                              body: types.ApiShieldDeleteLabelsOnOperationRequest): Future[JsonNode] {.async.} =
-  ## Remove label(s) on an operation in endpoint management
+  ## Removes one or more labels from a web or API operation.
 
   let res = await client.httpDELETE("/zones/{zone_id}/api_gateway/operations/{operation_id}/labels", body)
   let body = await res.body
