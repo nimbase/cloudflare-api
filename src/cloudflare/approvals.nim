@@ -31,8 +31,9 @@ proc getAccountsAccountIdCloudforceOneRulesApprovals*(client: CloudflareClient,
                                                       limit: float64 = default(float64),
                                                       offset: float64 = default(float64),
                                                       reviewerScope: ApprovalReviewerScopeOption,
-                                                      changeType: ApprovalChangeTypeOption): Future[types.CloudforceOneRuleApprovalsListResponse] {.async.} =
-  ## List rule approvals with optional status, revision, reviewer-scope, and
+                                                      changeType: ApprovalChangeTypeOption,
+                                                      ruleId: string = default(string)): Future[types.CloudforceOneRuleApprovalsListResponse] {.async.} =
+  ## Returns rule approvals with optional status, revision, reviewer-scope, and
   ## mutation-type filtering.
 
   var q = initOrderedTable[string, string]()
@@ -42,6 +43,7 @@ proc getAccountsAccountIdCloudforceOneRulesApprovals*(client: CloudflareClient,
   q["offset"] = $offset
   q["reviewer_scope"] = $reviewerScope
   q["change_type"] = $changeType
+  q["rule_id"] = $ruleId
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/rules/approvals", q)
   let body = await res.body
   case res.code
@@ -53,13 +55,26 @@ proc getAccountsAccountIdCloudforceOneRulesApprovals*(client: CloudflareClient,
 proc getAccountsAccountIdCloudforceOneRulesApprovalsId*(client: CloudflareClient,
                                                         accountId: string,
                                                         id: string): Future[types.CloudforceOneRuleApprovalDetailResponse] {.async.} =
-  ## Get a single rule approval with current rule data
+  ## Get a single rule approval with current rule data.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/rules/approvals/{id}")
   let body = await res.body
   case res.code
   of Http200:
     result = fromJson(body, types.CloudforceOneRuleApprovalDetailResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdCloudforceOneRulesApprovalsIdCancel*(client: CloudflareClient,
+                                                               accountId: string,
+                                                               id: string): Future[types.CloudforceOneSuccessResponse] {.async.} =
+  ## Cancel a pending rule approval. Only its original requester may cancel it.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/rules/approvals/{id}/cancel")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.CloudforceOneSuccessResponse)
   else:
     raise newException(CloudflareClientError, body)
 

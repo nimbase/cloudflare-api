@@ -31,13 +31,15 @@ proc getAccountsAccountIdAccessAiControlsMcpAnalyticsPortalsPortalIdToolCallsTim
                                                                                          portalId: string,
                                                                                          granularity: McpPortalAnalyticGranularityOption = granularityDaily,
                                                                                          aggregate: McpPortalAnalyticAggregateOption = aggregateFalse,
-                                                                                         tz: string = "utc"): Future[GetAccountsAccountIdAccessAiControlsMcpAnalyticsPortalsPortalIdToolCallsTimeseriesResponse] {.async.} =
+                                                                                         tz: string = "utc",
+                                                                                         days: int64 = default(int64)): Future[GetAccountsAccountIdAccessAiControlsMcpAnalyticsPortalsPortalIdToolCallsTimeseriesResponse] {.async.} =
   ## Returns daily or monthly tool-call counts for a portal.
 
   var q = initOrderedTable[string, string]()
   q["granularity"] = $granularity
   q["aggregate"] = $aggregate
   q["tz"] = $tz
+  q["days"] = $days
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/ai-controls/mcp/analytics/portals/{portalId}/tool-calls/timeseries", q)
   let body = await res.body
   case res.code
@@ -51,13 +53,15 @@ proc getAccountsAccountIdAccessAiControlsMcpAnalyticsServersServerIdToolCallsTim
                                                                                          serverId: string,
                                                                                          granularity: McpPortalAnalyticGranularityOption = granularityDaily,
                                                                                          aggregate: McpPortalAnalyticAggregateOption = aggregateFalse,
-                                                                                         tz: string = "utc"): Future[GetAccountsAccountIdAccessAiControlsMcpAnalyticsServersServerIdToolCallsTimeseriesResponse] {.async.} =
+                                                                                         tz: string = "utc",
+                                                                                         days: int64 = default(int64)): Future[GetAccountsAccountIdAccessAiControlsMcpAnalyticsServersServerIdToolCallsTimeseriesResponse] {.async.} =
   ## Returns daily or monthly tool-call counts for a server.
 
   var q = initOrderedTable[string, string]()
   q["granularity"] = $granularity
   q["aggregate"] = $aggregate
   q["tz"] = $tz
+  q["days"] = $days
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/ai-controls/mcp/analytics/servers/{serverId}/tool-calls/timeseries", q)
   let body = await res.body
   case res.code
@@ -70,13 +74,15 @@ proc getAccountsAccountIdAccessAiControlsMcpAnalyticsToolCallsTimeseries*(client
                                                                           accountId: string,
                                                                           granularity: McpPortalAnalyticGranularityOption = granularityDaily,
                                                                           aggregate: McpPortalAnalyticAggregateOption = aggregateFalse,
-                                                                          tz: string = "utc"): Future[GetAccountsAccountIdAccessAiControlsMcpAnalyticsToolCallsTimeseriesResponse] {.async.} =
+                                                                          tz: string = "utc",
+                                                                          days: int64 = default(int64)): Future[GetAccountsAccountIdAccessAiControlsMcpAnalyticsToolCallsTimeseriesResponse] {.async.} =
   ## Returns daily or monthly tool-call counts across the account.
 
   var q = initOrderedTable[string, string]()
   q["granularity"] = $granularity
   q["aggregate"] = $aggregate
   q["tz"] = $tz
+  q["days"] = $days
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/ai-controls/mcp/analytics/tool-calls/timeseries", q)
   let body = await res.body
   case res.code

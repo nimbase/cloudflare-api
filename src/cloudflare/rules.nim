@@ -19,6 +19,13 @@ type
     meta: Option[seq[types.CloudforceOneMetaInputEntry]]
     name: string
     strings: Option[seq[JsonNode]]
+  PutAccountsAccountIdCloudforceOneRulesStructuredApprovalsIdRequest = object
+    condition: Option[JsonNode]
+    description: Option[string]
+    enabled: Option[bool]
+    meta: Option[seq[types.CloudforceOneMetaInputEntry]]
+    name: string
+    strings: Option[seq[JsonNode]]
   PostAccountsAccountIdCloudforceOneRulesStructuredApprovalsIdResubmitRequest = object
     condition: types.CloudforceOneEmailRuleConditionGroup
     description: Option[string]
@@ -26,10 +33,18 @@ type
     meta: Option[seq[types.CloudforceOneMetaInputEntry]]
     name: string
     strings: Option[seq[JsonNode]]
+  GetAccountsAccountIdCloudforceOneRulesStructuredSchemaResponse* = object
+    arrays: seq[JsonNode]
+    headers: JsonNode
+    operators: JsonNode
+    scalars: seq[JsonNode]
+    string_arrays: seq[JsonNode]
+    structs: seq[JsonNode]
   PostAccountsAccountIdCloudforceOneRulesStructuredValidateRequest = object
     condition: types.CloudforceOneEmailRuleConditionGroup
     description: Option[string]
     enabled: Option[bool]
+    existing_rule_id: Option[string]
     meta: Option[seq[types.CloudforceOneMetaInputEntry]]
     name: string
     strings: Option[seq[JsonNode]]
@@ -82,8 +97,8 @@ proc getAccountsAccountIdCloudforceOneRules*(client: CloudflareClient,
                                              search: string = default(string),
                                              isPublic: RuleIsPublicOption,
                                              limit: float64 = default(float64),
-                                             offset: float64 = default(float64)): Future[types.CloudforceOneRulesListResponse] {.async.} =
-  ## List all rules for an account with optional filtering.
+                                             offset: float64 = default(float64)): Future[types.CloudforceOneRulesPreviewListResponse] {.async.} =
+  ## Returns all rules for an account with optional filtering.
 
   var q = initOrderedTable[string, string]()
   q["namespace"] = $namespace
@@ -97,7 +112,7 @@ proc getAccountsAccountIdCloudforceOneRules*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.CloudforceOneRulesListResponse)
+    result = fromJson(body, types.CloudforceOneRulesPreviewListResponse)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -243,8 +258,8 @@ proc getAccountsAccountIdCloudforceOneRulesStructured*(client: CloudflareClient,
                                                        accountId: string,
                                                        limit: float64 = default(float64),
                                                        offset: float64 = default(float64),
-                                                       search: string = default(string)): Future[types.CloudforceOneRulesListResponse] {.async.} =
-  ## List structured email rules.
+                                                       search: string = default(string)): Future[types.CloudforceOneEmailRulesListResponse] {.async.} =
+  ## Returns structured email rules.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
@@ -254,20 +269,38 @@ proc getAccountsAccountIdCloudforceOneRulesStructured*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.CloudforceOneRulesListResponse)
+    result = fromJson(body, types.CloudforceOneEmailRulesListResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdCloudforceOneRulesStructured*(client: CloudflareClient,
                                                         accountId: string,
-                                                        body: PostAccountsAccountIdCloudforceOneRulesStructuredRequest): Future[types.CloudforceOneRule] {.async.} =
+                                                        body: PostAccountsAccountIdCloudforceOneRulesStructuredRequest): Future[types.CloudforceOneRulePreview] {.async.} =
   ## Create a structured email rule.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/rules/structured", body)
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, types.CloudforceOneRule)
+    result = fromJson(body, types.CloudforceOneRulePreview)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountsAccountIdCloudforceOneRulesStructuredApprovalsId*(client: CloudflareClient,
+                                                                  accountId: string,
+                                                                  id: string,
+                                                                  module: RuleModuleOption = moduleEml,
+                                                                  body: PutAccountsAccountIdCloudforceOneRulesStructuredApprovalsIdRequest): Future[types.CloudforceOneEditApprovalResponse] {.async.} =
+  ## Validate, compile, and replace the proposed structured email rule on a pending
+  ## approval. Only the original requester may update it.
+
+  var q = initOrderedTable[string, string]()
+  q["module"] = $module
+  let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/rules/structured/approvals/{id}", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.CloudforceOneEditApprovalResponse)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -276,8 +309,8 @@ proc postAccountsAccountIdCloudforceOneRulesStructuredApprovalsIdResubmit*(clien
                                                                            id: string,
                                                                            module: RuleModuleOption = moduleEml,
                                                                            body: PostAccountsAccountIdCloudforceOneRulesStructuredApprovalsIdResubmitRequest): Future[types.CloudforceOneResubmitApprovalResponse] {.async.} =
-  ## Validate and compile a complete structured email rule, then create an immutable
-  ## pending revision of its rejected approval.
+  ## Validates and compiles a complete structured email rule, then creates an
+  ## immutable pending revision of its rejected approval.
 
   var q = initOrderedTable[string, string]()
   q["module"] = $module
@@ -290,21 +323,21 @@ proc postAccountsAccountIdCloudforceOneRulesStructuredApprovalsIdResubmit*(clien
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdCloudforceOneRulesStructuredSchema*(client: CloudflareClient,
-                                                             accountId: string): Future[JsonNode] {.async.} =
+                                                             accountId: string): Future[GetAccountsAccountIdCloudforceOneRulesStructuredSchemaResponse] {.async.} =
   ## Get the field catalog for structured email rules.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/rules/structured/schema")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneRulesStructuredSchemaResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdCloudforceOneRulesStructuredValidate*(client: CloudflareClient,
                                                                 accountId: string,
                                                                 body: PostAccountsAccountIdCloudforceOneRulesStructuredValidateRequest): Future[types.CloudforceOneEmailRuleValidationResponse] {.async.} =
-  ## Validate structured email rule syntax and metadata.
+  ## Validates structured email rule syntax and metadata.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/rules/structured/validate", body)
   let body = await res.body
@@ -316,28 +349,28 @@ proc postAccountsAccountIdCloudforceOneRulesStructuredValidate*(client: Cloudfla
 
 proc getAccountsAccountIdCloudforceOneRulesStructuredId*(client: CloudflareClient,
                                                          accountId: string,
-                                                         id: string): Future[types.CloudforceOneRule] {.async.} =
+                                                         id: string): Future[types.CloudforceOneRulePreview] {.async.} =
   ## Get a structured email rule by ID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/rules/structured/{id}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.CloudforceOneRule)
+    result = fromJson(body, types.CloudforceOneRulePreview)
   else:
     raise newException(CloudflareClientError, body)
 
 proc putAccountsAccountIdCloudforceOneRulesStructuredId*(client: CloudflareClient,
                                                          accountId: string,
                                                          id: string,
-                                                         body: PutAccountsAccountIdCloudforceOneRulesStructuredIdRequest): Future[types.CloudforceOneRule] {.async.} =
-  ## Update an existing structured email rule.
+                                                         body: PutAccountsAccountIdCloudforceOneRulesStructuredIdRequest): Future[types.CloudforceOneRulePreview] {.async.} =
+  ## Updates an existing structured email rule.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/rules/structured/{id}", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.CloudforceOneRule)
+    result = fromJson(body, types.CloudforceOneRulePreview)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -383,7 +416,7 @@ proc getAccountsAccountIdCloudforceOneRulesTree*(client: CloudflareClient,
 proc postAccountsAccountIdCloudforceOneRulesValidate*(client: CloudflareClient,
                                                       accountId: string,
                                                       body: PostAccountsAccountIdCloudforceOneRulesValidateRequest): Future[types.CloudforceOneValidationResponse] {.async.} =
-  ## Validate rule syntax, name uniqueness, namespace, and meta checks.
+  ## Validates rule syntax, name uniqueness, namespace, and metadata.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/rules/validate", body)
   let body = await res.body
@@ -394,27 +427,27 @@ proc postAccountsAccountIdCloudforceOneRulesValidate*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdCloudforceOneRulesId*(client: CloudflareClient,
-                                               accountId: string, id: string): Future[types.CloudforceOneRule] {.async.} =
+                                               accountId: string, id: string): Future[types.CloudforceOneRulePreview] {.async.} =
   ## Get a single rule by ID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/rules/{id}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.CloudforceOneRule)
+    result = fromJson(body, types.CloudforceOneRulePreview)
   else:
     raise newException(CloudflareClientError, body)
 
 proc putAccountsAccountIdCloudforceOneRulesId*(client: CloudflareClient,
                                                accountId: string, id: string,
-                                               body: types.CloudforceOneUpdateRule): Future[types.CloudforceOneRule] {.async.} =
-  ## Update an existing rule.
+                                               body: types.CloudforceOneUpdateRule): Future[types.CloudforceOneRulePreview] {.async.} =
+  ## Updates an existing rule.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/rules/{id}", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.CloudforceOneRule)
+    result = fromJson(body, types.CloudforceOneRulePreview)
   else:
     raise newException(CloudflareClientError, body)
 

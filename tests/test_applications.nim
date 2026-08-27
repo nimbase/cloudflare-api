@@ -15,10 +15,6 @@ suite "applications serialization":
     let obj = newAlexandriaCreateApplicationRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AlexandriaCreateApplicationRequest)) == openjson.toJson(obj)
 
-  test "round-trips CcApplication":
-    let obj = newCcApplication()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcApplication)) == openjson.toJson(obj)
-
   test "round-trips CcContainersDeleteApplicationResponseBody":
     let obj = newCcContainersDeleteApplicationResponseBody()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcContainersDeleteApplicationResponseBody)) == openjson.toJson(obj)
@@ -58,6 +54,10 @@ suite "applications serialization":
   test "round-trips CcV4BaseResponse":
     let obj = newCcV4BaseResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcV4BaseResponse)) == openjson.toJson(obj)
+
+  test "round-trips CcContainersApplicationResponse":
+    let obj = newCcContainersApplicationResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcContainersApplicationResponse)) == openjson.toJson(obj)
 
   test "round-trips OnePaginatedSetupFlowList":
     let obj = newOnePaginatedSetupFlowList()

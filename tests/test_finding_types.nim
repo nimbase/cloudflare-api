@@ -27,7 +27,7 @@ suite "finding_types endpoints":
   test "GET /accounts/{account_id}/data-security/posture/finding_types":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDataSecurityPostureFindingTypes("test", 1, 1, @["test"])
+    discard waitFor client.getAccountsAccountIdDataSecurityPostureFindingTypes("test", 1, 1, @["test"], "test")
 
   test "GET /accounts/{account_id}/data-security/posture/finding_types/{finding_type_id}":
     let client = initCloudflareClient("test-key")

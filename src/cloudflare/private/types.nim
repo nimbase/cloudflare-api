@@ -7565,7 +7565,7 @@ type
     cumulated_contracted_cost*: float64
       ## Specifies the cumulated cost for the billing period in the billing currency.
     cumulated_pricing_quantity*: int64
-      ## Specifies the cumulated pricing quantity for the billing period.
+      ## Specifies the portion of usage that is actually subject to a unit price.
     effective_cost*: float64
       ## The amortized cost of the charge. PayGo has no upfront commitments, so this
       ## equals ContractedCost.
@@ -9313,6 +9313,9 @@ type
     username*: string
       ## The username to use when authenticating to the image registry.
 
+  CcContainersApplicationResponse* = ref object of RootObj
+    ## The public Containers API returns an application.
+
   CcContainersContainerInstanceBase* = ref object of RootObj
     ## The last-reported state of a logical container instance.
     application_id*: Option[CcApplicationID]
@@ -9355,6 +9358,16 @@ type
   CcContainersCreateApplicationRequest* = ref object of RootObj
     ## Create a new Containers application.
 
+  CcContainersCreateDurableObjectApplicationRequest* = ref object of RootObj
+    ## Create a namespace-backed Containers application whose Durable Objects own its
+    ## instances.
+    durable_objects*: JsonNode
+      ## The customer-owned Durable Object namespace that owns this application and its
+      ## instances.
+    name*: string
+      ## The name for this application
+    scheduling_policy*: CcDurableObjectApplicationSchedulingPolicy
+
   CcContainersCreateImageRegistryRequestBody* = ref object of RootObj
     ## Configuration for connecting Containers to a supported private external image
     ## registry. See [Imagemanagement](https://developers.cloudflare.com/containers/pl
@@ -9375,23 +9388,6 @@ type
       ## Registry provider. This must match `domain`: `DockerHub` for `docker.io`,
       ## `ECR` for AWS ECR, or `GAR` for Google Artifact Registry.
       ##
-
-  CcContainersCreateInstanceApplicationRequest* = ref object of RootObj
-    ## Create a namespace-backed Containers application whose instances are owned by
-    ## Durable Objects.
-    configuration*: JsonNode
-      ## Instance applications choose their image and runtime configuration when each
-      ## Durable Object starts a container.
-      ## Set image to an empty string and omit every other configuration field.
-      ##
-    durable_objects*: JsonNode
-      ## The customer-owned Durable Object namespace that owns this application and its
-      ## instances.
-    instances*: int64
-      ## Instance applications do not pre-create deployments.
-    name*: string
-      ## The name for this application
-    scheduling_policy*: string
 
   CcContainersCreateScheduledApplicationRequest* = ref object of RootObj
     ## Create a new scheduler-backed Containers application.
@@ -9439,6 +9435,8 @@ type
       ## a username for Docker Hub, or a service account email for Google Artifact
       ## Registry.
       ##
+
+  CcContainersListApplications* = seq[CcContainersApplicationResponse]
 
   CcContainersListContainerInstances* = ref object of RootObj
     ## Container instances belonging to an application.
@@ -9552,6 +9550,20 @@ type
 
   CcDomain* = string
 
+  CcDurableObjectApplication* = ref object of RootObj
+    ## Durable Objects own and configure this namespace-backed application's instances.
+    account_id*: CcAccountID
+    created_at*: CcISO8601Timestamp
+    durable_objects*: CcDurableObjectsConfigurationNamespaceId
+    id*: CcApplicationID
+    name*: CcApplicationName
+    scheduling_policy*: CcDurableObjectApplicationSchedulingPolicy
+    updated_at*: CcISO8601Timestamp
+
+  CcDurableObjectApplicationSchedulingPolicy* = enum
+    ## Selects Durable Objects to own and schedule application instances.
+    durableObject = "durable_object"
+
   CcDurableObjectsConfiguration* = ref object of RootObj
     ## Set of properties to configure a Durable Object-backed application.
 
@@ -9653,11 +9665,16 @@ type
 
   CcImageRegistryCredentialsConfiguration* = ref object of RootObj
     ## Specifies the configuration for the image registry credential to create.
-    expiration_minutes*: int64
-      ## The minimum number of minutes the token stays valid. Must remain positive. We
-      ## make a best effort to respect this value, but some registry providers do not let
-      ## us configure the token lifetime, so the token might stay valid for longer.
-    permissions*: seq[CcImageRegistryPermissions]
+    ## Cloudflare requires both fields for managed registries. For external registries,
+    ## Cloudflare ignores both fields, and the registry provider determines the
+    ## returned credentials' permissions and lifetime.
+    expiration_minutes*: Option[int64]
+      ## The number of minutes Cloudflare managed registry credentials stay valid.
+      ## Required for managed registries and must remain positive. Cloudflare ignores
+      ## this value for external registries.
+    permissions*: Option[seq[CcImageRegistryPermissions]]
+      ## The permissions for Cloudflare managed registry credentials. Required for
+      ## managed registries. Cloudflare ignores this value for external registries.
 
   CcImageRegistryPermissions* = enum
     ## Specifies what permissions the credentials carry.
@@ -9668,8 +9685,6 @@ type
   CcInstanceID* = string
 
   CcInstanceType* = string
-
-  CcListApplications* = seq[CcApplication]
 
   CcListContainerInstanceGroups* = seq[CcContainerInstanceGroup]
 
@@ -9743,6 +9758,31 @@ type
 
   CcSSHPublicKey* = string
 
+  CcScheduledApplication* = ref object of RootObj
+    ## The Cloudchamber scheduler manages this application's instances.
+    account_id*: CcAccountID
+    active_rollout_id*: Option[CcRolloutID]
+    configuration*: CcUserDeploymentConfiguration
+    constraints*: Option[CcApplicationConstraints]
+    created_at*: CcISO8601Timestamp
+    durable_objects*: Option[CcApplicationDurableObjectsConfiguration]
+    health*: Option[CcApplicationHealth]
+    id*: CcApplicationID
+    instances*: int64
+      ## Number of deployments to create.
+    max_instances*: Option[int64]
+      ## Maximum number of instances the application allows. This is relevant for
+      ## applications that auto-scale.
+    name*: CcApplicationName
+    observability*: Option[JsonNode]
+      ## Top-level observability settings for the application.
+      ## This field is mutually exclusive with configuration.observability.
+      ##
+    rollout_active_grace_period*: Option[CcApplicationRolloutActiveGracePeriod]
+    scheduling_policy*: CcScheduledApplicationSchedulingPolicy
+    updated_at*: CcISO8601Timestamp
+    version*: int64
+
   CcScheduledApplicationSchedulingPolicy* = enum
     ## The scheduling policy to use for a scheduler-backed application.
     default = "default"
@@ -9750,7 +9790,7 @@ type
   CcSchedulingPolicy* = enum
     ## The scheduling policy to use for an application.
     default = "default"
-    instance = "instance"
+    durableObject = "durable_object"
 
   CcSecretsStoreRef* = ref object of RootObj
     ## Identifies an existing secret in [Secrets
@@ -10670,8 +10710,17 @@ type
     message*: string
 
   CloudforceOneApprovalProposedChanges* = ref object of RootObj
-    ## Structured proposed rule changes, or null when persisted data cannot be
-    ## resolved.
+    ## Contains structured proposed rule changes, or null for unresolved persisted
+    ## data.
+
+  CloudforceOneCompilerWarning* = ref object of RootObj
+    code*: string
+    column*: Option[int64]
+    footers*: Option[seq[JsonNode]]
+    labels*: Option[seq[JsonNode]]
+    line*: Option[int64]
+    text*: string
+    title*: string
 
   CloudforceOneCreateRule* = ref object of RootObj
     actions*: Option[seq[CloudforceOneRuleAction]]
@@ -10687,10 +10736,9 @@ type
     is_public*: Option[bool]
       ## Whether this rule is visible to other internal accounts.
     meta*: Option[seq[CloudforceOneMetaInputEntry]]
-      ## Additional YARA meta entries appended to the rule's meta block (and stored in
-      ## rule_meta alongside meta parsed from the content). Keys must be valid YARA
-      ## identifiers and must not be 'name', 'enabled', or 'description'. Duplicate keys
-      ## are allowed.
+      ## Adds YARA meta entries to the rule's meta block and stores them in rule_meta
+      ## alongside content metadata. Use valid YARA identifiers for keys; exclude 'name',
+      ## 'enabled', and 'description'. You may repeat keys.
     name*: string
     namespaces*: Option[seq[string]]
       ## Optional WfP deployment tags (customer rules only). Internal rules leave empty.
@@ -10703,6 +10751,9 @@ type
     commit_message*: Option[string]
       ## Human-readable justification for the deletion. Required for internal-account
       ## submissions; optional for customer accounts and automated sync.
+
+  CloudforceOneEditApprovalResponse* = ref object of RootObj
+    approval*: JsonNode
 
   CloudforceOneEmailRuleArrayCondition* = ref object of RootObj
     conditions*: seq[JsonNode]
@@ -10736,6 +10787,10 @@ type
     error*: Option[string]
     valid*: bool
 
+  CloudforceOneEmailRulesListResponse* = ref object of RootObj
+    rules*: seq[CloudforceOneRulePreview]
+    total*: float64
+
   CloudforceOneErrorResponse* = ref object of RootObj
     error*: string
 
@@ -10744,8 +10799,8 @@ type
     old_pattern*: string
 
   CloudforceOneMetaInputEntry* = ref object of RootObj
-    ## A YARA meta entry. Value type is resolved server-side. Constrained keys:
-    ## 'detection' must be one of MALICIOUS, SUSPICIOUS, SPAM, SPOOF.
+    ## A YARA meta entry. The server resolves its value type. The 'detection' key
+    ## accepts MALICIOUS, SUSPICIOUS, SPAM, or SPOOF.
     key*: string
     value*: JsonNode
 
@@ -10753,6 +10808,52 @@ type
     namespace*: Option[seq[string]]
     tag_match*: Option[seq[string]]
     worker_name*: Option[seq[string]]
+
+  CloudforceOnePendingApproval* = ref object of RootObj
+    audit_log_id*: float64
+    can_review*: bool
+      ## Whether the authenticated user may approve or reject this pending change.
+    cancelled_at*: Option[float64]
+      ## Time at which the requester cancelled the approval.
+    cancelled_by*: Option[string]
+      ## Requester who cancelled the pending approval.
+    change_description*: string
+    change_type*: string
+    commit_message*: Option[string]
+      ## The requester supplies this human-readable justification with the change.
+      ## Internal-account mutations require it; customer accounts and sync-originated
+      ## changes may omit it.
+    id*: float64
+    proposed_changes*: Option[CloudforceOneApprovalProposedChanges]
+    rejection_reason*: Option[string]
+      ## The reviewer may supply a reason when rejecting the change.
+    requested_at*: float64
+    requested_by*: string
+    reviewed_at*: Option[float64]
+    reviewed_by*: Option[string]
+    reviewer_scope*: string
+      ## Review policy: general Nomos approvers for default; general approvers or
+      ## Phishguard for email.
+    revision_number*: int64
+      ## Revision number within this approval request chain.
+    rule_id*: string
+    rule_name*: string
+    source_account_id*: Option[int64]
+      ## Customer account that owns this approval when returned by the aggregated email
+      ## queue.
+    status*: string
+    superseded_by_approval_id*: Option[float64]
+      ## Newer approval revision that replaced this approval.
+    supersedes_approval_id*: Option[float64]
+      ## This approval replaces the referenced approval revision.
+
+  CloudforceOnePendingRuleChange* = ref object of RootObj
+    ## Proposed update or deletion awaiting approval. The other rule fields describe
+    ## the currently applied version.
+    approval_id*: float64
+    requested_at*: float64
+    requested_by*: string
+    `type`*: string
 
   CloudforceOneResubmitApprovalRequest* = ref object of RootObj
     commit_message*: Option[string]
@@ -10787,6 +10888,7 @@ type
     path*: string
     pending_approval_id*: Option[float64]
       ## ID of an open approval workflow targeting this rule, or null if none is pending.
+    pending_change*: Option[CloudforceOnePendingRuleChange]
     structured_source*: Option[string]
       ## Original JSON payload for rules created via the structured rules API. Null for
       ## hand-written rules.
@@ -10811,8 +10913,8 @@ type
     `type`*: string
     value*: JsonNode
 
-  CloudforceOneRuleSearchResult* = ref object of RootObj
-    content*: string
+  CloudforceOneRulePreview* = ref object of RootObj
+    content*: Option[string]
     created_at*: float64
     created_by*: string
     description*: string
@@ -10829,6 +10931,32 @@ type
     path*: string
     pending_approval_id*: Option[float64]
       ## ID of an open approval workflow targeting this rule, or null if none is pending.
+    pending_change*: Option[CloudforceOnePendingRuleChange]
+    structured_source*: Option[string]
+      ## Original JSON payload for rules created via the structured rules API. Null for
+      ## hand-written rules.
+    updated_at*: float64
+    updated_by*: string
+
+  CloudforceOneRuleSearchResult* = ref object of RootObj
+    content*: Option[string]
+    created_at*: float64
+    created_by*: string
+    description*: string
+    enabled*: bool
+      ## Whether this rule is active for dice consumers.
+    id*: string
+    is_public*: bool
+      ## Whether this rule is visible to other internal accounts.
+    meta*: Option[seq[CloudforceOneRuleMetaEntry]]
+      ## Structured meta entries for the rule (parsed from content plus any
+      ## request-supplied meta). Returned in source order.
+    name*: string
+    namespaces*: seq[string]
+    path*: string
+    pending_approval_id*: Option[float64]
+      ## ID of an open approval workflow targeting this rule, or null if none is pending.
+    pending_change*: Option[CloudforceOnePendingRuleChange]
     structured_source*: Option[string]
       ## Original JSON payload for rules created via the structured rules API. Null for
       ## hand-written rules.
@@ -10837,10 +10965,10 @@ type
     score*: Option[float64]
       ## Relevance score in [0,1]. Present only when AI Search powers the query.
     scoring_details*: Option[JsonNode]
-      ## Per-component scoring breakdown returned by AI Search hybrid retrieval.
+      ## AI Search hybrid retrieval returns this per-component scoring breakdown.
 
-  CloudforceOneRulesListResponse* = ref object of RootObj
-    rules*: seq[CloudforceOneRule]
+  CloudforceOneRulesPreviewListResponse* = ref object of RootObj
+    rules*: seq[CloudforceOneRulePreview]
     total*: float64
 
   CloudforceOneRulesSearchResponse* = ref object of RootObj
@@ -10888,10 +11016,9 @@ type
     is_public*: Option[bool]
       ## Whether this rule is visible to other internal accounts.
     meta*: Option[seq[CloudforceOneMetaInputEntry]]
-      ## Additional YARA meta entries appended to the rule's meta block (and stored in
-      ## rule_meta alongside meta parsed from the content). Keys must be valid YARA
-      ## identifiers and must not be 'name', 'enabled', or 'description'. Duplicate keys
-      ## are allowed.
+      ## Adds YARA meta entries to the rule's meta block and stores them in rule_meta
+      ## alongside content metadata. Use valid YARA identifiers for keys; exclude 'name',
+      ## 'enabled', and 'description'. You may repeat keys.
     name*: Option[string]
     namespaces*: Option[seq[string]]
     path*: Option[string]
@@ -17713,6 +17840,9 @@ type
       ## Map of variation name to value. All values share the same type (boolean, string,
       ## number, or JSON object/array), and each serialized value stays within 10KB.
 
+  FlagshipFlagDefinitions* = ref object of RootObj
+    flags*: JsonNode
+
   FlagshipFlagsPage* = seq[FlagshipFlag]
 
   FlagshipJsonValue* = ref object of RootObj
@@ -22281,8 +22411,10 @@ type
     messages*: LogpushMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[JsonNode]
-      ## The transformed log record, or null if the query filtered it out.
+    result*: Option[seq[JsonNode]]
+      ## An array of transformed log records. Queries that produce multiple rows from a
+      ## single input (e.g. via UNNEST) return one object per output row. Null if the
+      ## query filtered out the input record.
 
   LogpushTransformerResponseCollection* = ref object of RootObj
     errors*: LogpushMessages
@@ -31917,6 +32049,7 @@ type
     gatewayBlockPageSettings = "gateway-block-page-settings"
     gatewayExtendedEmailMatching = "gateway-extended-email-matching"
     idpFederationGrant = "idp-federation-grant"
+    trustGrant = "trust-grant"
 
   ResourceSharingResourceVersion* = int64
 
@@ -44753,17 +44886,6 @@ type
     value*: JsonNode
       ## Current value of the zone setting.
 
-  ZonesBase2* = ref object of RootObj
-    editable*: Option[bool]
-      ## Whether or not this setting can be modified for this zone (based on your
-      ## Cloudflare plan level).
-    id*: string
-      ## Identifier of the zone setting.
-    modified_on*: Option[string]
-      ## last time this setting was modified.
-    value*: JsonNode
-      ## Current value of the zone setting.
-
   ZonesBrotli* = ref object of RootObj
     ## When the client requesting an asset supports the Brotli compression algorithm,
     ## Cloudflare will serve a Brotli compressed version of the asset.
@@ -46195,6 +46317,43 @@ type
     on = "on"
     off = "off"
 
+  ZonesWebmcpEnabled* = ref object of RootObj
+    ## When enabled, Cloudflare injects the WebMCP bridge (bridge.js) into HTML
+    ## responses for this zone, exposing DOM and Content Credentials tools to an
+    ## in-browser AI agent via navigator.modelContext. No origin-side code
+    ## changes are required. This setting is currently in beta and its behavior
+    ## may change.
+    editable*: Option[bool]
+      ## Whether or not this setting can be modified for this zone (based on your
+      ## Cloudflare plan level).
+    id*: string
+      ## ID of the zone setting.
+    modified_on*: Option[string]
+      ## last time this setting was modified.
+    value*: ZonesWebmcpEnabledValue
+
+  ZonesWebmcpEnabledValue* = enum
+    ## Value of the zone setting.
+    off = "off"
+    on = "on"
+
+  ZonesWebmcpPacks* = ref object of RootObj
+    ## Optional per-zone override of which bundled WebMCP tool packs the
+    ## injected bridge.js activates. Only takes effect when webmcp_enabled is
+    ## on. Leave empty to use the bridge's default pack set. Unknown pack names
+    ## are ignored by the bridge. This setting is currently in beta and its
+    ## behavior may change.
+    editable*: Option[bool]
+      ## Whether or not this setting can be modified for this zone (based on your
+      ## Cloudflare plan level).
+    id*: string
+      ## ID of the zone setting.
+    modified_on*: Option[string]
+      ## last time this setting was modified.
+    value*: ZonesWebmcpPacksValue
+
+  ZonesWebmcpPacksValue* = string
+
   ZonesWebp* = ref object of RootObj
     ## When the client requesting the image supports the WebP image codec, and WebP
     ## offers a performance advantage over the original image format, Cloudflare will
@@ -46250,7 +46409,8 @@ type
       ## The interval (in seconds) from when development mode expires
       ## (positive integer) or last expired (negative integer) for the
       ## domain. If development mode has never been enabled, this value is 0.
-    id*: ZonesIdentifier
+    id*: string
+      ## Identifier
     meta*: JsonNode
       ## Metadata about the zone.
     modified_on*: string

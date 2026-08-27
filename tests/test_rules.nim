@@ -15,6 +15,10 @@ suite "rules serialization":
     let obj = newCloudforceOneApprovalPendingResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneApprovalPendingResponse)) == openjson.toJson(obj)
 
+  test "round-trips CloudforceOneEditApprovalResponse":
+    let obj = newCloudforceOneEditApprovalResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneEditApprovalResponse)) == openjson.toJson(obj)
+
   test "round-trips CloudforceOneAccountExemptions":
     let obj = newCloudforceOneAccountExemptions()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneAccountExemptions)) == openjson.toJson(obj)
@@ -39,10 +43,6 @@ suite "rules serialization":
     let obj = newCloudforceOneRule()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneRule)) == openjson.toJson(obj)
 
-  test "round-trips CloudforceOneRulesListResponse":
-    let obj = newCloudforceOneRulesListResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneRulesListResponse)) == openjson.toJson(obj)
-
   test "round-trips CloudforceOneApprovalConflictResponse":
     let obj = newCloudforceOneApprovalConflictResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneApprovalConflictResponse)) == openjson.toJson(obj)
@@ -50,6 +50,10 @@ suite "rules serialization":
   test "round-trips CloudforceOneValidationResponse":
     let obj = newCloudforceOneValidationResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneValidationResponse)) == openjson.toJson(obj)
+
+  test "round-trips CloudforceOneRulesPreviewListResponse":
+    let obj = newCloudforceOneRulesPreviewListResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneRulesPreviewListResponse)) == openjson.toJson(obj)
 
   test "round-trips CloudforceOneDeleteAllResponse":
     let obj = newCloudforceOneDeleteAllResponse()
@@ -62,6 +66,14 @@ suite "rules serialization":
   test "round-trips CloudforceOneCreateRule":
     let obj = newCloudforceOneCreateRule()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneCreateRule)) == openjson.toJson(obj)
+
+  test "round-trips CloudforceOneRulePreview":
+    let obj = newCloudforceOneRulePreview()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneRulePreview)) == openjson.toJson(obj)
+
+  test "round-trips CloudforceOneEmailRulesListResponse":
+    let obj = newCloudforceOneEmailRulesListResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneEmailRulesListResponse)) == openjson.toJson(obj)
 
   test "round-trips CloudforceOneUpdateAccountExemptionsBody":
     let obj = newCloudforceOneUpdateAccountExemptionsBody()
@@ -98,6 +110,10 @@ suite "rules serialization":
   test "round-trips GetAccountsAccountIdCloudforceOneRulesManagedResponse":
     let obj = cloudflare.GetAccountsAccountIdCloudforceOneRulesManagedResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneRulesManagedResponse)) == openjson.toJson(obj)
+
+  test "round-trips GetAccountsAccountIdCloudforceOneRulesStructuredSchemaResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneRulesStructuredSchemaResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneRulesStructuredSchemaResponse)) == openjson.toJson(obj)
 
   test "round-trips PostAccountsAccountIdCloudforceOneRulesStructuredIdTestResponse":
     let obj = cloudflare.PostAccountsAccountIdCloudforceOneRulesStructuredIdTestResponse()

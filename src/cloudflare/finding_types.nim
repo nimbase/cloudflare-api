@@ -13,13 +13,15 @@ proc getAccountsAccountIdDataSecurityPostureFindingTypes*(client: CloudflareClie
                                                           accountId: string,
                                                           page: int64 = default(int64),
                                                           perPage: int64 = default(int64),
-                                                          vendors: seq[string] = @[]): Future[types.PostureApiPaginatedFindingTypeList] {.async.} =
+                                                          vendors: seq[string] = @[],
+                                                          search: string = default(string)): Future[types.PostureApiPaginatedFindingTypeList] {.async.} =
   ## List all available finding types with pagination support.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
   for v in vendors: q["vendors"] = $v
+  q["search"] = $search
   let res = await client.httpGET(fmt"/accounts/{accountId}/data-security/posture/finding_types", q)
   let body = await res.body
   case res.code

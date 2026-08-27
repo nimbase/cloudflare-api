@@ -289,8 +289,8 @@ proc getAccountsAccountIdWorkflowsSettings*(client: CloudflareClient,
 proc patchAccountsAccountIdWorkflowsSettings*(client: CloudflareClient,
                                               accountId: string,
                                               body: PatchAccountsAccountIdWorkflowsSettingsRequest): Future[PatchAccountsAccountIdWorkflowsSettingsResponse] {.async.} =
-  ## Partially updates account-level Workflows settings; only the fields present in
-  ## the body are changed.
+  ## Updates only the account-level Workflows settings fields present in the request
+  ## body.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/workflows/settings", body)
   let body = await res.body
@@ -413,7 +413,7 @@ proc postAccountsAccountIdWorkflowsWorkflowNameInstancesBatchDelete*(client: Clo
 proc postAccountsAccountIdWorkflowsWorkflowNameInstancesBatchTerminate*(client: CloudflareClient,
                                                                         workflowName: string,
                                                                         accountId: string): Future[PostAccountsAccountIdWorkflowsWorkflowNameInstancesBatchTerminateResponse] {.async.} =
-  ## Terminates multiple workflow instances in a single batch operation.
+  ## Performs a batch termination of multiple workflow instances.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/workflows/{workflowName}/instances/batch/terminate", body)
   let body = await res.body
@@ -533,7 +533,7 @@ proc getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribe*(clie
                                                                             cursor: int64 = default(int64),
                                                                             filter: string = default(string),
                                                                             accountId: string): Future[AsyncResponse] {.async.} =
-  ## Upgrades the request to a WebSocket that streams workflow instance events.
+  ## Opens a WebSocket that streams workflow instance events.
 
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor

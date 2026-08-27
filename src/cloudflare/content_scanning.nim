@@ -9,6 +9,8 @@ import ./private/metaclient
 import ./private/types
 
 type
+  PatchZonesZoneIdContentUploadScanPayloadsExpressionIdRequest = object
+    payload: types.WafProductApiBundleCustomScanPayload
   PutZonesZoneIdContentUploadScanSettingsRequest = object
     value: string
 
@@ -78,6 +80,21 @@ proc deleteZonesZoneIdContentUploadScanPayloadsExpressionId*(client: CloudflareC
   ## expression are no longer scanned.
 
   let res = await client.httpDELETE(fmt"/zones/{zoneId}/content-upload-scan/payloads/{expressionId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.WafProductApiBundleResponseCustomScanCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchZonesZoneIdContentUploadScanPayloadsExpressionId*(client: CloudflareClient,
+                                                            zoneId: types.WafProductApiBundleIdentifier,
+                                                            expressionId: types.WafProductApiBundleCustomScanId,
+                                                            body: PatchZonesZoneIdContentUploadScanPayloadsExpressionIdRequest): Future[types.WafProductApiBundleResponseCustomScanCollection] {.async.} =
+  ## Update the Content Scanning custom expression with the given identifier and
+  ## return the updated list of expressions.
+
+  let res = await client.httpPATCH(fmt"/zones/{zoneId}/content-upload-scan/payloads/{expressionId}", body)
   let body = await res.body
   case res.code
   of Http200:

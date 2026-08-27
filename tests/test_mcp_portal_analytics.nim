@@ -27,15 +27,15 @@ suite "mcp_portal_analytics endpoints":
   test "GET /accounts/{account_id}/access/ai-controls/mcp/analytics/portals/{portal_id}/tool-calls/timeseries":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAccessAiControlsMcpAnalyticsPortalsPortalIdToolCallsTimeseries("test", "test", {}, {}, "test")
+    discard waitFor client.getAccountsAccountIdAccessAiControlsMcpAnalyticsPortalsPortalIdToolCallsTimeseries("test", "test", {}, {}, "test", 1)
 
   test "GET /accounts/{account_id}/access/ai-controls/mcp/analytics/servers/{server_id}/tool-calls/timeseries":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAccessAiControlsMcpAnalyticsServersServerIdToolCallsTimeseries("test", "test", {}, {}, "test")
+    discard waitFor client.getAccountsAccountIdAccessAiControlsMcpAnalyticsServersServerIdToolCallsTimeseries("test", "test", {}, {}, "test", 1)
 
   test "GET /accounts/{account_id}/access/ai-controls/mcp/analytics/tool-calls/timeseries":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAccessAiControlsMcpAnalyticsToolCallsTimeseries("test", {}, {}, "test")
+    discard waitFor client.getAccountsAccountIdAccessAiControlsMcpAnalyticsToolCallsTimeseries("test", {}, {}, "test", 1)
 
