@@ -10,24 +10,24 @@ import ./private/types
 
 type
   PostAccountsAccountIdAddressingAddressMapsRequest = object
-    description: Option[types.AddressingSchemasDescription]
+    description: Option[types.AddressingDescription2]
     enabled: Option[types.AddressingEnabled]
     ips: Option[seq[types.AddressingIpAddress]]
     memberships: Option[types.AddressingMembershipRequests]
   PatchAccountsAccountIdAddressingAddressMapsAddressMapIdRequest = object
     default_sni: Option[types.AddressingDefaultSni]
-    description: Option[types.AddressingSchemasDescription]
+    description: Option[types.AddressingDescription2]
     enabled: Option[types.AddressingEnabled]
 
 proc getAccountsAccountIdAddressingAddressMaps*(client: CloudflareClient,
-                                                accountId: types.AddressingAccountIdentifier): Future[types.AddressingComponentsSchemasResponseCollection] {.async.} =
+                                                accountId: types.AddressingAccountIdentifier): Future[types.AddressingResponseCollection3] {.async.} =
   ## List all address maps owned by the account.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/addressing/address_maps")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AddressingComponentsSchemasResponseCollection)
+    result = fromJson(body, types.AddressingResponseCollection3)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -74,14 +74,14 @@ proc deleteAccountsAccountIdAddressingAddressMapsAddressMapId*(client: Cloudflar
 proc patchAccountsAccountIdAddressingAddressMapsAddressMapId*(client: CloudflareClient,
                                                               addressMapId: types.AddressingAddressMapIdentifier,
                                                               accountId: types.AddressingAccountIdentifier,
-                                                              body: PatchAccountsAccountIdAddressingAddressMapsAddressMapIdRequest): Future[types.AddressingComponentsSchemasSingleResponse] {.async.} =
+                                                              body: PatchAccountsAccountIdAddressingAddressMapsAddressMapIdRequest): Future[types.AddressingSingleResponse3] {.async.} =
   ## Modify properties of an address map owned by the account.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AddressingComponentsSchemasSingleResponse)
+    result = fromJson(body, types.AddressingSingleResponse3)
   else:
     raise newException(CloudflareClientError, body)
 

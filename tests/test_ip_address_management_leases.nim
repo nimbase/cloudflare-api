@@ -15,9 +15,9 @@ suite "ip_address_management_leases serialization":
     let obj = newAddressingApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips AddressingLeasesComponentsSchemasResponseCollection":
-    let obj = newAddressingLeasesComponentsSchemasResponseCollection()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingLeasesComponentsSchemasResponseCollection)) == openjson.toJson(obj)
+  test "round-trips AddressingResponseCollection4":
+    let obj = newAddressingResponseCollection4()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingResponseCollection4)) == openjson.toJson(obj)
 
 suite "ip_address_management_leases endpoints":
   test "GET /accounts/{account_id}/addressing/leases":

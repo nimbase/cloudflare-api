@@ -11,17 +11,13 @@ import cloudflare
 import ./common
 
 suite "ip_address_management_address_maps serialization":
-  test "round-trips AddressingComponentsSchemasResponseCollection":
-    let obj = newAddressingComponentsSchemasResponseCollection()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingComponentsSchemasResponseCollection)) == openjson.toJson(obj)
-
-  test "round-trips AddressingComponentsSchemasSingleResponse":
-    let obj = newAddressingComponentsSchemasSingleResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingComponentsSchemasSingleResponse)) == openjson.toJson(obj)
-
   test "round-trips AddressingApiResponseCommonFailure":
     let obj = newAddressingApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingApiResponseCommonFailure)) == openjson.toJson(obj)
+
+  test "round-trips AddressingSingleResponse3":
+    let obj = newAddressingSingleResponse3()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingSingleResponse3)) == openjson.toJson(obj)
 
   test "round-trips AddressingApiResponseCollection":
     let obj = newAddressingApiResponseCollection()
@@ -30,6 +26,10 @@ suite "ip_address_management_address_maps serialization":
   test "round-trips AddressingFullResponse":
     let obj = newAddressingFullResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingFullResponse)) == openjson.toJson(obj)
+
+  test "round-trips AddressingResponseCollection3":
+    let obj = newAddressingResponseCollection3()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingResponseCollection3)) == openjson.toJson(obj)
 
 suite "ip_address_management_address_maps endpoints":
   test "GET /accounts/{account_id}/addressing/address_maps":

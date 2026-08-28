@@ -60,6 +60,7 @@ type
     success: bool
   PutAccountsAccountIdWorkflowsWorkflowNameRequest = object
     class_name: string
+    concurrency: Option[JsonNode]
     default_retention: Option[JsonNode]
     limits: Option[JsonNode]
     schedules: Option[seq[JsonNode]]

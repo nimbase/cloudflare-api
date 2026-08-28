@@ -10,7 +10,7 @@ import ./private/types
 
 type
   PatchAccountsAccountIdAddressingPrefixesPrefixIdBgpStatusRequest = object
-    advertised: types.AddressingComponentsSchemasAdvertised
+    advertised: types.AddressingAdvertised3
 
 proc getAccountsAccountIdAddressingPrefixesPrefixIdBgpStatus*(client: CloudflareClient,
                                                               prefixId: types.AddressingPrefixIdentifier,

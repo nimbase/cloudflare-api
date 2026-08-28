@@ -49,6 +49,18 @@ type
     typeTEAM = "TEAM"
     typeUSER = "USER"
 
+  EmailSecurityOrderOption* = enum
+    orderSubmissionId = "submission_id"
+    orderSubject = "subject"
+    orderOriginalDisposition = "original_disposition"
+    orderRequestedDisposition = "requested_disposition"
+    orderOutcomeDisposition = "outcome_disposition"
+    orderRequestedAt = "requested_at"
+
+  EmailSecurityDirectionOption* = enum
+    directionAsc = "asc"
+    directionDesc = "desc"
+
 
 proc getAccountsAccountIdEmailSecurityInvestigate*(client: CloudflareClient,
                                                    start: string = default(string),
@@ -360,6 +372,8 @@ proc getAccountsAccountIdEmailSecuritySubmissions*(client: CloudflareClient,
                                                    status: string = default(string),
                                                    query: string = default(string),
                                                    escalatedFromUser: bool = default(bool),
+                                                   order: EmailSecurityOrderOption = orderRequestedAt,
+                                                   direction: EmailSecurityDirectionOption,
                                                    page: int64 = 1,
                                                    perPage: int64 = 20): Future[JsonNode] {.async.} =
   ## Returns information for submissions made to reclassify emails. Shows the status,
@@ -377,6 +391,8 @@ proc getAccountsAccountIdEmailSecuritySubmissions*(client: CloudflareClient,
   q["status"] = $status
   q["query"] = $query
   q["escalated_from_user"] = $escalatedFromUser
+  q["order"] = $order
+  q["direction"] = $direction
   q["page"] = $page
   q["per_page"] = $perPage
   let res = await client.httpGET("/accounts/{account_id}/email-security/submissions", q)

@@ -4,10 +4,113 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[strformat, json]
+import std/[strformat, options, json]
 import ./private/metaclient
 
 type
+  GetAccountsAccountIdArtifactsNamespacesResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: seq[JsonNode]
+    result_info: JsonNode
+    success: bool
+  GetAccountsAccountIdArtifactsNamespacesNamespaceResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
+  GetAccountsAccountIdArtifactsNamespacesNamespaceReposResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: seq[JsonNode]
+    result_info: JsonNode
+    success: bool
+  PostAccountsAccountIdArtifactsNamespacesNamespaceReposRequest = object
+    default_branch: Option[string]
+    description: Option[string]
+    name: string
+    read_only: Option[bool]
+  PostAccountsAccountIdArtifactsNamespacesNamespaceReposResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
+  GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
+  DeleteAccountsAccountIdArtifactsNamespacesNamespaceReposNameResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
+  GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameCommitHashResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
+  PostAccountsAccountIdArtifactsNamespacesNamespaceReposNameForkRequest = object
+    default_branch_only: Option[bool]
+    description: Option[string]
+    name: string
+    read_only: Option[bool]
+  PostAccountsAccountIdArtifactsNamespacesNamespaceReposNameForkResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
+  PostAccountsAccountIdArtifactsNamespacesNamespaceReposNameImportRequest = object
+    branch: Option[string]
+    depth: Option[int64]
+    read_only: Option[bool]
+    url: string
+  PostAccountsAccountIdArtifactsNamespacesNamespaceReposNameImportResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
+  GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameLogResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: seq[JsonNode]
+    result_info: JsonNode
+    success: bool
+  GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameTokensResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: seq[JsonNode]
+    result_info: JsonNode
+    success: bool
+  GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameTreeHashResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: seq[JsonNode]
+    result_info: JsonNode
+    success: bool
+  PostAccountsAccountIdArtifactsNamespacesNamespaceTokensRequest = object
+    repo: string
+    scope: Option[string]
+    ttl: Option[int64]
+  PostAccountsAccountIdArtifactsNamespacesNamespaceTokensResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
+  DeleteAccountsAccountIdArtifactsNamespacesNamespaceTokensIdResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
   ArtifactSortOption* = enum
     sortCreatedAt = "created_at"
     sortUpdatedAt = "updated_at"
@@ -27,7 +130,7 @@ type
 
 proc getAccountsAccountIdArtifactsNamespaces*(client: CloudflareClient,
                                               limit: int64 = 100,
-                                              cursor: string = default(string)): Future[JsonNode] {.async.} =
+                                              cursor: string = default(string)): Future[GetAccountsAccountIdArtifactsNamespacesResponse] {.async.} =
   ## Lists Artifacts namespaces for an account.
 
   var q = initOrderedTable[string, string]()
@@ -37,19 +140,19 @@ proc getAccountsAccountIdArtifactsNamespaces*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, GetAccountsAccountIdArtifactsNamespacesResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdArtifactsNamespacesNamespace*(client: CloudflareClient,
-                                                       namespace: string): Future[JsonNode] {.async.} =
+                                                       namespace: string): Future[GetAccountsAccountIdArtifactsNamespacesNamespaceResponse] {.async.} =
   ## Returns an Artifacts namespace summary.
 
   let res = await client.httpGET(fmt"/accounts/{account_id}/artifacts/namespaces/{namespace}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, GetAccountsAccountIdArtifactsNamespacesNamespaceResponse)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -59,7 +162,7 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceRepos*(client: CloudflareCl
                                                             cursor: string = default(string),
                                                             search: string = default(string),
                                                             sort: ArtifactSortOption = sortCreatedAt,
-                                                            direction: ArtifactDirectionOption = directionDesc): Future[JsonNode] {.async.} =
+                                                            direction: ArtifactDirectionOption = directionDesc): Future[GetAccountsAccountIdArtifactsNamespacesNamespaceReposResponse] {.async.} =
   ## Lists repositories in a namespace.
 
   var q = initOrderedTable[string, string]()
@@ -72,45 +175,46 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceRepos*(client: CloudflareCl
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, GetAccountsAccountIdArtifactsNamespacesNamespaceReposResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdArtifactsNamespacesNamespaceRepos*(client: CloudflareClient,
-                                                             namespace: string): Future[JsonNode] {.async.} =
+                                                             namespace: string,
+                                                             body: PostAccountsAccountIdArtifactsNamespacesNamespaceReposRequest): Future[PostAccountsAccountIdArtifactsNamespacesNamespaceReposResponse] {.async.} =
   ## Creates a Git-compatible Artifacts repository in a namespace.
 
   let res = await client.httpPOST(fmt"/accounts/{account_id}/artifacts/namespaces/{namespace}/repos", body)
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, PostAccountsAccountIdArtifactsNamespacesNamespaceReposResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdArtifactsNamespacesNamespaceReposName*(client: CloudflareClient,
                                                                 namespace: string,
-                                                                name: string): Future[JsonNode] {.async.} =
+                                                                name: string): Future[GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameResponse] {.async.} =
   ## Returns repository metadata.
 
   let res = await client.httpGET(fmt"/accounts/{account_id}/artifacts/namespaces/{namespace}/repos/{name}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc deleteAccountsAccountIdArtifactsNamespacesNamespaceReposName*(client: CloudflareClient,
                                                                    namespace: string,
-                                                                   name: string): Future[JsonNode] {.async.} =
+                                                                   name: string): Future[DeleteAccountsAccountIdArtifactsNamespacesNamespaceReposNameResponse] {.async.} =
   ## Deletes a repository and schedules cleanup of its backing data.
 
   let res = await client.httpDELETE(fmt"/accounts/{account_id}/artifacts/namespaces/{namespace}/repos/{name}")
   let body = await res.body
   case res.code
   of Http202:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, DeleteAccountsAccountIdArtifactsNamespacesNamespaceReposNameResponse)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -127,7 +231,7 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameBlobHash*(client: 
 proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameCommitHash*(client: CloudflareClient,
                                                                           namespace: string,
                                                                           name: string,
-                                                                          hash: string): Future[JsonNode] {.async.} =
+                                                                          hash: string): Future[GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameCommitHashResponse] {.async.} =
   ## Returns decoded metadata for an immutable Git commit object. Commit responses
   ## are cacheable forever by hash.
 
@@ -135,7 +239,7 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameCommitHash*(client
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameCommitHashResponse)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -154,27 +258,29 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameFile*(client: Clou
 
 proc postAccountsAccountIdArtifactsNamespacesNamespaceReposNameFork*(client: CloudflareClient,
                                                                      namespace: string,
-                                                                     name: string): Future[JsonNode] {.async.} =
+                                                                     name: string,
+                                                                     body: PostAccountsAccountIdArtifactsNamespacesNamespaceReposNameForkRequest): Future[PostAccountsAccountIdArtifactsNamespacesNamespaceReposNameForkResponse] {.async.} =
   ## Forks a source repository into a new repository.
 
   let res = await client.httpPOST(fmt"/accounts/{account_id}/artifacts/namespaces/{namespace}/repos/{name}/fork", body)
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, PostAccountsAccountIdArtifactsNamespacesNamespaceReposNameForkResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdArtifactsNamespacesNamespaceReposNameImport*(client: CloudflareClient,
                                                                        namespace: string,
-                                                                       name: string): Future[JsonNode] {.async.} =
+                                                                       name: string,
+                                                                       body: PostAccountsAccountIdArtifactsNamespacesNamespaceReposNameImportRequest): Future[PostAccountsAccountIdArtifactsNamespacesNamespaceReposNameImportResponse] {.async.} =
   ## Imports an HTTPS Git repository into an Artifacts repository.
 
   let res = await client.httpPOST(fmt"/accounts/{account_id}/artifacts/namespaces/{namespace}/repos/{name}/import", body)
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, PostAccountsAccountIdArtifactsNamespacesNamespaceReposNameImportResponse)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -183,7 +289,7 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameLog*(client: Cloud
                                                                    name: string,
                                                                    `ref`: string = default(string),
                                                                    limit: int64 = default(int64),
-                                                                   offset: int64 = default(int64)): Future[JsonNode] {.async.} =
+                                                                   offset: int64 = default(int64)): Future[GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameLogResponse] {.async.} =
   ## Returns commit metadata walking backwards from a ref, branch, tag, or HEAD.
 
   var q = initOrderedTable[string, string]()
@@ -194,7 +300,7 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameLog*(client: Cloud
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameLogResponse)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -202,7 +308,7 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameRawRefPath*(client
                                                                           namespace: string,
                                                                           name: string,
                                                                           `ref`: string,
-                                                                          path: string): Future[JsonNode] {.async.} =
+                                                                          path: string): Future[string] {.async.} =
   ## Returns file bytes resolved by ref and path, with a sniffed content type and
   ## browser-safe response headers.
 
@@ -210,7 +316,7 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameRawRefPath*(client
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, string)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -219,7 +325,7 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameTokens*(client: Cl
                                                                       name: string,
                                                                       state: ArtifactStateOption = stateActive,
                                                                       page: int64 = 1,
-                                                                      perPage: int64 = 30): Future[JsonNode] {.async.} =
+                                                                      perPage: int64 = 30): Future[GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameTokensResponse] {.async.} =
   ## Lists tokens for a repository.
 
   var q = initOrderedTable[string, string]()
@@ -230,14 +336,14 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameTokens*(client: Cl
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameTokensResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameTreeHash*(client: CloudflareClient,
                                                                         namespace: string,
                                                                         name: string,
-                                                                        hash: string): Future[JsonNode] {.async.} =
+                                                                        hash: string): Future[GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameTreeHashResponse] {.async.} =
   ## Returns decoded entries for an immutable Git tree object. Tree responses are
   ## cacheable forever by hash.
 
@@ -245,31 +351,32 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameTreeHash*(client: 
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameTreeHashResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdArtifactsNamespacesNamespaceTokens*(client: CloudflareClient,
-                                                              namespace: string): Future[JsonNode] {.async.} =
+                                                              namespace: string,
+                                                              body: PostAccountsAccountIdArtifactsNamespacesNamespaceTokensRequest): Future[PostAccountsAccountIdArtifactsNamespacesNamespaceTokensResponse] {.async.} =
   ## Creates a scoped Git token for a repository.
 
   let res = await client.httpPOST(fmt"/accounts/{account_id}/artifacts/namespaces/{namespace}/tokens", body)
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, PostAccountsAccountIdArtifactsNamespacesNamespaceTokensResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc deleteAccountsAccountIdArtifactsNamespacesNamespaceTokensId*(client: CloudflareClient,
                                                                   namespace: string,
-                                                                  id: string): Future[JsonNode] {.async.} =
+                                                                  id: string): Future[DeleteAccountsAccountIdArtifactsNamespacesNamespaceTokensIdResponse] {.async.} =
   ## Revokes an Artifacts repository token.
 
   let res = await client.httpDELETE(fmt"/accounts/{account_id}/artifacts/namespaces/{namespace}/tokens/{id}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, DeleteAccountsAccountIdArtifactsNamespacesNamespaceTokensIdResponse)
   else:
     raise newException(CloudflareClientError, body)

@@ -11,9 +11,11 @@ import ./private/types
 
 proc postAccountsAccountIdContainersApplicationsApplicationIdRollouts*(client: CloudflareClient,
                                                                        applicationId: types.CcApplicationID,
-                                                                       body: types.CcCreateApplicationRolloutRequest): Future[JsonNode] {.async.} =
+                                                                       body: types.CcContainersCreateApplicationRolloutRequest): Future[JsonNode] {.async.} =
   ## Creates a rollout to update the application's configuration across instances
-  ## with minimal downtime.
+  ## with minimal downtime. Rollouts apply only to scheduler-backed applications
+  ## with `scheduling_policy: "default"`. Versions and rollouts do not apply to
+  ## applications with `scheduling_policy: "durable_object"`.
 
   let res = await client.httpPOST(fmt"/accounts/{account_id}/containers/applications/{applicationId}/rollouts", body)
   let body = await res.body

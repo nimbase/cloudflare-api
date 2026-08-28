@@ -32,8 +32,17 @@ proc getAccountsAccountIdContainersApplications*(client: CloudflareClient,
 
 proc postAccountsAccountIdContainersApplications*(client: CloudflareClient,
                                                   body: types.CcContainersCreateApplicationRequest): Future[JsonNode] {.async.} =
-  ## Create a new application. An Application represents an intent to run one or more
-  ## containers, with the same image, dynamically scheduled based on constraints.
+  ## Create a Containers application.
+  ##
+  ## Use `scheduling_policy: "default"` for a scheduler-backed application. The
+  ## Containers scheduler maintains the requested instance count and manages
+  ## deployment configuration, placement, scaling, versions, and rollouts.
+  ##
+  ## Use `scheduling_policy: "durable_object"` for a Durable Object-managed
+  ## application. Each Durable Object creates and manages the lifecycle of its
+  ## container instance. This request accepts only `name`, `scheduling_policy`,
+  ## and `durable_objects`. Application-level configuration, scaling, constraints,
+  ## versions, and rollouts do not apply.
 
   let res = await client.httpPOST("/accounts/{account_id}/containers/applications", body)
   let body = await res.body
@@ -83,7 +92,9 @@ proc patchAccountsAccountIdContainersApplicationsApplicationId*(client: Cloudfla
 
 proc getAccountsAccountIdContainersApplicationsApplicationIdVersions*(client: CloudflareClient,
                                                                       applicationId: types.CcApplicationID): Future[JsonNode] {.async.} =
-  ## Returns all versions for this application.
+  ## Returns all versions for a scheduler-backed application with
+  ## `scheduling_policy: "default"`. Versions and rollouts do not apply to
+  ## applications with `scheduling_policy: "durable_object"`.
 
   let res = await client.httpGET(fmt"/accounts/{account_id}/containers/applications/{applicationId}/versions")
   let body = await res.body

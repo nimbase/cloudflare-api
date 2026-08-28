@@ -11,9 +11,9 @@ import cloudflare
 import ./common
 
 suite "ip_address_management_prefix_delegation serialization":
-  test "round-trips AddressingSchemasResponseCollection":
-    let obj = newAddressingSchemasResponseCollection()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingSchemasResponseCollection)) == openjson.toJson(obj)
+  test "round-trips AddressingResponseCollection2":
+    let obj = newAddressingResponseCollection2()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingResponseCollection2)) == openjson.toJson(obj)
 
   test "round-trips AddressingIdResponse":
     let obj = newAddressingIdResponse()
@@ -23,9 +23,9 @@ suite "ip_address_management_prefix_delegation serialization":
     let obj = newAddressingApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips AddressingSchemasSingleResponse":
-    let obj = newAddressingSchemasSingleResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingSchemasSingleResponse)) == openjson.toJson(obj)
+  test "round-trips AddressingSingleResponse2":
+    let obj = newAddressingSingleResponse2()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingSingleResponse2)) == openjson.toJson(obj)
 
 suite "ip_address_management_prefix_delegation endpoints":
   test "GET /accounts/{account_id}/addressing/prefixes/{prefix_id}/delegations":

@@ -159,8 +159,8 @@ type
     web_socket_debugger_url: string
       ## WebSocket URL for CDP connection
   GetAccountsAccountIdBrowserRenderingDevtoolsSessionSessionIdResponse* = object
-    close_reason: string
-      ## Reason for session closure.
+    close_reason: float64
+      ## Reason code for session closure.
     close_reason_text: string
       ## Human-readable close reason.
     connection_end_time: float64

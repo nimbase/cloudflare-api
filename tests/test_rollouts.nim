@@ -11,9 +11,9 @@ import cloudflare
 import ./common
 
 suite "rollouts serialization":
-  test "round-trips CcCreateApplicationRolloutRequest":
-    let obj = newCcCreateApplicationRolloutRequest()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcCreateApplicationRolloutRequest)) == openjson.toJson(obj)
+  test "round-trips CcContainersCreateApplicationRolloutRequest":
+    let obj = newCcContainersCreateApplicationRolloutRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcContainersCreateApplicationRolloutRequest)) == openjson.toJson(obj)
 
   test "round-trips CcApplicationRollout":
     let obj = newCcApplicationRollout()
@@ -31,5 +31,5 @@ suite "rollouts endpoints":
   test "POST /accounts/{account_id}/containers/applications/{application_id}/rollouts":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdContainersApplicationsApplicationIdRollouts("test", newCcCreateApplicationRolloutRequest())
+    discard waitFor client.postAccountsAccountIdContainersApplicationsApplicationIdRollouts("test", newCcContainersCreateApplicationRolloutRequest())
 

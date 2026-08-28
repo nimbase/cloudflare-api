@@ -856,16 +856,6 @@ proc renameHook*(v: DnssecDnssecZsk, fieldName: var string) {.inline.} =
   elif fieldName == "tag":
     fieldName = "Tag"
 
-proc renameHook*(v: FirewallFilters, fieldName: var string) {.inline.} =
-  if fieldName == "configuration.target":
-    fieldName = "configuration_target"
-  elif fieldName == "configuration_target":
-    fieldName = "configuration.target"
-  elif fieldName == "configuration.value":
-    fieldName = "configuration_value"
-  elif fieldName == "configuration_value":
-    fieldName = "configuration.value"
-
 proc renameHook*(v: FlagshipEvaluationResult, fieldName: var string) {.inline.} =
   if fieldName == "flagKey":
     fieldName = "flag_key"

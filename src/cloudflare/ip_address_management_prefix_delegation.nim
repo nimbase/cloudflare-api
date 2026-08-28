@@ -15,28 +15,28 @@ type
 
 proc getAccountsAccountIdAddressingPrefixesPrefixIdDelegations*(client: CloudflareClient,
                                                                 prefixId: types.AddressingPrefixIdentifier,
-                                                                accountId: types.AddressingAccountIdentifier): Future[types.AddressingSchemasResponseCollection] {.async.} =
+                                                                accountId: types.AddressingAccountIdentifier): Future[types.AddressingResponseCollection2] {.async.} =
   ## List all delegations for a given account IP prefix.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/addressing/prefixes/{prefixId}/delegations")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AddressingSchemasResponseCollection)
+    result = fromJson(body, types.AddressingResponseCollection2)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdAddressingPrefixesPrefixIdDelegations*(client: CloudflareClient,
                                                                  prefixId: types.AddressingPrefixIdentifier,
                                                                  accountId: types.AddressingAccountIdentifier,
-                                                                 body: PostAccountsAccountIdAddressingPrefixesPrefixIdDelegationsRequest): Future[types.AddressingSchemasSingleResponse] {.async.} =
+                                                                 body: PostAccountsAccountIdAddressingPrefixesPrefixIdDelegationsRequest): Future[types.AddressingSingleResponse2] {.async.} =
   ## Create a new account delegation for a given IP prefix.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/addressing/prefixes/{prefixId}/delegations", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AddressingSchemasSingleResponse)
+    result = fromJson(body, types.AddressingSingleResponse2)
   else:
     raise newException(CloudflareClientError, body)
 

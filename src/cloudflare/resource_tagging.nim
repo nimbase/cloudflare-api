@@ -69,6 +69,7 @@ proc getAccountsAccountIdTagsResources*(client: CloudflareClient,
                                         `type`: seq[string] = @[],
                                         name: string = default(string),
                                         id: seq[string] = @[],
+                                        caseInsensitive: bool = false,
                                         tag: seq[string] = @[],
                                         cursor: string = default(string)): Future[types.ResourceTaggingTaggedResourceResponseCollection] {.async.} =
   ## Lists all tagged resources for an account.
@@ -77,6 +78,7 @@ proc getAccountsAccountIdTagsResources*(client: CloudflareClient,
   for v in `type`: q["type"] = $v
   q["name"] = $name
   for v in id: q["id"] = $v
+  q["case_insensitive"] = $caseInsensitive
   for v in tag: q["tag"] = $v
   q["cursor"] = $cursor
   let res = await client.httpGET(fmt"/accounts/{accountId}/tags/resources", q)
