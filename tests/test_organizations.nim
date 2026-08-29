@@ -96,7 +96,7 @@ suite "organizations endpoints":
   test "GET /organizations/{organization_id}/accounts":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getOrganizationsOrganizationIdAccounts("test", "test", "test", "test", "test", "test", "test", "test", "test", {}, {}, "test", 1)
+    discard waitFor client.getOrganizationsOrganizationIdAccounts("test", "test", "test", "test", "test", "test", "test", "test", "test", {}, {}, true, "test", 1)
 
   test "GET /organizations/{organization_id}/profile":
     let client = initCloudflareClient("test-key")

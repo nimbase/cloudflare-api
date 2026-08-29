@@ -1056,6 +1056,7 @@ type
     urlPattern = "url_pattern"
     account = "account"
     zone = "zone"
+    customExpression = "custom_expression"
 
   AbuseReportsMitigationAppeal* = ref object of RootObj
     id*: string
@@ -7672,6 +7673,7 @@ type
 
   BotManagementBaseConfig* = ref object of RootObj
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
+    bot_preference_sync_enabled*: Option[BotManagementBotPreferenceSyncEnabled]
     cf_robots_variant*: Option[BotManagementCfRobotsVariant]
     content_bots_protection*: Option[BotManagementContentBotsProtection]
     crawler_protection*: Option[BotManagementCrawlerProtection]
@@ -7683,6 +7685,7 @@ type
 
   BotManagementBmSubscriptionConfig* = ref object of RootObj
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
+    bot_preference_sync_enabled*: Option[BotManagementBotPreferenceSyncEnabled]
     cf_robots_variant*: Option[BotManagementCfRobotsVariant]
     content_bots_protection*: Option[BotManagementContentBotsProtection]
     crawler_protection*: Option[BotManagementCrawlerProtection]
@@ -7698,6 +7701,7 @@ type
 
   BotManagementBotFightModeConfig* = ref object of RootObj
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
+    bot_preference_sync_enabled*: Option[BotManagementBotPreferenceSyncEnabled]
     cf_robots_variant*: Option[BotManagementCfRobotsVariant]
     content_bots_protection*: Option[BotManagementContentBotsProtection]
     crawler_protection*: Option[BotManagementCrawlerProtection]
@@ -7715,6 +7719,8 @@ type
     success*: bool
       ## Whether the API call was successful.
     result*: Option[JsonNode]
+
+  BotManagementBotPreferenceSyncEnabled* = bool
 
   BotManagementCfRobotsVariant* = enum
     ## Specifies the Robots Access Control License variant to use.
@@ -7794,6 +7800,7 @@ type
 
   BotManagementSbfmDefinitelyConfig* = ref object of RootObj
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
+    bot_preference_sync_enabled*: Option[BotManagementBotPreferenceSyncEnabled]
     cf_robots_variant*: Option[BotManagementCfRobotsVariant]
     content_bots_protection*: Option[BotManagementContentBotsProtection]
     crawler_protection*: Option[BotManagementCrawlerProtection]
@@ -7818,6 +7825,7 @@ type
 
   BotManagementSbfmLikelyConfig* = ref object of RootObj
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
+    bot_preference_sync_enabled*: Option[BotManagementBotPreferenceSyncEnabled]
     cf_robots_variant*: Option[BotManagementCfRobotsVariant]
     content_bots_protection*: Option[BotManagementContentBotsProtection]
     crawler_protection*: Option[BotManagementCrawlerProtection]
@@ -27245,6 +27253,8 @@ type
     id*: string
     name*: Option[string]
     settings*: JsonNode
+    tags*: Option[JsonNode]
+      ## Account tags, present only when `include_tags=true` is requested.
     `type`*: string
 
   OrganizationsApiBatchAccountMoveResponse* = ref object of RootObj

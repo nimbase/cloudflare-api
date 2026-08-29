@@ -152,6 +152,7 @@ proc getOrganizationsOrganizationIdAccounts*(client: CloudflareClient,
                                              nameContains: string = default(string),
                                              orderBy: OrganizationOrderByOption,
                                              direction: OrganizationDirectionOption,
+                                             includeTags: bool = default(bool),
                                              pageToken: string = default(string),
                                              pageSize: int64 = default(int64)): Future[GetOrganizationsOrganizationIdAccountsResponse] {.async.} =
   ## Retrieve a list of accounts that belong to a specific organization. (Currently
@@ -169,6 +170,7 @@ proc getOrganizationsOrganizationIdAccounts*(client: CloudflareClient,
   q["name.contains"] = $nameContains
   q["order_by"] = $orderBy
   q["direction"] = $direction
+  q["include_tags"] = $includeTags
   q["page_token"] = $pageToken
   q["page_size"] = $pageSize
   let res = await client.httpGET(fmt"/organizations/{organizationId}/accounts", q)

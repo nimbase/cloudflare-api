@@ -19,7 +19,25 @@ suite "account serialization":
     let obj = newBuildsAPIResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsAPIResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdAiGatewayLoggingStateResponse":
+    let obj = cloudflare.GetAccountsAccountIdAiGatewayLoggingStateResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdAiGatewayLoggingStateResponse)) == openjson.toJson(obj)
+
+  test "round-trips PatchAccountsAccountIdAiGatewayLoggingStateResponse":
+    let obj = cloudflare.PatchAccountsAccountIdAiGatewayLoggingStateResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdAiGatewayLoggingStateResponse)) == openjson.toJson(obj)
+
 suite "account endpoints":
+  test "GET /accounts/{account_id}/ai-gateway/logging-state":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdAiGatewayLoggingState("test")
+
+  test "PATCH /accounts/{account_id}/ai-gateway/logging-state":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.patchAccountsAccountIdAiGatewayLoggingState("test")
+
   test "GET /accounts/{account_id}/builds/account/limits":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
