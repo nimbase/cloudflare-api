@@ -11,7 +11,7 @@ import ./private/types
 
 proc getAccountsAccountIdRegistrarDomains*(client: CloudflareClient,
                                            accountId: types.RegistrarApiIdentifier): Future[types.RegistrarApiDomainResponseCollection] {.async.} =
-  ## List domains handled by Registrar.
+  ## Lists domains handled by Registrar.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/registrar/domains")
   let body = await res.body
@@ -37,7 +37,7 @@ proc getAccountsAccountIdRegistrarDomainsDomainName*(client: CloudflareClient,
 proc putAccountsAccountIdRegistrarDomainsDomainName*(client: CloudflareClient,
                                                      domainName: types.RegistrarApiDomainName,
                                                      accountId: types.RegistrarApiIdentifier): Future[types.RegistrarApiDomainResponseSingle] {.async.} =
-  ## Update individual domain.
+  ## Updates an individual domain.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/registrar/domains/{domainName}", body)
   let body = await res.body

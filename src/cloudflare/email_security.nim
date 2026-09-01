@@ -72,6 +72,7 @@ proc getAccountsAccountIdEmailSecurityInvestigate*(client: CloudflareClient,
                                                    messageAction: EmailSecurityMessageActionOption,
                                                    recipient: string = default(string),
                                                    sender: string = default(string),
+                                                   smtpHeloIp: string = default(string),
                                                    alertId: string = default(string),
                                                    domain: string = default(string),
                                                    messageId: string = default(string),
@@ -92,6 +93,7 @@ proc getAccountsAccountIdEmailSecurityInvestigate*(client: CloudflareClient,
   q["message_action"] = $messageAction
   q["recipient"] = $recipient
   q["sender"] = $sender
+  q["smtp_helo_ip"] = $smtpHeloIp
   q["alert_id"] = $alertId
   q["domain"] = $domain
   q["message_id"] = $messageId

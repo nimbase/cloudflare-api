@@ -96,7 +96,7 @@ proc deleteAccountsAccountIdCfdTunnelTunnelId*(client: CloudflareClient,
   ## Permanently deletes a Cloudflare Tunnel from an account. The tunnel must have no
   ## active connections.
 
-  let res = await client.httpDELETE(fmt"/accounts/{accountId}/cfd_tunnel/{tunnelId}", body)
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/cfd_tunnel/{tunnelId}")
   let body = await res.body
   case res.code
   of Http200:
@@ -299,7 +299,7 @@ proc deleteAccountsAccountIdWarpConnectorTunnelId*(client: CloudflareClient,
                                                    tunnelId: types.TunnelTunnelId): Future[types.TunnelWarpConnectorResponseSingle] {.async.} =
   ## Deletes a Warp Connector Tunnel from an account.
 
-  let res = await client.httpDELETE(fmt"/accounts/{accountId}/warp_connector/{tunnelId}", body)
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/warp_connector/{tunnelId}")
   let body = await res.body
   case res.code
   of Http200:

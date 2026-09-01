@@ -15,7 +15,7 @@ type
     sha256: string
 
 proc postAccountsAccountIdCloudforceOneBinary*(client: CloudflareClient,
-                                               accountId: float64): Future[PostAccountsAccountIdCloudforceOneBinaryResponse] {.async.} =
+                                               accountId: string): Future[PostAccountsAccountIdCloudforceOneBinaryResponse] {.async.} =
   ## Uploads a binary file to Cloudforce One's binary database for malware analysis
   ## and threat intelligence correlation.
 
@@ -28,7 +28,7 @@ proc postAccountsAccountIdCloudforceOneBinary*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdCloudforceOneBinaryHash*(client: CloudflareClient,
-                                                  accountId: float64,
+                                                  accountId: string,
                                                   hash: string): Future[AsyncResponse] {.async.} =
   ## Retrieves a binary file from the Cloudforce One binary storage for analysis.
 

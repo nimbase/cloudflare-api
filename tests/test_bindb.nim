@@ -19,10 +19,10 @@ suite "bindb endpoints":
   test "POST /accounts/{account_id}/cloudforce-one/binary":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdCloudforceOneBinary(1.0)
+    discard waitFor client.postAccountsAccountIdCloudforceOneBinary("test")
 
   test "GET /accounts/{account_id}/cloudforce-one/binary/{hash}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneBinaryHash(1.0, "test")
+    discard waitFor client.getAccountsAccountIdCloudforceOneBinaryHash("test", "test")
 

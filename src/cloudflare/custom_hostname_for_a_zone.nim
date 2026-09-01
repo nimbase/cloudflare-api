@@ -99,7 +99,7 @@ proc getZonesZoneIdCustomHostnames*(client: CloudflareClient,
                                     certificateAuthority: CustomHostnameForAZoneCertificateAuthorityOption,
                                     wildcard: bool = default(bool),
                                     customOriginServer: string = default(string),
-                                    ssl: CustomHostnameForAZoneSslOption): Future[types.TlsCertificatesAndHostnamesCustomHostnameResponseCollection] {.async.} =
+                                    ssl: CustomHostnameForAZoneSslOption = ssl): Future[types.TlsCertificatesAndHostnamesCustomHostnameResponseCollection] {.async.} =
   ## List, search, sort, and filter all of your custom hostnames.
 
   var q = initOrderedTable[string, string]()

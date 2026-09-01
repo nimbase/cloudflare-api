@@ -10073,6 +10073,7 @@ type
     cloudflareR2 = "cloudflare_r2"
     gcpStorage = "gcp_storage"
     azureStorage = "azure_storage"
+    ociStorage = "oci_storage"
 
   CloudConnectorRule* = ref object of RootObj
     description*: Option[string]
@@ -10089,7 +10090,6 @@ type
 
   CloudflarePipelinesConnectionSchema* = ref object of RootObj
     fields*: Option[seq[CloudflarePipelinesSourceField]]
-    format*: Option[JsonNode]
     inferred*: Option[bool]
 
   CloudflarePipelinesDecimalEncoding* = enum
@@ -15435,9 +15435,10 @@ type
     pattern*: Option[string]
       ## The pattern value to match. The format depends on `pattern_type`: a valid email
       ## address for EMAIL (e.g. `user@example.com`), a valid domain name for DOMAIN
-      ## (e.g. `example.com`), or a plain IPv4 address or IPv4 CIDR block for IP (e.g.
-      ## `1.2.3.4` or `1.2.3.0/24`); the API accepts only globally reachable IP addresses
-      ## and rejects private, loopback, link-local, and unspecified addresses.
+      ## (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g.
+      ## `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the
+      ## API rejects private or unique-local, loopback, link-local, unspecified, and IPv4
+      ## broadcast addresses, including their IPv4-mapped IPv6 equivalents.
     pattern_type*: Option[EmailSecurityPatternType]
     verify_sender*: Option[bool]
       ## Enforce DMARC, SPF or DKIM authentication. When on, Email Security only honors
@@ -15479,9 +15480,10 @@ type
     pattern*: Option[string]
       ## The pattern value to match. The format depends on `pattern_type`: a valid email
       ## address for EMAIL (e.g. `user@example.com`), a valid domain name for DOMAIN
-      ## (e.g. `example.com`), or a plain IPv4 address or IPv4 CIDR block for IP (e.g.
-      ## `1.2.3.4` or `1.2.3.0/24`); the API accepts only globally reachable IP addresses
-      ## and rejects private, loopback, link-local, and unspecified addresses.
+      ## (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g.
+      ## `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the
+      ## API rejects private or unique-local, loopback, link-local, unspecified, and IPv4
+      ## broadcast addresses, including their IPv4-mapped IPv6 equivalents.
     pattern_type*: Option[EmailSecurityPatternType]
 
   EmailSecurityBlockedSenderId* = string
@@ -15548,6 +15550,8 @@ type
     query*: Option[string]
     recipient*: Option[string]
     sender*: Option[string]
+    smtp_helo_ip*: Option[string]
+      ## Matches messages whose SMTP HELO server IP address equals this value.
     start*: Option[string]
       ## Beginning of search date range.
     subject*: Option[string]
@@ -15601,9 +15605,10 @@ type
     pattern*: string
       ## The pattern value to match. The format depends on `pattern_type`: a valid email
       ## address for EMAIL (e.g. `user@example.com`), a valid domain name for DOMAIN
-      ## (e.g. `example.com`), or a plain IPv4 address or IPv4 CIDR block for IP (e.g.
-      ## `1.2.3.4` or `1.2.3.0/24`); the API accepts only globally reachable IP addresses
-      ## and rejects private, loopback, link-local, and unspecified addresses.
+      ## (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g.
+      ## `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the
+      ## API rejects private or unique-local, loopback, link-local, unspecified, and IPv4
+      ## broadcast addresses, including their IPv4-mapped IPv6 equivalents.
     pattern_type*: EmailSecurityPatternType
     verify_sender*: bool
       ## Enforce DMARC, SPF or DKIM authentication. When on, Email Security only honors
@@ -15621,9 +15626,10 @@ type
     pattern*: string
       ## The pattern value to match. The format depends on `pattern_type`: a valid email
       ## address for EMAIL (e.g. `user@example.com`), a valid domain name for DOMAIN
-      ## (e.g. `example.com`), or a plain IPv4 address or IPv4 CIDR block for IP (e.g.
-      ## `1.2.3.4` or `1.2.3.0/24`); the API accepts only globally reachable IP addresses
-      ## and rejects private, loopback, link-local, and unspecified addresses.
+      ## (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g.
+      ## `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the
+      ## API rejects private or unique-local, loopback, link-local, unspecified, and IPv4
+      ## broadcast addresses, including their IPv4-mapped IPv6 equivalents.
     pattern_type*: EmailSecurityPatternType
 
   EmailSecurityCreateContentPolicy* = ref object of RootObj
@@ -15996,8 +16002,11 @@ type
     ## Type of pattern matching.
     ## - EMAIL: matches a full email address (e.g. `user@example.com`)
     ## - DOMAIN: matches a domain name (e.g. `example.com`)
-    ## - IP: matches a plain IPv4 address (e.g. `1.2.3.4`) or an IPv4 CIDR block (e.g.
-    ## `1.2.3.0/24`). The API accepts only globally reachable addresses.
+    ## - IP: matches a plain IPv4 or IPv6 address (e.g. `1.2.3.4` or
+    ## `2606:4700:4700::1111`) or CIDR block (e.g. `1.2.3.0/24` or
+    ## `2606:4700:4700::/48`). The API rejects private or unique-local, loopback,
+    ## link-local, unspecified, and IPv4 broadcast addresses, including their
+    ## IPv4-mapped IPv6 equivalents.
     ## - UNKNOWN: deprecated; you cannot use this when creating or updating policies,
     ## but it may appear on existing entries.
     ##
@@ -16193,9 +16202,10 @@ type
     pattern*: Option[string]
       ## The pattern value to match. The format depends on `pattern_type`: a valid email
       ## address for EMAIL (e.g. `user@example.com`), a valid domain name for DOMAIN
-      ## (e.g. `example.com`), or a plain IPv4 address or IPv4 CIDR block for IP (e.g.
-      ## `1.2.3.4` or `1.2.3.0/24`); the API accepts only globally reachable IP addresses
-      ## and rejects private, loopback, link-local, and unspecified addresses.
+      ## (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g.
+      ## `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the
+      ## API rejects private or unique-local, loopback, link-local, unspecified, and IPv4
+      ## broadcast addresses, including their IPv4-mapped IPv6 equivalents.
     pattern_type*: Option[EmailSecurityPatternType]
     verify_sender*: Option[bool]
       ## Enforce DMARC, SPF or DKIM authentication. When on, Email Security only honors
@@ -16213,9 +16223,10 @@ type
     pattern*: Option[string]
       ## The pattern value to match. The format depends on `pattern_type`: a valid email
       ## address for EMAIL (e.g. `user@example.com`), a valid domain name for DOMAIN
-      ## (e.g. `example.com`), or a plain IPv4 address or IPv4 CIDR block for IP (e.g.
-      ## `1.2.3.4` or `1.2.3.0/24`); the API accepts only globally reachable IP addresses
-      ## and rejects private, loopback, link-local, and unspecified addresses.
+      ## (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g.
+      ## `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the
+      ## API rejects private or unique-local, loopback, link-local, unspecified, and IPv4
+      ## broadcast addresses, including their IPv4-mapped IPv6 equivalents.
     pattern_type*: Option[EmailSecurityPatternType]
 
   EmailSecurityUpdateContentPolicy* = ref object of RootObj
@@ -29070,12 +29081,6 @@ type
 
   R2DataCatalogAccountId* = string
 
-  R2DataCatalogApiResponseCollection* = ref object of RootObj
-    errors*: R2DataCatalogApiResponseErrors
-    messages*: R2DataCatalogApiResponseMessages
-    success*: R2DataCatalogApiResponseSuccess
-    result_info*: Option[JsonNode]
-
   R2DataCatalogApiResponseCommonFailure* = ref object of RootObj
     errors*: Option[seq[JsonNode]]
     messages*: Option[seq[JsonNode]]
@@ -30653,7 +30658,7 @@ type
     messages*: RegistrarApiSandboxMessages
     result*: Option[seq[JsonNode]]
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
     result_info*: Option[RegistrarApiSandboxResultInfo]
 
   RegistrarApiSandboxApiResponseCommon* = ref object of RootObj
@@ -30661,21 +30666,21 @@ type
     messages*: RegistrarApiSandboxMessages
     result*: JsonNode
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiSandboxApiResponseCommonFailure* = ref object of RootObj
     errors*: JsonNode
     messages*: JsonNode
     result*: Option[JsonNode]
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiSandboxApiResponseSingle* = ref object of RootObj
     errors*: RegistrarApiSandboxMessages
     messages*: RegistrarApiSandboxMessages
     result*: Option[JsonNode]
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiSandboxAutoRenew* = bool
 
@@ -30724,17 +30729,17 @@ type
   RegistrarApiSandboxCurrentRegistrar* = string
 
   RegistrarApiSandboxCursorResultInfo* = ref object of RootObj
-    ## Cursor-based pagination metadata. Used by list endpoints that support
-    ## cursor pagination. Pass the `cursor` value as a query parameter in the
-    ## next request to fetch the next page. An empty string indicates there
-    ## are no more pages.
+    ## Provides cursor-based pagination metadata. List endpoints use this
+    ## metadata for cursor pagination. Pass the `cursor` value as a query
+    ## parameter in the next request to fetch the next page. An empty string
+    ## indicates the end of pagination.
     ##
     count*: int64
       ## Number of items in the current result set.
     cursor*: string
       ## Opaque cursor for fetching the next page. Pass this value as the
       ## `cursor` query parameter in a subsequent request. An empty string
-      ## indicates there are no more pages.
+      ## indicates the end of pagination.
       ##
     per_page*: int64
       ## Maximum number of items per page.
@@ -30744,12 +30749,12 @@ type
     domains*: seq[string]
       ## List of fully qualified domain names (FQDNs) to check for availability. Each
       ## domain must include the extension.
-      ## - Minimum: 1 domain
-      ## - Maximum: 20 domains per request
-      ## - Domains on unsupported extensions are returned with `registrable: false` and a
-      ## `reason` field
-      ## - Malformed domain names (e.g., missing extension) may be omitted from the
-      ## response
+      ## - Minimum: 1 domain.
+      ## - Maximum: 20 domains per request.
+      ## - The response returns domains on unsupported extensions with `registrable:
+      ## false` and a `reason` field.
+      ## - The response may omit malformed domain names (e.g., names missing an
+      ## extension).
       ##
 
   RegistrarApiSandboxDomainCheckResponse* = ref object of RootObj
@@ -30758,45 +30763,44 @@ type
     result*: JsonNode
       ## Contains the availability check results.
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiSandboxDomainCheckResult* = ref object of RootObj
-    ## Represents a single authoritative domain availability result returned by the
-    ## Check endpoint. Check results reflect current registry status and should be used
-    ## immediately before registration.
+    ## Describes a single authoritative domain availability result from the Check
+    ## endpoint. Check results reflect current registry status; use them immediately
+    ## before registration.
     name*: string
       ## The fully qualified domain name (FQDN) in punycode format for internationalized
       ## domain names (IDNs).
     pricing*: Option[RegistrarApiSandboxPricing]
     reason*: Option[string]
-      ## Present only when `registrable` is `false`. Explains why the domain cannot be
-      ## registered via this API.
+      ## Appears only when `registrable` is `false` and explains the result.
       ## - `extension_not_supported_via_api`: Cloudflare Registrar supports this
-      ## extension in the dashboard but it is not yet available for programmatic
-      ## registration via this API. The user can register via
+      ## extension in the dashboard but currently excludes it from programmatic
+      ## registration through this API. The user can register via
       ## `https://dash.cloudflare.com/{account_id}/domains/registrations`.
-      ## - `extension_not_supported`: This extension is not supported by Cloudflare
-      ## Registrar at all.
-      ## - `extension_disallows_registration`: The extension's registry has temporarily
-      ## or permanently frozen new registrations. No registrar can register domains on
-      ## this extension at this time.
-      ## - `domain_premium`: The domain is premium priced. Premium registration is not
-      ## currently supported by this API.
-      ## - `domain_unavailable`: The domain is already registered, reserved, or otherwise
-      ## not available on a supported extension.
+      ## - `extension_not_supported`: Cloudflare Registrar excludes this extension
+      ## entirely.
+      ## - `extension_disallows_registration`: The extension's registry temporarily or
+      ## permanently freezes new registrations. Registrars currently cannot register
+      ## domains on this extension.
+      ## - `domain_premium`: The domain carries premium pricing. This API currently
+      ## supports standard registrations only.
+      ## - `domain_unavailable`: An existing registration, reservation, or other registry
+      ## restriction makes the domain unavailable on a supported extension.
     registrable*: bool
-      ## Indicates whether this domain can be registered programmatically through this
-      ## API based on a real-time registry check.
-      ## - `true`: Domain is available for registration. The `pricing` object will be
-      ## included.
-      ## - `false`: Domain is not available. See the `reason` field for why. `tier` may
-      ## still be present on some non-registrable results, such as premium domains.
+      ## Indicates programmatic registration eligibility according to a real-time
+      ## registry check.
+      ## - `true`: The domain is available for registration. The response includes the
+      ## `pricing` object.
+      ## - `false`: A restriction prevents registration. See the `reason` field for
+      ## details. Some results, such as premium domains, may still include `tier`.
     tier*: Option[string]
-      ## The pricing tier for this domain. Always present when `registrable` is `true`;
-      ## defaults to `standard` for most domains. May be absent when `registrable` is
-      ## `false`.
-      ## - `standard`: Standard registry pricing
-      ## - `premium`: Premium domain with higher pricing set by the registry
+      ## The pricing tier for this domain. A `registrable` value of `true` always
+      ## includes this field, which defaults to `standard` for most domains. A
+      ## `registrable` value of `false` may omit it.
+      ## - `standard`: Standard registry pricing.
+      ## - `premium`: Premium domain with higher pricing from the registry.
 
   RegistrarApiSandboxDomainIdentifier* = string
 
@@ -30821,7 +30825,7 @@ type
     messages*: RegistrarApiSandboxMessages
     result*: seq[RegistrarApiSandboxDomains]
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
     result_info*: Option[RegistrarApiSandboxResultInfo]
 
   RegistrarApiSandboxDomainResponseSingle* = ref object of RootObj
@@ -30829,7 +30833,7 @@ type
     messages*: RegistrarApiSandboxMessages
     result*: JsonNode
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiSandboxDomainSearchResponse* = ref object of RootObj
     errors*: RegistrarApiSandboxMessages
@@ -30837,41 +30841,43 @@ type
     result*: JsonNode
       ## Contains the search results.
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiSandboxDomainSearchResult* = ref object of RootObj
-    ## Represents a single domain suggestion returned by the Search endpoint. Search
-    ## results are non-authoritative and may be based on cached data. Use POST
-    ## /domain-check to confirm real-time availability and pricing before registration.
+    ## Describes a single domain suggestion from the Search endpoint. Search results
+    ## use non-authoritative data that may come from a cache. Use POST /domain-check to
+    ## confirm real-time availability and pricing before registration.
     name*: string
       ## The fully qualified domain name (FQDN) in punycode format for internationalized
       ## domain names (IDNs).
     pricing*: Option[RegistrarApiSandboxPricing]
     reason*: Option[string]
-      ## Present only when `registrable` is `false` on search results. Explains why the
-      ## domain does not appear registrable through this API. These values are advisory;
-      ## use POST /domain-check for authoritative status.
+      ## Appears only when `registrable` is `false` and explains the advisory search
+      ## result. Use POST /domain-check for authoritative status.
       ## - `extension_not_supported_via_api`: Cloudflare Registrar supports this
-      ## extension in the dashboard but it is not yet available for programmatic
-      ## registration via this API.
-      ## - `extension_not_supported`: This extension is not supported by Cloudflare
-      ## Registrar at all.
-      ## - `extension_disallows_registration`: The extension's registry has temporarily
-      ## or permanently frozen new registrations.
-      ## - `domain_premium`: The domain is premium priced. Premium registration is not
-      ## currently supported by this API.
+      ## extension in the dashboard but currently excludes it from programmatic
+      ## registration through this API.
+      ## - `extension_not_supported`: Cloudflare Registrar excludes this extension
+      ## entirely.
+      ## - `extension_disallows_registration`: The extension's registry temporarily or
+      ## permanently freezes new registrations.
+      ## - `domain_premium`: The domain carries premium pricing. This API currently
+      ## supports standard registrations only.
       ## - `domain_unavailable`: The domain appears unavailable.
     registrable*: bool
-      ## Indicates whether this domain appears available based on search data. Search
-      ## results are non-authoritative and may be stale. - `true`: The domain appears
-      ## available. Use POST /domain-check to confirm before registration.
-      ## - `false`: The domain does not appear available in search results.
+      ## Indicates domain availability according to potentially stale, non-authoritative
+      ## search data.
+      ## - `true`: The domain appears available. Use POST /domain-check to confirm before
+      ## registration.
+      ## - `false`: Search results mark the domain ineligible for registration through
+      ## this API. See `reason` for details.
     tier*: Option[string]
-      ## The pricing tier for this domain. Always present when `registrable` is `true`;
-      ## defaults to `standard` for most domains. May be absent when `registrable`
-      ## is `false`.
-      ## - `standard`: Standard registry pricing
-      ## - `premium`: Premium domain with higher pricing set by the registry
+      ## The pricing tier for this domain.
+      ## A `registrable` value of `true` always
+      ## includes this field, which defaults to `standard` for most domains. A
+      ## `registrable` value of `false` may omit it.
+      ## - `standard`: Standard registry pricing.
+      ## - `premium`: Premium domain with higher pricing from the registry.
       ##
 
   RegistrarApiSandboxDomainUpdateProperties* = ref object of RootObj
@@ -30901,7 +30907,7 @@ type
     ## Extension entry with metadata and JSON Schema documents for the registration
     ## operation.
     metadata*: JsonNode
-      ## Extension metadata
+      ## Extension metadata.
     registration_schema*: JsonNode
       ## JSON Schema describing the expected input structure for registration operations
       ## on this extension.
@@ -30911,7 +30917,7 @@ type
     messages*: RegistrarApiSandboxMessages
     result*: seq[RegistrarApiSandboxExtensionItem]
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
     result_info*: Option[JsonNode]
       ## Cursor-based pagination metadata.
 
@@ -30920,7 +30926,7 @@ type
     messages*: RegistrarApiSandboxMessages
     result*: RegistrarApiSandboxExtensionItem
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiSandboxFax* = string
 
@@ -30937,27 +30943,25 @@ type
   RegistrarApiSandboxOrganization* = string
 
   RegistrarApiSandboxPricing* = ref object of RootObj
-    ## Annual pricing information for a registrable domain. This object is only
-    ## present when `registrable` is `true`. All prices are per year and returned
-    ## as strings to preserve decimal precision.
+    ## Provides annual pricing information for a registrable domain. This object
+    ## appears only when `registrable` is `true`. The API returns all per-year
+    ## prices as strings to preserve decimal precision.
     ##
-    ## `registration_cost` and `renewal_cost` are frequently the same value, but
-    ## may differ — especially for premium domains where registries set different
-    ## rates for initial registration vs. renewal. For a multi-year registration
-    ## (e.g., 4 years), the first year is charged at `registration_cost` and each
-    ## subsequent year at `renewal_cost`. Registry pricing may change over time;
-    ## the values returned here reflect the current registry rate. Premium pricing
-    ## may be surfaced by Search and Check, but premium registration is not currently
-    ## supported by this API.
+    ## `registration_cost` and `renewal_cost` frequently have the same value, but
+    ## may differ, especially when registries set different premium rates for
+    ## initial registration and renewal. For a multi-year registration (e.g., 4
+    ## years), `registration_cost` applies to the first year and `renewal_cost`
+    ## applies to each subsequent year. The values reflect the current registry
+    ## rate, which may change over time. Search and Check may surface premium
+    ## pricing, but this API currently supports standard registrations only.
     ##
     currency*: string
       ## ISO-4217 currency code for the prices (e.g., "USD", "EUR", "GBP").
     registration_cost*: string
       ## The first-year cost to register this domain. For premium domains
-      ## (`tier: premium`), this price is set by the registry and may be
-      ## significantly higher than standard pricing. For multi-year
-      ## registrations, this cost applies to the first year only; subsequent
-      ## years are charged at `renewal_cost`.
+      ## (`tier: premium`), the registry sets this price, which may significantly
+      ## exceed standard pricing. For multi-year registrations, this cost applies
+      ## to the first year only; `renewal_cost` applies to subsequent years.
       ##
     renewal_cost*: string
       ## Per-year renewal cost for this domain. Applied to each year beyond
@@ -30989,25 +30993,25 @@ type
     ## A domain registration resource representing the current state of a registered
     ## domain.
     auto_renew*: bool
-      ## Whether the domain will be automatically renewed before expiration.
+      ## Whether automatic renewal occurs before expiration.
     created_at*: string
       ## When the domain was registered. Present when the registration resource exists.
     domain_name*: RegistrarApiSandboxDomainName
     expires_at*: Option[string]
-      ## When the domain registration expires. Present when the registration is ready;
-      ## may be null only while `status` is `registration_pending`.
+      ## When the domain registration expires. Ready registrations include this value;
+      ## only `registration_pending` may return null.
     locked*: bool
       ## Whether the domain is locked for transfer.
     privacy_mode*: string
       ## Current WHOIS privacy mode for the registration.
     status*: string
       ## Current registration status.
-      ## - `active`: Domain is registered and operational
-      ## - `registration_pending`: Registration is in progress
-      ## - `expired`: Domain has expired
-      ## - `suspended`: Domain is suspended by the registry
-      ## - `redemption_period`: Domain is in the redemption grace period
-      ## - `pending_delete`: Domain is pending deletion by the registry
+      ## - `active`: The domain operates with an active registration.
+      ## - `registration_pending`: Registration remains in progress.
+      ## - `expired`: The domain registration expired.
+      ## - `suspended`: The registry suspended the domain.
+      ## - `redemption_period`: The domain entered the redemption grace period.
+      ## - `pending_delete`: The registry scheduled the domain for deletion.
       ##
 
   RegistrarApiSandboxRegistrationResponseCollection* = ref object of RootObj
@@ -31015,7 +31019,7 @@ type
     messages*: RegistrarApiSandboxMessages
     result*: seq[RegistrarApiSandboxRegistration]
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
     result_info*: RegistrarApiSandboxCursorResultInfo
 
   RegistrarApiSandboxRegistrationResponseSingle* = ref object of RootObj
@@ -31023,7 +31027,7 @@ type
     messages*: RegistrarApiSandboxMessages
     result*: RegistrarApiSandboxRegistration
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiSandboxRegistrationContact* = ref object of RootObj
     ## Contact data for the domain registration. This information
@@ -31040,10 +31044,9 @@ type
       ## Most registrations do not require a fax number.
       ##
     phone*: string
-      ## Phone number in E.164 format: `+{country_code}.{number}` with no
-      ## spaces or dashes. Examples: `+1.5555555555` (US), `+44.2071234567`
-      ## (UK), `+81.312345678` (Japan).
-      ##
+      ## Phone number in E.164 format: `+{country_code}.{number}` without spaces or
+      ## dashes. Examples: `+1.5555555555` (US), `+44.2071234567` (UK), `+81.312345678`
+      ## (Japan).
     postal_info*: RegistrarApiSandboxRegistrationContactPostalInfo
 
   RegistrarApiSandboxRegistrationContactAddress* = ref object of RootObj
@@ -31069,48 +31072,61 @@ type
     ##
     address*: RegistrarApiSandboxRegistrationContactAddress
     name*: string
-      ## Full legal name of the contact, including all required name components
-      ## for an individual or authorized representative. Some registries require
-      ## a complete personal name that includes a family or last name where
-      ## applicable. Provide the complete name in this single field, for example
-      ## `Ada Lovelace`; do not send separate first-name or last-name fields.
-      ##
+      ## Full legal name of the contact, including all required name components for an
+      ## individual or authorized representative. Some registries require a complete
+      ## personal name that includes a family or last name where applicable. Provide the
+      ## complete name in this single field, for example `Ada Lovelace`; do not send
+      ## separate first-name or last-name fields.
     organization*: Option[string]
       ## Organization or company name. Optional for individual registrants.
 
   RegistrarApiSandboxRegistrationContacts* = ref object of RootObj
-    ## Contact data for the registration request.
+    ## Provides contact data for the registration request.
     ##
-    ## The per-extension schema returned by
-    ## `GET /accounts/{account_id}/registrar/extensions/{extension}` is the
-    ## authoritative contract for which contact roles are accepted. Every
-    ## currently supported extension requires only `contacts.registrant` from
-    ## API callers. Additional roles such as `technical`, `administrator`, and
-    ## `billing` may be provided when the extension schema includes them. If a
-    ## registry requires one of those roles and the caller omits it, Cloudflare
+    ## The per-extension schema from
+    ## `GET /accounts/{account_id}/registrar/extensions/{extension}` defines the
+    ## accepted contact roles. Every currently supported extension requires only
+    ## `contacts.registrant` from API callers. Callers may provide additional roles
+    ## such as `technical`, `administrator`, and `billing` when the extension
+    ## schema includes them. When a registry requires an omitted role, Cloudflare
     ## may derive that contact from `contacts.registrant`.
     ##
-    ## If the `contacts` object is omitted entirely from the request, or if
-    ## `contacts.registrant` is not provided, the system will use the account's
-    ## default address book entry as the registrant contact. This default must be
-    ## pre-configured by the account owner at
-    ## `https://dash.cloudflare.com/{account_id}/domains/registrations`, where
-    ## they can create or update the address book entry and accept the required
-    ## agreement. No API exists for managing address book entries at this time.
+    ## When the request omits either the entire `contacts` object or
+    ## `contacts.registrant`, the system uses the account's default address book
+    ## entry as the registrant contact. The account owner must configure this
+    ## default at `https://dash.cloudflare.com/{account_id}/domains/registrations`,
+    ## where they can create or update the address book entry and accept the
+    ## required agreement. Dashboard settings currently provide the only way to
+    ## manage address book entries.
     ##
-    ## If no default address book entry exists and no registrant contact is
-    ## provided, the registration request will fail with a validation error.
+    ## Without either a default address book entry or a registrant contact, the
+    ## registration request fails validation.
     ##
-    administrator*: Option[RegistrarApiSandboxRegistrationContact]
-    billing*: Option[RegistrarApiSandboxRegistrationContact]
-    registrant*: Option[RegistrarApiSandboxRegistrationContact]
-    technical*: Option[RegistrarApiSandboxRegistrationContact]
+    administrator*: Option[JsonNode]
+      ## Optional administrator contact. Accepted only when the extension
+      ## schema includes this role. When the registry requires an omitted
+      ## contact, Cloudflare may derive it from `contacts.registrant`.
+      ##
+    billing*: Option[JsonNode]
+      ## Optional billing contact. Accepted only when the extension schema
+      ## includes this role. When the registry requires an omitted contact,
+      ## Cloudflare may derive it from `contacts.registrant`.
+      ##
+    registrant*: Option[JsonNode]
+      ## Optional registrant contact. If omitted, the account's default
+      ## address book entry is used instead.
+      ##
+    technical*: Option[JsonNode]
+      ## Optional technical contact. Accepted only when the extension schema
+      ## includes this role. When the registry requires an omitted contact,
+      ## Cloudflare may derive it from `contacts.registrant`.
+      ##
 
   RegistrarApiSandboxRegistrationCreateRequest* = ref object of RootObj
     acknowledgements*: Option[JsonNode]
-      ## User acknowledgements required by a specific extension or premium
-      ## registration flow. The expected keys are described by the extension
-      ## registration schema returned by the extension discovery endpoint.
+      ## Provides user acknowledgements for a specific extension or premium
+      ## registration flow. The extension registration schema from the
+      ## extension discovery endpoint identifies the required keys.
       ##
     auto_renew*: Option[bool]
       ## Enable or disable automatic renewal. Defaults to `false` if omitted.
@@ -31120,34 +31136,32 @@ type
       ## Renewal pricing may change over time based on registry pricing.
       ##
     contact_extensions*: Option[JsonNode]
-      ## Registry-specific contact extension values for the registrant. The
-      ## required keys and allowed values vary by extension and are described
-      ## by `GET /accounts/{account_id}/registrar/extensions/{extension}` in
-      ## the `registration_schema.properties.contact_extensions` object.
+      ## Provides registry-specific contact extension values for the registrant.
+      ## `GET /accounts/{account_id}/registrar/extensions/{extension}` identifies
+      ## the required keys and allowed values for each extension in the
+      ## `registration_schema.properties.contact_extensions` object.
       ##
       ## Examples include `.us` nexus fields, `.uk` registrant type fields,
-      ## and `.ca` legal type fields. Omit this object for extensions whose
-      ## registration schema does not include `contact_extensions`.
+      ## and `.ca` legal type fields. Omit this object when the extension's
+      ## registration schema excludes `contact_extensions`.
       ##
     contacts*: Option[RegistrarApiSandboxRegistrationContacts]
     domain_name*: RegistrarApiSandboxDomainName
     privacy_mode*: Option[string]
-      ## WHOIS privacy mode for the registration. Defaults to `redaction`.
-      ## - `off`: Do not request WHOIS privacy.
-      ## - `redaction`: Request WHOIS redaction where supported by the extension.
-      ## Some extensions do not support privacy/redaction.
+      ## Sets the WHOIS privacy mode for the registration. Defaults to `redaction`.
+      ## - `off`: Disables WHOIS privacy.
+      ## - `redaction`: Requests WHOIS redaction where the extension supports it.
+      ## Some extensions exclude privacy and redaction.
       ##
     years*: Option[int64]
-      ## Number of years to register (1–10). If omitted, defaults to the
-      ## minimum registration period required by the registry for this
-      ## extension. For most extensions this is 1 year, but some extensions
-      ## require longer minimum terms (e.g., `.ai` requires a minimum of
-      ## 2 years).
+      ## Sets the registration term from 1 to 10 years. When omitted, this
+      ## field defaults to the registry's minimum registration period for the
+      ## extension. Most extensions require 1 year, while some require longer
+      ## minimum terms (e.g., `.ai` requires 2 years).
       ##
-      ## The registry for each extension may also enforce its own maximum
-      ## registration term. If the requested value exceeds the registry's
-      ## maximum, the registration will be rejected. When in doubt, use the
-      ## default by omitting this field.
+      ## Each registry may also enforce its own maximum registration term. A
+      ## request above that maximum fails. When uncertain, omit this field to
+      ## use the default.
       ##
 
   RegistrarApiSandboxRegistrationUpdateRequest* = ref object of RootObj
@@ -31167,13 +31181,13 @@ type
 
   RegistrarApiSandboxResultInfo* = ref object of RootObj
     count*: Option[float64]
-      ## Total number of results for the requested service
+      ## Total number of results for the requested service.
     page*: Option[float64]
-      ## Current page within paginated list of results
+      ## Current page within paginated list of results.
     per_page*: Option[float64]
-      ## Number of results per page of results
+      ## Number of results per page of results.
     total_count*: Option[float64]
-      ## Total results available without any search parameters
+      ## Total results available without any search parameters.
 
   RegistrarApiSandboxState* = string
 
@@ -31184,17 +31198,17 @@ type
   RegistrarApiSandboxTransferIn* = ref object of RootObj
     ## Statuses for domain transfers into Cloudflare Registrar.
     accept_foa*: Option[string]
-      ## Form of authorization has been accepted by the registrant.
+      ## Status of the registrant authorization step.
     approve_transfer*: Option[string]
-      ## Shows transfer status with the registry.
+      ## Status of the registry transfer-approval step.
     can_cancel_transfer*: Option[bool]
       ## Indicates if cancellation is still possible.
     disable_privacy*: Option[string]
-      ## Privacy guards are disabled at the foreign registrar.
+      ## Status of the privacy-guard disabling step at the foreign registrar.
     enter_auth_code*: Option[string]
-      ## Auth code has been entered and verified.
+      ## Status of the auth-code entry and verification step.
     unlock_domain*: Option[string]
-      ## Domain is unlocked at the foreign registrar.
+      ## Status of the domain-unlock step at the foreign registrar.
 
   RegistrarApiSandboxUpdatedAt* = string
 
@@ -31203,16 +31217,14 @@ type
     messages*: RegistrarApiSandboxMessages
     result*: RegistrarApiSandboxWorkflowStatus
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiSandboxWorkflowError* = ref object of RootObj
-    ## Error details when a workflow reaches the `failed` state. The specific
-    ## error codes and messages depend on the workflow type (registration,
-    ## update, etc.) and the underlying registry response. These workflow
-    ## error codes are separate from immediate HTTP error `errors[].code`
-    ## values returned by non-2xx responses. Surface
-    ## `error.message` to the user for context.
-    ##
+    ## Provides error details when a workflow reaches the `failed` state. The workflow
+    ## type (registration, update, etc.) and underlying registry response determine the
+    ## specific codes and messages. Workflow error codes differ from immediate HTTP
+    ## error `errors[].code` values in non-2xx responses. Surface `error.message` to
+    ## the user for context.
     code*: string
       ## Machine-readable error code identifying the failure reason.
     message*: string
@@ -31228,39 +31240,35 @@ type
   RegistrarApiSandboxWorkflowStatus* = ref object of RootObj
     ## Status of an async registration workflow.
     completed*: bool
-      ## Whether the workflow has reached a terminal state. `true` when
-      ## `state` is `succeeded` or `failed`. `false` for `pending`,
-      ## `in_progress`, `action_required`, and `blocked`.
-      ##
+      ## Indicates whether the workflow reached a terminal state. A `succeeded` or
+      ## `failed` state returns `true`; `pending`, `in_progress`, `action_required`, and
+      ## `blocked` return `false`.
     context*: Option[JsonNode]
-      ## Workflow-specific data for this workflow.
+      ## Provides workflow-specific data.
       ##
-      ## The workflow subject is identified by `context.domain_name` for
-      ## domain-centric workflows.
+      ## For domain-centric workflows, `context.domain_name` identifies the
+      ## workflow subject.
       ##
     created_at*: string
     error*: Option[JsonNode]
     links*: RegistrarApiSandboxWorkflowLinks
     state*: string
-      ## Workflow lifecycle state.
-      ## - `pending`: Workflow has been created but not yet started processing.
-      ## - `in_progress`: Actively processing. Continue polling `links.self`.
-      ## The workflow has an internal deadline and will not remain in this
-      ## state indefinitely.
-      ## - `action_required`: Paused — requires action by the user (not the
-      ## system). See `context.action` for what is needed. An automated
-      ## polling loop must break on this state; it will not resolve on its
-      ## own without user intervention.
-      ## - `blocked`: The workflow cannot make progress due to a third party
-      ## such as the domain extension's registry or a losing registrar.
-      ## No user action will help. Continue polling — the block may resolve
-      ## when the third party responds.
-      ## - `succeeded`: Terminal. The operation completed successfully.
-      ## `completed` will be `true`. For registrations, `context.registration`
-      ## contains the resulting registration resource.
-      ## - `failed`: Terminal. The operation failed. `completed` will be `true`.
-      ## See `error.code` and `error.message` for the reason. Do not
-      ## auto-retry without user review.
+      ## Describes the workflow lifecycle state.
+      ## - `pending`: The workflow awaits processing.
+      ## - `in_progress`: Processing started. Continue polling `links.self`.
+      ## An internal deadline limits the duration of this state.
+      ## - `action_required`: The workflow pauses for user action. See
+      ## `context.action` for details. Stop automated polling until the user
+      ## completes the required action.
+      ## - `blocked`: A third party, such as the domain extension's registry or
+      ## a losing registrar, prevents progress. Continue polling because the
+      ## block may resolve when the third party responds.
+      ## - `succeeded`: Terminal state. The operation completed successfully.
+      ## `completed` equals `true`. For registrations,
+      ## `context.registration` contains the resulting registration resource.
+      ## - `failed`: Terminal state. The operation failed. `completed` equals
+      ## `true`. See `error.code` and `error.message` for the reason. Require
+      ## user review before retrying.
       ##
     updated_at*: string
 
@@ -31275,7 +31283,7 @@ type
     messages*: RegistrarApiMessages
     result*: Option[seq[JsonNode]]
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
     result_info*: Option[RegistrarApiResultInfo]
 
   RegistrarApiApiResponseCommon* = ref object of RootObj
@@ -31283,21 +31291,21 @@ type
     messages*: RegistrarApiMessages
     result*: JsonNode
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiApiResponseCommonFailure* = ref object of RootObj
     errors*: JsonNode
     messages*: JsonNode
     result*: Option[JsonNode]
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiApiResponseSingle* = ref object of RootObj
     errors*: RegistrarApiMessages
     messages*: RegistrarApiMessages
     result*: Option[JsonNode]
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiAutoRenew* = bool
 
@@ -31346,17 +31354,17 @@ type
   RegistrarApiCurrentRegistrar* = string
 
   RegistrarApiCursorResultInfo* = ref object of RootObj
-    ## Cursor-based pagination metadata. Used by list endpoints that support
-    ## cursor pagination. Pass the `cursor` value as a query parameter in the
-    ## next request to fetch the next page. An empty string indicates there
-    ## are no more pages.
+    ## Provides cursor-based pagination metadata. List endpoints use this
+    ## metadata for cursor pagination. Pass the `cursor` value as a query
+    ## parameter in the next request to fetch the next page. An empty string
+    ## indicates the end of pagination.
     ##
     count*: int64
       ## Number of items in the current result set.
     cursor*: string
       ## Opaque cursor for fetching the next page. Pass this value as the
       ## `cursor` query parameter in a subsequent request. An empty string
-      ## indicates there are no more pages.
+      ## indicates the end of pagination.
       ##
     per_page*: int64
       ## Maximum number of items per page.
@@ -31366,12 +31374,12 @@ type
     domains*: seq[string]
       ## List of fully qualified domain names (FQDNs) to check for availability. Each
       ## domain must include the extension.
-      ## - Minimum: 1 domain
-      ## - Maximum: 20 domains per request
-      ## - Domains on unsupported extensions are returned with `registrable: false` and a
-      ## `reason` field
-      ## - Malformed domain names (e.g., missing extension) may be omitted from the
-      ## response
+      ## - Minimum: 1 domain.
+      ## - Maximum: 20 domains per request.
+      ## - The response returns domains on unsupported extensions with `registrable:
+      ## false` and a `reason` field.
+      ## - The response may omit malformed domain names (e.g., names missing an
+      ## extension).
       ##
 
   RegistrarApiDomainCheckResponse* = ref object of RootObj
@@ -31380,45 +31388,44 @@ type
     result*: JsonNode
       ## Contains the availability check results.
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiDomainCheckResult* = ref object of RootObj
-    ## Represents a single authoritative domain availability result returned by the
-    ## Check endpoint. Check results reflect current registry status and should be used
-    ## immediately before registration.
+    ## Describes a single authoritative domain availability result from the Check
+    ## endpoint. Check results reflect current registry status; use them immediately
+    ## before registration.
     name*: string
       ## The fully qualified domain name (FQDN) in punycode format for internationalized
       ## domain names (IDNs).
     pricing*: Option[RegistrarApiPricing]
     reason*: Option[string]
-      ## Present only when `registrable` is `false`. Explains why the domain cannot be
-      ## registered via this API.
+      ## Appears only when `registrable` is `false` and explains the result.
       ## - `extension_not_supported_via_api`: Cloudflare Registrar supports this
-      ## extension in the dashboard but it is not yet available for programmatic
-      ## registration via this API. The user can register via
+      ## extension in the dashboard but currently excludes it from programmatic
+      ## registration through this API. The user can register via
       ## `https://dash.cloudflare.com/{account_id}/domains/registrations`.
-      ## - `extension_not_supported`: This extension is not supported by Cloudflare
-      ## Registrar at all.
-      ## - `extension_disallows_registration`: The extension's registry has temporarily
-      ## or permanently frozen new registrations. No registrar can register domains on
-      ## this extension at this time.
-      ## - `domain_premium`: The domain is premium priced. Premium registration is not
-      ## currently supported by this API.
-      ## - `domain_unavailable`: The domain is already registered, reserved, or otherwise
-      ## not available on a supported extension.
+      ## - `extension_not_supported`: Cloudflare Registrar excludes this extension
+      ## entirely.
+      ## - `extension_disallows_registration`: The extension's registry temporarily or
+      ## permanently freezes new registrations. Registrars currently cannot register
+      ## domains on this extension.
+      ## - `domain_premium`: The domain carries premium pricing. This API currently
+      ## supports standard registrations only.
+      ## - `domain_unavailable`: An existing registration, reservation, or other registry
+      ## restriction makes the domain unavailable on a supported extension.
     registrable*: bool
-      ## Indicates whether this domain can be registered programmatically through this
-      ## API based on a real-time registry check.
-      ## - `true`: Domain is available for registration. The `pricing` object will be
-      ## included.
-      ## - `false`: Domain is not available. See the `reason` field for why. `tier` may
-      ## still be present on some non-registrable results, such as premium domains.
+      ## Indicates programmatic registration eligibility according to a real-time
+      ## registry check.
+      ## - `true`: The domain is available for registration. The response includes the
+      ## `pricing` object.
+      ## - `false`: A restriction prevents registration. See the `reason` field for
+      ## details. Some results, such as premium domains, may still include `tier`.
     tier*: Option[string]
-      ## The pricing tier for this domain. Always present when `registrable` is `true`;
-      ## defaults to `standard` for most domains. May be absent when `registrable` is
-      ## `false`.
-      ## - `standard`: Standard registry pricing
-      ## - `premium`: Premium domain with higher pricing set by the registry
+      ## The pricing tier for this domain. A `registrable` value of `true` always
+      ## includes this field, which defaults to `standard` for most domains. A
+      ## `registrable` value of `false` may omit it.
+      ## - `standard`: Standard registry pricing.
+      ## - `premium`: Premium domain with higher pricing from the registry.
 
   RegistrarApiDomainIdentifier* = string
 
@@ -31443,7 +31450,7 @@ type
     messages*: RegistrarApiMessages
     result*: seq[RegistrarApiDomains]
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
     result_info*: Option[RegistrarApiResultInfo]
 
   RegistrarApiDomainResponseSingle* = ref object of RootObj
@@ -31451,7 +31458,7 @@ type
     messages*: RegistrarApiMessages
     result*: JsonNode
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiDomainSearchResponse* = ref object of RootObj
     errors*: RegistrarApiMessages
@@ -31459,41 +31466,43 @@ type
     result*: JsonNode
       ## Contains the search results.
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiDomainSearchResult* = ref object of RootObj
-    ## Represents a single domain suggestion returned by the Search endpoint. Search
-    ## results are non-authoritative and may be based on cached data. Use POST
-    ## /domain-check to confirm real-time availability and pricing before registration.
+    ## Describes a single domain suggestion from the Search endpoint. Search results
+    ## use non-authoritative data that may come from a cache. Use POST /domain-check to
+    ## confirm real-time availability and pricing before registration.
     name*: string
       ## The fully qualified domain name (FQDN) in punycode format for internationalized
       ## domain names (IDNs).
     pricing*: Option[RegistrarApiPricing]
     reason*: Option[string]
-      ## Present only when `registrable` is `false` on search results. Explains why the
-      ## domain does not appear registrable through this API. These values are advisory;
-      ## use POST /domain-check for authoritative status.
+      ## Appears only when `registrable` is `false` and explains the advisory search
+      ## result. Use POST /domain-check for authoritative status.
       ## - `extension_not_supported_via_api`: Cloudflare Registrar supports this
-      ## extension in the dashboard but it is not yet available for programmatic
-      ## registration via this API.
-      ## - `extension_not_supported`: This extension is not supported by Cloudflare
-      ## Registrar at all.
-      ## - `extension_disallows_registration`: The extension's registry has temporarily
-      ## or permanently frozen new registrations.
-      ## - `domain_premium`: The domain is premium priced. Premium registration is not
-      ## currently supported by this API.
+      ## extension in the dashboard but currently excludes it from programmatic
+      ## registration through this API.
+      ## - `extension_not_supported`: Cloudflare Registrar excludes this extension
+      ## entirely.
+      ## - `extension_disallows_registration`: The extension's registry temporarily or
+      ## permanently freezes new registrations.
+      ## - `domain_premium`: The domain carries premium pricing. This API currently
+      ## supports standard registrations only.
       ## - `domain_unavailable`: The domain appears unavailable.
     registrable*: bool
-      ## Indicates whether this domain appears available based on search data. Search
-      ## results are non-authoritative and may be stale. - `true`: The domain appears
-      ## available. Use POST /domain-check to confirm before registration.
-      ## - `false`: The domain does not appear available in search results.
+      ## Indicates domain availability according to potentially stale, non-authoritative
+      ## search data.
+      ## - `true`: The domain appears available. Use POST /domain-check to confirm before
+      ## registration.
+      ## - `false`: Search results mark the domain ineligible for registration through
+      ## this API. See `reason` for details.
     tier*: Option[string]
-      ## The pricing tier for this domain. Always present when `registrable` is `true`;
-      ## defaults to `standard` for most domains. May be absent when `registrable`
-      ## is `false`.
-      ## - `standard`: Standard registry pricing
-      ## - `premium`: Premium domain with higher pricing set by the registry
+      ## The pricing tier for this domain.
+      ## A `registrable` value of `true` always
+      ## includes this field, which defaults to `standard` for most domains. A
+      ## `registrable` value of `false` may omit it.
+      ## - `standard`: Standard registry pricing.
+      ## - `premium`: Premium domain with higher pricing from the registry.
       ##
 
   RegistrarApiDomainUpdateProperties* = ref object of RootObj
@@ -31523,7 +31532,7 @@ type
     ## Extension entry with metadata and JSON Schema documents for the registration
     ## operation.
     metadata*: JsonNode
-      ## Extension metadata
+      ## Extension metadata.
     registration_schema*: JsonNode
       ## JSON Schema describing the expected input structure for registration operations
       ## on this extension.
@@ -31533,7 +31542,7 @@ type
     messages*: RegistrarApiMessages
     result*: seq[RegistrarApiExtensionItem]
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
     result_info*: Option[JsonNode]
       ## Cursor-based pagination metadata.
 
@@ -31542,7 +31551,7 @@ type
     messages*: RegistrarApiMessages
     result*: RegistrarApiExtensionItem
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiFax* = string
 
@@ -31559,27 +31568,25 @@ type
   RegistrarApiOrganization* = string
 
   RegistrarApiPricing* = ref object of RootObj
-    ## Annual pricing information for a registrable domain. This object is only
-    ## present when `registrable` is `true`. All prices are per year and returned
-    ## as strings to preserve decimal precision.
+    ## Provides annual pricing information for a registrable domain. This object
+    ## appears only when `registrable` is `true`. The API returns all per-year
+    ## prices as strings to preserve decimal precision.
     ##
-    ## `registration_cost` and `renewal_cost` are frequently the same value, but
-    ## may differ — especially for premium domains where registries set different
-    ## rates for initial registration vs. renewal. For a multi-year registration
-    ## (e.g., 4 years), the first year is charged at `registration_cost` and each
-    ## subsequent year at `renewal_cost`. Registry pricing may change over time;
-    ## the values returned here reflect the current registry rate. Premium pricing
-    ## may be surfaced by Search and Check, but premium registration is not currently
-    ## supported by this API.
+    ## `registration_cost` and `renewal_cost` frequently have the same value, but
+    ## may differ, especially when registries set different premium rates for
+    ## initial registration and renewal. For a multi-year registration (e.g., 4
+    ## years), `registration_cost` applies to the first year and `renewal_cost`
+    ## applies to each subsequent year. The values reflect the current registry
+    ## rate, which may change over time. Search and Check may surface premium
+    ## pricing, but this API currently supports standard registrations only.
     ##
     currency*: string
       ## ISO-4217 currency code for the prices (e.g., "USD", "EUR", "GBP").
     registration_cost*: string
       ## The first-year cost to register this domain. For premium domains
-      ## (`tier: premium`), this price is set by the registry and may be
-      ## significantly higher than standard pricing. For multi-year
-      ## registrations, this cost applies to the first year only; subsequent
-      ## years are charged at `renewal_cost`.
+      ## (`tier: premium`), the registry sets this price, which may significantly
+      ## exceed standard pricing. For multi-year registrations, this cost applies
+      ## to the first year only; `renewal_cost` applies to subsequent years.
       ##
     renewal_cost*: string
       ## Per-year renewal cost for this domain. Applied to each year beyond
@@ -31611,25 +31618,25 @@ type
     ## A domain registration resource representing the current state of a registered
     ## domain.
     auto_renew*: bool
-      ## Whether the domain will be automatically renewed before expiration.
+      ## Whether automatic renewal occurs before expiration.
     created_at*: string
       ## When the domain was registered. Present when the registration resource exists.
     domain_name*: RegistrarApiDomainName
     expires_at*: Option[string]
-      ## When the domain registration expires. Present when the registration is ready;
-      ## may be null only while `status` is `registration_pending`.
+      ## When the domain registration expires. Ready registrations include this value;
+      ## only `registration_pending` may return null.
     locked*: bool
       ## Whether the domain is locked for transfer.
     privacy_mode*: string
       ## Current WHOIS privacy mode for the registration.
     status*: string
       ## Current registration status.
-      ## - `active`: Domain is registered and operational
-      ## - `registration_pending`: Registration is in progress
-      ## - `expired`: Domain has expired
-      ## - `suspended`: Domain is suspended by the registry
-      ## - `redemption_period`: Domain is in the redemption grace period
-      ## - `pending_delete`: Domain is pending deletion by the registry
+      ## - `active`: The domain operates with an active registration.
+      ## - `registration_pending`: Registration remains in progress.
+      ## - `expired`: The domain registration expired.
+      ## - `suspended`: The registry suspended the domain.
+      ## - `redemption_period`: The domain entered the redemption grace period.
+      ## - `pending_delete`: The registry scheduled the domain for deletion.
       ##
 
   RegistrarApiRegistrationResponseCollection* = ref object of RootObj
@@ -31637,7 +31644,7 @@ type
     messages*: RegistrarApiMessages
     result*: seq[RegistrarApiRegistration]
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
     result_info*: RegistrarApiCursorResultInfo
 
   RegistrarApiRegistrationResponseSingle* = ref object of RootObj
@@ -31645,7 +31652,7 @@ type
     messages*: RegistrarApiMessages
     result*: RegistrarApiRegistration
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiRegistrationContact* = ref object of RootObj
     ## Contact data for the domain registration. This information
@@ -31662,10 +31669,9 @@ type
       ## Most registrations do not require a fax number.
       ##
     phone*: string
-      ## Phone number in E.164 format: `+{country_code}.{number}` with no
-      ## spaces or dashes. Examples: `+1.5555555555` (US), `+44.2071234567`
-      ## (UK), `+81.312345678` (Japan).
-      ##
+      ## Phone number in E.164 format: `+{country_code}.{number}` without spaces or
+      ## dashes. Examples: `+1.5555555555` (US), `+44.2071234567` (UK), `+81.312345678`
+      ## (Japan).
     postal_info*: RegistrarApiRegistrationContactPostalInfo
 
   RegistrarApiRegistrationContactAddress* = ref object of RootObj
@@ -31691,48 +31697,61 @@ type
     ##
     address*: RegistrarApiRegistrationContactAddress
     name*: string
-      ## Full legal name of the contact, including all required name components
-      ## for an individual or authorized representative. Some registries require
-      ## a complete personal name that includes a family or last name where
-      ## applicable. Provide the complete name in this single field, for example
-      ## `Ada Lovelace`; do not send separate first-name or last-name fields.
-      ##
+      ## Full legal name of the contact, including all required name components for an
+      ## individual or authorized representative. Some registries require a complete
+      ## personal name that includes a family or last name where applicable. Provide the
+      ## complete name in this single field, for example `Ada Lovelace`; do not send
+      ## separate first-name or last-name fields.
     organization*: Option[string]
       ## Organization or company name. Optional for individual registrants.
 
   RegistrarApiRegistrationContacts* = ref object of RootObj
-    ## Contact data for the registration request.
+    ## Provides contact data for the registration request.
     ##
-    ## The per-extension schema returned by
-    ## `GET /accounts/{account_id}/registrar/extensions/{extension}` is the
-    ## authoritative contract for which contact roles are accepted. Every
-    ## currently supported extension requires only `contacts.registrant` from
-    ## API callers. Additional roles such as `technical`, `administrator`, and
-    ## `billing` may be provided when the extension schema includes them. If a
-    ## registry requires one of those roles and the caller omits it, Cloudflare
+    ## The per-extension schema from
+    ## `GET /accounts/{account_id}/registrar/extensions/{extension}` defines the
+    ## accepted contact roles. Every currently supported extension requires only
+    ## `contacts.registrant` from API callers. Callers may provide additional roles
+    ## such as `technical`, `administrator`, and `billing` when the extension
+    ## schema includes them. When a registry requires an omitted role, Cloudflare
     ## may derive that contact from `contacts.registrant`.
     ##
-    ## If the `contacts` object is omitted entirely from the request, or if
-    ## `contacts.registrant` is not provided, the system will use the account's
-    ## default address book entry as the registrant contact. This default must be
-    ## pre-configured by the account owner at
-    ## `https://dash.cloudflare.com/{account_id}/domains/registrations`, where
-    ## they can create or update the address book entry and accept the required
-    ## agreement. No API exists for managing address book entries at this time.
+    ## When the request omits either the entire `contacts` object or
+    ## `contacts.registrant`, the system uses the account's default address book
+    ## entry as the registrant contact. The account owner must configure this
+    ## default at `https://dash.cloudflare.com/{account_id}/domains/registrations`,
+    ## where they can create or update the address book entry and accept the
+    ## required agreement. Dashboard settings currently provide the only way to
+    ## manage address book entries.
     ##
-    ## If no default address book entry exists and no registrant contact is
-    ## provided, the registration request will fail with a validation error.
+    ## Without either a default address book entry or a registrant contact, the
+    ## registration request fails validation.
     ##
-    administrator*: Option[RegistrarApiRegistrationContact]
-    billing*: Option[RegistrarApiRegistrationContact]
-    registrant*: Option[RegistrarApiRegistrationContact]
-    technical*: Option[RegistrarApiRegistrationContact]
+    administrator*: Option[JsonNode]
+      ## Optional administrator contact. Accepted only when the extension
+      ## schema includes this role. When the registry requires an omitted
+      ## contact, Cloudflare may derive it from `contacts.registrant`.
+      ##
+    billing*: Option[JsonNode]
+      ## Optional billing contact. Accepted only when the extension schema
+      ## includes this role. When the registry requires an omitted contact,
+      ## Cloudflare may derive it from `contacts.registrant`.
+      ##
+    registrant*: Option[JsonNode]
+      ## Optional registrant contact. If omitted, the account's default
+      ## address book entry is used instead.
+      ##
+    technical*: Option[JsonNode]
+      ## Optional technical contact. Accepted only when the extension schema
+      ## includes this role. When the registry requires an omitted contact,
+      ## Cloudflare may derive it from `contacts.registrant`.
+      ##
 
   RegistrarApiRegistrationCreateRequest* = ref object of RootObj
     acknowledgements*: Option[JsonNode]
-      ## User acknowledgements required by a specific extension or premium
-      ## registration flow. The expected keys are described by the extension
-      ## registration schema returned by the extension discovery endpoint.
+      ## Provides user acknowledgements for a specific extension or premium
+      ## registration flow. The extension registration schema from the
+      ## extension discovery endpoint identifies the required keys.
       ##
     auto_renew*: Option[bool]
       ## Enable or disable automatic renewal. Defaults to `false` if omitted.
@@ -31742,34 +31761,32 @@ type
       ## Renewal pricing may change over time based on registry pricing.
       ##
     contact_extensions*: Option[JsonNode]
-      ## Registry-specific contact extension values for the registrant. The
-      ## required keys and allowed values vary by extension and are described
-      ## by `GET /accounts/{account_id}/registrar/extensions/{extension}` in
-      ## the `registration_schema.properties.contact_extensions` object.
+      ## Provides registry-specific contact extension values for the registrant.
+      ## `GET /accounts/{account_id}/registrar/extensions/{extension}` identifies
+      ## the required keys and allowed values for each extension in the
+      ## `registration_schema.properties.contact_extensions` object.
       ##
       ## Examples include `.us` nexus fields, `.uk` registrant type fields,
-      ## and `.ca` legal type fields. Omit this object for extensions whose
-      ## registration schema does not include `contact_extensions`.
+      ## and `.ca` legal type fields. Omit this object when the extension's
+      ## registration schema excludes `contact_extensions`.
       ##
     contacts*: Option[RegistrarApiRegistrationContacts]
     domain_name*: RegistrarApiDomainName
     privacy_mode*: Option[string]
-      ## WHOIS privacy mode for the registration. Defaults to `redaction`.
-      ## - `off`: Do not request WHOIS privacy.
-      ## - `redaction`: Request WHOIS redaction where supported by the extension.
-      ## Some extensions do not support privacy/redaction.
+      ## Sets the WHOIS privacy mode for the registration. Defaults to `redaction`.
+      ## - `off`: Disables WHOIS privacy.
+      ## - `redaction`: Requests WHOIS redaction where the extension supports it.
+      ## Some extensions exclude privacy and redaction.
       ##
     years*: Option[int64]
-      ## Number of years to register (1–10). If omitted, defaults to the
-      ## minimum registration period required by the registry for this
-      ## extension. For most extensions this is 1 year, but some extensions
-      ## require longer minimum terms (e.g., `.ai` requires a minimum of
-      ## 2 years).
+      ## Sets the registration term from 1 to 10 years. When omitted, this
+      ## field defaults to the registry's minimum registration period for the
+      ## extension. Most extensions require 1 year, while some require longer
+      ## minimum terms (e.g., `.ai` requires 2 years).
       ##
-      ## The registry for each extension may also enforce its own maximum
-      ## registration term. If the requested value exceeds the registry's
-      ## maximum, the registration will be rejected. When in doubt, use the
-      ## default by omitting this field.
+      ## Each registry may also enforce its own maximum registration term. A
+      ## request above that maximum fails. When uncertain, omit this field to
+      ## use the default.
       ##
 
   RegistrarApiRegistrationUpdateRequest* = ref object of RootObj
@@ -31789,13 +31806,13 @@ type
 
   RegistrarApiResultInfo* = ref object of RootObj
     count*: Option[float64]
-      ## Total number of results for the requested service
+      ## Total number of results for the requested service.
     page*: Option[float64]
-      ## Current page within paginated list of results
+      ## Current page within paginated list of results.
     per_page*: Option[float64]
-      ## Number of results per page of results
+      ## Number of results per page of results.
     total_count*: Option[float64]
-      ## Total results available without any search parameters
+      ## Total results available without any search parameters.
 
   RegistrarApiState* = string
 
@@ -31806,17 +31823,17 @@ type
   RegistrarApiTransferIn* = ref object of RootObj
     ## Statuses for domain transfers into Cloudflare Registrar.
     accept_foa*: Option[string]
-      ## Form of authorization has been accepted by the registrant.
+      ## Status of the registrant authorization step.
     approve_transfer*: Option[string]
-      ## Shows transfer status with the registry.
+      ## Status of the registry transfer-approval step.
     can_cancel_transfer*: Option[bool]
       ## Indicates if cancellation is still possible.
     disable_privacy*: Option[string]
-      ## Privacy guards are disabled at the foreign registrar.
+      ## Status of the privacy-guard disabling step at the foreign registrar.
     enter_auth_code*: Option[string]
-      ## Auth code has been entered and verified.
+      ## Status of the auth-code entry and verification step.
     unlock_domain*: Option[string]
-      ## Domain is unlocked at the foreign registrar.
+      ## Status of the domain-unlock step at the foreign registrar.
 
   RegistrarApiUpdatedAt* = string
 
@@ -31825,16 +31842,14 @@ type
     messages*: RegistrarApiMessages
     result*: RegistrarApiWorkflowStatus
     success*: bool
-      ## Whether the API call was successful
+      ## Whether the API call was successful.
 
   RegistrarApiWorkflowError* = ref object of RootObj
-    ## Error details when a workflow reaches the `failed` state. The specific
-    ## error codes and messages depend on the workflow type (registration,
-    ## update, etc.) and the underlying registry response. These workflow
-    ## error codes are separate from immediate HTTP error `errors[].code`
-    ## values returned by non-2xx responses. Surface
-    ## `error.message` to the user for context.
-    ##
+    ## Provides error details when a workflow reaches the `failed` state. The workflow
+    ## type (registration, update, etc.) and underlying registry response determine the
+    ## specific codes and messages. Workflow error codes differ from immediate HTTP
+    ## error `errors[].code` values in non-2xx responses. Surface `error.message` to
+    ## the user for context.
     code*: string
       ## Machine-readable error code identifying the failure reason.
     message*: string
@@ -31850,39 +31865,35 @@ type
   RegistrarApiWorkflowStatus* = ref object of RootObj
     ## Status of an async registration workflow.
     completed*: bool
-      ## Whether the workflow has reached a terminal state. `true` when
-      ## `state` is `succeeded` or `failed`. `false` for `pending`,
-      ## `in_progress`, `action_required`, and `blocked`.
-      ##
+      ## Indicates whether the workflow reached a terminal state. A `succeeded` or
+      ## `failed` state returns `true`; `pending`, `in_progress`, `action_required`, and
+      ## `blocked` return `false`.
     context*: Option[JsonNode]
-      ## Workflow-specific data for this workflow.
+      ## Provides workflow-specific data.
       ##
-      ## The workflow subject is identified by `context.domain_name` for
-      ## domain-centric workflows.
+      ## For domain-centric workflows, `context.domain_name` identifies the
+      ## workflow subject.
       ##
     created_at*: string
     error*: Option[JsonNode]
     links*: RegistrarApiWorkflowLinks
     state*: string
-      ## Workflow lifecycle state.
-      ## - `pending`: Workflow has been created but not yet started processing.
-      ## - `in_progress`: Actively processing. Continue polling `links.self`.
-      ## The workflow has an internal deadline and will not remain in this
-      ## state indefinitely.
-      ## - `action_required`: Paused — requires action by the user (not the
-      ## system). See `context.action` for what is needed. An automated
-      ## polling loop must break on this state; it will not resolve on its
-      ## own without user intervention.
-      ## - `blocked`: The workflow cannot make progress due to a third party
-      ## such as the domain extension's registry or a losing registrar.
-      ## No user action will help. Continue polling — the block may resolve
-      ## when the third party responds.
-      ## - `succeeded`: Terminal. The operation completed successfully.
-      ## `completed` will be `true`. For registrations, `context.registration`
-      ## contains the resulting registration resource.
-      ## - `failed`: Terminal. The operation failed. `completed` will be `true`.
-      ## See `error.code` and `error.message` for the reason. Do not
-      ## auto-retry without user review.
+      ## Describes the workflow lifecycle state.
+      ## - `pending`: The workflow awaits processing.
+      ## - `in_progress`: Processing started. Continue polling `links.self`.
+      ## An internal deadline limits the duration of this state.
+      ## - `action_required`: The workflow pauses for user action. See
+      ## `context.action` for details. Stop automated polling until the user
+      ## completes the required action.
+      ## - `blocked`: A third party, such as the domain extension's registry or
+      ## a losing registrar, prevents progress. Continue polling because the
+      ## block may resolve when the third party responds.
+      ## - `succeeded`: Terminal state. The operation completed successfully.
+      ## `completed` equals `true`. For registrations,
+      ## `context.registration` contains the resulting registration resource.
+      ## - `failed`: Terminal state. The operation failed. `completed` equals
+      ## `true`. See `error.code` and `error.message` for the reason. Require
+      ## user review before retrying.
       ##
     updated_at*: string
 

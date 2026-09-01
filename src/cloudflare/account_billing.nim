@@ -136,9 +136,9 @@ proc getAccountsAccountIdReceiptsReceiptIdPdf*(client: CloudflareClient,
 
 proc postBillingAddressValidation*(client: CloudflareClient,
                                    body: types.BillSubsApiAddressValidationRequest): Future[types.BillSubsApiAddressValidationResponseSingle] {.async.} =
-  ## Validates a billing address and returns validated address suggestions. This
-  ## endpoint is intentionally unauthenticated to support pre-signup address
-  ## validation flows.
+  ## Validates a billing address and returns validated address suggestions.
+  ## Authentication is not enforced to support pre-signup address validation flows,
+  ## so credentials are accepted but not required.
 
   let res = await client.httpPOST("/billing/address-validation", body)
   let body = await res.body
