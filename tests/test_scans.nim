@@ -51,6 +51,10 @@ suite "scans serialization":
     let obj = newCloudforceOnePortScanApiApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOnePortScanApiApiResponseCommonFailure)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdCloudforceOneBannerConfigIdResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneBannerConfigIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneBannerConfigIdResponse)) == openjson.toJson(obj)
+
   test "round-trips DeleteAccountsAccountIdCloudforceOneScansConfigConfigIdResponse":
     let obj = cloudflare.DeleteAccountsAccountIdCloudforceOneScansConfigConfigIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdCloudforceOneScansConfigConfigIdResponse)) == openjson.toJson(obj)
@@ -60,6 +64,11 @@ suite "scans serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneScansResultsConfigIdResponse)) == openjson.toJson(obj)
 
 suite "scans endpoints":
+  test "GET /accounts/{account_id}/cloudforce-one/banner/{config_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneBannerConfigId("test", "test")
+
   test "GET /accounts/{account_id}/cloudforce-one/scans/config":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

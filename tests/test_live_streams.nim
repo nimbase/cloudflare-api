@@ -23,10 +23,6 @@ suite "live_streams serialization":
     let obj = cloudflare.GetAccountsAccountIdRealtimeKitAppIdLivestreamsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdRealtimeKitAppIdLivestreamsResponse)) == openjson.toJson(obj)
 
-  test "round-trips PostAccountsAccountIdRealtimeKitAppIdLivestreamsResponse":
-    let obj = cloudflare.PostAccountsAccountIdRealtimeKitAppIdLivestreamsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdRealtimeKitAppIdLivestreamsResponse)) == openjson.toJson(obj)
-
   test "round-trips GetAccountsAccountIdRealtimeKitAppIdLivestreamsSessionsLivestreamSessionIdResponse":
     let obj = cloudflare.GetAccountsAccountIdRealtimeKitAppIdLivestreamsSessionsLivestreamSessionIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdRealtimeKitAppIdLivestreamsSessionsLivestreamSessionIdResponse)) == openjson.toJson(obj)

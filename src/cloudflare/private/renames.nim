@@ -247,6 +247,10 @@ proc renameHook*(v: BillableUsageApiCostAndUsageData, fieldName: var string) {.i
     fieldName = "sub_account_name"
   elif fieldName == "sub_account_name":
     fieldName = "SubAccountName"
+  elif fieldName == "Tags":
+    fieldName = "tags"
+  elif fieldName == "tags":
+    fieldName = "Tags"
   elif fieldName == "x_BillableMetricId":
     fieldName = "x_billable_metric_id"
   elif fieldName == "x_billable_metric_id":
@@ -395,6 +399,30 @@ proc renameHook*(v: BillableUsageApiV2FilterBy, fieldName: var string) {.inline.
     fieldName = "product_family_ids"
   elif fieldName == "product_family_ids":
     fieldName = "ProductFamilyIds"
+  elif fieldName == "Tags":
+    fieldName = "tags"
+  elif fieldName == "tags":
+    fieldName = "Tags"
+
+proc renameHook*(v: BillableUsageApiV2GroupBy, fieldName: var string) {.inline.} =
+  if fieldName == "Key":
+    fieldName = "key"
+  elif fieldName == "key":
+    fieldName = "Key"
+  elif fieldName == "Type":
+    fieldName = "type"
+  elif fieldName == "type":
+    fieldName = "Type"
+
+proc renameHook*(v: BillableUsageApiV2TagFilter, fieldName: var string) {.inline.} =
+  if fieldName == "Key":
+    fieldName = "key"
+  elif fieldName == "key":
+    fieldName = "Key"
+  elif fieldName == "Values":
+    fieldName = "values"
+  elif fieldName == "values":
+    fieldName = "Values"
 
 proc renameHook*(v: BillableUsageApiV2TimePeriod, fieldName: var string) {.inline.} =
   if fieldName == "From":
@@ -411,6 +439,10 @@ proc renameHook*(v: BillableUsageApiV2UsageQuery, fieldName: var string) {.inlin
     fieldName = "filter_by"
   elif fieldName == "filter_by":
     fieldName = "FilterBy"
+  elif fieldName == "GroupBy":
+    fieldName = "group_by"
+  elif fieldName == "group_by":
+    fieldName = "GroupBy"
   elif fieldName == "TimePeriod":
     fieldName = "time_period"
   elif fieldName == "time_period":

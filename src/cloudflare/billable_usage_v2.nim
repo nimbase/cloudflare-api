@@ -61,9 +61,16 @@ proc postAccountsAccountIdBillableUsage*(client: CloudflareClient,
   ## is omitted, the range defaults to the start of the current month through
   ## today. The maximum date range is 31 days.
   ##
-  ## Filters are combined with AND. Filter values that do not match a known
-  ## billable metric or product family simply match no usage, and the
-  ## response is an empty result set.
+  ## Filters of different kinds are combined with AND. Values within one tag
+  ## filter are combined with OR. Filter values that do not match usage
+  ## produce an empty result set.
+  ##
+  ## Results can be grouped by up to two customer resource-tag keys. Grouped
+  ## values are returned in the `Tags` field. Usage without a requested tag
+  ## remains in an untagged group, with that key omitted from `Tags`.
+  ##
+  ## Requests using tag filtering or grouping return HTTP 400 when tag-aware
+  ## usage data is unavailable.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/billable/usage", body)
   let body = await res.body

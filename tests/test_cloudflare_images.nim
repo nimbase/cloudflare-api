@@ -47,6 +47,10 @@ suite "cloudflare_images serialization":
     let obj = newImagesImagesListResponseV2()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ImagesImagesListResponseV2)) == openjson.toJson(obj)
 
+  test "round-trips ImagesMetadataKeysResponse":
+    let obj = newImagesMetadataKeysResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ImagesMetadataKeysResponse)) == openjson.toJson(obj)
+
   test "round-trips ImagesImagesStatsResponse":
     let obj = newImagesImagesStatsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ImagesImagesStatsResponse)) == openjson.toJson(obj)
@@ -113,4 +117,9 @@ suite "cloudflare_images endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdImagesV2DirectUpload("test")
+
+  test "GET /accounts/{account_id}/images/v2/metadata/keys":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdImagesV2MetadataKeys("test")
 

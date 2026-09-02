@@ -230,3 +230,15 @@ proc postAccountsAccountIdImagesV2DirectUpload*(client: CloudflareClient,
     result = fromJson(body, types.ImagesImageDirectUploadResponseV2)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdImagesV2MetadataKeys*(client: CloudflareClient,
+                                               accountId: types.ImagesAccountIdentifier): Future[types.ImagesMetadataKeysResponse] {.async.} =
+  ## Lists filterable metadata keys used by images for an account.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/images/v2/metadata/keys")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.ImagesMetadataKeysResponse)
+  else:
+    raise newException(CloudflareClientError, body)

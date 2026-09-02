@@ -9,6 +9,11 @@ import ./private/metaclient
 import ./private/types
 
 type
+  GetAccountsAccountIdCloudforceOneBannerConfigIdResponse* = object
+    errors: seq[string]
+    messages: seq[string]
+    result: JsonNode
+    success: bool
   PostAccountsAccountIdCloudforceOneScansConfigRequest = object
     frequency: Option[types.CloudforceOnePortScanApiFrequency]
     ips: types.CloudforceOnePortScanApiIps
@@ -28,9 +33,23 @@ type
     result: JsonNode
     success: bool
 
+proc getAccountsAccountIdCloudforceOneBannerConfigId*(client: CloudflareClient,
+                                                      accountId: string,
+                                                      configId: string): Future[GetAccountsAccountIdCloudforceOneBannerConfigIdResponse] {.async.} =
+  ## Retrieves the latest banner grab results for a Cloudforce One scan
+  ## configuration, including service banners from open ports.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/banner/{configId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneBannerConfigIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdCloudforceOneScansConfig*(client: CloudflareClient,
                                                    accountId: string): Future[JsonNode] {.async.} =
-  ## List Scan Configs
+  ## Lists scan configurations for Cloudforce One's network scanning service.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/scans/config")
   let body = await res.body
@@ -43,7 +62,7 @@ proc getAccountsAccountIdCloudforceOneScansConfig*(client: CloudflareClient,
 proc postAccountsAccountIdCloudforceOneScansConfig*(client: CloudflareClient,
                                                     accountId: string,
                                                     body: PostAccountsAccountIdCloudforceOneScansConfigRequest): Future[JsonNode] {.async.} =
-  ## Create a new Scan Config
+  ## Creates a new scan configuration for Cloudforce One's network scanning service.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/scans/config", body)
   let body = await res.body
@@ -56,7 +75,7 @@ proc postAccountsAccountIdCloudforceOneScansConfig*(client: CloudflareClient,
 proc deleteAccountsAccountIdCloudforceOneScansConfigConfigId*(client: CloudflareClient,
                                                               accountId: string,
                                                               configId: string): Future[DeleteAccountsAccountIdCloudforceOneScansConfigConfigIdResponse] {.async.} =
-  ## Delete a Scan Config
+  ## Deletes a scan configuration from Cloudforce One's network scanning service.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/scans/config/{configId}")
   let body = await res.body
@@ -70,7 +89,8 @@ proc patchAccountsAccountIdCloudforceOneScansConfigConfigId*(client: CloudflareC
                                                              accountId: string,
                                                              configId: string,
                                                              body: PatchAccountsAccountIdCloudforceOneScansConfigConfigIdRequest): Future[JsonNode] {.async.} =
-  ## Update an existing Scan Config
+  ## Updates an existing scan configuration in Cloudforce One's network scanning
+  ## service.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/scans/config/{configId}", body)
   let body = await res.body
@@ -83,7 +103,8 @@ proc patchAccountsAccountIdCloudforceOneScansConfigConfigId*(client: CloudflareC
 proc getAccountsAccountIdCloudforceOneScansResultsConfigId*(client: CloudflareClient,
                                                             accountId: string,
                                                             configId: string): Future[GetAccountsAccountIdCloudforceOneScansResultsConfigIdResponse] {.async.} =
-  ## Get the Latest Scan Result
+  ## Retrieves the latest scan results for a Cloudforce One scan configuration,
+  ## including discovered open ports.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/scans/results/{configId}")
   let body = await res.body

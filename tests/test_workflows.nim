@@ -95,6 +95,10 @@ suite "workflows serialization":
     let obj = cloudflare.GetAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdStepResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdStepResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribeTokenResponse":
+    let obj = cloudflare.GetAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribeTokenResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribeTokenResponse)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdWorkflowsWorkflowNameVersionsResponse":
     let obj = cloudflare.GetAccountsAccountIdWorkflowsWorkflowNameVersionsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkflowsWorkflowNameVersionsResponse)) == openjson.toJson(obj)
@@ -201,6 +205,11 @@ suite "workflows endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribe("test", "test", 1, "test", "test")
+
+  test "GET /accounts/{account_id}/workflows/{workflow_name}/instances/{instance_id}/subscribe/token":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribeToken("test", "test", "test")
 
   test "GET /accounts/{account_id}/workflows/{workflow_name}/versions":
     let client = initCloudflareClient("test-key")

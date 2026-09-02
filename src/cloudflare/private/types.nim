@@ -980,6 +980,13 @@ type
     subject*: string
       ## Subject line of the email.
 
+  AbuseReportsEmailListResponse* = ref object of RootObj
+    errors*: Option[seq[AbuseReportsErrorMessage]]
+    messages*: Option[seq[AbuseReportsMessage]]
+    result*: JsonNode
+    result_info*: Option[AbuseReportsResultInfo]
+    success*: bool
+
   AbuseReportsErrorCode* = string
 
   AbuseReportsErrorMessage* = ref object of RootObj
@@ -1285,6 +1292,13 @@ type
     NCSEI = "NCSEI"
     NETWORK = "NETWORK"
 
+  AbuseReportsResultInfo* = ref object of RootObj
+    count*: float64
+    page*: float64
+    per_page*: float64
+    total_count*: float64
+    total_pages*: float64
+
   AbuseReportsSubmissionReportType* = string
 
   AbuseReportsSubmitErrorResponse* = ref object of RootObj
@@ -1304,6 +1318,109 @@ type
     request*: JsonNode
     result*: string
       ## The result should be 'success' for successful response
+
+  AbuseReportsSubmittedAbuseReportDenialReason* = enum
+    ## Submitter-safe reason that a submitted report was denied.
+    unableToConfirm = "unable_to_confirm"
+    incompleteReport = "incomplete_report"
+    notOnCloudflare = "not_on_cloudflare"
+    duplicateReport = "duplicate_report"
+    contentRemoved = "content_removed"
+    reportDetailsMismatch = "report_details_mismatch"
+    noAbuseFound = "no_abuse_found"
+    missingOriginalWork = "missing_original_work"
+    directUrlRequired = "direct_url_required"
+    wrongReportCategory = "wrong_report_category"
+    contentUnavailable = "content_unavailable"
+    lawEnforcementReferralRequired = "law_enforcement_referral_required"
+    domainDisputeProcessRequired = "domain_dispute_process_required"
+
+  AbuseReportsSubmittedAbuseReportDetail* = ref object of RootObj
+    cdate*: string
+      ## Time the report was submitted.
+    denial_reason*: Option[string]
+      ## Submitter-safe reason for a denied report. Null when unavailable.
+    domain*: string
+      ## Domain identified in the report.
+    id*: string
+      ## Public report code.
+    status*: AbuseReportsSubmittedAbuseReportStatus
+    submitter*: Option[AbuseReportsSubmitterDetails]
+    `type`*: AbuseReportsReportType
+    agent_name*: Option[string]
+      ## Authorized agent name supplied with the report.
+    comments*: Option[string]
+      ## Additional comments supplied with the report.
+    court*: Option[string]
+      ## The string "on" when a court proceeding applies to the report; otherwise
+      ## omitted.
+    destination_ips*: Option[seq[string]]
+      ## Destination IP addresses supplied with a network abuse report.
+    dsa_attestation*: bool
+      ## Whether the submitter provided the Digital Services Act attestation.
+    host_notification*: Option[string]
+      ## Submitter preference for notifying the hosting provider.
+    justification*: Option[string]
+      ## Evidence supplied with the report.
+    ncmec_notification*: Option[string]
+      ## Submitter preference for notifying NCMEC.
+    ncsei_subject_representation*: Option[bool]
+      ## Representation supplied for an NCSEI report.
+    original_work*: Option[string]
+      ## Original work or targeted brand supplied with the report.
+    owner_notification*: Option[string]
+      ## Submitter preference for notifying the content owner.
+    ports_protocols*: Option[seq[string]]
+      ## Ports and protocols supplied with a network abuse report.
+    reg_who_request*: Option[AbuseReportsRegistrarWhoIsFields]
+    reported_country*: Option[string]
+      ## Country associated with the reported activity.
+    reported_user_agent*: Option[string]
+      ## User agent associated with the reported activity.
+    source_ips*: Option[seq[string]]
+      ## Source IP addresses supplied with a network abuse report.
+    subtypes*: Option[seq[string]]
+      ## Additional abuse classifications supplied with the report.
+    title*: Option[string]
+      ## Title supplied with the report.
+    udrp*: Option[string]
+      ## The string "on" when a UDRP proceeding applies to the report; otherwise omitted.
+    urls*: seq[string]
+      ## URLs supplied with the report.
+    urs*: Option[string]
+      ## The string "on" when a URS proceeding applies to the report; otherwise omitted.
+
+  AbuseReportsSubmittedAbuseReportDetailResponse* = ref object of RootObj
+    errors*: Option[seq[AbuseReportsErrorMessage]]
+    messages*: Option[seq[AbuseReportsMessage]]
+    result*: AbuseReportsSubmittedAbuseReportDetail
+    success*: bool
+
+  AbuseReportsSubmittedAbuseReportListItem* = ref object of RootObj
+    cdate*: string
+      ## Time the report was submitted.
+    denial_reason*: Option[string]
+      ## Submitter-safe reason for a denied report. Null when unavailable.
+    domain*: string
+      ## Domain identified in the report.
+    id*: string
+      ## Public report code.
+    status*: AbuseReportsSubmittedAbuseReportStatus
+    submitter*: Option[AbuseReportsSubmitterDetails]
+    `type`*: AbuseReportsReportType
+
+  AbuseReportsSubmittedAbuseReportListResponse* = ref object of RootObj
+    errors*: Option[seq[AbuseReportsErrorMessage]]
+    messages*: Option[seq[AbuseReportsMessage]]
+    result*: JsonNode
+    result_info*: Option[AbuseReportsResultInfo]
+    success*: bool
+
+  AbuseReportsSubmittedAbuseReportStatus* = enum
+    ## Status visible to the account that submitted the report.
+    submitted = "submitted"
+    accepted = "accepted"
+    denied = "denied"
 
   AbuseReportsSubmitterDetails* = ref object of RootObj
     ## Information about the submitter of the report.
@@ -5977,7 +6094,7 @@ type
     last_updated*: ApiShieldTimestamp2
     metadata*: ApiShieldLabelMetadata
     name*: ApiShieldLabelName
-    source*: JsonNode
+    source*: string
     mapped_resources*: Option[ApiShieldLabelMappedResources]
 
   ApiShieldGlobalSettingChangeBase* = ref object of RootObj
@@ -7464,6 +7581,10 @@ type
     sub_account_name*: Option[string]
       ## Name assigned to a grouping of services. For Cloudflare, this is the
       ## subscription or contract display name.
+    tags*: Option[JsonNode]
+      ## Tag values for the requested `GroupBy` keys. Omitted when `GroupBy` is not
+      ## provided. Missing keys are omitted, and key-only tags are returned as boolean
+      ## `true`. All other tag values are strings.
     x_billable_metric_id*: string
       ## The unique identifier for the billable metric in the Cloudflare catalog.
       ## Cloudflare extension; replaces FOCUS SkuId.
@@ -7615,6 +7736,25 @@ type
     product_family_ids*: Option[seq[string]]
       ## Restrict results to billable metrics belonging to these product families. Values
       ## must be unique UUIDs.
+    tags*: Option[seq[BillableUsageApiV2TagFilter]]
+      ## Restrict results by customer resource tags. Filters for different keys are
+      ## combined with AND, while values within one filter are combined with OR. Keys
+      ## must be unique and are case-sensitive.
+
+  BillableUsageApiV2GroupBy* = ref object of RootObj
+    ## A customer resource-tag key used to split result rows.
+    key*: string
+      ## Case-sensitive customer resource-tag key.
+    `type`*: string
+      ## Dimension category. Currently only customer resource tags are supported.
+
+  BillableUsageApiV2TagFilter* = ref object of RootObj
+    ## Values accepted for one customer resource-tag key.
+    key*: string
+      ## Case-sensitive customer resource-tag key.
+    values*: seq[string]
+      ## Tag values to match. Values are combined with OR and must be unique. An empty
+      ## string matches a key-only tag.
 
   BillableUsageApiV2TimePeriod* = ref object of RootObj
     ## Charge period to query, i.e. when consumption happened, not when it was billed.
@@ -7631,6 +7771,9 @@ type
     ## Filter criteria for a usage query. Every field is optional; an empty object is
     ## equivalent to omitting the body entirely. Unknown fields are rejected.
     filter_by*: Option[BillableUsageApiV2FilterBy]
+    group_by*: Option[seq[BillableUsageApiV2GroupBy]]
+      ## Customer resource tags used to split result rows. At most two unique tag keys
+      ## may be supplied.
     time_period*: Option[BillableUsageApiV2TimePeriod]
 
   BillableUsageApiV2UsageResponse* = ref object of RootObj
@@ -10089,6 +10232,7 @@ type
   CloudConnectorZoneIdentifier* = CloudConnectorIdentifier
 
   CloudflarePipelinesConnectionSchema* = ref object of RootObj
+    ## Defines the schema of the events in the data stream.
     fields*: Option[seq[CloudflarePipelinesSourceField]]
     inferred*: Option[bool]
 
@@ -10100,6 +10244,7 @@ type
   CloudflarePipelinesFieldType* = ref object of RootObj
 
   CloudflarePipelinesFormat* = ref object of RootObj
+    ## Defines the data format of the events.
 
   CloudflarePipelinesJsonFormat* = ref object of RootObj
     decimal_encoding*: Option[CloudflarePipelinesDecimalEncoding]
@@ -10128,6 +10273,7 @@ type
     value_type*: string
 
   CloudflarePipelinesPipelineGraph* = ref object of RootObj
+    ## Indicates the processing flow to implement the SQL.
     edges*: seq[CloudflarePipelinesPipelineEdge]
     nodes*: seq[CloudflarePipelinesPipelineNode]
 
@@ -19945,6 +20091,13 @@ type
 
   ImagesMessages* = seq[JsonNode]
 
+  ImagesMetadataKeysResponse* = ref object of RootObj
+    errors*: ImagesMessages
+    messages*: ImagesMessages
+    result*: JsonNode
+    success*: bool
+      ## Whether the API call was successful
+
   ImagesSigningKeyIdentifier* = string
 
   ImagesSourcingkitAcceptableContentType* = enum
@@ -25206,6 +25359,8 @@ type
     messages*: Option[seq[MconnCodedMessage]]
     success*: bool
     result*: MconnConnectorEventsPostResult
+
+  MconnConnectorInterruptsCreateRequest* = MconnInterrupt
 
   MconnConnectorInterruptsCreateResponse* = ref object of RootObj
     messages*: seq[MconnCodedMessage]

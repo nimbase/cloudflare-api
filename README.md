@@ -17,7 +17,7 @@
 > generated sources by hand — regenerate with `nimbase` instead.
 
 ## Features
-- Typed client for Cloudflare API (3407 endpoints)
+- Typed client for Cloudflare API (3412 endpoints)
 - Bearer-token authentication
 - Mock-server backed test suite
 - Async-first, generated with Nimbase

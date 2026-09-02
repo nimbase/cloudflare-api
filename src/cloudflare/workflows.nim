@@ -150,6 +150,12 @@ type
     result: JsonNode
     result_info: JsonNode
     success: bool
+  GetAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribeTokenResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
   GetAccountsAccountIdWorkflowsWorkflowNameVersionsResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
@@ -541,6 +547,21 @@ proc getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribe*(clie
   q["filter"] = $filter
   let res = await client.httpGET(fmt"/accounts/{accountId}/workflows/{workflowName}/instances/{instanceId}/subscribe", q)
   return res
+
+proc getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribeToken*(client: CloudflareClient,
+                                                                                 workflowName: string,
+                                                                                 instanceId: string,
+                                                                                 accountId: string): Future[GetAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribeTokenResponse] {.async.} =
+  ## Creates a short-lived token for connecting to the workflow instance event
+  ## WebSocket.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/workflows/{workflowName}/instances/{instanceId}/subscribe/token")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribeTokenResponse)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdWorkflowsWorkflowNameVersions*(client: CloudflareClient,
                                                         workflowName: string,

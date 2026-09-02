@@ -18,11 +18,6 @@ type
   GetAccountsAccountIdRealtimeKitAppIdLivestreamsResponse* = object
     data: JsonNode
     success: bool
-  PostAccountsAccountIdRealtimeKitAppIdLivestreamsRequest = object
-    name: Option[string]
-  PostAccountsAccountIdRealtimeKitAppIdLivestreamsResponse* = object
-    data: JsonNode
-    success: bool
   GetAccountsAccountIdRealtimeKitAppIdLivestreamsSessionsLivestreamSessionIdResponse* = object
     data: JsonNode
     success: bool
@@ -127,21 +122,6 @@ proc getAccountsAccountIdRealtimeKitAppIdLivestreams*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, GetAccountsAccountIdRealtimeKitAppIdLivestreamsResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc postAccountsAccountIdRealtimeKitAppIdLivestreams*(client: CloudflareClient,
-                                                       body: PostAccountsAccountIdRealtimeKitAppIdLivestreamsRequest): Future[PostAccountsAccountIdRealtimeKitAppIdLivestreamsResponse] {.async.} =
-  ## Creates a livestream for the given App ID and returns ingest server, stream key,
-  ## and playback URL. You can pass custom input to the ingest server and stream key,
-  ## and freely distribute the content using the playback URL on any player that
-  ## supports HLS/LHLS.
-
-  let res = await client.httpPOST("/accounts/{account_id}/realtime/kit/{app_id}/livestreams", body)
-  let body = await res.body
-  case res.code
-  of Http201:
-    result = fromJson(body, PostAccountsAccountIdRealtimeKitAppIdLivestreamsResponse)
   else:
     raise newException(CloudflareClientError, body)
 

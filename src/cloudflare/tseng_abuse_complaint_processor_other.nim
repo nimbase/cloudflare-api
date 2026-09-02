@@ -79,6 +79,69 @@ proc getAccountsAccountIdAbuseReports*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc getAccountsAccountIdAbuseReportsSubmitted*(client: CloudflareClient,
+                                                accountId: string,
+                                                page: int64 = 1,
+                                                perPage: int64 = 100,
+                                                sort: string = default(string),
+                                                id: string = default(string),
+                                                domain: seq[string] = @[],
+                                                createdBefore: string = default(string),
+                                                createdAfter: string = default(string),
+                                                status: seq[string] = @[],
+                                                `type`: seq[string] = @[]): Future[types.AbuseReportsSubmittedAbuseReportListResponse] {.async.} =
+  ## List abuse reports submitted by the account.
+
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  q["sort"] = $sort
+  q["id"] = $id
+  for v in domain: q["domain"] = $v
+  q["created_before"] = $createdBefore
+  q["created_after"] = $createdAfter
+  for v in status: q["status"] = $v
+  for v in `type`: q["type"] = $v
+  let res = await client.httpGET(fmt"/accounts/{accountId}/abuse-reports/submitted", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AbuseReportsSubmittedAbuseReportListResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdAbuseReportsSubmittedReportId*(client: CloudflareClient,
+                                                        accountId: string,
+                                                        reportId: string): Future[types.AbuseReportsSubmittedAbuseReportDetailResponse] {.async.} =
+  ## Retrieve a report submitted by the account.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/abuse-reports/submitted/{reportId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AbuseReportsSubmittedAbuseReportDetailResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdAbuseReportsSubmittedReportIdEmails*(client: CloudflareClient,
+                                                              accountId: string,
+                                                              reportId: string,
+                                                              page: int64 = default(int64),
+                                                              perPage: int64 = default(int64)): Future[types.AbuseReportsEmailListResponse] {.async.} =
+  ## List successful emails sent to the submitter of a report submitted by the
+  ## account. Does not include emails sent to customers or hosts.
+
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/accounts/{accountId}/abuse-reports/submitted/{reportId}/emails", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AbuseReportsEmailListResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdAbuseReportsReportIdAppealsEligibility*(client: CloudflareClient,
                                                                  accountId: string,
                                                                  reportId: string): Future[GetAccountsAccountIdAbuseReportsReportIdAppealsEligibilityResponse] {.async.} =
