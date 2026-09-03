@@ -67,13 +67,13 @@ proc putAccountsAccountIdAccessPoliciesPolicyId*(client: CloudflareClient,
 
 proc deleteAccountsAccountIdAccessPoliciesPolicyId*(client: CloudflareClient,
                                                     accountId: types.AccessIdentifier,
-                                                    policyId: types.AccessUuid2): Future[types.AccessIdResponse5] {.async.} =
+                                                    policyId: types.AccessUuid2): Future[types.AccessIdResponse4] {.async.} =
   ## Deletes an Access reusable policy.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/access/policies/{policyId}")
   let body = await res.body
   case res.code
   of Http202:
-    result = fromJson(body, types.AccessIdResponse5)
+    result = fromJson(body, types.AccessIdResponse4)
   else:
     raise newException(CloudflareClientError, body)

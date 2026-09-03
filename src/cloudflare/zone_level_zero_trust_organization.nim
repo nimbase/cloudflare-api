@@ -12,14 +12,14 @@ type
   PostZonesZoneIdAccessOrganizationsRequest = object
     auth_domain: types.AccessAuthDomain2
     is_ui_read_only: Option[types.AccessIsUiReadOnly2]
-    login_design: Option[types.AccessLoginDesign2]
+    login_design: Option[types.AccessLoginDesign]
     name: types.AccessName15
     ui_read_only_toggle_reason: Option[types.AccessUiReadOnlyToggleReason]
     user_seat_expiration_inactive_time: Option[types.AccessUserSeatExpirationInactiveTime2]
   PutZonesZoneIdAccessOrganizationsRequest = object
     auth_domain: Option[types.AccessAuthDomain2]
     is_ui_read_only: Option[types.AccessIsUiReadOnly2]
-    login_design: Option[types.AccessLoginDesign2]
+    login_design: Option[types.AccessLoginDesign]
     name: Option[types.AccessName15]
     ui_read_only_toggle_reason: Option[types.AccessUiReadOnlyToggleReason]
     user_seat_expiration_inactive_time: Option[types.AccessUserSeatExpirationInactiveTime2]

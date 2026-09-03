@@ -11,13 +11,13 @@ import cloudflare
 import ./common
 
 suite "access_reusable_policies serialization":
+  test "round-trips AccessIdResponse4":
+    let obj = newAccessIdResponse4()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessIdResponse4)) == openjson.toJson(obj)
+
   test "round-trips AccessSingleResponse10":
     let obj = newAccessSingleResponse10()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse10)) == openjson.toJson(obj)
-
-  test "round-trips AccessIdResponse5":
-    let obj = newAccessIdResponse5()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessIdResponse5)) == openjson.toJson(obj)
 
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()

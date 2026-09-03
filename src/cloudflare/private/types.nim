@@ -1600,15 +1600,11 @@ type
 
   AccessAllowedHeaders* = seq[string]
 
-  AccessAllowedHeaders2* = seq[JsonNode]
-
   AccessAllowedIdps* = seq[string]
 
   AccessAllowedMethods* = seq[string]
 
   AccessAllowedOrigins* = seq[string]
-
-  AccessAllowedOrigins2* = seq[JsonNode]
 
   AccessAnyValidServiceTokenRule* = ref object of RootObj
     ## Matches any valid Access Service Token
@@ -1657,8 +1653,8 @@ type
     custom_deny_url*: Option[AccessCustomDenyUrl]
     custom_non_identity_deny_url*: Option[AccessCustomNonIdentityDenyUrl]
     custom_pages*: Option[AccessCustomPages2]
-    domain*: Option[JsonNode]
-    name*: Option[JsonNode]
+    domain*: Option[string]
+    name*: Option[string]
     session_duration*: Option[AccessSessionDuration2]
     `type`*: JsonNode
     app_launcher_logo_url*: Option[AccessAppLauncherLogoUrl]
@@ -1671,8 +1667,8 @@ type
   AccessAppLauncherProps2* = ref object of RootObj
     allowed_idps*: Option[AccessAllowedIdps]
     auto_redirect_to_identity*: Option[AccessAutoRedirectToIdentity2]
-    domain*: Option[JsonNode]
-    name*: Option[JsonNode]
+    domain*: Option[string]
+    name*: Option[string]
     session_duration*: Option[AccessSessionDuration4]
     `type`*: string
       ## The application type.
@@ -1772,18 +1768,9 @@ type
     email_list_uuid*: Option[string]
       ## The UUID of an re-usable email list.
 
-  AccessApprovalGroup2* = ref object of RootObj
-    ## A group of email addresses that can approve a temporary authentication request.
-    approvals_needed*: float64
-      ## The number of approvals needed to obtain access.
-    email_addresses*: Option[seq[JsonNode]]
-      ## A list of emails that can approve the access request.
-    email_list_uuid*: Option[string]
-      ## The UUID of an re-usable email list.
-
   AccessApprovalGroups* = seq[AccessApprovalGroup]
 
-  AccessApprovalGroups2* = seq[AccessApprovalGroup2]
+  AccessApprovalGroups2* = seq[AccessApprovalGroup]
 
   AccessApprovalRequired* = bool
 
@@ -1908,16 +1895,16 @@ type
     custom_deny_url*: Option[AccessCustomDenyUrl]
     custom_non_identity_deny_url*: Option[AccessCustomNonIdentityDenyUrl]
     custom_pages*: Option[AccessCustomPages2]
-    domain*: Option[JsonNode]
-    name*: Option[JsonNode]
+    domain*: Option[string]
+    name*: Option[string]
     session_duration*: Option[AccessSessionDuration2]
     `type`*: JsonNode
 
   AccessBisoProps2* = ref object of RootObj
     allowed_idps*: Option[AccessAllowedIdps]
     auto_redirect_to_identity*: Option[AccessAutoRedirectToIdentity2]
-    domain*: Option[JsonNode]
-    name*: Option[JsonNode]
+    domain*: Option[string]
+    name*: Option[string]
     session_duration*: Option[AccessSessionDuration4]
     `type`*: string
       ## The application type.
@@ -1932,8 +1919,8 @@ type
     `type`*: Option[JsonNode]
 
   AccessBookmarkProps2* = ref object of RootObj
-    app_launcher_visible*: Option[JsonNode]
-    domain*: JsonNode
+    app_launcher_visible*: Option[bool]
+    domain*: string
       ## The URL or domain of the bookmark.
     logo_url*: Option[AccessLogoUrl]
     name*: Option[AccessName8]
@@ -2044,7 +2031,7 @@ type
     created_at*: Option[AccessTimestamp]
     expires_on*: Option[AccessTimestamp]
     fingerprint*: Option[AccessFingerprint]
-    id*: Option[JsonNode]
+    id*: Option[string]
       ## The ID of the application that will use this certificate.
     name*: Option[AccessName18]
     updated_at*: Option[AccessTimestamp]
@@ -2137,16 +2124,6 @@ type
     allowed_headers*: Option[AccessAllowedHeaders]
     allowed_methods*: Option[AccessAllowedMethods]
     allowed_origins*: Option[AccessAllowedOrigins]
-    max_age*: Option[AccessMaxAge]
-
-  AccessCorsHeaders2* = ref object of RootObj
-    allow_all_headers*: Option[AccessAllowAllHeaders]
-    allow_all_methods*: Option[AccessAllowAllMethods]
-    allow_all_origins*: Option[AccessAllowAllOrigins]
-    allow_credentials*: Option[AccessAllowCredentials]
-    allowed_headers*: Option[AccessAllowedHeaders2]
-    allowed_methods*: Option[AccessAllowedMethods]
-    allowed_origins*: Option[AccessAllowedOrigins2]
     max_age*: Option[AccessMaxAge]
 
   AccessCountryRule* = ref object of RootObj
@@ -2641,20 +2618,13 @@ type
       ## Whether the API call was successful.
     result*: Option[JsonNode]
 
-  AccessIdResponse6* = ref object of RootObj
-    errors*: AccessMessages
-    messages*: AccessMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[JsonNode]
-
   AccessIdentifier* = string
 
   AccessIdentifier2* = ref object of RootObj
 
   AccessIdentifier3* = string
 
-  AccessIdentifier4* = ref object of RootObj
+  AccessIdentifier4* = string
 
   AccessIdentity* = ref object of RootObj
     account_id*: Option[string]
@@ -2977,18 +2947,6 @@ type
       ## are-one/identity/idp-integration/).
 
   AccessLoginDesign* = ref object of RootObj
-    background_color*: Option[string]
-      ## The background color on your login page.
-    footer_text*: Option[string]
-      ## The text at the bottom of your login page.
-    header_text*: Option[string]
-      ## The text at the top of your login page.
-    logo_path*: Option[string]
-      ## The URL of the logo on your login page.
-    text_color*: Option[string]
-      ## The text color on your login page.
-
-  AccessLoginDesign2* = ref object of RootObj
     background_color*: Option[string]
       ## The background color on your login page.
     footer_text*: Option[string]
@@ -3436,7 +3394,7 @@ type
     deny_unmatched_requests*: Option[AccessDenyUnmatchedRequests]
     deny_unmatched_requests_exempted_zone_names*: Option[AccessDenyUnmatchedRequestsExemptedZoneNames]
     is_ui_read_only*: Option[AccessIsUiReadOnly2]
-    login_design*: Option[AccessLoginDesign2]
+    login_design*: Option[AccessLoginDesign]
     name*: Option[AccessName15]
     ui_read_only_toggle_reason*: Option[AccessUiReadOnlyToggleReason]
     updated_at*: Option[AccessTimestamp]
@@ -3610,10 +3568,10 @@ type
     custom_deny_url*: Option[AccessCustomDenyUrl]
     custom_non_identity_deny_url*: Option[AccessCustomNonIdentityDenyUrl]
     custom_pages*: Option[AccessCustomPages2]
-    domain*: Option[JsonNode]
+    domain*: Option[string]
       ## The proxy endpoint domain in the format: 10 alphanumeric characters followed by
       ## .proxy.cloudflare-gateway.com
-    name*: Option[JsonNode]
+    name*: Option[string]
     session_duration*: Option[AccessSessionDuration2]
     `type`*: JsonNode
 
@@ -4342,7 +4300,7 @@ type
     allowed_idps*: Option[AccessAllowedIdps]
     app_launcher_visible*: Option[AccessAppLauncherVisible]
     auto_redirect_to_identity*: Option[AccessAutoRedirectToIdentity2]
-    cors_headers*: Option[AccessCorsHeaders2]
+    cors_headers*: Option[AccessCorsHeaders]
     custom_deny_message*: Option[AccessCustomDenyMessage]
     custom_deny_url*: Option[AccessCustomDenyUrl2]
     domain*: AccessDomain3
@@ -4637,7 +4595,7 @@ type
     allowed_idps*: Option[AccessAllowedIdps]
     app_launcher_visible*: Option[AccessAppLauncherVisible]
     auto_redirect_to_identity*: Option[AccessAutoRedirectToIdentity2]
-    cors_headers*: Option[AccessCorsHeaders2]
+    cors_headers*: Option[AccessCorsHeaders]
     custom_deny_message*: Option[AccessCustomDenyMessage]
     custom_deny_url*: Option[AccessCustomDenyUrl2]
     domain*: AccessDomain3
@@ -4875,7 +4833,7 @@ type
     allowed_idps*: Option[AccessAllowedIdps]
     app_launcher_visible*: Option[AccessAppLauncherVisible]
     auto_redirect_to_identity*: Option[AccessAutoRedirectToIdentity2]
-    cors_headers*: Option[AccessCorsHeaders2]
+    cors_headers*: Option[AccessCorsHeaders]
     custom_deny_message*: Option[AccessCustomDenyMessage]
     custom_deny_url*: Option[AccessCustomDenyUrl2]
     domain*: AccessDomain3
@@ -4903,16 +4861,16 @@ type
     custom_deny_url*: Option[AccessCustomDenyUrl]
     custom_non_identity_deny_url*: Option[AccessCustomNonIdentityDenyUrl]
     custom_pages*: Option[AccessCustomPages2]
-    domain*: Option[JsonNode]
-    name*: Option[JsonNode]
+    domain*: Option[string]
+    name*: Option[string]
     session_duration*: Option[AccessSessionDuration2]
     `type`*: JsonNode
 
   AccessWarpProps2* = ref object of RootObj
     allowed_idps*: Option[AccessAllowedIdps]
     auto_redirect_to_identity*: Option[AccessAutoRedirectToIdentity2]
-    domain*: Option[JsonNode]
-    name*: Option[JsonNode]
+    domain*: Option[string]
+    name*: Option[string]
     session_duration*: Option[AccessSessionDuration4]
     `type`*: string
       ## The application type.
@@ -10411,7 +10369,9 @@ type
   CloudforceOneEventsFieldDefinition* = ref object of RootObj
     allowed_values*: Option[seq[string]]
     annotations*: Option[JsonNode]
-    element*: Option[CloudforceOneEventsFieldDefinition]
+    element*: Option[JsonNode]
+      ## Nested FieldDefinition describing the element type of an array field. Required
+      ## when kind is 'array'. See FieldDefinition (recursive).
     enforcement*: Option[string]
     format*: Option[string]
     key*: string
@@ -10423,6 +10383,29 @@ type
       ## Map of property key to FieldDefinition for object fields. Required when kind is
       ## 'object'. See FieldDefinition (recursive).
     required*: Option[bool]
+
+  CloudforceOneEventsHydratedEntity* = ref object of RootObj
+    ## Hydrated event, indicator, or tag entity.
+
+  CloudforceOneEventsRelationshipEdge* = ref object of RootObj
+    confidence*: Option[int64]
+      ## Confidence score 0–100, or null.
+    created_at*: string
+      ## ISO 8601 creation timestamp.
+    dataset_id*: string
+      ## Dataset the relationship belongs to.
+    entity_id*: string
+      ## UUID of the related entity (other end).
+    entity_type*: string
+      ## Type of the related entity.
+    metadata*: Option[JsonNode]
+      ## Arbitrary JSON metadata, or null.
+    relationship_uuid*: string
+      ## Relationship UUID (use for PATCH/DELETE).
+    `type`*: string
+      ## Relationship type.
+    updated_at*: string
+      ## ISO 8601 last-update timestamp.
 
   CloudforceOnePortScanApiApiResponseCommon* = ref object of RootObj
     errors*: CloudforceOnePortScanApiMessages
@@ -23923,20 +23906,6 @@ type
       ## The ID of the IPsec tunnel.
     psk*: MagicPsk
 
-  MagicIpsecTunnelUpdateRequest* = ref object of RootObj
-    automatic_return_routing*: Option[MagicAutomaticReturnRouting]
-    bgp*: Option[MagicBgpConfig]
-    cloudflare_endpoint*: MagicCloudflareIpsecEndpoint
-    custom_remote_identities*: Option[MagicCustomRemoteIdentities]
-    customer_endpoint*: Option[MagicCustomerIpsecEndpoint]
-    description*: Option[MagicComponentsSchemasDescription]
-    health_check*: Option[MagicTunnelHealthCheck]
-    interface_address*: MagicInterfaceAddress
-    interface_address6*: Option[MagicInterfaceAddress6]
-    name*: MagicIpsecTunnelName
-    psk*: Option[MagicPsk]
-    replay_protection*: Option[MagicReplayProtection]
-
   MagicIpsecTunnelsPskRequest* = ref object of RootObj
     ## Request body for setting PSKs for multiple IPsec tunnels.
     psks*: seq[MagicIpsecTunnelPskEntry]
@@ -29538,6 +29507,7 @@ type
   R2SlurperJurisdiction* = enum
     default = "default"
     eu = "eu"
+    us = "us"
     fedramp = "fedramp"
 
   R2SlurperR2SourceSchema* = ref object of RootObj

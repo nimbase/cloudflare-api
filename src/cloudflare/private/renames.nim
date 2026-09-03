@@ -486,6 +486,32 @@ proc renameHook*(v: CloudforceOneEventsFieldDefinition, fieldName: var string) {
   elif fieldName == "number_constraint":
     fieldName = "numberConstraint"
 
+proc renameHook*(v: CloudforceOneEventsRelationshipEdge, fieldName: var string) {.inline.} =
+  if fieldName == "createdAt":
+    fieldName = "created_at"
+  elif fieldName == "created_at":
+    fieldName = "createdAt"
+  elif fieldName == "datasetId":
+    fieldName = "dataset_id"
+  elif fieldName == "dataset_id":
+    fieldName = "datasetId"
+  elif fieldName == "entityId":
+    fieldName = "entity_id"
+  elif fieldName == "entity_id":
+    fieldName = "entityId"
+  elif fieldName == "entityType":
+    fieldName = "entity_type"
+  elif fieldName == "entity_type":
+    fieldName = "entityType"
+  elif fieldName == "relationshipUuid":
+    fieldName = "relationship_uuid"
+  elif fieldName == "relationship_uuid":
+    fieldName = "relationshipUuid"
+  elif fieldName == "updatedAt":
+    fieldName = "updated_at"
+  elif fieldName == "updated_at":
+    fieldName = "updatedAt"
+
 proc renameHook*(v: CpsCommunicationPreferences, fieldName: var string) {.inline.} =
   if fieldName == "language-locale":
     fieldName = "language_locale"

@@ -517,11 +517,14 @@ proc getAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
                                               forceRefresh: bool = default(bool),
                                               format: EventFormatOption,
                                               cache: EventCacheOption): Future[seq[JsonNode]] {.async.} =
-  ## Use `datasetId=all` or `datasetId=*` to query all event datasets for the account
-  ## (limited to 50). When `datasetId` is unspecified, events are listed from the
-  ## default Cloudforce One Threat Events dataset. To list existing datasets, use the
-  ## [`ListDatasets`](https://developers.cloudflare.com/api/resources/cloudforce_one
-  ## /subresources/threat_events/subresources/datasets/methods/list/) endpoint.
+  ## Use `datasetId=all` or `datasetId=*` for the legacy all-datasets scope,
+  ## `datasetId=analytics` for datasets with `isAnalytics=true`, or
+  ## `datasetId=operational` for datasets with `isAnalytics=false` (limited to 50).
+  ## Scope values must be used alone. When `datasetId` is unspecified, events are
+  ## listed from the default Cloudforce One Threat Events dataset. To list existing
+  ## datasets, use the [`ListDatasets`](https://developers.cloudflare.com/api/resour
+  ## ces/cloudforce_one/subresources/threat_events/subresources/datasets/methods/list
+  ## /) endpoint.
 
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor

@@ -49,13 +49,13 @@ proc postZonesZoneIdAccessAppsAppIdCa*(client: CloudflareClient,
 
 proc deleteZonesZoneIdAccessAppsAppIdCa*(client: CloudflareClient,
                                          appId: types.AccessUuid,
-                                         zoneId: types.AccessIdentifier): Future[types.AccessIdResponse6] {.async.} =
+                                         zoneId: types.AccessIdentifier): Future[types.AccessIdResponse5] {.async.} =
   ## Deletes a short-lived certificate CA.
 
   let res = await client.httpDELETE(fmt"/zones/{zoneId}/access/apps/{appId}/ca")
   let body = await res.body
   case res.code
   of Http202:
-    result = fromJson(body, types.AccessIdResponse6)
+    result = fromJson(body, types.AccessIdResponse5)
   else:
     raise newException(CloudflareClientError, body)

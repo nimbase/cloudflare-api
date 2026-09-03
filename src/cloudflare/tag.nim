@@ -46,8 +46,9 @@ type
     alias_group_names: seq[string]
     alias_group_names_internal: seq[string]
     aliases: seq[JsonNode]
-      ## Structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: stripped from
-      ## responses to non-CFONE accounts.
+      ## Structured aliases ({ value, confidence 1-10, tlp }). Public: returned to all
+      ## accounts with per-entry TLP filtering (entries with tlp: purple are removed for
+      ## non-CFONE accounts).
     attribution_organization: string
     attribution_organization_annotated: JsonNode
     category_name: string
@@ -95,8 +96,9 @@ type
     alias_group_names: seq[string]
     alias_group_names_internal: seq[string]
     aliases: seq[JsonNode]
-      ## Structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: stripped from
-      ## responses to non-CFONE accounts.
+      ## Structured aliases ({ value, confidence 1-10, tlp }). Public: returned to all
+      ## accounts with per-entry TLP filtering (entries with tlp: purple are removed for
+      ## non-CFONE accounts).
     attribution_organization: string
     attribution_organization_annotated: JsonNode
     category_name: string
@@ -170,8 +172,9 @@ type
     alias_group_names: seq[string]
     alias_group_names_internal: seq[string]
     aliases: seq[JsonNode]
-      ## Structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: stripped from
-      ## responses to non-CFONE accounts.
+      ## Structured aliases ({ value, confidence 1-10, tlp }). Public: returned to all
+      ## accounts with per-entry TLP filtering (entries with tlp: purple are removed for
+      ## non-CFONE accounts).
     attribution_organization: string
     attribution_organization_annotated: JsonNode
     category_name: string
@@ -363,7 +366,9 @@ proc getAccountsAccountIdCloudforceOneEventsTagsTagUuidIndicators*(client: Cloud
                                                                    search: seq[string] = @[]): Future[GetAccountsAccountIdCloudforceOneEventsTagsTagUuidIndicatorsResponse] {.async.} =
   ## Returns indicators associated with the provided tag UUID, with pagination. By
   ## default fans out across every indicator dataset the account can read; pass
-  ## datasetIds to scope to specific datasets.
+  ## datasetIds to scope to UUIDs, analytics datasets, or operational datasets.
+  ## Analytics datasets do not expose tag associations, so the analytics scope
+  ## returns an empty result.
 
   var q = initOrderedTable[string, string]()
   for v in datasetIds: q["datasetIds"] = $v
@@ -389,7 +394,9 @@ proc getAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationships*(client: Cl
                                                                       cursor: string = default(string),
                                                                       pageSize: int64 = 25): Future[GetAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse] {.async.} =
   ## Returns sparse relationship edges. Optionally hydrate related entities via
-  ## `expand`. Fans out across all accessible indicator dataset shards.
+  ## `expand`. Fans out across all accessible indicator dataset shards. Analytics
+  ## datasets do not expose tag associations, so the analytics scope returns an empty
+  ## result.
 
   var q = initOrderedTable[string, string]()
   for v in datasets: q["datasets"] = $v

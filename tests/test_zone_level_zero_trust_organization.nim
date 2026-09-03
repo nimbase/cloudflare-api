@@ -23,17 +23,13 @@ suite "zone_level_zero_trust_organization serialization":
     let obj = newAccessEmptyResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessEmptyResponse)) == openjson.toJson(obj)
 
-  test "round-trips AccessLoginDesign2":
-    let obj = newAccessLoginDesign2()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessLoginDesign2)) == openjson.toJson(obj)
-
-  test "round-trips AccessIdentifier4":
-    let obj = newAccessIdentifier4()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessIdentifier4)) == openjson.toJson(obj)
+  test "round-trips AccessLoginDesign":
+    let obj = newAccessLoginDesign()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessLoginDesign)) == openjson.toJson(obj)
 
 suite "zone_level_zero_trust_organization endpoints":
   test "GET /zones/{zone_id}/access/organizations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdAccessOrganizations(newAccessIdentifier4())
+    discard waitFor client.getZonesZoneIdAccessOrganizations("test")
 

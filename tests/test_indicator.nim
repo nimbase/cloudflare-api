@@ -11,6 +11,14 @@ import cloudflare
 import ./common
 
 suite "indicator serialization":
+  test "round-trips CloudforceOneEventsHydratedEntity":
+    let obj = newCloudforceOneEventsHydratedEntity()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneEventsHydratedEntity)) == openjson.toJson(obj)
+
+  test "round-trips CloudforceOneEventsRelationshipEdge":
+    let obj = newCloudforceOneEventsRelationshipEdge()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneEventsRelationshipEdge)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsResponse":
     let obj = cloudflare.GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsResponse)) == openjson.toJson(obj)

@@ -79,7 +79,7 @@ proc putAccountsAccountIdAccessAppsAppIdPoliciesPolicyId*(client: CloudflareClie
 proc deleteAccountsAccountIdAccessAppsAppIdPoliciesPolicyId*(client: CloudflareClient,
                                                              appId: types.AccessUuid,
                                                              policyId: types.AccessUuid,
-                                                             accountId: types.AccessIdentifier): Future[types.AccessIdResponse4] {.async.} =
+                                                             accountId: types.AccessIdentifier): Future[types.AccessIdResponse] {.async.} =
   ## Deletes an Access policy specific to an application. To delete a reusable
   ## policy, use the /accounts/{account_id}/policies/{uid} endpoint.
 
@@ -87,7 +87,7 @@ proc deleteAccountsAccountIdAccessAppsAppIdPoliciesPolicyId*(client: CloudflareC
   let body = await res.body
   case res.code
   of Http202:
-    result = fromJson(body, types.AccessIdResponse4)
+    result = fromJson(body, types.AccessIdResponse)
   else:
     raise newException(CloudflareClientError, body)
 

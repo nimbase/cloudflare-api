@@ -19,6 +19,7 @@ type
     indicator_type: string
     related_events: Option[seq[JsonNode]]
     tags: Option[seq[JsonNode]]
+    tlp: Option[string]
     value: string
   PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsCreateResponse* = object
     created_at: string
@@ -27,6 +28,9 @@ type
     indicator_type: string
     related_events: seq[JsonNode]
     tags: seq[JsonNode]
+    tlp: string
+      ## Traffic Light Protocol designation. UPPERCASE. Possible values: CLEAR, GREEN,
+      ## AMBER, AMBER-STRICT, RED, PURPLE. Null when not set.
     updated_at: string
     uuid: string
     value: string
@@ -37,6 +41,9 @@ type
     indicator_type: string
     related_events: seq[JsonNode]
     tags: seq[JsonNode]
+    tlp: string
+      ## Traffic Light Protocol designation. UPPERCASE. Possible values: CLEAR, GREEN,
+      ## AMBER, AMBER-STRICT, RED, PURPLE. Null when not set.
     updated_at: string
     uuid: string
     value: string
@@ -47,6 +54,7 @@ type
     indicator_type: Option[string]
     related_events: Option[seq[JsonNode]]
     tags: Option[seq[JsonNode]]
+    tlp: Option[string]
     value: Option[string]
   PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdResponse* = object
     created_at: string
@@ -55,6 +63,9 @@ type
     indicator_type: string
     related_events: seq[JsonNode]
     tags: seq[JsonNode]
+    tlp: string
+      ## Traffic Light Protocol designation. UPPERCASE. Possible values: CLEAR, GREEN,
+      ## AMBER, AMBER-STRICT, RED, PURPLE. Null when not set.
     updated_at: string
     uuid: string
     value: string
@@ -308,9 +319,10 @@ proc getAccountsAccountIdCloudforceOneEventsIndicators*(client: CloudflareClient
                                                         cache: IndicatorCacheOption,
                                                         cursor: string = default(string)): Future[GetAccountsAccountIdCloudforceOneEventsIndicatorsResponse] {.async.} =
   ## Retrieves indicators across specified datasets, ordered by createdAt descending
-  ## then UUID, dataset ID, and shard ID ascending. Use datasetIds=all or
-  ## datasetIds=* to query all datasets for the account. If no datasetIds provided,
-  ## uses the default dataset.
+  ## then UUID, dataset ID, and shard ID ascending. Use the standalone datasetIds
+  ## value 'all'/'*' for legacy all-datasets behavior, 'analytics' for
+  ## isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. If
+  ## no datasetIds are provided, uses the default dataset.
 
   var q = initOrderedTable[string, string]()
   for v in datasetIds: q["datasetIds"] = $v
