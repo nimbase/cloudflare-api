@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "email_sending serialization":
+  test "round-trips EmailSendingReputationResponseSingle":
+    let obj = newEmailSendingReputationResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSendingReputationResponseSingle)) == openjson.toJson(obj)
+
   test "round-trips EmailSendingSendRawRequest":
     let obj = newEmailSendingSendRawRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSendingSendRawRequest)) == openjson.toJson(obj)
@@ -49,6 +53,11 @@ suite "email_sending endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdEmailSendingMessagesMessageId("test", "test")
+
+  test "GET /accounts/{account_id}/email/sending/reputation":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdEmailSendingReputation("test")
 
   test "POST /accounts/{account_id}/email/sending/send":
     let client = initCloudflareClient("test-key")

@@ -4,7 +4,7 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[json]
+import std/[strformat, json]
 import ./private/metaclient
 
 type
@@ -14,9 +14,39 @@ type
   GetRadarTrafficAnomaliesLocationsResponse* = object
     result: JsonNode
     success: bool
+  GetRadarTrafficAnomaliesUuidResponse* = object
+    result: JsonNode
+    success: bool
   RadarTrafficAnomalieStatusOption* = enum
     statusVERIFIED = "VERIFIED"
     statusUNVERIFIED = "UNVERIFIED"
+
+  RadarTrafficAnomalieDataSourceOption* = enum
+    dataSourceALL = "ALL"
+    dataSourceAIBOTS = "AI_BOTS"
+    dataSourceAIGATEWAY = "AI_GATEWAY"
+    dataSourceBGP = "BGP"
+    dataSourceBOTS = "BOTS"
+    dataSourceCONNECTIONANOMALY = "CONNECTION_ANOMALY"
+    dataSourceCT = "CT"
+    dataSourceDNS = "DNS"
+    dataSourceDNSMAGNITUDE = "DNS_MAGNITUDE"
+    dataSourceDNSAS112 = "DNS_AS112"
+    dataSourceDOS = "DOS"
+    dataSourceEMAILROUTING = "EMAIL_ROUTING"
+    dataSourceEMAILSECURITY = "EMAIL_SECURITY"
+    dataSourceFW = "FW"
+    dataSourceFWPG = "FW_PG"
+    dataSourceHTTP = "HTTP"
+    dataSourceHTTPCONTROL = "HTTP_CONTROL"
+    dataSourceHTTPCRAWLERREFERER = "HTTP_CRAWLER_REFERER"
+    dataSourceHTTPORIGINS = "HTTP_ORIGINS"
+    dataSourceIQI = "IQI"
+    dataSourceLEAKEDCREDENTIALS = "LEAKED_CREDENTIALS"
+    dataSourceNET = "NET"
+    dataSourceROBOTSTXT = "ROBOTS_TXT"
+    dataSourceSPEED = "SPEED"
+    dataSourceWORKERSAI = "WORKERS_AI"
 
   RadarTrafficAnomalieFormatOption* = enum
     formatJSON = "JSON"
@@ -30,6 +60,7 @@ proc getRadarTrafficAnomalies*(client: CloudflareClient, limit: int64 = 5,
                                dateEnd: string = default(string),
                                status: RadarTrafficAnomalieStatusOption,
                                `type`: seq[string] = default(seq[string]),
+                               dataSource: RadarTrafficAnomalieDataSourceOption,
                                asn: int64 = default(int64),
                                location: string = default(string),
                                origin: string = default(string),
@@ -46,6 +77,7 @@ proc getRadarTrafficAnomalies*(client: CloudflareClient, limit: int64 = 5,
   q["dateEnd"] = $dateEnd
   q["status"] = $status
   q["type"] = $`type`
+  q["dataSource"] = $dataSource
   q["asn"] = $asn
   q["location"] = $location
   q["origin"] = $origin
@@ -81,5 +113,19 @@ proc getRadarTrafficAnomaliesLocations*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, GetRadarTrafficAnomaliesLocationsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getRadarTrafficAnomaliesUuid*(client: CloudflareClient, uuid: string,
+                                   format: RadarTrafficAnomalieFormatOption): Future[GetRadarTrafficAnomaliesUuidResponse] {.async.} =
+  ## Retrieves a single Internet traffic anomaly by UUID.
+
+  var q = initOrderedTable[string, string]()
+  q["format"] = $format
+  let res = await client.httpGET(fmt"/radar/traffic_anomalies/{uuid}", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetRadarTrafficAnomaliesUuidResponse)
   else:
     raise newException(CloudflareClientError, body)

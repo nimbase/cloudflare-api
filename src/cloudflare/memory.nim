@@ -8,6 +8,15 @@ import std/[strformat, options, json]
 import ./private/metaclient
 
 type
+  GetAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesResponse* = object
+    errors: seq[JsonNode]
+      ## Always empty for a successful response.
+    messages: seq[JsonNode]
+      ## Informational, non-error messages, if any.
+    result: seq[JsonNode]
+    result_info: JsonNode
+    success: string
+      ## Always true for a successful response.
   DeleteAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameResponse* = object
     errors: seq[JsonNode]
       ## Always empty for a successful response.
@@ -100,6 +109,24 @@ type
     typeInstruction = "instruction"
     typeTask = "task"
 
+
+proc getAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfiles*(client: CloudflareClient,
+                                                                     namespaceName: string,
+                                                                     perPage: int64 = default(int64),
+                                                                     cursor: string = default(string)): Future[GetAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesResponse] {.async.} =
+  ## Lists the profiles of a namespace, ordered by name. A profile appears once it
+  ## has been used.
+
+  var q = initOrderedTable[string, string]()
+  q["per_page"] = $perPage
+  q["cursor"] = $cursor
+  let res = await client.httpGET(fmt"/accounts/{account_id}/agent-memory/namespaces/{namespaceName}/profiles", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesResponse)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc deleteAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileName*(client: CloudflareClient,
                                                                                    namespaceName: string,
@@ -227,7 +254,7 @@ proc postAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameS
                                                                                         namespaceName: string,
                                                                                         profileName: string,
                                                                                         body: PostAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameSummaryRequest): Future[PostAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameSummaryResponse] {.async.} =
-  ## Generates a structured Markdown summary of everything stored in a memory
+  ## Generates a paste-ready prompt block summarizing everything stored in a memory
   ## profile.
 
   let res = await client.httpPOST(fmt"/accounts/{account_id}/agent-memory/namespaces/{namespaceName}/profiles/{profileName}/summary", body)

@@ -15,6 +15,10 @@ suite "account serialization":
     let obj = newBuildsGetAccountLimitResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsGetAccountLimitResponse)) == openjson.toJson(obj)
 
+  test "round-trips BuildsErrorResponse":
+    let obj = newBuildsErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsErrorResponse)) == openjson.toJson(obj)
+
   test "round-trips BuildsAPIResponse":
     let obj = newBuildsAPIResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsAPIResponse)) == openjson.toJson(obj)

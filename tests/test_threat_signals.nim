@@ -15,6 +15,10 @@ suite "threat_signals serialization":
     let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesResponse)) == openjson.toJson(obj)
 
+  test "round-trips PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTagResponse":
+    let obj = cloudflare.PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTagResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTagResponse)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdCloudforceOneV2ThreatSignalsIndicatorsResponse":
     let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2ThreatSignalsIndicatorsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneV2ThreatSignalsIndicatorsResponse)) == openjson.toJson(obj)
@@ -31,7 +35,7 @@ suite "threat_signals endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/v2/threat-signals/articles":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles("test", "test", 1, "test", true, "test", "test", "test", true, "test", "test", "test", "test", "test", "test", {}, {}, "test")
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles("test", "test", 1, "test", "test", true, "test", "test", "test", true, "test", "test", "test", "test", "test", "test", {}, {}, "test")
 
   test "GET /accounts/{account_id}/cloudforce-one/v2/threat-signals/articles/{article_id}":
     let client = initCloudflareClient("test-key")

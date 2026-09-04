@@ -42,7 +42,7 @@ type
     success: types.CloudflarePipelinesWorkerPipelinesCommonSuccess
   PostAccountsAccountIdPipelinesV1SinksRequest = object
     config: Option[JsonNode]
-    format: Option[types.CloudflarePipelinesFormat]
+    format: Option[types.CloudflarePipelinesSinkFormat]
     name: string
     schema: Option[types.CloudflarePipelinesConnectionSchema]
     `type`: string

@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "memory serialization":
+  test "round-trips GetAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesResponse":
+    let obj = cloudflare.GetAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesResponse)) == openjson.toJson(obj)
+
   test "round-trips DeleteAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameResponse":
     let obj = cloudflare.DeleteAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameResponse)) == openjson.toJson(obj)
@@ -48,6 +52,11 @@ suite "memory serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameSummaryResponse)) == openjson.toJson(obj)
 
 suite "memory endpoints":
+  test "GET /accounts/{account_id}/agent-memory/namespaces/{namespace_name}/profiles":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfiles("test", 1, "test")
+
   test "DELETE /accounts/{account_id}/agent-memory/namespaces/{namespace_name}/profiles/{profile_name}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

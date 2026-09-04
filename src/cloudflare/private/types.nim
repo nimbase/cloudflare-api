@@ -3895,6 +3895,7 @@ type
     name*: Option[AccessName9]
     require*: Option[AccessRequire2]
     updated_at*: Option[AccessTimestamp]
+    account_id*: Option[AccessIdentifier]
     app_count*: Option[AccessAppCount]
     reusable*: Option[bool]
 
@@ -8110,7 +8111,7 @@ type
     terminated = "terminated"
 
   BuildsBuildResponse* = ref object of RootObj
-    build_outcome*: Option[BuildsBuildOutcome]
+    build_outcome*: Option[string]
     build_trigger_metadata*: Option[BuildsBuildTriggerMetadataResponse]
     build_uuid*: Option[BuildsBuildUuid]
     created_on*: Option[BuildsCreatedOn]
@@ -8179,6 +8180,8 @@ type
     default_worker_name*: Option[string]
     env_worker_names*: Option[JsonNode]
     package_manager*: Option[string]
+      ## Package manager inferred from repository lockfiles; defaults to npm when none is
+      ## detected.
     scripts*: Option[JsonNode]
 
   BuildsCreateBuildRequest* = ref object of RootObj
@@ -8239,11 +8242,11 @@ type
     repo_name*: BuildsRepoName
 
   BuildsCreateWorkerGitRepositoryGrantInput* = ref object of RootObj
-    ## Internal GitLab repository input for creating a Worker build configuration
+    ## Grant-backed repository input for creating a Worker build configuration
     branch*: string
       ## Git branch to watch for builds
     grant_id*: string
-      ## Grant ID required when provider_type is gitlab_internal
+      ## Grant ID required for grant-backed providers
     provider_account_id*: BuildsProviderAccountId
     provider_account_name*: BuildsProviderAccountName
     provider_type*: string
@@ -8322,6 +8325,7 @@ type
     github = "github"
     gitlab = "gitlab"
     gitlabInternal = "gitlab_internal"
+    origin = "origin"
 
   BuildsTriggerDeployHookResponse* = ref object of RootObj
     already_exists*: Option[bool]
@@ -9369,21 +9373,71 @@ type
   CcContainerInstance* = ref object of RootObj
     ## A container instance belonging to an application.
     application_id*: CcApplicationID
+    configuration*: Option[CcContainerInstanceConfiguration]
     id*: CcContainerInstanceID
     image*: JsonNode
       ## The image for the current container placement, or the image currently configured
       ## for the application when the instance lacks a placement.
       ##
-    location*: Option[CcContainersContainerInstanceLocation]
+    location*: Option[CcContainerInstanceLocation]
     name*: Option[string]
       ## The customer-provided instance name, when available. Its UTF-8 encoding uses at
       ## most 1,024 bytes.
       ##
     started_at*: Option[JsonNode]
       ## The time at which the current container placement started, when one exists.
-    status*: CcContainersContainerInstanceStatus
+    status*: CcContainerInstanceStatus
+
+  CcContainerInstanceBase* = ref object of RootObj
+    ## The last-reported state of a logical container instance.
+    application_id*: Option[CcApplicationID]
+    configuration*: Option[CcContainerInstanceConfiguration]
+    id*: CcContainerInstanceID
+    image*: Option[JsonNode]
+      ## The image for the current container placement, when one is available.
+      ##
+    location*: Option[CcContainerInstanceLocation]
+    name*: Option[string]
+      ## The customer-provided instance name, when available. Its UTF-8 encoding uses at
+      ## most 1,024 bytes.
+      ##
+    started_at*: Option[JsonNode]
+      ## The time at which the current container placement started, when one exists.
+    status*: CcContainerInstanceStatus
+
+  CcContainerInstanceConfiguration* = ref object of RootObj
+    ## The resources allocated to the container instance.
+    disk*: int64
+      ## Disk allocated to the container instance, in decimal MB.
+    memory*: int64
+      ## Memory allocated to the container instance, in MiB.
+    vcpu*: float64
+      ## Number of virtual CPUs allocated to the container instance.
 
   CcContainerInstanceID* = string
+
+  CcContainerInstanceLocation* = ref object of RootObj
+    ## The location of the instance's current container placement.
+    name*: CcLocationID
+    region*: CcRegion
+
+  CcContainerInstanceStatus* = ref object of RootObj
+    ## The latest known status of a container instance.
+    exit_code*: Option[int64]
+      ## The process exit code, when the runtime reports one.
+    state*: CcContainerInstanceStatusState
+    updated_at*: CcISO8601Timestamp
+
+  CcContainerInstanceStatusState* = enum
+    ## The current lifecycle state of a container instance.
+    provisioning = "provisioning"
+    running = "running"
+    failed = "failed"
+    stopping = "stopping"
+    stopped = "stopped"
+    unhealthy = "unhealthy"
+    inactive = "inactive"
+    unknown = "unknown"
 
   CcContainersAccountRegistryToken* = ref object of RootObj
     ## Credentials returned for an authenticated registry configured on a Containers
@@ -9398,45 +9452,6 @@ type
 
   CcContainersApplicationResponse* = ref object of RootObj
     ## The public Containers API returns an application.
-
-  CcContainersContainerInstanceBase* = ref object of RootObj
-    ## The last-reported state of a logical container instance.
-    application_id*: Option[CcApplicationID]
-    id*: CcContainerInstanceID
-    image*: Option[JsonNode]
-      ## The image for the current container placement, when one is available.
-      ##
-    location*: Option[CcContainersContainerInstanceLocation]
-    name*: Option[string]
-      ## The customer-provided instance name, when available. Its UTF-8 encoding uses at
-      ## most 1,024 bytes.
-      ##
-    started_at*: Option[JsonNode]
-      ## The time at which the current container placement started, when one exists.
-    status*: CcContainersContainerInstanceStatus
-
-  CcContainersContainerInstanceLocation* = ref object of RootObj
-    ## The location of the instance's current container placement.
-    name*: CcLocationID
-    region*: CcRegion
-
-  CcContainersContainerInstanceStatus* = ref object of RootObj
-    ## The latest known status of a container instance.
-    exit_code*: Option[int64]
-      ## The process exit code, when the runtime reports one.
-    state*: CcContainersContainerInstanceStatusState
-    updated_at*: CcISO8601Timestamp
-
-  CcContainersContainerInstanceStatusState* = enum
-    ## The current lifecycle state of a container instance.
-    provisioning = "provisioning"
-    running = "running"
-    failed = "failed"
-    stopping = "stopping"
-    stopped = "stopped"
-    unhealthy = "unhealthy"
-    inactive = "inactive"
-    unknown = "unknown"
 
   CcContainersCreateApplicationRequest* = ref object of RootObj
     ## Create a Containers application. Set `scheduling_policy` to `default` for a
@@ -10204,6 +10219,11 @@ type
   CloudflarePipelinesFormat* = ref object of RootObj
     ## Defines the data format of the events.
 
+  CloudflarePipelinesJsonCompression* = enum
+    ## Specifies the compression applied to JSON sink output.
+    uncompressed = "uncompressed"
+    gzip = "gzip"
+
   CloudflarePipelinesJsonFormat* = ref object of RootObj
     decimal_encoding*: Option[CloudflarePipelinesDecimalEncoding]
     timestamp_format*: Option[CloudflarePipelinesTimestampFormat]
@@ -10240,6 +10260,21 @@ type
     node_id*: int32
     operator*: string
     parallelism*: int32
+
+  CloudflarePipelinesSinkFormat* = ref object of RootObj
+    ## Defines the output data format of a sink.
+
+  CloudflarePipelinesSinkJsonFormat* = ref object of RootObj
+    decimal_encoding*: Option[CloudflarePipelinesDecimalEncoding]
+    timestamp_format*: Option[CloudflarePipelinesTimestampFormat]
+    unstructured*: Option[bool]
+    compression*: Option[CloudflarePipelinesJsonCompression]
+    `type`*: string
+
+  CloudflarePipelinesSinkParquetFormat* = ref object of RootObj
+    compression*: Option[CloudflarePipelinesParquetCompression]
+    row_group_bytes*: Option[int64]
+    `type`*: string
 
   CloudflarePipelinesSourceField* = ref object of RootObj
     metadata_key*: Option[string]
@@ -15625,6 +15660,7 @@ type
     alert_id*: Option[string]
     created_at*: string
     email_message_id*: Option[string]
+    message*: Option[EmailSecurityMessageDetails]
     message_id*: string
     postfix_id*: string
     processed_at*: Option[string]
@@ -15941,19 +15977,19 @@ type
   EmailSecurityDomainList* = seq[EmailSecurityDomain]
 
   EmailSecurityDomainStatus* = enum
-    pending = "pending"
-    active = "active"
-    failed = "failed"
-    timeout = "timeout"
+    PENDING = "PENDING"
+    ACTIVE = "ACTIVE"
+    FAILED = "FAILED"
+    TIMEOUT = "TIMEOUT"
     null = "null"
 
   EmailSecurityDomainVerificationInfo* = ref object of RootObj
     last_checked_at*: Option[string]
       ## When the last DNS TXT check was attempted, if any.
     status*: Option[EmailSecurityDomainStatus]
-    txt_record_name*: string
+    txt_record_name*: Option[string]
       ## Full DNS TXT record name (e.g. `_cf-email-sec-challenge.example.com`).
-    txt_record_value*: string
+    txt_record_value*: Option[string]
       ## Token value to publish in the TXT record.
 
   EmailSecurityEmailsProcessed* = ref object of RootObj
@@ -16560,6 +16596,10 @@ type
       ## Email addresses that permanently bounced.
     queued*: seq[string]
       ## Email addresses for which delivery was queued for later.
+    suppressed_recipients*: seq[string]
+      ## Email addresses dropped because they are on the suppression list. Returned when
+      ## suppressed-recipient dropping is enabled for the sending subdomain; otherwise
+      ## the request fails instead.
 
   EmailSendingNamedRecipientList* = ref object of RootObj
     ## Recipient(s). Optional if cc or bcc is provided. A single email string, a named
@@ -16575,6 +16615,18 @@ type
       ## MIME message control what the recipient's email client displays.
     recipients*: seq[string]
       ## List of recipient email addresses.
+
+  EmailReputationPolicy* = ref object of RootObj
+    complaint*: EmailReputationThreshold
+    customer_bounce*: EmailReputationThreshold
+    spam_rejection*: EmailReputationThreshold
+    suspension_after_hours*: int64
+      ## The grace period before suspension. The value must be a whole number of days.
+
+  EmailReputationThreshold* = ref object of RootObj
+    at_risk_at*: float64
+    minimum_denominator*: int64
+    warning_at*: float64
 
   EmailAccountId* = EmailIdentifier
 
@@ -16936,6 +16988,19 @@ type
     success*: bool
       ## Whether the API call was successful.
     result*: Option[EmailSendingLimitsProperties]
+
+  EmailSendingReputationProperties* = ref object of RootObj
+    active_policy*: EmailReputationPolicy
+    evaluated_at*: Option[string]
+    status*: string
+    status_since*: Option[string]
+
+  EmailSendingReputationResponseSingle* = ref object of RootObj
+    errors*: EmailMessages
+    messages*: EmailMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[EmailSendingReputationProperties]
 
   EmailSendingSubdomain* = ref object of RootObj
     created*: Option[EmailCreated]
@@ -23969,7 +24034,7 @@ type
       ## when DHCP server is enabled.
     dhcp_pool_end*: Option[MagicIpAddress]
     dhcp_pool_start*: Option[MagicIpAddress]
-    dns_server*: Option[MagicIpAddress]
+    dns_server*: Option[JsonNode]
     dns_servers*: Option[seq[MagicIpAddress]]
     reservations*: Option[JsonNode]
       ## Mapping of MAC addresses to IP addresses
@@ -25245,315 +25310,72 @@ type
     item_type*: string
     yaml*: string
 
-  MconnAccountId* = string
+  MconnTelemetryAccountId* = string
 
-  MconnAdminEventGetSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
-    success*: bool
-    result*: MconnRecordedEvent
-
-  MconnAdminEventsGetLatestResult* = ref object of RootObj
-    count*: float64
-    items*: seq[MconnRecordedEvent]
-
-  MconnAdminEventsGetLatestSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
-    success*: bool
-    result*: MconnAdminEventsGetLatestResult
-
-  MconnAdminEventsGetResult* = ref object of RootObj
-    count*: float64
-    cursor*: Option[string]
-    items*: seq[MconnEventMetadata]
-
-  MconnAdminEventsGetSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
-    success*: bool
-    result*: MconnAdminEventsGetResult
-
-  MconnAdminMacrosReportExceptionResult* = ref object of RootObj
-    message*: string
-
-  MconnAdminMacrosReportExceptionSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
-    success*: bool
-    result*: MconnAdminMacrosReportExceptionResult
-
-  MconnAdminSnapshotGetSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
-    success*: bool
-    result*: MconnSnapshot
-
-  MconnAdminSnapshotsGetLatestResult* = ref object of RootObj
-    count*: float64
-    items*: seq[MconnSnapshot]
-
-  MconnAdminSnapshotsGetLatestSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
-    success*: bool
-    result*: MconnAdminSnapshotsGetLatestResult
-
-  MconnAdminSnapshotsGetResult* = ref object of RootObj
-    count*: float64
-    cursor*: Option[string]
-    items*: seq[MconnSnapshotMetadata]
-
-  MconnAdminSnapshotsGetSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
-    success*: bool
-    result*: MconnAdminSnapshotsGetResult
-
-  MconnBadResponse* = ref object of RootObj
-    messages*: seq[MconnCodedMessage]
-    success*: bool
-    errors*: seq[MconnCodedMessage]
-    result*: Option[MconnNone]
-
-  MconnCodedMessage* = ref object of RootObj
+  MconnTelemetryCodedMessage* = ref object of RootObj
     code*: float64
     message*: string
 
-  MconnConnectorEventsPostResult* = ref object of RootObj
+  MconnTelemetryCustomerEventsGetSuccess* = ref object of RootObj
+    errors*: Option[seq[MconnTelemetryCodedMessage]]
+    messages*: Option[seq[MconnTelemetryCodedMessage]]
+    success*: bool
+    result*: MconnTelemetryRecordedEvent
+
+  MconnTelemetryCustomerEventsLatestGetResult* = ref object of RootObj
     count*: float64
+    items*: seq[MconnTelemetryRecordedEvent]
 
-  MconnConnectorEventsPostSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
+  MconnTelemetryCustomerEventsLatestGetSuccess* = ref object of RootObj
+    errors*: Option[seq[MconnTelemetryCodedMessage]]
+    messages*: Option[seq[MconnTelemetryCodedMessage]]
     success*: bool
-    result*: MconnConnectorEventsPostResult
+    result*: MconnTelemetryCustomerEventsLatestGetResult
 
-  MconnConnectorInterruptsCreateRequest* = MconnInterrupt
-
-  MconnConnectorInterruptsCreateResponse* = ref object of RootObj
-    messages*: seq[MconnCodedMessage]
-    success*: bool
-    errors*: seq[MconnCodedMessage]
-    result*: MconnConnectorInterruptsResult
-
-  MconnConnectorInterruptsListResponse* = ref object of RootObj
-    messages*: seq[MconnCodedMessage]
-    success*: bool
-    errors*: seq[MconnCodedMessage]
-    result*: seq[MconnConnectorInterruptsResult]
-
-  MconnConnectorInterruptsResult* = ref object of RootObj
-    reboot*: Option[JsonNode]
-    restart*: Option[JsonNode]
-    shutdown*: Option[JsonNode]
-    submitted_at*: string
-    triggered_at*: Option[string]
-
-  MconnConnectorSnapshotsPostResult* = ref object of RootObj
-    count*: float64
-
-  MconnConnectorSnapshotsPostSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
-    success*: bool
-    result*: MconnConnectorSnapshotsPostResult
-
-  MconnCustomerConnector* = ref object of RootObj
-    activated*: bool
-    device*: Option[MconnCustomerDevice]
-    id*: MconnUuid
-    interrupt_window_days_of_week*: seq[MconnDayOfWeek]
-      ## Allowed days of the week for upgrades. Default is all days.
-    interrupt_window_duration_hours*: float64
-    interrupt_window_embargo_dates*: seq[MconnEmbargoDate]
-      ## List of dates (YYYY-MM-DD) when upgrades are blocked.
-    interrupt_window_hour_of_day*: float64
-    last_heartbeat*: Option[string]
-    last_seen_version*: Option[string]
-    last_updated*: string
-    license_key*: Option[string]
-    notes*: string
-    primary*: bool
-    site_id*: Option[string]
-    timezone*: string
-
-  MconnCustomerConnectorFields* = ref object of RootObj
-    activated*: Option[bool]
-    interrupt_window_days_of_week*: Option[seq[MconnDayOfWeek]]
-      ## Allowed days of the week for upgrades. Default is all days.
-    interrupt_window_duration_hours*: Option[float64]
-    interrupt_window_embargo_dates*: Option[seq[MconnEmbargoDate]]
-      ## List of dates (YYYY-MM-DD) when upgrades are blocked.
-    interrupt_window_hour_of_day*: Option[float64]
-    notes*: Option[string]
-    primary*: Option[bool]
-    site_id*: Option[string]
-    timezone*: Option[string]
-
-  MconnCustomerConnectorsCreateRequest* = ref object of RootObj
-    device*: MconnCustomerDeviceOptions
-    activated*: Option[bool]
-    interrupt_window_days_of_week*: Option[seq[MconnDayOfWeek]]
-      ## Allowed days of the week for upgrades. Default is all days.
-    interrupt_window_duration_hours*: Option[float64]
-    interrupt_window_embargo_dates*: Option[seq[MconnEmbargoDate]]
-      ## List of dates (YYYY-MM-DD) when upgrades are blocked.
-    interrupt_window_hour_of_day*: Option[float64]
-    notes*: Option[string]
-    primary*: Option[bool]
-    site_id*: Option[string]
-    timezone*: Option[string]
-
-  MconnCustomerConnectorsCreateResponse* = ref object of RootObj
-    messages*: seq[MconnCodedMessage]
-    success*: bool
-    errors*: seq[MconnCodedMessage]
-    result*: MconnCustomerConnector
-
-  MconnCustomerConnectorsDeleteResponse* = ref object of RootObj
-    messages*: seq[MconnCodedMessage]
-    success*: bool
-    errors*: seq[MconnCodedMessage]
-    result*: MconnCustomerConnector
-
-  MconnCustomerConnectorsEditRequest* = ref object of RootObj
-    activated*: Option[bool]
-    interrupt_window_days_of_week*: Option[seq[MconnDayOfWeek]]
-      ## Allowed days of the week for upgrades. Default is all days.
-    interrupt_window_duration_hours*: Option[float64]
-    interrupt_window_embargo_dates*: Option[seq[MconnEmbargoDate]]
-      ## List of dates (YYYY-MM-DD) when upgrades are blocked.
-    interrupt_window_hour_of_day*: Option[float64]
-    notes*: Option[string]
-    primary*: Option[bool]
-    site_id*: Option[string]
-    timezone*: Option[string]
-    provision_license*: Option[bool]
-      ## When true, regenerate license key for the connector.
-
-  MconnCustomerConnectorsEditResponse* = ref object of RootObj
-    messages*: seq[MconnCodedMessage]
-    success*: bool
-    errors*: seq[MconnCodedMessage]
-    result*: MconnCustomerConnector
-
-  MconnCustomerConnectorsGetResponse* = ref object of RootObj
-    messages*: seq[MconnCodedMessage]
-    success*: bool
-    errors*: seq[MconnCodedMessage]
-    result*: MconnCustomerConnector
-
-  MconnCustomerConnectorsListResponse* = ref object of RootObj
-    messages*: seq[MconnCodedMessage]
-    success*: bool
-    errors*: seq[MconnCodedMessage]
-    result*: seq[MconnCustomerConnector]
-
-  MconnCustomerConnectorsUpdateRequest* = ref object of RootObj
-    activated*: Option[bool]
-    interrupt_window_days_of_week*: Option[seq[MconnDayOfWeek]]
-      ## Allowed days of the week for upgrades. Default is all days.
-    interrupt_window_duration_hours*: Option[float64]
-    interrupt_window_embargo_dates*: Option[seq[MconnEmbargoDate]]
-      ## List of dates (YYYY-MM-DD) when upgrades are blocked.
-    interrupt_window_hour_of_day*: Option[float64]
-    notes*: Option[string]
-    primary*: Option[bool]
-    site_id*: Option[string]
-    timezone*: Option[string]
-    provision_license*: Option[bool]
-      ## When true, regenerate license key for the connector.
-
-  MconnCustomerConnectorsUpdateResponse* = ref object of RootObj
-    messages*: seq[MconnCodedMessage]
-    success*: bool
-    errors*: seq[MconnCodedMessage]
-    result*: MconnCustomerConnector
-
-  MconnCustomerDevice* = ref object of RootObj
-    id*: MconnUuid
-    serial_number*: Option[string]
-    `type`*: Option[string]
-
-  MconnCustomerDeviceOptions* = ref object of RootObj
-    ## Exactly one of id, serial_number, or provision_license must be provided.
-    id*: Option[string]
-    provision_license*: Option[bool]
-      ## When true, create and provision a new licence key for the connector.
-    serial_number*: Option[string]
-
-  MconnCustomerEventsGetSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
-    success*: bool
-    result*: MconnRecordedEvent
-
-  MconnCustomerEventsLatestGetResult* = ref object of RootObj
-    count*: float64
-    items*: seq[MconnRecordedEvent]
-
-  MconnCustomerEventsLatestGetSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
-    success*: bool
-    result*: MconnCustomerEventsLatestGetResult
-
-  MconnCustomerEventsListResult* = ref object of RootObj
+  MconnTelemetryCustomerEventsListResult* = ref object of RootObj
     count*: float64
     cursor*: Option[string]
-    items*: seq[MconnEventMetadata]
+    items*: seq[MconnTelemetryEventMetadata]
 
-  MconnCustomerEventsListSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
+  MconnTelemetryCustomerEventsListSuccess* = ref object of RootObj
+    errors*: Option[seq[MconnTelemetryCodedMessage]]
+    messages*: Option[seq[MconnTelemetryCodedMessage]]
     success*: bool
-    result*: MconnCustomerEventsListResult
+    result*: MconnTelemetryCustomerEventsListResult
 
-  MconnCustomerSnapshotsGetSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
+  MconnTelemetryCustomerSnapshotsGetSuccess* = ref object of RootObj
+    errors*: Option[seq[MconnTelemetryCodedMessage]]
+    messages*: Option[seq[MconnTelemetryCodedMessage]]
     success*: bool
-    result*: MconnSnapshot
+    result*: MconnTelemetrySnapshot
 
-  MconnCustomerSnapshotsLatestGetResult* = ref object of RootObj
+  MconnTelemetryCustomerSnapshotsLatestGetResult* = ref object of RootObj
     count*: float64
-    items*: seq[MconnSnapshot]
+    items*: seq[MconnTelemetrySnapshot]
 
-  MconnCustomerSnapshotsLatestGetSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
+  MconnTelemetryCustomerSnapshotsLatestGetSuccess* = ref object of RootObj
+    errors*: Option[seq[MconnTelemetryCodedMessage]]
+    messages*: Option[seq[MconnTelemetryCodedMessage]]
     success*: bool
-    result*: MconnCustomerSnapshotsLatestGetResult
+    result*: MconnTelemetryCustomerSnapshotsLatestGetResult
 
-  MconnCustomerSnapshotsListResult* = ref object of RootObj
+  MconnTelemetryCustomerSnapshotsListResult* = ref object of RootObj
     count*: float64
     cursor*: Option[string]
-    items*: seq[MconnSnapshotMetadata]
+    items*: seq[MconnTelemetrySnapshotMetadata]
 
-  MconnCustomerSnapshotsListSuccess* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
+  MconnTelemetryCustomerSnapshotsListSuccess* = ref object of RootObj
+    errors*: Option[seq[MconnTelemetryCodedMessage]]
+    messages*: Option[seq[MconnTelemetryCodedMessage]]
     success*: bool
-    result*: MconnCustomerSnapshotsListResult
+    result*: MconnTelemetryCustomerSnapshotsListResult
 
-  MconnDayOfWeek* = enum
-    Sunday = "Sunday"
-    Monday = "Monday"
-    Tuesday = "Tuesday"
-    Wednesday = "Wednesday"
-    Thursday = "Thursday"
-    Friday = "Friday"
-    Saturday = "Saturday"
-
-  MconnEmbargoDate* = string
-
-  MconnEnvelope* = ref object of RootObj
-    errors*: Option[seq[MconnCodedMessage]]
-    messages*: Option[seq[MconnCodedMessage]]
+  MconnTelemetryEnvelope* = ref object of RootObj
+    errors*: Option[seq[MconnTelemetryCodedMessage]]
+    messages*: Option[seq[MconnTelemetryCodedMessage]]
     success*: bool
 
-  MconnEvent* = ref object of RootObj
+  MconnTelemetryEvent* = ref object of RootObj
     ## Event kind plus event-specific payload fields.
     ##
     ## Event kinds:
@@ -25571,6 +25393,9 @@ type
     ## - `StartUpgrade`: Started upgrade
     ## - `FinishUpgradeSuccess`: Finished upgrade
     ## - `FinishUpgradeFailure`: Failed upgrade
+    ## - `BlessSlotSuccess`: Blessed boot entry slot
+    ## - `BlessSlotPending`: Boot entry slot is not yet blessed
+    ## - `BlessSlotFailure`: Failed to bless boot entry slot
     ## - `Reconcile`: Reconciled
     ## - `ConfigureCloudflaredTunnel`: Configured Cloudflared tunnel
     ## - `RekeyInstallBoth`: Installed initial inbound and outbound keys
@@ -25586,7 +25411,7 @@ type
     k*: string
       ## Event kind
 
-  MconnEventMetadata* = ref object of RootObj
+  MconnTelemetryEventMetadata* = ref object of RootObj
     a*: float64
       ## Time the Event was collected (seconds since the Unix epoch)
     k*: string
@@ -25596,22 +25421,9 @@ type
     t*: float64
       ## Time the Event was recorded (seconds since the Unix epoch)
 
-  MconnGoodResponse* = ref object of RootObj
-    messages*: seq[MconnCodedMessage]
-    success*: bool
-    errors*: seq[MconnCodedMessage]
-
-  MconnInterrupt* = ref object of RootObj
-    ## Interrupt action for a connector.
-    reboot*: Option[JsonNode]
-    restart*: Option[JsonNode]
-    shutdown*: Option[JsonNode]
-
-  MconnNone* = ref object of RootObj
-
-  MconnRecordedEvent* = ref object of RootObj
+  MconnTelemetryRecordedEvent* = ref object of RootObj
     ## Recorded Event
-    e*: MconnEvent
+    e*: MconnTelemetryEvent
     n*: float64
       ## Sequence number, used to order events with the same timestamp
     t*: float64
@@ -25619,13 +25431,9 @@ type
     v*: Option[string]
       ## Version
 
-  MconnResponse* = ref object of RootObj
-    messages*: seq[MconnCodedMessage]
-    success*: bool
-
-  MconnSnapshot* = ref object of RootObj
+  MconnTelemetrySnapshot* = ref object of RootObj
     ## Snapshot
-    bonds*: Option[seq[MconnSnapshotBond]]
+    bonds*: Option[seq[MconnTelemetrySnapshotBond]]
     count_reclaim_failures*: float64
       ## Count of failures to reclaim space
     count_reclaimed_paths*: float64
@@ -25666,8 +25474,8 @@ type
       ## Time spent in user mode (milliseconds)
     delta*: Option[float64]
       ## Number of network operations applied during state transition
-    dhcp_leases*: Option[seq[MconnSnapshotDhcpLease]]
-    disks*: Option[seq[MconnSnapshotDisk]]
+    dhcp_leases*: Option[seq[MconnTelemetrySnapshotDhcpLease]]
+    disks*: Option[seq[MconnTelemetrySnapshotDisk]]
     epsilon*: Option[float64]
       ## Simulated number of network operations applied during state transition
     ha_state*: Option[string]
@@ -25675,7 +25483,7 @@ type
     ha_value*: Option[float64]
       ## Numeric value associated with high availability state (0 = disabled, 1 = active,
       ## 2 = standby, 3 = stopped, 4 = fault)
-    interfaces*: Option[seq[MconnSnapshotInterface]]
+    interfaces*: Option[seq[MconnTelemetrySnapshotInterface]]
     io_pressure_full_10s*: Option[float64]
       ## Percentage of time over a 10 second window that all tasks were stalled
     io_pressure_full_300s*: Option[float64]
@@ -25821,10 +25629,11 @@ type
       ## Memory consumed by the zswap backend, compressed
     memory_z_swapped_bytes*: Option[float64]
       ## Amount of anonymous memory stored in zswap, uncompressed
-    mounts*: Option[seq[MconnSnapshotMount]]
-    netdevs*: Option[seq[MconnSnapshotNetdev]]
+    mounts*: Option[seq[MconnTelemetrySnapshotMount]]
+    netdevs*: Option[seq[MconnTelemetrySnapshotNetdev]]
     platform*: Option[string]
       ## Platform identifier
+    routes*: Option[seq[MconnTelemetrySnapshotRoute]]
     site_id*: Option[string]
       ## Site identifier
     snmp_icmp_in_addr_mask_reps*: Option[float64]
@@ -25965,8 +25774,8 @@ type
       ## Boottime of the system (seconds since the Unix epoch)
     t*: float64
       ## Time the Snapshot was recorded (seconds since the Unix epoch)
-    thermals*: Option[seq[MconnSnapshotThermal]]
-    tunnels*: Option[seq[MconnSnapshotTunnel]]
+    thermals*: Option[seq[MconnTelemetrySnapshotThermal]]
+    tunnels*: Option[seq[MconnTelemetrySnapshotTunnel]]
     uptime_idle_ms*: Option[float64]
       ## Sum of how much time each core has spent idle
     uptime_total_ms*: Option[float64]
@@ -25974,14 +25783,14 @@ type
     v*: string
       ## Version
 
-  MconnSnapshotBond* = ref object of RootObj
+  MconnTelemetrySnapshotBond* = ref object of RootObj
     ## Snapshot Bond
     name*: string
       ## Name of the network interface
     status*: string
       ## Current status of the network interface
 
-  MconnSnapshotDhcpLease* = ref object of RootObj
+  MconnTelemetrySnapshotDhcpLease* = ref object of RootObj
     ## Snapshot DHCP lease
     client_id*: string
       ## Client ID of the device the IP Address was leased to
@@ -25996,7 +25805,7 @@ type
     mac_address*: string
       ## MAC Address of the device the IP Address was leased to
 
-  MconnSnapshotDisk* = ref object of RootObj
+  MconnTelemetrySnapshotDisk* = ref object of RootObj
     ## Snapshot Disk
     discards*: Option[float64]
       ## Discards completed successfully
@@ -26039,9 +25848,9 @@ type
     writes_merged*: float64
       ## Writes merged
 
-  MconnSnapshotInterface* = ref object of RootObj
+  MconnTelemetrySnapshotInterface* = ref object of RootObj
     ## Snapshot Interface
-    ip_addresses*: Option[seq[MconnSnapshotInterfaceAddress]]
+    ip_addresses*: Option[seq[MconnTelemetrySnapshotInterfaceAddress]]
     name*: string
       ## Name of the network interface
     operstate*: string
@@ -26049,20 +25858,20 @@ type
     speed*: Option[float64]
       ## Speed of the network interface (bits per second)
 
-  MconnSnapshotInterfaceAddress* = ref object of RootObj
+  MconnTelemetrySnapshotInterfaceAddress* = ref object of RootObj
     ## Snapshot Interface Address
     interface_name*: string
       ## Name of the network interface
     ip_address*: string
       ## IP address of the network interface
 
-  MconnSnapshotMetadata* = ref object of RootObj
+  MconnTelemetrySnapshotMetadata* = ref object of RootObj
     a*: float64
       ## Time the Snapshot was collected (seconds since the Unix epoch)
     t*: float64
       ## Time the Snapshot was recorded (seconds since the Unix epoch)
 
-  MconnSnapshotMount* = ref object of RootObj
+  MconnTelemetrySnapshotMount* = ref object of RootObj
     ## Snapshot Mount
     available_bytes*: Option[float64]
       ## Available disk size (bytes)
@@ -26085,7 +25894,7 @@ type
     total_inodes*: Option[float64]
       ## Total inodes on filesystem
 
-  MconnSnapshotNetdev* = ref object of RootObj
+  MconnTelemetrySnapshotNetdev* = ref object of RootObj
     ## Snapshot Netdev
     name*: string
       ## Name of the network device
@@ -26122,7 +25931,22 @@ type
     sent_packets*: float64
       ## Total packets transmitted
 
-  MconnSnapshotThermal* = ref object of RootObj
+  MconnTelemetrySnapshotRoute* = ref object of RootObj
+    ## Snapshot Route
+    destination*: string
+      ## Route destination as default or an IPv4 CIDR
+    gateway*: Option[string]
+      ## Gateway address for the next hop
+    interface_name*: string
+      ## Interface used by the next hop
+    kind*: string
+      ## Routing decision type: tunnel, breakout, or lan
+    metric*: float64
+      ## Route metric; lower metrics are preferred
+    weight*: Option[float64]
+      ## Relative weight within an equal-cost route
+
+  MconnTelemetrySnapshotThermal* = ref object of RootObj
     ## Snapshot Thermal
     critical_celcius*: Option[float64]
       ## Critical failure temperature of the component (degrees Celsius)
@@ -26133,7 +25957,7 @@ type
     max_celcius*: Option[float64]
       ## Maximum temperature of the component (degrees Celsius)
 
-  MconnSnapshotTunnel* = ref object of RootObj
+  MconnTelemetrySnapshotTunnel* = ref object of RootObj
     ## Snapshot Tunnels
     health_state*: string
       ## Name of tunnel health state (unknown, healthy, degraded, down)
@@ -26160,6 +25984,191 @@ type
       ## Number of recent unhealthy pings for this tunnel
     tunnel_id*: string
       ## Tunnel identifier
+
+  MconnAccountId* = string
+
+  MconnBadResponse* = ref object of RootObj
+    messages*: seq[MconnCodedMessage]
+    success*: bool
+    errors*: seq[MconnCodedMessage]
+    result*: Option[MconnNone]
+
+  MconnCodedMessage* = ref object of RootObj
+    code*: int64
+    message*: string
+
+  MconnConnectorInterruptsCreateRequest* = MconnInterrupt
+
+  MconnConnectorInterruptsCreateResponse* = ref object of RootObj
+    messages*: seq[MconnCodedMessage]
+    success*: bool
+    errors*: seq[MconnCodedMessage]
+    result*: MconnConnectorInterruptsResult
+
+  MconnConnectorInterruptsListResponse* = ref object of RootObj
+    messages*: seq[MconnCodedMessage]
+    success*: bool
+    errors*: seq[MconnCodedMessage]
+    result*: seq[MconnConnectorInterruptsResult]
+
+  MconnConnectorInterruptsResult* = ref object of RootObj
+    reboot*: Option[JsonNode]
+    restart*: Option[JsonNode]
+    shutdown*: Option[JsonNode]
+    submitted_at*: string
+    triggered_at*: Option[string]
+
+  MconnCustomerConnector* = ref object of RootObj
+    activated*: bool
+    device*: Option[MconnCustomerDevice]
+    id*: MconnUuid
+    interrupt_window_days_of_week*: seq[MconnDayOfWeek]
+      ## Allowed days of the week for upgrades. Default is all days.
+    interrupt_window_duration_hours*: float64
+    interrupt_window_embargo_dates*: seq[MconnEmbargoDate]
+      ## List of dates (YYYY-MM-DD) when upgrades are blocked.
+    interrupt_window_hour_of_day*: float64
+    last_heartbeat*: Option[string]
+    last_seen_version*: Option[string]
+    last_updated*: string
+    license_key*: Option[string]
+    notes*: string
+    primary*: bool
+    site_id*: Option[string]
+    timezone*: string
+
+  MconnCustomerConnectorFields* = ref object of RootObj
+    activated*: Option[bool]
+    interrupt_window_days_of_week*: Option[seq[MconnDayOfWeek]]
+      ## Allowed days of the week for upgrades. Default is all days.
+    interrupt_window_duration_hours*: Option[float64]
+    interrupt_window_embargo_dates*: Option[seq[MconnEmbargoDate]]
+      ## List of dates (YYYY-MM-DD) when upgrades are blocked.
+    interrupt_window_hour_of_day*: Option[float64]
+    notes*: Option[string]
+    primary*: Option[bool]
+    site_id*: Option[string]
+    timezone*: Option[string]
+
+  MconnCustomerConnectorsCreateRequest* = ref object of RootObj
+    device*: MconnCustomerDeviceOptions
+    activated*: Option[bool]
+    interrupt_window_days_of_week*: Option[seq[MconnDayOfWeek]]
+      ## Allowed days of the week for upgrades. Default is all days.
+    interrupt_window_duration_hours*: Option[float64]
+    interrupt_window_embargo_dates*: Option[seq[MconnEmbargoDate]]
+      ## List of dates (YYYY-MM-DD) when upgrades are blocked.
+    interrupt_window_hour_of_day*: Option[float64]
+    notes*: Option[string]
+    primary*: Option[bool]
+    site_id*: Option[string]
+    timezone*: Option[string]
+
+  MconnCustomerConnectorsCreateResponse* = ref object of RootObj
+    messages*: seq[MconnCodedMessage]
+    success*: bool
+    errors*: seq[MconnCodedMessage]
+    result*: MconnCustomerConnector
+
+  MconnCustomerConnectorsDeleteResponse* = ref object of RootObj
+    messages*: seq[MconnCodedMessage]
+    success*: bool
+    errors*: seq[MconnCodedMessage]
+    result*: MconnCustomerConnector
+
+  MconnCustomerConnectorsEditRequest* = ref object of RootObj
+    activated*: Option[bool]
+    interrupt_window_days_of_week*: Option[seq[MconnDayOfWeek]]
+      ## Allowed days of the week for upgrades. Default is all days.
+    interrupt_window_duration_hours*: Option[float64]
+    interrupt_window_embargo_dates*: Option[seq[MconnEmbargoDate]]
+      ## List of dates (YYYY-MM-DD) when upgrades are blocked.
+    interrupt_window_hour_of_day*: Option[float64]
+    notes*: Option[string]
+    primary*: Option[bool]
+    site_id*: Option[string]
+    timezone*: Option[string]
+    provision_license*: Option[bool]
+      ## When true, regenerate license key for the connector.
+
+  MconnCustomerConnectorsEditResponse* = ref object of RootObj
+    messages*: seq[MconnCodedMessage]
+    success*: bool
+    errors*: seq[MconnCodedMessage]
+    result*: MconnCustomerConnector
+
+  MconnCustomerConnectorsGetResponse* = ref object of RootObj
+    messages*: seq[MconnCodedMessage]
+    success*: bool
+    errors*: seq[MconnCodedMessage]
+    result*: MconnCustomerConnector
+
+  MconnCustomerConnectorsListResponse* = ref object of RootObj
+    messages*: seq[MconnCodedMessage]
+    success*: bool
+    errors*: seq[MconnCodedMessage]
+    result*: seq[MconnCustomerConnector]
+
+  MconnCustomerConnectorsUpdateRequest* = ref object of RootObj
+    activated*: Option[bool]
+    interrupt_window_days_of_week*: Option[seq[MconnDayOfWeek]]
+      ## Allowed days of the week for upgrades. Default is all days.
+    interrupt_window_duration_hours*: Option[float64]
+    interrupt_window_embargo_dates*: Option[seq[MconnEmbargoDate]]
+      ## List of dates (YYYY-MM-DD) when upgrades are blocked.
+    interrupt_window_hour_of_day*: Option[float64]
+    notes*: Option[string]
+    primary*: Option[bool]
+    site_id*: Option[string]
+    timezone*: Option[string]
+    provision_license*: Option[bool]
+      ## When true, regenerate license key for the connector.
+
+  MconnCustomerConnectorsUpdateResponse* = ref object of RootObj
+    messages*: seq[MconnCodedMessage]
+    success*: bool
+    errors*: seq[MconnCodedMessage]
+    result*: MconnCustomerConnector
+
+  MconnCustomerDevice* = ref object of RootObj
+    id*: MconnUuid
+    serial_number*: Option[string]
+    `type`*: Option[string]
+
+  MconnCustomerDeviceOptions* = ref object of RootObj
+    ## Exactly one of id, serial_number, or provision_license must be provided.
+    id*: Option[string]
+    provision_license*: Option[bool]
+      ## When true, create and provision a new licence key for the connector.
+    serial_number*: Option[string]
+
+  MconnDayOfWeek* = enum
+    Sunday = "Sunday"
+    Monday = "Monday"
+    Tuesday = "Tuesday"
+    Wednesday = "Wednesday"
+    Thursday = "Thursday"
+    Friday = "Friday"
+    Saturday = "Saturday"
+
+  MconnEmbargoDate* = string
+
+  MconnGoodResponse* = ref object of RootObj
+    messages*: seq[MconnCodedMessage]
+    success*: bool
+    errors*: seq[MconnCodedMessage]
+
+  MconnInterrupt* = ref object of RootObj
+    ## Interrupt action for a connector.
+    reboot*: Option[JsonNode]
+    restart*: Option[JsonNode]
+    shutdown*: Option[JsonNode]
+
+  MconnNone* = ref object of RootObj
+
+  MconnResponse* = ref object of RootObj
+    messages*: seq[MconnCodedMessage]
+    success*: bool
 
   MconnUuid* = string
 
@@ -28025,6 +28034,8 @@ type
   PostureApiBaseFindingType* = ref object of RootObj
     ## Basic finding type information.
     category*: PostureApiFindingCategory
+    description*: Option[string]
+      ## Detailed description of the finding.
     id*: string
       ## The unique identifier of the finding.
     name*: string
@@ -28370,6 +28381,8 @@ type
 
   PostureApiFindingType* = ref object of RootObj
     category*: PostureApiFindingCategory
+    description*: Option[string]
+      ## Detailed description of the finding.
     id*: string
       ## The unique identifier of the finding.
     name*: string
@@ -28377,8 +28390,6 @@ type
     severity*: PostureApiSeverityEnum
     vendor*: string
       ## The SaaS/Cloud vendor of the platform with which the finding is associated.
-    description*: Option[string]
-      ## Detailed description of the finding.
     remediation*: Option[PostureApiFindingRemediation]
 
   PostureApiIntegrationPolicy* = ref object of RootObj
@@ -42607,7 +42618,7 @@ type
     ## is carried in `errors[].meta.details`, sorted by class name.
     ##
     errors*: seq[JsonNode]
-    messages*: seq[JsonNode]
+    messages*: WorkersMessages
     result*: Option[JsonNode]
     success*: bool
 
@@ -45964,6 +45975,23 @@ type
     off = "off"
     lossless = "lossless"
     lossy = "lossy"
+
+  ZonesPreRender* = ref object of RootObj
+    ## When enabled, Cloudflare serves pre-rendered HTML to eligible search and
+    ## AI crawlers instead of the origin's unrendered response.
+    editable*: Option[bool]
+      ## Whether or not this setting can be modified for this zone (based on your
+      ## Cloudflare plan level).
+    id*: string
+      ## ID of the zone setting.
+    modified_on*: Option[string]
+      ## last time this setting was modified.
+    value*: ZonesPreRenderValue
+
+  ZonesPreRenderValue* = enum
+    ## Value of the zone setting.
+    off = "off"
+    on = "on"
 
   ZonesPrefetchPreload* = ref object of RootObj
     ## Cloudflare will prefetch any URLs that are included in the response headers.

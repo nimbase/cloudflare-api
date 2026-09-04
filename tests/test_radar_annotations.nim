@@ -23,19 +23,18 @@ suite "radar_annotations serialization":
     let obj = cloudflare.GetRadarAnnotationsOutagesLocationsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetRadarAnnotationsOutagesLocationsResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetRadarAnnotationsIdResponse":
+    let obj = cloudflare.GetRadarAnnotationsIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetRadarAnnotationsIdResponse)) == openjson.toJson(obj)
+
 suite "radar_annotations endpoints":
-  test "GET /radar/annotations":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarAnnotations(1, 1, "test", "test", "test", {}, {}, 1, "test", "test", {})
-
-  test "GET /radar/annotations/outages":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarAnnotationsOutages(1, 1, "test", "test", "test", 1, "test", "test", {})
-
   test "GET /radar/annotations/outages/locations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getRadarAnnotationsOutagesLocations(1, "test", "test", "test", {})
+
+  test "GET /radar/annotations/{id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getRadarAnnotationsId("test", {})
 

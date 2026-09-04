@@ -492,13 +492,8 @@ proc patchAccountsAccountIdEmailSecuritySettingsDomainsDomainId*(client: Cloudfl
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdEmailSecuritySettingsDomainsDomainIdVerification*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Returns DNS TXT verification details for a domain created through the Terraform
-  ## API.
-  ## Returns `200 OK` with the TXT record name and value when the domain uses
-  ## `dns_txt`
-  ## verification. Returns `204 No Content` for pre-existing domains or domains
-  ## verified
-  ## by other means (Cloudflare zone ownership, CASB integration).
+  ## Returns the DNS TXT record information when the domain ownership isn't
+  ## verified through Cloudflare zone ownership or CASB integration.
 
   let res = await client.httpGET("/accounts/{account_id}/email-security/settings/domains/{domain_id}/verification")
   let body = await res.body

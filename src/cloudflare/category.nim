@@ -174,7 +174,7 @@ proc getAccountsAccountIdResourceLibraryCategories*(client: CloudflareClient,
 
 proc getAccountsAccountIdResourceLibraryCategoriesId*(client: CloudflareClient,
                                                       accountId: string,
-                                                      id: int64): Future[types.AlexandriaGetCategoryResponse] {.async.} =
+                                                      id: types.AlexandriaCategoryId): Future[types.AlexandriaGetCategoryResponse] {.async.} =
   ## Get application category by ID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/resource-library/categories/{id}")

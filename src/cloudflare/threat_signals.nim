@@ -17,6 +17,11 @@ type
     read: bool
   PatchAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdRequest = object
     read: bool
+  PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTagResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    success: bool
   PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTagsRequest = object
     tag_id: string
   PostAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeedsRequest = object
@@ -96,6 +101,7 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles*(client: Cloudflar
                                                                cursor: string = default(string),
                                                                perPage: int64 = 20,
                                                                feedId: string = default(string),
+                                                               articleId: string = default(string),
                                                                read: bool = default(bool),
                                                                tagId: string = default(string),
                                                                tag: string = default(string),
@@ -116,6 +122,7 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles*(client: Cloudflar
   q["cursor"] = $cursor
   q["per_page"] = $perPage
   q["feed_id"] = $feedId
+  q["article_id"] = $articleId
   q["read"] = $read
   q["tag_id"] = $tagId
   q["tag"] = $tag
@@ -185,11 +192,16 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkil
 
 proc postAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTag*(client: CloudflareClient,
                                                                             accountId: string,
-                                                                            articleId: string): Future[AsyncResponse] {.async.} =
+                                                                            articleId: string): Future[PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTagResponse] {.async.} =
   ## Generate Threat Signals article AI tags.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/{articleId}/tag")
-  return res
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTagResponse)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTags*(client: CloudflareClient,
                                                                              accountId: string,

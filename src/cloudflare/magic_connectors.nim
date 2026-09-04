@@ -126,13 +126,13 @@ proc postAccountsAccountIdMagicConnectorsConnectorIdInterrupts*(client: Cloudfla
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdMagicConnectorsConnectorIdTelemetryEvents*(client: CloudflareClient,
-                                                                    accountId: types.MconnAccountId,
+                                                                    accountId: types.MconnTelemetryAccountId,
                                                                     connectorId: string,
                                                                     `from`: float64,
                                                                     to: float64,
                                                                     limit: float64 = default(float64),
                                                                     cursor: string = default(string),
-                                                                    k: string = default(string)): Future[types.MconnCustomerEventsListSuccess] {.async.} =
+                                                                    k: string = default(string)): Future[types.MconnTelemetryCustomerEventsListSuccess] {.async.} =
   ## Lists Magic WAN Connector Telemetry Events
 
   var q = initOrderedTable[string, string]()
@@ -145,45 +145,45 @@ proc getAccountsAccountIdMagicConnectorsConnectorIdTelemetryEvents*(client: Clou
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.MconnCustomerEventsListSuccess)
+    result = fromJson(body, types.MconnTelemetryCustomerEventsListSuccess)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdMagicConnectorsConnectorIdTelemetryEventsLatest*(client: CloudflareClient,
-                                                                          accountId: types.MconnAccountId,
-                                                                          connectorId: string): Future[types.MconnCustomerEventsLatestGetSuccess] {.async.} =
+                                                                          accountId: types.MconnTelemetryAccountId,
+                                                                          connectorId: string): Future[types.MconnTelemetryCustomerEventsLatestGetSuccess] {.async.} =
   ## Gets latest Magic WAN Connector Telemetry Events
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/magic/connectors/{connectorId}/telemetry/events/latest")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.MconnCustomerEventsLatestGetSuccess)
+    result = fromJson(body, types.MconnTelemetryCustomerEventsLatestGetSuccess)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdMagicConnectorsConnectorIdTelemetryEventsEventTEventN*(client: CloudflareClient,
-                                                                                accountId: types.MconnAccountId,
+                                                                                accountId: types.MconnTelemetryAccountId,
                                                                                 connectorId: string,
                                                                                 eventT: float64,
-                                                                                eventN: float64): Future[types.MconnCustomerEventsGetSuccess] {.async.} =
+                                                                                eventN: float64): Future[types.MconnTelemetryCustomerEventsGetSuccess] {.async.} =
   ## Gets Magic WAN Connector Telemetry Event
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/magic/connectors/{connectorId}/telemetry/events/{eventT}.{eventN}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.MconnCustomerEventsGetSuccess)
+    result = fromJson(body, types.MconnTelemetryCustomerEventsGetSuccess)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdMagicConnectorsConnectorIdTelemetrySnapshots*(client: CloudflareClient,
-                                                                       accountId: types.MconnAccountId,
+                                                                       accountId: types.MconnTelemetryAccountId,
                                                                        connectorId: string,
                                                                        `from`: float64,
                                                                        to: float64,
                                                                        limit: float64 = default(float64),
-                                                                       cursor: string = default(string)): Future[types.MconnCustomerSnapshotsListSuccess] {.async.} =
+                                                                       cursor: string = default(string)): Future[types.MconnTelemetryCustomerSnapshotsListSuccess] {.async.} =
   ## Lists Magic WAN Connector Telemetry Snapshots
 
   var q = initOrderedTable[string, string]()
@@ -195,33 +195,33 @@ proc getAccountsAccountIdMagicConnectorsConnectorIdTelemetrySnapshots*(client: C
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.MconnCustomerSnapshotsListSuccess)
+    result = fromJson(body, types.MconnTelemetryCustomerSnapshotsListSuccess)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdMagicConnectorsConnectorIdTelemetrySnapshotsLatest*(client: CloudflareClient,
-                                                                             accountId: types.MconnAccountId,
-                                                                             connectorId: string): Future[types.MconnCustomerSnapshotsLatestGetSuccess] {.async.} =
+                                                                             accountId: types.MconnTelemetryAccountId,
+                                                                             connectorId: string): Future[types.MconnTelemetryCustomerSnapshotsLatestGetSuccess] {.async.} =
   ## Gets latest Magic WAN Connector Telemetry Snapshots
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/magic/connectors/{connectorId}/telemetry/snapshots/latest")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.MconnCustomerSnapshotsLatestGetSuccess)
+    result = fromJson(body, types.MconnTelemetryCustomerSnapshotsLatestGetSuccess)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdMagicConnectorsConnectorIdTelemetrySnapshotsSnapshotT*(client: CloudflareClient,
-                                                                                accountId: types.MconnAccountId,
+                                                                                accountId: types.MconnTelemetryAccountId,
                                                                                 connectorId: string,
-                                                                                snapshotT: float64): Future[types.MconnCustomerSnapshotsGetSuccess] {.async.} =
+                                                                                snapshotT: float64): Future[types.MconnTelemetryCustomerSnapshotsGetSuccess] {.async.} =
   ## Gets Magic WAN Connector Telemetry Snapshot
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/magic/connectors/{connectorId}/telemetry/snapshots/{snapshotT}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.MconnCustomerSnapshotsGetSuccess)
+    result = fromJson(body, types.MconnTelemetryCustomerSnapshotsGetSuccess)
   else:
     raise newException(CloudflareClientError, body)

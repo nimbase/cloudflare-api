@@ -19,9 +19,18 @@ suite "radar_traffic_anomalies serialization":
     let obj = cloudflare.GetRadarTrafficAnomaliesLocationsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetRadarTrafficAnomaliesLocationsResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetRadarTrafficAnomaliesUuidResponse":
+    let obj = cloudflare.GetRadarTrafficAnomaliesUuidResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetRadarTrafficAnomaliesUuidResponse)) == openjson.toJson(obj)
+
 suite "radar_traffic_anomalies endpoints":
   test "GET /radar/traffic_anomalies/locations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getRadarTrafficAnomaliesLocations(1, "test", "test", "test", {}, {})
+
+  test "GET /radar/traffic_anomalies/{uuid}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getRadarTrafficAnomaliesUuid("test", {})
 

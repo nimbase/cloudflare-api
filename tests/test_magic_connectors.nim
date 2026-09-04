@@ -31,9 +31,13 @@ suite "magic_connectors serialization":
     let obj = newMconnCustomerConnectorsEditResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnCustomerConnectorsEditResponse)) == openjson.toJson(obj)
 
-  test "round-trips MconnCustomerSnapshotsGetSuccess":
-    let obj = newMconnCustomerSnapshotsGetSuccess()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnCustomerSnapshotsGetSuccess)) == openjson.toJson(obj)
+  test "round-trips MconnTelemetryCustomerSnapshotsGetSuccess":
+    let obj = newMconnTelemetryCustomerSnapshotsGetSuccess()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnTelemetryCustomerSnapshotsGetSuccess)) == openjson.toJson(obj)
+
+  test "round-trips MconnTelemetryCustomerEventsGetSuccess":
+    let obj = newMconnTelemetryCustomerEventsGetSuccess()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnTelemetryCustomerEventsGetSuccess)) == openjson.toJson(obj)
 
   test "round-trips MconnInterrupt":
     let obj = newMconnInterrupt()
@@ -43,9 +47,9 @@ suite "magic_connectors serialization":
     let obj = newMconnCustomerConnectorsUpdateRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnCustomerConnectorsUpdateRequest)) == openjson.toJson(obj)
 
-  test "round-trips MconnCustomerSnapshotsLatestGetSuccess":
-    let obj = newMconnCustomerSnapshotsLatestGetSuccess()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnCustomerSnapshotsLatestGetSuccess)) == openjson.toJson(obj)
+  test "round-trips MconnTelemetryCustomerEventsListSuccess":
+    let obj = newMconnTelemetryCustomerEventsListSuccess()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnTelemetryCustomerEventsListSuccess)) == openjson.toJson(obj)
 
   test "round-trips MconnCustomerConnectorsUpdateResponse":
     let obj = newMconnCustomerConnectorsUpdateResponse()
@@ -55,13 +59,9 @@ suite "magic_connectors serialization":
     let obj = newMconnCustomerConnectorsEditRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnCustomerConnectorsEditRequest)) == openjson.toJson(obj)
 
-  test "round-trips MconnCustomerEventsGetSuccess":
-    let obj = newMconnCustomerEventsGetSuccess()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnCustomerEventsGetSuccess)) == openjson.toJson(obj)
-
-  test "round-trips MconnCustomerEventsListSuccess":
-    let obj = newMconnCustomerEventsListSuccess()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnCustomerEventsListSuccess)) == openjson.toJson(obj)
+  test "round-trips MconnTelemetryCustomerEventsLatestGetSuccess":
+    let obj = newMconnTelemetryCustomerEventsLatestGetSuccess()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnTelemetryCustomerEventsLatestGetSuccess)) == openjson.toJson(obj)
 
   test "round-trips MconnBadResponse":
     let obj = newMconnBadResponse()
@@ -71,25 +71,25 @@ suite "magic_connectors serialization":
     let obj = newMconnConnectorInterruptsListResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnConnectorInterruptsListResponse)) == openjson.toJson(obj)
 
+  test "round-trips MconnTelemetryCustomerSnapshotsLatestGetSuccess":
+    let obj = newMconnTelemetryCustomerSnapshotsLatestGetSuccess()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnTelemetryCustomerSnapshotsLatestGetSuccess)) == openjson.toJson(obj)
+
+  test "round-trips MconnTelemetryEnvelope":
+    let obj = newMconnTelemetryEnvelope()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnTelemetryEnvelope)) == openjson.toJson(obj)
+
   test "round-trips MconnCustomerConnectorsCreateResponse":
     let obj = newMconnCustomerConnectorsCreateResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnCustomerConnectorsCreateResponse)) == openjson.toJson(obj)
-
-  test "round-trips MconnCustomerSnapshotsListSuccess":
-    let obj = newMconnCustomerSnapshotsListSuccess()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnCustomerSnapshotsListSuccess)) == openjson.toJson(obj)
 
   test "round-trips MconnCustomerConnectorsDeleteResponse":
     let obj = newMconnCustomerConnectorsDeleteResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnCustomerConnectorsDeleteResponse)) == openjson.toJson(obj)
 
-  test "round-trips MconnEnvelope":
-    let obj = newMconnEnvelope()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnEnvelope)) == openjson.toJson(obj)
-
-  test "round-trips MconnCustomerEventsLatestGetSuccess":
-    let obj = newMconnCustomerEventsLatestGetSuccess()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnCustomerEventsLatestGetSuccess)) == openjson.toJson(obj)
+  test "round-trips MconnTelemetryCustomerSnapshotsListSuccess":
+    let obj = newMconnTelemetryCustomerSnapshotsListSuccess()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnTelemetryCustomerSnapshotsListSuccess)) == openjson.toJson(obj)
 
 suite "magic_connectors endpoints":
   test "GET /accounts/{account_id}/magic/connectors":

@@ -4,7 +4,7 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[json]
+import std/[strformat, json]
 import ./private/metaclient
 
 type
@@ -15,6 +15,9 @@ type
     result: JsonNode
     success: bool
   GetRadarAnnotationsOutagesLocationsResponse* = object
+    result: JsonNode
+    success: bool
+  GetRadarAnnotationsIdResponse* = object
     result: JsonNode
     success: bool
   RadarAnnotationDataSourceOption* = enum
@@ -52,6 +55,31 @@ type
     eventTypePIPELINE = "PIPELINE"
     eventTypeTRAFFICANOMALY = "TRAFFIC_ANOMALY"
 
+  RadarAnnotationOutageTypeOption* = enum
+    outageTypeNATIONWIDE = "NATIONWIDE"
+    outageTypeREGIONAL = "REGIONAL"
+    outageTypeNETWORK = "NETWORK"
+    outageTypePLATFORM = "PLATFORM"
+
+  RadarAnnotationOutageCauseOption* = enum
+    outageCauseBLOCKING = "BLOCKING"
+    outageCauseCABLECUT = "CABLE_CUT"
+    outageCauseCYBERATTACK = "CYBERATTACK"
+    outageCauseDNS = "DNS"
+    outageCauseFIRE = "FIRE"
+    outageCauseGOVERNMENTDIRECTED = "GOVERNMENT_DIRECTED"
+    outageCauseMAINTENANCE = "MAINTENANCE"
+    outageCauseMECHANICAL = "MECHANICAL"
+    outageCauseMILITARYACTION = "MILITARY_ACTION"
+    outageCauseMISCONFIGURATION = "MISCONFIGURATION"
+    outageCauseNATURALDISASTER = "NATURAL_DISASTER"
+    outageCauseNETWORKPROBLEM = "NETWORK_PROBLEM"
+    outageCausePOWEROUTAGE = "POWER_OUTAGE"
+    outageCauseSOFTWARE = "SOFTWARE"
+    outageCauseTECHNICALPROBLEM = "TECHNICAL_PROBLEM"
+    outageCauseUNKNOWN = "UNKNOWN"
+    outageCauseWEATHER = "WEATHER"
+
   RadarAnnotationFormatOption* = enum
     formatJSON = "JSON"
     formatCSV = "CSV"
@@ -64,9 +92,18 @@ proc getRadarAnnotations*(client: CloudflareClient, limit: int64 = 5,
                           dateEnd: string = default(string),
                           dataSource: RadarAnnotationDataSourceOption,
                           eventType: RadarAnnotationEventTypeOption,
+                          outageType: RadarAnnotationOutageTypeOption,
+                          outageCause: RadarAnnotationOutageCauseOption,
+                          tags: seq[string] = default(seq[string]),
+                          query: string = default(string),
                           asn: int64 = default(int64),
                           location: string = default(string),
+                          geoId: string = default(string),
                           origin: string = default(string),
+                          tld: string = default(string),
+                          ca: string = default(string),
+                          log: string = default(string),
+                          bot: string = default(string),
                           format: RadarAnnotationFormatOption): Future[GetRadarAnnotationsResponse] {.async.} =
   ## Retrieves the latest annotations.
 
@@ -78,9 +115,18 @@ proc getRadarAnnotations*(client: CloudflareClient, limit: int64 = 5,
   q["dateEnd"] = $dateEnd
   q["dataSource"] = $dataSource
   q["eventType"] = $eventType
+  q["outageType"] = $outageType
+  q["outageCause"] = $outageCause
+  q["tags"] = $tags
+  q["query"] = $query
   q["asn"] = $asn
   q["location"] = $location
+  q["geoId"] = $geoId
   q["origin"] = $origin
+  q["tld"] = $tld
+  q["ca"] = $ca
+  q["log"] = $log
+  q["bot"] = $bot
   q["format"] = $format
   let res = await client.httpGET("/radar/annotations", q)
   let body = await res.body
@@ -95,9 +141,19 @@ proc getRadarAnnotationsOutages*(client: CloudflareClient, limit: int64 = 5,
                                  dateRange: string = default(string),
                                  dateStart: string = default(string),
                                  dateEnd: string = default(string),
+                                 dataSource: RadarAnnotationDataSourceOption,
+                                 outageType: RadarAnnotationOutageTypeOption,
+                                 outageCause: RadarAnnotationOutageCauseOption,
+                                 tags: seq[string] = default(seq[string]),
+                                 query: string = default(string),
                                  asn: int64 = default(int64),
                                  location: string = default(string),
+                                 geoId: string = default(string),
                                  origin: string = default(string),
+                                 tld: string = default(string),
+                                 ca: string = default(string),
+                                 log: string = default(string),
+                                 bot: string = default(string),
                                  format: RadarAnnotationFormatOption): Future[GetRadarAnnotationsOutagesResponse] {.async.} =
   ## Retrieves the latest Internet outages and anomalies.
 
@@ -107,9 +163,19 @@ proc getRadarAnnotationsOutages*(client: CloudflareClient, limit: int64 = 5,
   q["dateRange"] = $dateRange
   q["dateStart"] = $dateStart
   q["dateEnd"] = $dateEnd
+  q["dataSource"] = $dataSource
+  q["outageType"] = $outageType
+  q["outageCause"] = $outageCause
+  q["tags"] = $tags
+  q["query"] = $query
   q["asn"] = $asn
   q["location"] = $location
+  q["geoId"] = $geoId
   q["origin"] = $origin
+  q["tld"] = $tld
+  q["ca"] = $ca
+  q["log"] = $log
+  q["bot"] = $bot
   q["format"] = $format
   let res = await client.httpGET("/radar/annotations/outages", q)
   let body = await res.body
@@ -138,5 +204,19 @@ proc getRadarAnnotationsOutagesLocations*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, GetRadarAnnotationsOutagesLocationsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getRadarAnnotationsId*(client: CloudflareClient, id: string,
+                            format: RadarAnnotationFormatOption): Future[GetRadarAnnotationsIdResponse] {.async.} =
+  ## Retrieves a single annotation by ID.
+
+  var q = initOrderedTable[string, string]()
+  q["format"] = $format
+  let res = await client.httpGET(fmt"/radar/annotations/{id}", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetRadarAnnotationsIdResponse)
   else:
     raise newException(CloudflareClientError, body)

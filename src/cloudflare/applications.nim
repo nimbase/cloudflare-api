@@ -227,7 +227,7 @@ proc postAccountsAccountIdResourceLibraryApplications*(client: CloudflareClient,
 
 proc getAccountsAccountIdResourceLibraryApplicationsId*(client: CloudflareClient,
                                                         accountId: string,
-                                                        id: int64): Future[types.AlexandriaGetApplicationResponse] {.async.} =
+                                                        id: types.AlexandriaApplicationId): Future[types.AlexandriaGetApplicationResponse] {.async.} =
   ## Get application by ID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/resource-library/applications/{id}")

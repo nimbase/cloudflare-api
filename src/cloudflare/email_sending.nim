@@ -45,6 +45,20 @@ proc getAccountsAccountIdEmailSendingMessagesMessageId*(client: CloudflareClient
   let res = await client.httpGET(fmt"/accounts/{accountId}/email/sending/messages/{messageId}")
   return res
 
+proc getAccountsAccountIdEmailSendingReputation*(client: CloudflareClient,
+                                                 accountId: types.EmailIdentifier): Future[types.EmailSendingReputationResponseSingle] {.async.} =
+  ## Returns the authoritative Email Sending reputation state and active evaluation
+  ## policy. Accounts without an evaluation are Healthy with null evaluation
+  ## timestamps.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/email/sending/reputation")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.EmailSendingReputationResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc postAccountsAccountIdEmailSendingSend*(client: CloudflareClient,
                                             accountId: string,
                                             body: types.EmailSendingEmailBuilder): Future[PostAccountsAccountIdEmailSendingSendResponse] {.async.} =

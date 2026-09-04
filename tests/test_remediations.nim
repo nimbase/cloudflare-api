@@ -19,6 +19,10 @@ suite "remediations serialization":
     let obj = newPostureApiPaginatedRemediationJobList()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostureApiPaginatedRemediationJobList)) == openjson.toJson(obj)
 
+  test "round-trips PostureApiErrorResponse":
+    let obj = newPostureApiErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostureApiErrorResponse)) == openjson.toJson(obj)
+
   test "round-trips PostureApiCreateRemediationJobResponse":
     let obj = newPostureApiCreateRemediationJobResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostureApiCreateRemediationJobResponse)) == openjson.toJson(obj)

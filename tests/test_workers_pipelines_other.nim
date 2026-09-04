@@ -15,6 +15,10 @@ suite "workers_pipelines_other serialization":
     let obj = newCloudflarePipelinesWorkersPipelinesPipeline()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudflarePipelinesWorkersPipelinesPipeline)) == openjson.toJson(obj)
 
+  test "round-trips CloudflarePipelinesSinkFormat":
+    let obj = newCloudflarePipelinesSinkFormat()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudflarePipelinesSinkFormat)) == openjson.toJson(obj)
+
   test "round-trips CloudflarePipelinesFormat":
     let obj = newCloudflarePipelinesFormat()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudflarePipelinesFormat)) == openjson.toJson(obj)

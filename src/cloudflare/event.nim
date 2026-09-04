@@ -30,6 +30,7 @@ type
     indicators: Option[seq[JsonNode]]
     insight: Option[string]
     raw: JsonNode
+    source: Option[JsonNode]
     tags: Option[seq[string]]
     target_country: Option[string]
     target_industry: Option[string]
