@@ -4,7 +4,7 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[strformat, json]
+import std/[strformat]
 import ./private/metaclient
 import ./private/types
 
@@ -62,7 +62,7 @@ proc postZonesZoneIdEmailRoutingDisable*(client: CloudflareClient,
 
 proc getZonesZoneIdEmailRoutingDns*(client: CloudflareClient,
                                     zoneId: types.EmailIdentifier,
-                                    subdomain: types.EmailEmailSettingName = default(types.EmailEmailSettingName)): Future[JsonNode] {.async.} =
+                                    subdomain: types.EmailEmailSettingName = default(types.EmailEmailSettingName)): Future[types.EmailDnsSettingsResponseCollection] {.async.} =
   ## Show the DNS records needed to configure your Email Routing zone.
 
   var q = initOrderedTable[string, string]()
@@ -71,7 +71,7 @@ proc getZonesZoneIdEmailRoutingDns*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, types.EmailDnsSettingsResponseCollection)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -90,7 +90,7 @@ proc postZonesZoneIdEmailRoutingDns*(client: CloudflareClient,
 
 proc deleteZonesZoneIdEmailRoutingDns*(client: CloudflareClient,
                                        zoneId: types.EmailIdentifier,
-                                       body: types.EmailEmailSettingDnsRequestBody): Future[JsonNode] {.async.} =
+                                       body: types.EmailEmailSettingDnsRequestBody): Future[types.EmailEmailSettingsResponseSingle] {.async.} =
   ## Disable your Email Routing zone. Also removes additional MX records previously
   ## required for Email Routing to work.
 
@@ -98,7 +98,7 @@ proc deleteZonesZoneIdEmailRoutingDns*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, JsonNode)
+    result = fromJson(body, types.EmailEmailSettingsResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 

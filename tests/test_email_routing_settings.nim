@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "email_routing_settings serialization":
+  test "round-trips EmailDnsSettingsResponseCollection":
+    let obj = newEmailDnsSettingsResponseCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailDnsSettingsResponseCollection)) == openjson.toJson(obj)
+
   test "round-trips EmailEmailSettingDnsRequestBody":
     let obj = newEmailEmailSettingDnsRequestBody()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailEmailSettingDnsRequestBody)) == openjson.toJson(obj)

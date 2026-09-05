@@ -16820,20 +16820,6 @@ type
 
   EmailEmail* = string
 
-  EmailEmailRoutingDnsQueryResponse* = ref object of RootObj
-    errors*: EmailMessages
-    messages*: EmailMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[JsonNode]
-    result*: Option[JsonNode]
-
-  EmailEmailRoutingGetResponseDnsError* = ref object of RootObj
-    code*: Option[string]
-    missing*: Option[EmailDnsRecord]
-
-  EmailEmailRoutingGetResponseDnsErrors* = seq[EmailEmailRoutingGetResponseDnsError]
-
   EmailEmailSettingCreated* = string
 
   EmailEmailSettingDnsRequestBody* = ref object of RootObj
@@ -22475,8 +22461,9 @@ type
       ## well, otherwise they will end up as null. Format as a Go `text/template` without
       ## any standard functions, like conditionals, loops, sub-templates, etc.
     sample_rate*: Option[float64]
-      ## Floating number to specify sampling rate. Sampling is applied on top of
-      ## filtering, and regardless of the current `sample_interval` of the data.
+      ## Specifies the sampling rate as a floating number greater than 0 and at most 1.
+      ## Sampling is applied on top of filtering, and regardless of the current
+      ## `sample_interval` of the data.
     timestamp_format*: Option[string]
       ## String to specify the format for timestamps, such as `unixnano`, `unix`,
       ## `rfc3339`, `rfc3339ms` or `rfc3339ns`.
