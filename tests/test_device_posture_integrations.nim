@@ -15,10 +15,6 @@ suite "device_posture_integrations serialization":
     let obj = newTeamsDevicesSchemasIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesSchemasIdResponse)) == openjson.toJson(obj)
 
-  test "round-trips TeamsDevicesIdentifier":
-    let obj = newTeamsDevicesIdentifier()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesIdentifier)) == openjson.toJson(obj)
-
   test "round-trips TeamsDevicesSchemasSingleResponse":
     let obj = newTeamsDevicesSchemasSingleResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesSchemasSingleResponse)) == openjson.toJson(obj)
@@ -39,15 +35,15 @@ suite "device_posture_integrations endpoints":
   test "GET /accounts/{account_id}/devices/posture/integration":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPostureIntegration(newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesPostureIntegration("test")
 
   test "GET /accounts/{account_id}/devices/posture/integration/{integration_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPostureIntegrationIntegrationId("test", newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesPostureIntegrationIntegrationId("test", "test")
 
   test "DELETE /accounts/{account_id}/devices/posture/integration/{integration_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdDevicesPostureIntegrationIntegrationId("test", newTeamsDevicesIdentifier())
+    discard waitFor client.deleteAccountsAccountIdDevicesPostureIntegrationIntegrationId("test", "test")
 

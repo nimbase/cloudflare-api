@@ -43,7 +43,7 @@ suite "zero_trust_gateway_rules endpoints":
   test "GET /accounts/{account_id}/gateway/rules":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdGatewayRules("test")
+    discard waitFor client.getAccountsAccountIdGatewayRules("test", @["test"], "test", {}, {})
 
   test "PATCH /accounts/{account_id}/gateway/rules":
     let client = initCloudflareClient("test-key")

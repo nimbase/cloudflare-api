@@ -34,6 +34,7 @@ type
     support_url: Option[types.TeamsDevicesSupportUrl]
     switch_locked: Option[types.TeamsDevicesSwitchLocked]
     tunnel_protocol: Option[types.TeamsDevicesTunnelProtocol]
+    uninstall_protection: Option[types.TeamsDevicesUninstallProtection]
     virtual_networks: Option[types.TeamsDevicesVirtualNetworks]
   PatchAccountsAccountIdDevicesPolicyRequest = object
     allow_mode_switch: Option[types.TeamsDevicesAllowModeSwitch]
@@ -55,6 +56,7 @@ type
     support_url: Option[types.TeamsDevicesSupportUrl]
     switch_locked: Option[types.TeamsDevicesSwitchLocked]
     tunnel_protocol: Option[types.TeamsDevicesTunnelProtocol]
+    uninstall_protection: Option[types.TeamsDevicesUninstallProtection]
     virtual_networks: Option[types.TeamsDevicesVirtualNetworks]
   PatchAccountsAccountIdDevicesPolicyPolicyIdRequest = object
     allow_mode_switch: Option[types.TeamsDevicesAllowModeSwitch]
@@ -81,6 +83,7 @@ type
     support_url: Option[types.TeamsDevicesSupportUrl]
     switch_locked: Option[types.TeamsDevicesSwitchLocked]
     tunnel_protocol: Option[types.TeamsDevicesTunnelProtocol]
+    uninstall_protection: Option[types.TeamsDevicesUninstallProtection]
     virtual_networks: Option[types.TeamsDevicesVirtualNetworks]
 
 proc getAccountsAccountIdDevices*(client: CloudflareClient,

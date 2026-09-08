@@ -19,6 +19,10 @@ suite "warp_teams_device_api_other serialization":
     let obj = newTeamsDevicesOverrideCodes()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesOverrideCodes)) == openjson.toJson(obj)
 
+  test "round-trips TeamsDevicesV4ErrorResponse":
+    let obj = newTeamsDevicesV4ErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesV4ErrorResponse)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdDevicesRegistrationsRegistrationIdOverrideCodesResponse":
     let obj = cloudflare.GetAccountsAccountIdDevicesRegistrationsRegistrationIdOverrideCodesResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdDevicesRegistrationsRegistrationIdOverrideCodesResponse)) == openjson.toJson(obj)

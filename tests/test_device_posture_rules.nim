@@ -11,10 +11,6 @@ import cloudflare
 import ./common
 
 suite "device_posture_rules serialization":
-  test "round-trips TeamsDevicesIdentifier":
-    let obj = newTeamsDevicesIdentifier()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesIdentifier)) == openjson.toJson(obj)
-
   test "round-trips TeamsDevicesInput":
     let obj = newTeamsDevicesInput()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesInput)) == openjson.toJson(obj)
@@ -39,15 +35,15 @@ suite "device_posture_rules endpoints":
   test "GET /accounts/{account_id}/devices/posture":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPosture(newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesPosture("test")
 
   test "GET /accounts/{account_id}/devices/posture/{rule_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPostureRuleId("test", newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesPostureRuleId("test", "test")
 
   test "DELETE /accounts/{account_id}/devices/posture/{rule_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdDevicesPostureRuleId("test", newTeamsDevicesIdentifier())
+    discard waitFor client.deleteAccountsAccountIdDevicesPostureRuleId("test", "test")
 

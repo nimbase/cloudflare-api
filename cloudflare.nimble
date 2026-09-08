@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.18"
+version       = "0.1.19"
 author        = "nimbase-bot[bot]"
 description   = "Welcome to Cloudflare's API documentation site."
 license       = "MIT"

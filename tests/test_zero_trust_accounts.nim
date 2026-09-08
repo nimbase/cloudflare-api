@@ -11,10 +11,6 @@ import cloudflare
 import ./common
 
 suite "zero_trust_accounts serialization":
-  test "round-trips TeamsDevicesIdentifier":
-    let obj = newTeamsDevicesIdentifier()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesIdentifier)) == openjson.toJson(obj)
-
   test "round-trips ZeroTrustGatewayApiResponseCommonFailure":
     let obj = newZeroTrustGatewayApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ZeroTrustGatewayApiResponseCommonFailure)) == openjson.toJson(obj)
@@ -63,22 +59,22 @@ suite "zero_trust_accounts endpoints":
   test "GET /accounts/{account_id}/devices/settings":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesSettings(newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesSettings("test")
 
   test "PUT /accounts/{account_id}/devices/settings":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdDevicesSettings(newTeamsDevicesIdentifier(), newTeamsDevicesZeroTrustAccountDeviceSettings())
+    discard waitFor client.putAccountsAccountIdDevicesSettings("test", newTeamsDevicesZeroTrustAccountDeviceSettings())
 
   test "DELETE /accounts/{account_id}/devices/settings":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdDevicesSettings(newTeamsDevicesIdentifier())
+    discard waitFor client.deleteAccountsAccountIdDevicesSettings("test")
 
   test "PATCH /accounts/{account_id}/devices/settings":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchAccountsAccountIdDevicesSettings(newTeamsDevicesIdentifier(), newTeamsDevicesZeroTrustAccountDeviceSettings())
+    discard waitFor client.patchAccountsAccountIdDevicesSettings("test", newTeamsDevicesZeroTrustAccountDeviceSettings())
 
   test "GET /accounts/{account_id}/gateway":
     let client = initCloudflareClient("test-key")

@@ -14,12 +14,30 @@ type
   PatchAccountsAccountIdGatewayProxyEndpointsProxyEndpointIdRequest = object
     ips: Option[types.ZeroTrustGatewayIps]
     name: Option[types.ZeroTrustGatewayName6]
+  ZeroTrustGatewayProxyEndpointOrderByOption* = enum
+    orderByName = "name"
+    orderByCreatedAt = "created_at"
+    orderByUpdatedAt = "updated_at"
+
+  ZeroTrustGatewayProxyEndpointDirectionOption* = enum
+    directionAsc = "asc"
+    directionDesc = "desc"
+
 
 proc getAccountsAccountIdGatewayProxyEndpoints*(client: CloudflareClient,
-                                                accountId: types.ZeroTrustGatewayIdentifier2): Future[types.ZeroTrustGatewayResponseCollection9] {.async.} =
+                                                accountId: types.ZeroTrustGatewayIdentifier2,
+                                                filter: seq[string] = @[],
+                                                search: string = default(string),
+                                                orderBy: ZeroTrustGatewayProxyEndpointOrderByOption,
+                                                direction: ZeroTrustGatewayProxyEndpointDirectionOption): Future[types.ZeroTrustGatewayResponseCollection9] {.async.} =
   ## List all Zero Trust Gateway proxy endpoints for an account.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/gateway/proxy_endpoints")
+  var q = initOrderedTable[string, string]()
+  for v in filter: q["filter"] = $v
+  q["search"] = $search
+  q["order_by"] = $orderBy
+  q["direction"] = $direction
+  let res = await client.httpGET(fmt"/accounts/{accountId}/gateway/proxy_endpoints", q)
   let body = await res.body
   case res.code
   of Http200:

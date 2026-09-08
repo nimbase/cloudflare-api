@@ -11,10 +11,6 @@ import cloudflare
 import ./common
 
 suite "device_managed_networks serialization":
-  test "round-trips TeamsDevicesIdentifier":
-    let obj = newTeamsDevicesIdentifier()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesIdentifier)) == openjson.toJson(obj)
-
   test "round-trips TeamsDevicesSchemasConfigRequest":
     let obj = newTeamsDevicesSchemasConfigRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesSchemasConfigRequest)) == openjson.toJson(obj)
@@ -35,15 +31,15 @@ suite "device_managed_networks endpoints":
   test "GET /accounts/{account_id}/devices/networks":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesNetworks(newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesNetworks("test")
 
   test "GET /accounts/{account_id}/devices/networks/{network_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesNetworksNetworkId("test", newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesNetworksNetworkId("test", "test")
 
   test "DELETE /accounts/{account_id}/devices/networks/{network_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdDevicesNetworksNetworkId("test", newTeamsDevicesIdentifier())
+    discard waitFor client.deleteAccountsAccountIdDevicesNetworksNetworkId("test", "test")
 

@@ -75,8 +75,8 @@ proc postAccountsAccountIdFlagshipAppsAppIdFlags*(client: CloudflareClient,
                                                   accountId: string,
                                                   appId: string,
                                                   body: PostAccountsAccountIdFlagshipAppsAppIdFlagsRequest): Future[PostAccountsAccountIdFlagshipAppsAppIdFlagsResponse] {.async.} =
-  ## Creates a flag. Returns 409 if the key already exists. `type` is inferred from
-  ## variation values and may be omitted.
+  ## Creates a flag. Returns 409 if the key already exists. `type` is always inferred
+  ## from variation values; legacy request-side values are ignored.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/flagship/apps/{appId}/flags", body)
   let body = await res.body

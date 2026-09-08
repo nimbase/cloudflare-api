@@ -27,6 +27,10 @@ suite "registrations serialization":
     let obj = newTeamsDevicesCursorResultInfo()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesCursorResultInfo)) == openjson.toJson(obj)
 
+  test "round-trips TeamsDevicesV4ErrorResponse":
+    let obj = newTeamsDevicesV4ErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesV4ErrorResponse)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdDevicesRegistrationsResponse":
     let obj = cloudflare.GetAccountsAccountIdDevicesRegistrationsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdDevicesRegistrationsResponse)) == openjson.toJson(obj)

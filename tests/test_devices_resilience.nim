@@ -11,10 +11,6 @@ import cloudflare
 import ./common
 
 suite "devices_resilience serialization":
-  test "round-trips TeamsDevicesIdentifier":
-    let obj = newTeamsDevicesIdentifier()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesIdentifier)) == openjson.toJson(obj)
-
   test "round-trips TeamsDevicesGlobalWarpOverrideResponse":
     let obj = newTeamsDevicesGlobalWarpOverrideResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesGlobalWarpOverrideResponse)) == openjson.toJson(obj)
@@ -31,10 +27,10 @@ suite "devices_resilience endpoints":
   test "GET /accounts/{account_id}/devices/resilience/disconnect":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesResilienceDisconnect(newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesResilienceDisconnect("test")
 
   test "POST /accounts/{account_id}/devices/resilience/disconnect":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdDevicesResilienceDisconnect(newTeamsDevicesIdentifier(), newTeamsDevicesGlobalWarpOverrideRequest())
+    discard waitFor client.postAccountsAccountIdDevicesResilienceDisconnect("test", newTeamsDevicesGlobalWarpOverrideRequest())
 

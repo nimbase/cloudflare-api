@@ -39,7 +39,7 @@ suite "zero_trust_gateway_locations endpoints":
   test "GET /accounts/{account_id}/gateway/locations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdGatewayLocations("test")
+    discard waitFor client.getAccountsAccountIdGatewayLocations("test", @["test"], "test", {}, {})
 
   test "GET /accounts/{account_id}/gateway/locations/{location_id}":
     let client = initCloudflareClient("test-key")

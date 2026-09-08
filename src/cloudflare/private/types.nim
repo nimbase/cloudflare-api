@@ -17241,6 +17241,53 @@ type
 
   EntitlementsIdentifier* = string
 
+  FieldExtractorsApiError* = ref object of RootObj
+    code*: float64
+    message*: string
+    source*: Option[JsonNode]
+      ## Points to the offending input as a JSON Pointer into the request body.
+
+  FieldExtractorsDeleteResponse* = ref object of RootObj
+    errors*: seq[FieldExtractorsApiError]
+    messages*: seq[JsonNode]
+      ## Additional informational messages.
+    result*: Option[JsonNode]
+      ## Result is null.
+    success*: bool
+
+  FieldExtractorsErrorResponse* = ref object of RootObj
+    errors*: seq[FieldExtractorsApiError]
+    messages*: seq[JsonNode]
+      ## Additional informational messages.
+    result*: Option[JsonNode]
+      ## Result is null.
+    success*: bool
+
+  FieldExtractorsExtractorResult* = ref object of RootObj
+    extractor*: string
+      ## Extractor type.
+    rules*: seq[FieldExtractorsRuleOutput]
+
+  FieldExtractorsFieldOutput* = ref object of RootObj
+    expression*: string
+      ## Wirefilter value expression.
+    name*: string
+      ## Field name.
+
+  FieldExtractorsRuleOutput* = ref object of RootObj
+    description*: Option[string]
+      ## Human-readable rule description.
+    fields*: seq[FieldExtractorsFieldOutput]
+    `ref`*: string
+      ## Stable rule identifier.
+
+  FieldExtractorsSuccessResponse* = ref object of RootObj
+    errors*: seq[FieldExtractorsApiError]
+    messages*: seq[JsonNode]
+      ## Additional informational messages.
+    result*: FieldExtractorsExtractorResult
+    success*: bool
+
   FirewallAccountIdentifier* = string
 
   FirewallAction* = ref object of RootObj
@@ -17947,9 +17994,8 @@ type
     rules*: seq[JsonNode]
       ## Targeting rules evaluated in ascending `priority`; the first matching rule wins.
       ## An empty array means the flag always serves `default_variation`.
-    `type`*: Option[string]
-      ## Value type of the flag's variations. The API infers this from the variation
-      ## values on write, so you can omit it in requests.
+    `type`*: string
+      ## Server-inferred value type shared by all of the flag's variations.
     updated_at*: Option[string]
     updated_by*: Option[string]
     variations*: JsonNode
@@ -33153,7 +33199,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33173,7 +33219,7 @@ type
     action_parameters*: Option[JsonNode]
       ## The parameters configuring the rule's action.
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33192,7 +33238,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33214,7 +33260,7 @@ type
     action_parameters*: Option[JsonNode]
       ## The parameters configuring the rule's action.
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33250,7 +33296,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33278,7 +33324,7 @@ type
     action_parameters*: Option[JsonNode]
       ## The parameters configuring the rule's action.
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33298,7 +33344,7 @@ type
     action_parameters*: Option[JsonNode]
       ## The parameters configuring the rule's action.
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33325,7 +33371,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33347,7 +33393,7 @@ type
     action_parameters*: Option[JsonNode]
       ## The parameters configuring the rule's action.
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33367,7 +33413,7 @@ type
     action_parameters*: Option[JsonNode]
       ## The parameters configuring the rule's action.
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33443,7 +33489,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33472,6 +33518,11 @@ type
       ## Whether the API call was successful.
 
   RulesetsResponseRule* = ref object of RootObj
+    action*: string
+    enabled*: bool
+    expression*: string
+    id*: string
+    `ref`*: string
 
   RulesetsResponseRules* = seq[RulesetsResponseRule]
 
@@ -33493,7 +33544,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33539,7 +33590,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33685,7 +33736,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33715,7 +33766,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33754,7 +33805,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33882,7 +33933,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33954,7 +34005,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -33984,7 +34035,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -34012,7 +34063,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -34042,7 +34093,7 @@ type
     action*: Option[string]
     action_parameters*: Option[JsonNode]
     categories*: Option[RulesetsRuleCategories]
-    description*: Option[JsonNode]
+    description*: Option[string]
     enabled*: Option[JsonNode]
     exposed_credential_check*: Option[RulesetsRuleExposedCredentialCheck]
     expression*: Option[string]
@@ -36444,13 +36495,6 @@ type
       ## Whether the API call was successful.
     result_info*: Option[TeamsDevicesResultInfo]
 
-  TeamsDevicesApiResponseCollectionCommon* = ref object of RootObj
-    errors*: TeamsDevicesMessages
-    messages*: TeamsDevicesMessages
-    result*: Option[seq[JsonNode]]
-    success*: bool
-      ## Whether the API call was successful.
-
   TeamsDevicesApiResponseCommon* = ref object of RootObj
     errors*: TeamsDevicesMessages
     messages*: TeamsDevicesMessages
@@ -36651,6 +36695,7 @@ type
     support_url*: Option[TeamsDevicesSupportUrl]
     switch_locked*: Option[TeamsDevicesSwitchLocked]
     tunnel_protocol*: Option[TeamsDevicesTunnelProtocol]
+    uninstall_protection*: Option[TeamsDevicesUninstallProtection]
     virtual_networks*: Option[TeamsDevicesVirtualNetworks]
 
   TeamsDevicesDefaultDeviceSettingsResponse* = ref object of RootObj
@@ -36717,26 +36762,6 @@ type
     updated*: Option[TeamsDevicesUpdated]
     user*: Option[TeamsDevicesUser]
     version*: Option[TeamsDevicesVersion]
-
-  TeamsDevicesDeviceDexTestSchemasData* = ref object of RootObj
-    ## The configuration object which contains the details for the WARP client to
-    ## conduct the test.
-    host*: Option[string]
-      ## The desired endpoint to test.
-    kind*: Option[string]
-      ## The type of test.
-    `method`*: Option[string]
-      ## The HTTP request method type.
-
-  TeamsDevicesDeviceDexTestSchemasDescription* = string
-
-  TeamsDevicesDeviceDexTestSchemasEnabled* = bool
-
-  TeamsDevicesDeviceDexTestSchemasInterval* = string
-
-  TeamsDevicesDeviceDexTestSchemasName* = string
-
-  TeamsDevicesDeviceDexTestTargetPolicies* = seq[TeamsDevicesDexTargetPolicy]
 
   TeamsDevicesDeviceManagedNetworks* = ref object of RootObj
     config*: Option[TeamsDevicesSchemasConfigResponse]
@@ -36806,6 +36831,7 @@ type
     switch_locked*: Option[TeamsDevicesSwitchLocked]
     target_tests*: Option[seq[TeamsDevicesTargetDexTest]]
     tunnel_protocol*: Option[TeamsDevicesTunnelProtocol]
+    uninstall_protection*: Option[TeamsDevicesUninstallProtection]
     virtual_networks*: Option[TeamsDevicesVirtualNetworks]
 
   TeamsDevicesDeviceSettingsResponse* = ref object of RootObj
@@ -36866,14 +36892,6 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[TeamsDevicesResultInfo]
-
-  TeamsDevicesDexTargetPolicy* = ref object of RootObj
-    default*: Option[bool]
-      ## Whether the profile is the account default.
-    id*: Option[string]
-      ## The id of the device settings profile.
-    name*: Option[string]
-      ## The name of the device settings profile.
 
   TeamsDevicesDisableAutoFallback* = bool
 
@@ -37011,7 +37029,7 @@ type
     success*: bool
       ## Whether the API call was successful.
 
-  TeamsDevicesIdentifier* = ref object of RootObj
+  TeamsDevicesIdentifier* = string
 
   TeamsDevicesInclude* = seq[TeamsDevicesSplitTunnelInclude]
 
@@ -37378,8 +37396,6 @@ type
     success*: bool
       ## Whether the API call was successful.
 
-  TeamsDevicesSchemasTestId* = string
-
   TeamsDevicesSchemasType* = enum
     ## The type of device posture integration.
     workspaceOne = "workspace_one"
@@ -37565,6 +37581,8 @@ type
     sentineloneS2s = "sentinelone_s2s"
     customS2s = "custom_s2s"
 
+  TeamsDevicesUninstallProtection* = bool
+
   TeamsDevicesUniqueClientIdInputRequest* = ref object of RootObj
     id*: string
       ## List ID.
@@ -37592,6 +37610,12 @@ type
       ## The enrolled device user's name.
 
   TeamsDevicesUuid* = string
+
+  TeamsDevicesV4ErrorResponse* = ref object of RootObj
+    errors*: seq[TeamsDevicesV4ResponseMessage]
+    messages*: seq[TeamsDevicesV4ResponseMessage]
+    result*: Option[JsonNode]
+    success*: bool
 
   TeamsDevicesV4ResponseMessage* = ref object of RootObj
     ## A message which can be returned in either the 'errors' or 'messages' fields in a

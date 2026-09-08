@@ -15,10 +15,6 @@ suite "devices serialization":
     let obj = newTeamsDevicesOverrideCodesResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesOverrideCodesResponse)) == openjson.toJson(obj)
 
-  test "round-trips TeamsDevicesIdentifier":
-    let obj = newTeamsDevicesIdentifier()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesIdentifier)) == openjson.toJson(obj)
-
   test "round-trips TeamsDevicesDeviceSettingsResponseCollection":
     let obj = newTeamsDevicesDeviceSettingsResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesDeviceSettingsResponseCollection)) == openjson.toJson(obj)
@@ -95,105 +91,105 @@ suite "devices endpoints":
   test "GET /accounts/{account_id}/devices":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevices(newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevices("test")
 
   test "GET /accounts/{account_id}/devices/policies":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPolicies(newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesPolicies("test")
 
   test "GET /accounts/{account_id}/devices/policy":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPolicy(newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesPolicy("test")
 
   test "GET /accounts/{account_id}/devices/policy/exclude":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPolicyExclude(newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesPolicyExclude("test")
 
   test "PUT /accounts/{account_id}/devices/policy/exclude":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdDevicesPolicyExclude(newTeamsDevicesIdentifier())
+    discard waitFor client.putAccountsAccountIdDevicesPolicyExclude("test")
 
   test "GET /accounts/{account_id}/devices/policy/fallback_domains":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPolicyFallbackDomains(newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesPolicyFallbackDomains("test")
 
   test "PUT /accounts/{account_id}/devices/policy/fallback_domains":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdDevicesPolicyFallbackDomains(newTeamsDevicesIdentifier())
+    discard waitFor client.putAccountsAccountIdDevicesPolicyFallbackDomains("test")
 
   test "GET /accounts/{account_id}/devices/policy/include":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPolicyInclude(newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesPolicyInclude("test")
 
   test "PUT /accounts/{account_id}/devices/policy/include":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdDevicesPolicyInclude(newTeamsDevicesIdentifier())
+    discard waitFor client.putAccountsAccountIdDevicesPolicyInclude("test")
 
   test "GET /accounts/{account_id}/devices/policy/{policy_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPolicyPolicyId("test", newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesPolicyPolicyId("test", "test")
 
   test "DELETE /accounts/{account_id}/devices/policy/{policy_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdDevicesPolicyPolicyId("test", newTeamsDevicesIdentifier())
+    discard waitFor client.deleteAccountsAccountIdDevicesPolicyPolicyId("test", "test")
 
   test "GET /accounts/{account_id}/devices/policy/{policy_id}/exclude":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPolicyPolicyIdExclude("test", newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesPolicyPolicyIdExclude("test", "test")
 
   test "PUT /accounts/{account_id}/devices/policy/{policy_id}/exclude":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdDevicesPolicyPolicyIdExclude("test", newTeamsDevicesIdentifier())
+    discard waitFor client.putAccountsAccountIdDevicesPolicyPolicyIdExclude("test", "test")
 
   test "GET /accounts/{account_id}/devices/policy/{policy_id}/fallback_domains":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPolicyPolicyIdFallbackDomains("test", newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesPolicyPolicyIdFallbackDomains("test", "test")
 
   test "PUT /accounts/{account_id}/devices/policy/{policy_id}/fallback_domains":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdDevicesPolicyPolicyIdFallbackDomains("test", newTeamsDevicesIdentifier())
+    discard waitFor client.putAccountsAccountIdDevicesPolicyPolicyIdFallbackDomains("test", "test")
 
   test "GET /accounts/{account_id}/devices/policy/{policy_id}/include":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPolicyPolicyIdInclude("test", newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesPolicyPolicyIdInclude("test", "test")
 
   test "PUT /accounts/{account_id}/devices/policy/{policy_id}/include":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdDevicesPolicyPolicyIdInclude("test", newTeamsDevicesIdentifier())
+    discard waitFor client.putAccountsAccountIdDevicesPolicyPolicyIdInclude("test", "test")
 
   test "GET /accounts/{account_id}/devices/{device_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesDeviceId("test", newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesDeviceId("test", "test")
 
   test "GET /accounts/{account_id}/devices/{device_id}/override_codes":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesDeviceIdOverrideCodes("test", newTeamsDevicesIdentifier())
+    discard waitFor client.getAccountsAccountIdDevicesDeviceIdOverrideCodes("test", "test")
 
   test "GET /zones/{zone_id}/devices/policy/certificates":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdDevicesPolicyCertificates(newTeamsDevicesIdentifier())
+    discard waitFor client.getZonesZoneIdDevicesPolicyCertificates("test")
 
   test "PATCH /zones/{zone_id}/devices/policy/certificates":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchZonesZoneIdDevicesPolicyCertificates(newTeamsDevicesIdentifier(), newTeamsDevicesDevicesPolicyCertificates())
+    discard waitFor client.patchZonesZoneIdDevicesPolicyCertificates("test", newTeamsDevicesDevicesPolicyCertificates())
 

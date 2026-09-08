@@ -31,6 +31,10 @@ suite "ip_profiles serialization":
     let obj = newTeamsDevicesIpProfile()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesIpProfile)) == openjson.toJson(obj)
 
+  test "round-trips TeamsDevicesV4ErrorResponse":
+    let obj = newTeamsDevicesV4ErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesV4ErrorResponse)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdDevicesIpProfilesResponse":
     let obj = cloudflare.GetAccountsAccountIdDevicesIpProfilesResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdDevicesIpProfilesResponse)) == openjson.toJson(obj)

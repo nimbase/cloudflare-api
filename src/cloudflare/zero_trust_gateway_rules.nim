@@ -40,12 +40,31 @@ type
     enabled: Option[types.ZeroTrustGatewayEnabled]
     name: Option[types.ZeroTrustGatewayName3]
     precedence: Option[types.ZeroTrustGatewayPrecedence]
+  ZeroTrustGatewayRuleOrderByOption* = enum
+    orderByName = "name"
+    orderByCreatedAt = "created_at"
+    orderByUpdatedAt = "updated_at"
+    orderByPrecedence = "precedence"
+
+  ZeroTrustGatewayRuleDirectionOption* = enum
+    directionAsc = "asc"
+    directionDesc = "desc"
+
 
 proc getAccountsAccountIdGatewayRules*(client: CloudflareClient,
-                                       accountId: types.ZeroTrustGatewayIdentifier2): Future[types.ZeroTrustGatewayResponseCollection6] {.async.} =
+                                       accountId: types.ZeroTrustGatewayIdentifier2,
+                                       filter: seq[string] = @[],
+                                       search: string = default(string),
+                                       orderBy: ZeroTrustGatewayRuleOrderByOption,
+                                       direction: ZeroTrustGatewayRuleDirectionOption): Future[types.ZeroTrustGatewayResponseCollection6] {.async.} =
   ## List Zero Trust Gateway rules for an account.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/gateway/rules")
+  var q = initOrderedTable[string, string]()
+  for v in filter: q["filter"] = $v
+  q["search"] = $search
+  q["order_by"] = $orderBy
+  q["direction"] = $direction
+  let res = await client.httpGET(fmt"/accounts/{accountId}/gateway/rules", q)
   let body = await res.body
   case res.code
   of Http200:

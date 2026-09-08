@@ -21,14 +21,32 @@ type
   PatchAccountsAccountIdGatewayListsListIdRequest = object
     append: Option[types.ZeroTrustGatewayItemsInput]
     remove: Option[seq[types.ZeroTrustGatewayValue]]
+  ZeroTrustListOrderByOption* = enum
+    orderByName = "name"
+    orderByCreatedAt = "created_at"
+    orderByUpdatedAt = "updated_at"
+    orderByItemCount = "item_count"
+
+  ZeroTrustListDirectionOption* = enum
+    directionAsc = "asc"
+    directionDesc = "desc"
+
 
 proc getAccountsAccountIdGatewayLists*(client: CloudflareClient,
                                        accountId: types.ZeroTrustGatewayIdentifier2,
-                                       `type`: types.ZeroTrustGatewayType2 = default(types.ZeroTrustGatewayType2)): Future[types.ZeroTrustGatewayResponseCollection3] {.async.} =
+                                       `type`: types.ZeroTrustGatewayType2 = default(types.ZeroTrustGatewayType2),
+                                       filter: seq[string] = @[],
+                                       search: string = default(string),
+                                       orderBy: ZeroTrustListOrderByOption,
+                                       direction: ZeroTrustListDirectionOption): Future[types.ZeroTrustGatewayResponseCollection3] {.async.} =
   ## Fetch all Zero Trust lists for an account.
 
   var q = initOrderedTable[string, string]()
   q["type"] = $`type`
+  for v in filter: q["filter"] = $v
+  q["search"] = $search
+  q["order_by"] = $orderBy
+  q["direction"] = $direction
   let res = await client.httpGET(fmt"/accounts/{accountId}/gateway/lists", q)
   let body = await res.body
   case res.code

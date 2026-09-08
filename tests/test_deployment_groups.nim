@@ -27,6 +27,10 @@ suite "deployment_groups serialization":
     let obj = newTeamsDevicesDeploymentGroup()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesDeploymentGroup)) == openjson.toJson(obj)
 
+  test "round-trips TeamsDevicesV4ErrorResponse":
+    let obj = newTeamsDevicesV4ErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesV4ErrorResponse)) == openjson.toJson(obj)
+
   test "round-trips TeamsDevicesDeploymentGroupCreateRequest":
     let obj = newTeamsDevicesDeploymentGroupCreateRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesDeploymentGroupCreateRequest)) == openjson.toJson(obj)

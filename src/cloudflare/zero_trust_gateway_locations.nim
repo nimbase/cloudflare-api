@@ -25,12 +25,30 @@ type
     max_ttl: Option[types.ZeroTrustGatewayMaxTtl]
     name: types.ZeroTrustGatewayName2
     networks: Option[types.ZeroTrustGatewayIpv4Networks]
+  ZeroTrustGatewayLocationOrderByOption* = enum
+    orderByName = "name"
+    orderByCreatedAt = "created_at"
+    orderByUpdatedAt = "updated_at"
+
+  ZeroTrustGatewayLocationDirectionOption* = enum
+    directionAsc = "asc"
+    directionDesc = "desc"
+
 
 proc getAccountsAccountIdGatewayLocations*(client: CloudflareClient,
-                                           accountId: types.ZeroTrustGatewayIdentifier2): Future[types.ZeroTrustGatewayResponseCollection5] {.async.} =
+                                           accountId: types.ZeroTrustGatewayIdentifier2,
+                                           filter: seq[string] = @[],
+                                           search: string = default(string),
+                                           orderBy: ZeroTrustGatewayLocationOrderByOption,
+                                           direction: ZeroTrustGatewayLocationDirectionOption): Future[types.ZeroTrustGatewayResponseCollection5] {.async.} =
   ## List Zero Trust Gateway locations for an account.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/gateway/locations")
+  var q = initOrderedTable[string, string]()
+  for v in filter: q["filter"] = $v
+  q["search"] = $search
+  q["order_by"] = $orderBy
+  q["direction"] = $direction
+  let res = await client.httpGET(fmt"/accounts/{accountId}/gateway/locations", q)
   let body = await res.body
   case res.code
   of Http200:

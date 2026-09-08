@@ -31,7 +31,7 @@ suite "zero_trust_gateway_proxy_endpoints endpoints":
   test "GET /accounts/{account_id}/gateway/proxy_endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdGatewayProxyEndpoints("test")
+    discard waitFor client.getAccountsAccountIdGatewayProxyEndpoints("test", @["test"], "test", {}, {})
 
   test "GET /accounts/{account_id}/gateway/proxy_endpoints/{proxy_endpoint_id}":
     let client = initCloudflareClient("test-key")
