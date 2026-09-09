@@ -19,18 +19,9 @@ suite "metrics_export serialization":
     let obj = cloudflare.PostAccountsAccountIdWorkersObservabilityMetricsexportResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdWorkersObservabilityMetricsexportResponse)) == openjson.toJson(obj)
 
-  test "round-trips DeleteAccountsAccountIdWorkersObservabilityMetricsexportResponse":
-    let obj = cloudflare.DeleteAccountsAccountIdWorkersObservabilityMetricsexportResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdWorkersObservabilityMetricsexportResponse)) == openjson.toJson(obj)
-
 suite "metrics_export endpoints":
   test "GET /accounts/{account_id}/workers/observability/metricsexport":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdWorkersObservabilityMetricsexport()
-
-  test "POST /accounts/{account_id}/workers/observability/metricsexport":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdWorkersObservabilityMetricsexport()
 

@@ -1720,36 +1720,6 @@ proc renameHook*(v: RealtimekitTranscriptSummary, fieldName: var string) {.inlin
   elif fieldName == "summary_download_url_expiry":
     fieldName = "summaryDownloadUrlExpiry"
 
-proc renameHook*(v: StreamClipping, fieldName: var string) {.inline.} =
-  if fieldName == "allowedOrigins":
-    fieldName = "allowed_origins"
-  elif fieldName == "allowed_origins":
-    fieldName = "allowedOrigins"
-  elif fieldName == "clippedFromVideoUID":
-    fieldName = "clipped_from_video_u_i_d"
-  elif fieldName == "clipped_from_video_u_i_d":
-    fieldName = "clippedFromVideoUID"
-  elif fieldName == "endTimeSeconds":
-    fieldName = "end_time_seconds"
-  elif fieldName == "end_time_seconds":
-    fieldName = "endTimeSeconds"
-  elif fieldName == "maxDurationSeconds":
-    fieldName = "max_duration_seconds"
-  elif fieldName == "max_duration_seconds":
-    fieldName = "maxDurationSeconds"
-  elif fieldName == "requireSignedURLs":
-    fieldName = "require_signed_u_r_ls"
-  elif fieldName == "require_signed_u_r_ls":
-    fieldName = "requireSignedURLs"
-  elif fieldName == "startTimeSeconds":
-    fieldName = "start_time_seconds"
-  elif fieldName == "start_time_seconds":
-    fieldName = "startTimeSeconds"
-  elif fieldName == "thumbnailTimestampPct":
-    fieldName = "thumbnail_timestamp_pct"
-  elif fieldName == "thumbnail_timestamp_pct":
-    fieldName = "thumbnailTimestampPct"
-
 proc renameHook*(v: StreamCreateInputRequest, fieldName: var string) {.inline.} =
   if fieldName == "defaultCreator":
     fieldName = "default_creator"

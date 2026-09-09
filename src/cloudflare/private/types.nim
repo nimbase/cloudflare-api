@@ -9096,10 +9096,10 @@ type
       ## Whether the API call was successful.
 
   CallsApp* = ref object of RootObj
-    created*: Option[CallsCreated]
-    modified*: Option[CallsModified]
-    name*: Option[CallsName]
-    uid*: Option[CallsIdentifier]
+    created*: CallsCreated
+    modified*: CallsModified
+    name*: CallsName
+    uid*: CallsIdentifier
 
   CallsAppEditableFields* = ref object of RootObj
     name*: Option[CallsName]
@@ -9126,11 +9126,11 @@ type
     result*: Option[CallsAppWithSecret]
 
   CallsAppWithSecret* = ref object of RootObj
-    created*: Option[CallsCreated]
-    modified*: Option[CallsModified]
-    name*: Option[CallsName]
-    secret*: Option[CallsSecret]
-    uid*: Option[CallsIdentifier]
+    created*: CallsCreated
+    modified*: CallsModified
+    name*: CallsName
+    secret*: CallsSecret
+    uid*: CallsIdentifier
 
   CallsCreated* = string
 
@@ -9159,17 +9159,10 @@ type
   CallsTurnKeyName* = string
 
   CallsTurnKeyObject* = ref object of RootObj
-    created*: Option[CallsCreated]
-    modified*: Option[CallsModified]
-    name*: Option[CallsName]
-    uid*: Option[CallsIdentifier]
-
-  CallsTurnKeyResponseCollection* = ref object of RootObj
-    errors*: CallsMessages
-    messages*: CallsMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[seq[CallsTurnKeyObject]]
+    created*: CallsCreated
+    modified*: CallsModified
+    name*: CallsName
+    uid*: CallsIdentifier
 
   CallsTurnKeyResponseSingle* = ref object of RootObj
     errors*: CallsMessages
@@ -9186,11 +9179,11 @@ type
     result*: Option[CallsTurnKeyWithKey]
 
   CallsTurnKeyWithKey* = ref object of RootObj
-    created*: Option[CallsCreated]
-    key*: Option[CallsTurnKey]
-    modified*: Option[CallsModified]
-    name*: Option[CallsTurnKeyName]
-    uid*: Option[CallsIdentifier]
+    created*: CallsCreated
+    key*: CallsTurnKey
+    modified*: CallsModified
+    name*: CallsTurnKeyName
+    uid*: CallsIdentifier
 
   CcAccountID* = string
 
@@ -9643,10 +9636,22 @@ type
     account_id*: CcAccountID
     created_at*: CcISO8601Timestamp
     durable_objects*: CcDurableObjectsConfigurationNamespaceId
+    health*: Option[CcDurableObjectApplicationHealth]
     id*: CcApplicationID
     name*: CcApplicationName
     scheduling_policy*: CcDurableObjectApplicationSchedulingPolicy
     updated_at*: CcISO8601Timestamp
+
+  CcDurableObjectApplicationHealth* = ref object of RootObj
+    ## Aggregate current activity for the latest observed placement of each instance.
+    ## Runtime snapshots feed periodic background sweeps. Counts refresh after each
+    ## complete sweep. Instance listings retain their separate three-month history
+    ## for failure discovery.
+    ##
+    instances*: JsonNode
+      ## Counts of observed non-terminal instances.
+    summary*: Option[string]
+      ## Present as pending until the first activity sweep completes; omitted afterward.
 
   CcDurableObjectApplicationSchedulingPolicy* = enum
     ## Selects a Durable Object-managed application. Each Durable Object creates and
@@ -22372,6 +22377,8 @@ type
 
   LogpushFilter2* = string
 
+  LogpushFilterAttackTraffic* = bool
+
   LogpushFrequency* = enum
     ## This field is deprecated. Please use `max_upload_*` parameters instead. . The
     ## frequency at which Cloudflare sends batches of logs to your destination. Setting
@@ -22436,6 +22443,7 @@ type
     destination_conf*: Option[LogpushDestinationConf]
     enabled*: Option[LogpushEnabled]
     error_message*: Option[LogpushErrorMessage]
+    filter_attack_traffic*: Option[LogpushFilterAttackTraffic]
     frequency*: Option[LogpushFrequency]
     id*: Option[LogpushId]
     kind*: Option[LogpushKind]
@@ -35778,25 +35786,6 @@ type
 
   StreamClippedFromVideoUid* = string
 
-  StreamClipping* = ref object of RootObj
-    allowed_origins*: Option[StreamAllowedOrigins]
-    clipped_from_video_u_i_d*: Option[StreamClippedFromVideoUid]
-    created*: Option[StreamClippingCreated]
-    creator*: Option[StreamCreator]
-    end_time_seconds*: Option[StreamEndTimeSeconds]
-    max_duration_seconds*: Option[StreamMaxDurationSeconds]
-    meta*: Option[StreamMediaMetadata]
-    modified*: Option[StreamLiveInputModified]
-    playback*: Option[StreamPlayback]
-    preview*: Option[StreamPreview]
-    require_signed_u_r_ls*: Option[StreamRequireSignedURLs]
-    start_time_seconds*: Option[StreamStartTimeSeconds]
-    status*: Option[StreamMediaState]
-    thumbnail_timestamp_pct*: Option[StreamThumbnailTimestampPct]
-    watermark*: Option[StreamWatermarkAtUpload]
-
-  StreamClippingCreated* = string
-
   StreamCopyAudioTrack* = ref object of RootObj
     label*: StreamAudioLabel
     url*: Option[string]
@@ -39811,6 +39800,18 @@ type
 
   TurnstileCreatedOn* = string
 
+  TurnstileDeployedVia* = enum
+    ## Origin that created this widget, recorded at creation time and
+    ## immutable afterward. Server-derived from the create request; not
+    ## client-settable. Omitted from the response for widgets created
+    ## before this field existed.
+    ##
+    wrangler = "wrangler"
+    dashboard = "dashboard"
+    spin = "spin"
+    api = "api"
+    unknown = "unknown"
+
   TurnstileDomains* = seq[string]
 
   TurnstileEphemeralId* = bool
@@ -39818,6 +39819,17 @@ type
   TurnstileIdentifier* = string
 
   TurnstileInvalidateImmediately* = bool
+
+  TurnstileLastModifiedVia* = enum
+    ## Origin of the most recent mutation (create, update, delete, or
+    ## secret rotation). Server-derived; not client-settable. Omitted for
+    ## widgets last mutated before this field existed.
+    ##
+    wrangler = "wrangler"
+    dashboard = "dashboard"
+    spin = "spin"
+    api = "api"
+    unknown = "unknown"
 
   TurnstileMessages* = seq[JsonNode]
 
@@ -39852,8 +39864,10 @@ type
     bot_fight_mode*: TurnstileBotFightMode
     clearance_level*: TurnstileClearanceLevel
     created_on*: TurnstileCreatedOn
+    deployed_via*: Option[TurnstileDeployedVia]
     domains*: TurnstileDomains
     ephemeral_id*: TurnstileEphemeralId
+    last_modified_via*: Option[TurnstileLastModifiedVia]
     mode*: TurnstileWidgetMode
     modified_on*: TurnstileModifiedOn
     name*: TurnstileName
@@ -39867,8 +39881,10 @@ type
     bot_fight_mode*: TurnstileBotFightMode
     clearance_level*: TurnstileClearanceLevel
     created_on*: TurnstileCreatedOn
+    deployed_via*: Option[TurnstileDeployedVia]
     domains*: TurnstileDomains
     ephemeral_id*: TurnstileEphemeralId
+    last_modified_via*: Option[TurnstileLastModifiedVia]
     mode*: TurnstileWidgetMode
     modified_on*: TurnstileModifiedOn
     name*: TurnstileName

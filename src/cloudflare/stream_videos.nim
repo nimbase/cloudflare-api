@@ -82,7 +82,8 @@ proc postAccountsAccountIdStreamCopy*(client: CloudflareClient,
 proc postAccountsAccountIdStreamDirectUpload*(client: CloudflareClient,
                                               accountId: types.StreamAccountIdentifier,
                                               body: types.StreamDirectUploadRequest): Future[types.StreamDirectUploadResponse] {.async.} =
-  ## Creates a direct upload that allows video uploads without an API key.
+  ## Creates a direct upload endpoint that allows an end-user to upload a video
+  ## without an API key.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/stream/direct_upload", body)
   let body = await res.body
@@ -145,9 +146,9 @@ proc deleteAccountsAccountIdStreamIdentifier*(client: CloudflareClient,
 proc getAccountsAccountIdStreamIdentifierEmbed*(client: CloudflareClient,
                                                 identifier: types.StreamIdentifier,
                                                 accountId: types.StreamAccountIdentifier): Future[AsyncResponse] {.async.} =
-  ## Fetches an HTML code snippet to embed a video in a web page delivered through
-  ## Cloudflare. On success, returns an HTML fragment for use on web pages to display
-  ## a video. On failure, returns a JSON response body.
+  ## Fetches the legacy HTML code snippet to embed a video in a web page delivered
+  ## through Cloudflare. On success, returns an HTML fragment for use on web pages to
+  ## display a video. On failure, returns a JSON response body.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/stream/{identifier}/embed")
   return res

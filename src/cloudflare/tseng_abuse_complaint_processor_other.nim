@@ -212,7 +212,9 @@ proc postAccountsAccountIdAbuseReportsReportIdMitigationsAppeal*(client: Cloudfl
                                                                  accountId: string,
                                                                  reportId: string,
                                                                  body: types.AbuseReportsMitigationAppealRequest): Future[types.AbuseReportsMitigationAppealResult] {.async.} =
-  ## Request a review for mitigations on an account.
+  ## Request a review for mitigations on an account. Repeating a request for a
+  ## mitigation with an unresolved appeal is idempotent and returns that mitigation
+  ## in the in-review state.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/abuse-reports/{reportId}/mitigations/appeal", body)
   let body = await res.body

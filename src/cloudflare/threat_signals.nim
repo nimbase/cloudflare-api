@@ -50,6 +50,10 @@ type
     poll_interval_s: Option[int64]
     title: Option[string]
     url: Option[string]
+  PostAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsPollResponse* = object
+    errors: seq[JsonNode]
+    result: JsonNode
+    success: bool
   PatchAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdRequest = object
     category: Option[string]
     display_name: Option[string]
@@ -308,13 +312,18 @@ proc postAccountsAccountIdCloudforceOneV2ThreatSignalsFeeds*(client: CloudflareC
 
 proc postAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsPoll*(client: CloudflareClient,
                                                                  accountId: string,
-                                                                 feedId: JsonNode = default(JsonNode)): Future[AsyncResponse] {.async.} =
+                                                                 feedId: JsonNode = default(JsonNode)): Future[PostAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsPollResponse] {.async.} =
   ## Trigger Threat Signals feed poll.
 
   var q = initOrderedTable[string, string]()
   q["feed_id"] = $feedId
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/feeds/poll", q)
-  return res
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsPollResponse)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc deleteAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedId*(client: CloudflareClient,
                                                                      accountId: string,

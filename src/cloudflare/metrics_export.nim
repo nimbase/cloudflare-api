@@ -13,18 +13,13 @@ type
     messages: seq[JsonNode]
     result: seq[JsonNode]
     success: bool
+  PostAccountsAccountIdWorkersObservabilityMetricsexportRequest = object
+    requester: JsonNode
+    resources: seq[JsonNode]
   PostAccountsAccountIdWorkersObservabilityMetricsexportResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
     result: seq[JsonNode]
-    success: bool
-  DeleteAccountsAccountIdWorkersObservabilityMetricsexportRequest = object
-    resource_id: string
-    resource_type: string
-  DeleteAccountsAccountIdWorkersObservabilityMetricsexportResponse* = object
-    errors: seq[JsonNode]
-    messages: seq[JsonNode]
-    result: JsonNode
     success: bool
 
 proc getAccountsAccountIdWorkersObservabilityMetricsexport*(client: CloudflareClient): Future[GetAccountsAccountIdWorkersObservabilityMetricsexportResponse] {.async.} =
@@ -38,7 +33,8 @@ proc getAccountsAccountIdWorkersObservabilityMetricsexport*(client: CloudflareCl
   else:
     raise newException(CloudflareClientError, body)
 
-proc postAccountsAccountIdWorkersObservabilityMetricsexport*(client: CloudflareClient): Future[PostAccountsAccountIdWorkersObservabilityMetricsexportResponse] {.async.} =
+proc postAccountsAccountIdWorkersObservabilityMetricsexport*(client: CloudflareClient,
+                                                             body: PostAccountsAccountIdWorkersObservabilityMetricsexportRequest): Future[PostAccountsAccountIdWorkersObservabilityMetricsexportResponse] {.async.} =
   ## Create or replace resources configured for Workers Observability metrics export.
 
   let res = await client.httpPOST("/accounts/{account_id}/workers/observability/metricsexport", body)
@@ -46,17 +42,5 @@ proc postAccountsAccountIdWorkersObservabilityMetricsexport*(client: CloudflareC
   case res.code
   of Http201:
     result = fromJson(body, PostAccountsAccountIdWorkersObservabilityMetricsexportResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc deleteAccountsAccountIdWorkersObservabilityMetricsexport*(client: CloudflareClient,
-                                                               body: DeleteAccountsAccountIdWorkersObservabilityMetricsexportRequest): Future[DeleteAccountsAccountIdWorkersObservabilityMetricsexportResponse] {.async.} =
-  ## Delete one resource configured for Workers Observability metrics export.
-
-  let res = await client.httpDELETE("/accounts/{account_id}/workers/observability/metricsexport", body)
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, DeleteAccountsAccountIdWorkersObservabilityMetricsexportResponse)
   else:
     raise newException(CloudflareClientError, body)

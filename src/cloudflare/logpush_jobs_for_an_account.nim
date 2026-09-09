@@ -14,6 +14,7 @@ type
     destination_conf: types.LogpushDestinationConf
     enabled: Option[types.LogpushEnabled]
     filter: Option[types.LogpushFilter]
+    filter_attack_traffic: Option[types.LogpushFilterAttackTraffic]
     frequency: Option[types.LogpushFrequency]
     kind: Option[types.LogpushKind]
     logpull_options: Option[types.LogpushLogpullOptions]
@@ -27,6 +28,7 @@ type
     destination_conf: Option[types.LogpushDestinationConf]
     enabled: Option[types.LogpushEnabled]
     filter: Option[types.LogpushFilter]
+    filter_attack_traffic: Option[types.LogpushFilterAttackTraffic]
     frequency: Option[types.LogpushFrequency]
     kind: Option[types.LogpushKind]
     logpull_options: Option[types.LogpushLogpullOptions]

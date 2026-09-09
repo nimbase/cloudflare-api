@@ -69,8 +69,8 @@ proc putAccountsAccountIdStreamLiveInputsLiveInputIdentifier*(client: Cloudflare
 proc deleteAccountsAccountIdStreamLiveInputsLiveInputIdentifier*(client: CloudflareClient,
                                                                  liveInputIdentifier: types.StreamLiveInputIdentifier,
                                                                  accountId: types.StreamIdentifier2): Future[AsyncResponse] {.async.} =
-  ## Prevents a live input from being streamed to and makes the live input
-  ## inaccessible to any future API calls.
+  ## Permanently delete a live input, making it inaccessible and blocking current and
+  ## future broadcasts to it. Existing recordings will be retained.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/stream/live_inputs/{liveInputIdentifier}")
   return res
@@ -78,8 +78,8 @@ proc deleteAccountsAccountIdStreamLiveInputsLiveInputIdentifier*(client: Cloudfl
 proc postAccountsAccountIdStreamLiveInputsLiveInputIdentifierDisable*(client: CloudflareClient,
                                                                       liveInputIdentifier: types.StreamLiveInputIdentifier,
                                                                       accountId: types.StreamIdentifier2): Future[types.StreamLiveInputResponseSingle] {.async.} =
-  ## Prevents a live input from being streamed to and makes the live input
-  ## inaccessible to any future API calls until enabled.
+  ## Prevents a live input from being streamed to and terminates any active
+  ## broadcasts until re-enabled.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/stream/live_inputs/{liveInputIdentifier}/disable")
   let body = await res.body
@@ -92,8 +92,7 @@ proc postAccountsAccountIdStreamLiveInputsLiveInputIdentifierDisable*(client: Cl
 proc postAccountsAccountIdStreamLiveInputsLiveInputIdentifierEnable*(client: CloudflareClient,
                                                                      liveInputIdentifier: types.StreamLiveInputIdentifier,
                                                                      accountId: types.StreamIdentifier2): Future[types.StreamLiveInputResponseSingle] {.async.} =
-  ## Allows a live input to be streamed to and makes the live input accessible to any
-  ## future API calls.
+  ## Allows a disabled live input to start receiving broadcasts again.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/stream/live_inputs/{liveInputIdentifier}/enable")
   let body = await res.body

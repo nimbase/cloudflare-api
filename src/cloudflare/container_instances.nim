@@ -8,16 +8,25 @@ import std/[strformat, json]
 import ./private/metaclient
 import ./private/types
 
+type
+  ContainerInstanceStateOption* = enum
+    stateActive = "active"
+    stateNotActive = "not-active"
+
 
 proc getAccountsAccountIdContainersApplicationsApplicationIdInstances*(client: CloudflareClient,
                                                                        applicationId: types.CcApplicationID,
                                                                        perPage: int64 = default(int64),
-                                                                       pageToken: string = default(string)): Future[JsonNode] {.async.} =
+                                                                       pageToken: string = default(string),
+                                                                       state: ContainerInstanceStateOption,
+                                                                       namePrefix: string = default(string)): Future[JsonNode] {.async.} =
   ## Lists container instances belonging to an application.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
   q["page_token"] = $pageToken
+  q["state"] = $state
+  q["name_prefix"] = $namePrefix
   let res = await client.httpGET(fmt"/accounts/{account_id}/containers/applications/{applicationId}/instances", q)
   let body = await res.body
   case res.code

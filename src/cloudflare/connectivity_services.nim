@@ -71,7 +71,8 @@ proc putAccountsAccountIdConnectivityDirectoryServicesServiceId*(client: Cloudfl
 proc deleteAccountsAccountIdConnectivityDirectoryServicesServiceId*(client: CloudflareClient,
                                                                     accountId: string,
                                                                     serviceId: string): Future[AsyncResponse] {.async.} =
-  ## Removes a single Workers VPC connectivity service by its ID.
+  ## Removes a single Workers VPC connectivity service by its ID. Any Worker
+  ## bindings referencing this service will stop working.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/connectivity/directory/services/{serviceId}")
   return res
