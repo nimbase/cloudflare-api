@@ -113,7 +113,7 @@ proc putUserTokensTokenIdValue*(client: CloudflareClient,
                                 tokenId: types.IamTokenIdentifier): Future[types.IamResponseSingleValue] {.async.} =
   ## Roll the token secret.
 
-  let res = await client.httpPUT(fmt"/user/tokens/{tokenId}/value", body)
+  let res = await client.httpPUT(fmt"/user/tokens/{tokenId}/value")
   let body = await res.body
   case res.code
   of Http200:

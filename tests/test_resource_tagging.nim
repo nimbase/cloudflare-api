@@ -39,10 +39,6 @@ suite "resource_tagging serialization":
     let obj = newResourceTaggingTagKeysResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceTaggingTagKeysResponseCollection)) == openjson.toJson(obj)
 
-  test "round-trips ResourceTaggingZoneId":
-    let obj = newResourceTaggingZoneId()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceTaggingZoneId)) == openjson.toJson(obj)
-
   test "round-trips ResourceTaggingSetTagsRequestAccountLevel":
     let obj = newResourceTaggingSetTagsRequestAccountLevel()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceTaggingSetTagsRequestAccountLevel)) == openjson.toJson(obj)
@@ -88,10 +84,10 @@ suite "resource_tagging endpoints":
   test "PUT /zones/{zone_id}/tags":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putZonesZoneIdTags(newResourceTaggingZoneId(), newResourceTaggingSetTagsRequestZoneLevel())
+    discard waitFor client.putZonesZoneIdTags("test", newResourceTaggingSetTagsRequestZoneLevel())
 
   test "DELETE /zones/{zone_id}/tags":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteZonesZoneIdTags(newResourceTaggingZoneId(), newResourceTaggingDeleteTagsRequestZoneLevel())
+    discard waitFor client.deleteZonesZoneIdTags("test", newResourceTaggingDeleteTagsRequestZoneLevel())
 

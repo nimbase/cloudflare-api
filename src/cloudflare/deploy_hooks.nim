@@ -12,7 +12,7 @@ import ./private/types
 proc getAccountsAccountIdBuildsWorkersScriptNameDeployHooks*(client: CloudflareClient,
                                                              accountId: types.BuildsAccountId,
                                                              scriptName: types.BuildsScriptName): Future[JsonNode] {.async.} =
-  ## Get all deploy hooks for a specific worker script.
+  ## List the branch-specific deploy hooks configured for a Worker.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/builds/workers/{scriptName}/deploy_hooks")
   let body = await res.body
@@ -26,7 +26,7 @@ proc postAccountsAccountIdBuildsWorkersScriptNameDeployHooks*(client: Cloudflare
                                                               accountId: types.BuildsAccountId,
                                                               scriptName: types.BuildsScriptName,
                                                               body: types.BuildsCreateDeployHookRequest): Future[JsonNode] {.async.} =
-  ## Create a new deploy hook for a worker script.
+  ## Create an HTTP hook that starts a build for a selected Worker branch.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/builds/workers/{scriptName}/deploy_hooks", body)
   let body = await res.body
@@ -40,7 +40,7 @@ proc getAccountsAccountIdBuildsWorkersScriptNameDeployHooksDeployHookUuid*(clien
                                                                            accountId: types.BuildsAccountId,
                                                                            scriptName: types.BuildsScriptName,
                                                                            deployHookUuid: types.BuildsDeployHookUuid): Future[JsonNode] {.async.} =
-  ## Get details of a specific deploy hook.
+  ## Retrieve the name, branch, Worker identifier, and timestamps for a deploy hook.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/builds/workers/{scriptName}/deploy_hooks/{deployHookUuid}")
   let body = await res.body
@@ -55,7 +55,7 @@ proc putAccountsAccountIdBuildsWorkersScriptNameDeployHooksDeployHookUuid*(clien
                                                                            scriptName: types.BuildsScriptName,
                                                                            deployHookUuid: types.BuildsDeployHookUuid,
                                                                            body: types.BuildsCreateDeployHookRequest): Future[JsonNode] {.async.} =
-  ## Update an existing deploy hook.
+  ## Replace the name and target branch for a deploy hook.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/builds/workers/{scriptName}/deploy_hooks/{deployHookUuid}", body)
   let body = await res.body
@@ -69,7 +69,7 @@ proc deleteAccountsAccountIdBuildsWorkersScriptNameDeployHooksDeployHookUuid*(cl
                                                                               accountId: types.BuildsAccountId,
                                                                               scriptName: types.BuildsScriptName,
                                                                               deployHookUuid: types.BuildsDeployHookUuid): Future[JsonNode] {.async.} =
-  ## Delete a deploy hook.
+  ## Delete a deploy hook so its UUID can no longer start builds.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/builds/workers/{scriptName}/deploy_hooks/{deployHookUuid}")
   let body = await res.body

@@ -47,15 +47,15 @@ suite "ip_address_management_address_maps endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdAddressingAddressMapsAddressMapId("test", "test")
 
-  test "PUT /accounts/{account_id}/addressing/address_maps/{address_map_id}/accounts/{account_id}":
+  test "PUT /accounts/{account_id}/addressing/address_maps/{address_map_id}/accounts/{member_account_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdAddressingAddressMapsAddressMapIdAccountsAccountId("test", "test")
+    discard waitFor client.putAccountsAccountIdAddressingAddressMapsAddressMapIdAccountsMemberAccountId("test", "test", "test")
 
-  test "DELETE /accounts/{account_id}/addressing/address_maps/{address_map_id}/accounts/{account_id}":
+  test "DELETE /accounts/{account_id}/addressing/address_maps/{address_map_id}/accounts/{member_account_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdAddressingAddressMapsAddressMapIdAccountsAccountId("test", "test")
+    discard waitFor client.deleteAccountsAccountIdAddressingAddressMapsAddressMapIdAccountsMemberAccountId("test", "test", "test")
 
   test "PUT /accounts/{account_id}/addressing/address_maps/{address_map_id}/ips/{ip_address}":
     let client = initCloudflareClient("test-key")

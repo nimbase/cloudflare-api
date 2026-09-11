@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "table_maintenance_configuration serialization":
+  test "round-trips R2DataCatalogMaintenanceRunsResponse":
+    let obj = newR2DataCatalogMaintenanceRunsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2DataCatalogMaintenanceRunsResponse)) == openjson.toJson(obj)
+
   test "round-trips R2DataCatalogApiResponseSingle":
     let obj = newR2DataCatalogApiResponseSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2DataCatalogApiResponseSingle)) == openjson.toJson(obj)
@@ -31,6 +35,14 @@ suite "table_maintenance_configuration serialization":
     let obj = newR2DataCatalogTableMaintenanceConfig()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2DataCatalogTableMaintenanceConfig)) == openjson.toJson(obj)
 
+  test "round-trips R2DataCatalogQueueMaintenanceResponse":
+    let obj = newR2DataCatalogQueueMaintenanceResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2DataCatalogQueueMaintenanceResponse)) == openjson.toJson(obj)
+
+  test "round-trips R2DataCatalogQueueMaintenanceRequest":
+    let obj = newR2DataCatalogQueueMaintenanceRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2DataCatalogQueueMaintenanceRequest)) == openjson.toJson(obj)
+
 suite "table_maintenance_configuration endpoints":
   test "GET /accounts/{account_id}/r2-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-configs":
     let client = initCloudflareClient("test-key")
@@ -41,4 +53,9 @@ suite "table_maintenance_configuration endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdR2CatalogBucketNameNamespacesNamespaceTablesTableNameMaintenanceConfigs("test", "test", "test", "test", newR2DataCatalogTableMaintenanceUpdateRequest())
+
+  test "GET /accounts/{account_id}/r2-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-runs":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdR2CatalogBucketNameNamespacesNamespaceTablesTableNameMaintenanceRuns("test", "test", "test", "test", 1, "test")
 

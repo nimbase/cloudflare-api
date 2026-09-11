@@ -12,7 +12,8 @@ import ./private/types
 proc postAccountsAccountIdBuildsTriggers*(client: CloudflareClient,
                                           accountId: types.BuildsAccountId,
                                           body: types.BuildsCreateTriggerRequest): Future[JsonNode] {.async.} =
-  ## Create a new CI/CD trigger
+  ## Create a trigger defining the repository connection, Worker tag, commands,
+  ## filters, cache setting, and build token.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/builds/triggers", body)
   let body = await res.body
@@ -25,7 +26,7 @@ proc postAccountsAccountIdBuildsTriggers*(client: CloudflareClient,
 proc deleteAccountsAccountIdBuildsTriggersTriggerUuid*(client: CloudflareClient,
                                                        accountId: types.BuildsAccountId,
                                                        triggerUuid: types.BuildsTriggerUuid): Future[types.BuildsAPIResponse] {.async.} =
-  ## Remove a CI/CD trigger
+  ## Delete a trigger and cancel its unfinished builds.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/builds/triggers/{triggerUuid}")
   let body = await res.body
@@ -39,7 +40,7 @@ proc patchAccountsAccountIdBuildsTriggersTriggerUuid*(client: CloudflareClient,
                                                       accountId: types.BuildsAccountId,
                                                       triggerUuid: types.BuildsTriggerUuid,
                                                       body: types.BuildsUpdateTriggerRequest): Future[JsonNode] {.async.} =
-  ## Update an existing CI/CD trigger
+  ## Update commands, cache settings, or branch and path filters for a trigger.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/builds/triggers/{triggerUuid}", body)
   let body = await res.body
@@ -53,7 +54,7 @@ proc postAccountsAccountIdBuildsTriggersTriggerUuidBuilds*(client: CloudflareCli
                                                            accountId: types.BuildsAccountId,
                                                            triggerUuid: types.BuildsTriggerUuid,
                                                            body: types.BuildsCreateBuildRequest): Future[JsonNode] {.async.} =
-  ## Trigger a manual build for a specific trigger
+  ## Start a build for a branch or commit using the selected trigger.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/builds/triggers/{triggerUuid}/builds", body)
   let body = await res.body
@@ -66,7 +67,7 @@ proc postAccountsAccountIdBuildsTriggersTriggerUuidBuilds*(client: CloudflareCli
 proc postAccountsAccountIdBuildsTriggersTriggerUuidPurgeBuildCache*(client: CloudflareClient,
                                                                     accountId: types.BuildsAccountId,
                                                                     triggerUuid: types.BuildsTriggerUuid): Future[types.BuildsAPIResponse] {.async.} =
-  ## Clear the build cache for a specific trigger
+  ## Delete cached dependencies and build artifacts associated with a trigger.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/builds/triggers/{triggerUuid}/purge_build_cache")
   let body = await res.body

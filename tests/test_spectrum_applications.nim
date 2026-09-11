@@ -15,14 +15,6 @@ suite "spectrum_applications serialization":
     let obj = newSpectrumConfigApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpectrumConfigApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips SpectrumConfigZoneIdentifier":
-    let obj = newSpectrumConfigZoneIdentifier()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpectrumConfigZoneIdentifier)) == openjson.toJson(obj)
-
-  test "round-trips SpectrumConfigAppIdentifier":
-    let obj = newSpectrumConfigAppIdentifier()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpectrumConfigAppIdentifier)) == openjson.toJson(obj)
-
   test "round-trips SpectrumConfigAppConfigSingle":
     let obj = newSpectrumConfigAppConfigSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpectrumConfigAppConfigSingle)) == openjson.toJson(obj)
@@ -47,30 +39,30 @@ suite "spectrum_applications endpoints":
   test "GET /zones/{zone_id}/spectrum/apps":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdSpectrumApps(newSpectrumConfigZoneIdentifier(), 1.0, 1.0, {}, {})
+    discard waitFor client.getZonesZoneIdSpectrumApps("test", 1.0, 1.0, {}, {})
 
   test "POST /zones/{zone_id}/spectrum/apps":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postZonesZoneIdSpectrumApps(newSpectrumConfigZoneIdentifier(), newSpectrumConfigUpdateAppConfig())
+    discard waitFor client.postZonesZoneIdSpectrumApps("test", newSpectrumConfigUpdateAppConfig())
 
   test "GET /zones/{zone_id}/spectrum/apps/{app_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdSpectrumAppsAppId(newSpectrumConfigAppIdentifier(), newSpectrumConfigZoneIdentifier())
+    discard waitFor client.getZonesZoneIdSpectrumAppsAppId("test", "test")
 
   test "PUT /zones/{zone_id}/spectrum/apps/{app_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putZonesZoneIdSpectrumAppsAppId(newSpectrumConfigAppIdentifier(), newSpectrumConfigZoneIdentifier(), newSpectrumConfigUpdateAppConfig())
+    discard waitFor client.putZonesZoneIdSpectrumAppsAppId("test", "test", newSpectrumConfigUpdateAppConfig())
 
   test "DELETE /zones/{zone_id}/spectrum/apps/{app_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteZonesZoneIdSpectrumAppsAppId(newSpectrumConfigAppIdentifier(), newSpectrumConfigZoneIdentifier())
+    discard waitFor client.deleteZonesZoneIdSpectrumAppsAppId("test", "test")
 
   test "GET /zones/{zone_id}/spectrum/protocols":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdSpectrumProtocols(newSpectrumConfigZoneIdentifier())
+    discard waitFor client.getZonesZoneIdSpectrumProtocols("test")
 

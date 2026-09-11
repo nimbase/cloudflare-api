@@ -259,6 +259,17 @@ proc postAccountsAccountIdRegistrarRegistrations*(client: CloudflareClient,
   ## - Use `POST /domain-check` immediately before calling this endpoint to confirm
   ## real-time availability and pricing.
   ##
+  ## ### Supported extensions
+  ##
+  ## This API supports programmatic registration for all extensions supported by
+  ## the dashboard experience, with the following exceptions:
+  ##
+  ## `giving`, `mom`, `inc`, `lol`, `sh`, `link`, `cc`, `new`
+  ##
+  ## Cloudflare Registrar supports 400+ extensions in the dashboard. Extensions
+  ## listed above can be registered at
+  ## `https://dash.cloudflare.com/{account_id}/domains/registrations`.
+  ##
   ## ### Express mode
   ## The only required field is `domain_name`. If `contacts` is omitted, the system
   ## uses the account's default address book entry as the registrant. If no default

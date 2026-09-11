@@ -12,7 +12,7 @@ import ./private/types
 proc putAccountsAccountIdBuildsReposConnections*(client: CloudflareClient,
                                                  accountId: types.BuildsAccountId,
                                                  body: types.BuildsUpsertRepoConnectionRequest): Future[JsonNode] {.async.} =
-  ## Upsert a repository connection for CI/CD integration
+  ## Save the repository connection required by build triggers.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/builds/repos/connections", body)
   let body = await res.body
@@ -25,7 +25,7 @@ proc putAccountsAccountIdBuildsReposConnections*(client: CloudflareClient,
 proc deleteAccountsAccountIdBuildsReposConnectionsRepoConnectionUuid*(client: CloudflareClient,
                                                                       accountId: types.BuildsAccountId,
                                                                       repoConnectionUuid: types.BuildsRepoConnectionUuid): Future[types.BuildsAPIResponse] {.async.} =
-  ## Remove a repository connection
+  ## Delete a saved repository connection.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/builds/repos/connections/{repoConnectionUuid}")
   let body = await res.body

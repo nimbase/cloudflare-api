@@ -43,7 +43,8 @@ proc patchAccountsAccountIdAiGatewayLoggingState*(client: CloudflareClient,
 
 proc getAccountsAccountIdBuildsAccountLimits*(client: CloudflareClient,
                                               accountId: types.BuildsAccountId): Future[JsonNode] {.async.} =
-  ## Retrieve account limits and usage information
+  ## Return whether the account's build-minute allowance is exhausted and when it
+  ## refreshes.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/builds/account/limits")
   let body = await res.body

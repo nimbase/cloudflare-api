@@ -448,6 +448,16 @@ proc renameHook*(v: BillableUsageApiV2UsageQuery, fieldName: var string) {.inlin
   elif fieldName == "time_period":
     fieldName = "TimePeriod"
 
+proc renameHook*(v: BrexInstalledExtension, fieldName: var string) {.inline.} =
+  if fieldName == "hostPermissions":
+    fieldName = "host_permissions"
+  elif fieldName == "host_permissions":
+    fieldName = "hostPermissions"
+  elif fieldName == "installType":
+    fieldName = "install_type"
+  elif fieldName == "install_type":
+    fieldName = "installType"
+
 proc renameHook*(v: BuildsBuildSeedRepoInputFile, fieldName: var string) {.inline.} =
   if fieldName == "isBase64":
     fieldName = "is_base64"
@@ -1643,6 +1653,30 @@ proc renameHook*(v: R2R2ObjectHttpMetadata, fieldName: var string) {.inline.} =
     fieldName = "content_type"
   elif fieldName == "content_type":
     fieldName = "contentType"
+
+proc renameHook*(v: R2R2StorageClassMigrationJob, fieldName: var string) {.inline.} =
+  if fieldName == "endTime":
+    fieldName = "end_time"
+  elif fieldName == "end_time":
+    fieldName = "endTime"
+  elif fieldName == "jobType":
+    fieldName = "job_type"
+  elif fieldName == "job_type":
+    fieldName = "jobType"
+  elif fieldName == "startTime":
+    fieldName = "start_time"
+  elif fieldName == "start_time":
+    fieldName = "startTime"
+  elif fieldName == "storageClassMigration":
+    fieldName = "storage_class_migration"
+  elif fieldName == "storage_class_migration":
+    fieldName = "storageClassMigration"
+
+proc renameHook*(v: R2R2StorageClassMigrationJobsResult, fieldName: var string) {.inline.} =
+  if fieldName == "nextContinuationToken":
+    fieldName = "next_continuation_token"
+  elif fieldName == "next_continuation_token":
+    fieldName = "nextContinuationToken"
 
 proc renameHook*(v: R2TempAccessCredsRequest, fieldName: var string) {.inline.} =
   if fieldName == "parentAccessKeyId":

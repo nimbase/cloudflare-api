@@ -7746,10 +7746,31 @@ type
     success*: bool
       ## Indicates whether the API call was successful.
 
+  BotManagementAiBotsMigrationOptOut* = bool
+
   BotManagementAiBotsProtection* = enum
     ## Enable rule to block AI Scrapers and Crawlers.
     Block = "block"
     disabled = "disabled"
+    onlyOnAdPages = "only_on_ad_pages"
+
+  BotManagementAiSearch* = enum
+    ## Configure robots.txt policy for AI search bots.
+    disabled = "disabled"
+    Block = "block"
+    onlyOnAdPages = "only_on_ad_pages"
+
+  BotManagementAiTraining* = enum
+    ## Configure robots.txt policy for AI model training bots.
+    disabled = "disabled"
+    disallow = "disallow"
+    Block = "block"
+    onlyOnAdPages = "only_on_ad_pages"
+
+  BotManagementAiUser* = enum
+    ## Configure robots.txt policy for AI assistant and agent bots.
+    disabled = "disabled"
+    Block = "block"
     onlyOnAdPages = "only_on_ad_pages"
 
   BotManagementApiResponseCommon* = ref object of RootObj
@@ -7774,7 +7795,11 @@ type
   BotManagementAutoUpdateModel* = bool
 
   BotManagementBaseConfig* = ref object of RootObj
+    ai_bots_migration_opt_out*: Option[BotManagementAiBotsMigrationOptOut]
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
+    ai_search*: Option[BotManagementAiSearch]
+    ai_training*: Option[BotManagementAiTraining]
+    ai_user*: Option[BotManagementAiUser]
     bot_preference_sync_enabled*: Option[BotManagementBotPreferenceSyncEnabled]
     cf_robots_variant*: Option[BotManagementCfRobotsVariant]
     content_bots_protection*: Option[BotManagementContentBotsProtection]
@@ -7786,7 +7811,11 @@ type
   BotManagementBmCookieEnabled* = bool
 
   BotManagementBmSubscriptionConfig* = ref object of RootObj
+    ai_bots_migration_opt_out*: Option[BotManagementAiBotsMigrationOptOut]
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
+    ai_search*: Option[BotManagementAiSearch]
+    ai_training*: Option[BotManagementAiTraining]
+    ai_user*: Option[BotManagementAiUser]
     bot_preference_sync_enabled*: Option[BotManagementBotPreferenceSyncEnabled]
     cf_robots_variant*: Option[BotManagementCfRobotsVariant]
     content_bots_protection*: Option[BotManagementContentBotsProtection]
@@ -7802,7 +7831,11 @@ type
     suppress_session_score*: Option[BotManagementSuppressSessionScore]
 
   BotManagementBotFightModeConfig* = ref object of RootObj
+    ai_bots_migration_opt_out*: Option[BotManagementAiBotsMigrationOptOut]
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
+    ai_search*: Option[BotManagementAiSearch]
+    ai_training*: Option[BotManagementAiTraining]
+    ai_user*: Option[BotManagementAiUser]
     bot_preference_sync_enabled*: Option[BotManagementBotPreferenceSyncEnabled]
     cf_robots_variant*: Option[BotManagementCfRobotsVariant]
     content_bots_protection*: Option[BotManagementContentBotsProtection]
@@ -7901,7 +7934,11 @@ type
   BotManagementSbfmDefinitelyAutomatedTurnedOn* = string
 
   BotManagementSbfmDefinitelyConfig* = ref object of RootObj
+    ai_bots_migration_opt_out*: Option[BotManagementAiBotsMigrationOptOut]
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
+    ai_search*: Option[BotManagementAiSearch]
+    ai_training*: Option[BotManagementAiTraining]
+    ai_user*: Option[BotManagementAiUser]
     bot_preference_sync_enabled*: Option[BotManagementBotPreferenceSyncEnabled]
     cf_robots_variant*: Option[BotManagementCfRobotsVariant]
     content_bots_protection*: Option[BotManagementContentBotsProtection]
@@ -7926,7 +7963,11 @@ type
   BotManagementSbfmLikelyAutomatedTurnedOn* = string
 
   BotManagementSbfmLikelyConfig* = ref object of RootObj
+    ai_bots_migration_opt_out*: Option[BotManagementAiBotsMigrationOptOut]
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
+    ai_search*: Option[BotManagementAiSearch]
+    ai_training*: Option[BotManagementAiTraining]
+    ai_user*: Option[BotManagementAiUser]
     bot_preference_sync_enabled*: Option[BotManagementBotPreferenceSyncEnabled]
     cf_robots_variant*: Option[BotManagementCfRobotsVariant]
     content_bots_protection*: Option[BotManagementContentBotsProtection]
@@ -8048,9 +8089,6 @@ type
   BrexBrowserExtensionConfig* = ref object of RootObj
     min_extension_version*: Option[string]
       ## Minimum required browser extension version.
-    mode*: Option[string]
-    proxy_url*: string
-      ## PAC script URL for proxy configuration.
     team_domain*: string
       ## Team domain for the browser extension.
     created_at*: string
@@ -8061,11 +8099,15 @@ type
   BrexBrowserExtensionConfigBase* = ref object of RootObj
     min_extension_version*: Option[string]
       ## Minimum required browser extension version.
-    mode*: Option[string]
-    proxy_url*: string
-      ## PAC script URL for proxy configuration.
     team_domain*: string
       ## Team domain for the browser extension.
+
+  BrexBrowserExtensionConfigInput* = ref object of RootObj
+    min_extension_version*: Option[string]
+      ## Minimum required browser extension version.
+    team_name*: string
+      ## Access team name. The service derives `team_domain` as
+      ## `<team_name>.cloudflareaccess.com`.
 
   BrexConfigResponse* = ref object of RootObj
     errors*: seq[BrexApiMessage]
@@ -8074,7 +8116,7 @@ type
     success*: bool
 
   BrexCreateConfigRequest* = ref object of RootObj
-    config*: BrexBrowserExtensionConfigBase
+    config*: BrexBrowserExtensionConfigInput
 
   BrexDeleteResponse* = ref object of RootObj
     errors*: seq[BrexApiMessage]
@@ -8082,14 +8124,64 @@ type
     result*: Option[JsonNode]
     success*: bool
 
+  BrexDeviceState* = ref object of RootObj
+    account_id*: string
+      ## Cloudflare account internal ID.
+    created_at*: string
+      ## When the device state row was created.
+    installed_extensions*: seq[BrexInstalledExtension]
+    observed_at*: string
+      ## When the browser extension took the inventory snapshot.
+    physical_device_id*: Option[string]
+      ## Physical device ID from trusted device identity.
+    registration_id*: string
+      ## Browser extension registration ID.
+    updated_at*: string
+      ## When the device state row was last updated.
+
   BrexErrorResponse* = ref object of RootObj
     errors*: seq[BrexApiMessage]
     messages*: seq[BrexApiMessage]
     result*: Option[JsonNode]
     success*: bool
 
+  BrexInstalledExtension* = ref object of RootObj
+    enabled*: bool
+      ## Whether the extension is enabled.
+    host_permissions*: seq[string]
+      ## Browser extension host permissions (URL patterns).
+    id*: string
+      ## Browser extension ID.
+    install_type*: string
+      ## How the extension was installed.
+    name*: string
+      ## Browser extension display name.
+    permissions*: seq[string]
+      ## Browser extension API permissions.
+    version*: string
+      ## Browser extension version string.
+
+  BrexInventoriesResponse* = ref object of RootObj
+    errors*: seq[BrexApiMessage]
+    messages*: seq[BrexApiMessage]
+    result*: seq[BrexDeviceState]
+    result_info*: BrexPaginationInfo
+    success*: bool
+
+  BrexInventoryResponse* = ref object of RootObj
+    errors*: seq[BrexApiMessage]
+    messages*: seq[BrexApiMessage]
+    result*: BrexDeviceState
+    success*: bool
+
+  BrexPaginationInfo* = ref object of RootObj
+    cursor*: Option[string]
+      ## Opaque cursor for the next page. Null when there are no more results.
+    per_page*: int64
+      ## Number of results returned per page.
+
   BrexUpdateConfigRequest* = ref object of RootObj
-    config*: BrexBrowserExtensionConfigBase
+    config*: BrexBrowserExtensionConfigInput
 
   BuildsAPIResponse* = ref object of RootObj
     errors*: seq[JsonNode]
@@ -8125,19 +8217,26 @@ type
       ## Trigger information without build_token_uuid
 
   BuildsBuildSeedRepoInput* = ref object of RootObj
-    branch*: BuildsBranch
+    branch*: Option[JsonNode]
+      ## Repository branch to seed.
     files*: Option[seq[BuildsBuildSeedRepoInputFile]]
+      ## Files to add or replace for this build. Maximum 2.
     owner*: string
-    path*: string
-    provider*: BuildsSCMProviderType
+      ## Repository owner or namespace.
+    path*: Option[string]
+      ## Path within the repository to seed.
+    provider*: string
+      ## Source control provider for the seed repository.
     repository*: string
+      ## Repository name.
 
   BuildsBuildSeedRepoInputFile* = ref object of RootObj
     content*: string
     filename*: string
     is_base64*: Option[bool]
+      ## Whether content is Base64-encoded.
     replace*: Option[string]
-      ## Text to replace in the file
+      ## Existing text in the target file to replace with content.
 
   BuildsBuildStatus* = enum
     queued = "queued"
@@ -8189,7 +8288,8 @@ type
       ## Git branch name (required if commit_hash not provided)
     commit_hash*: Option[JsonNode]
       ## Git commit hash (required if branch not provided)
-    seed_repo*: Option[BuildsBuildSeedRepoInput]
+    seed_repo*: Option[JsonNode]
+      ## Optional repository and file overrides used to seed this build.
 
   BuildsCreateBuildTokenRequest* = ref object of RootObj
     build_token_name*: BuildsBuildTokenName
@@ -8279,6 +8379,8 @@ type
     modified_on*: Option[BuildsModifiedOn]
 
   BuildsEnvironmentVariablesRequest* = ref object of RootObj
+    ## Map of environment-variable names to build-time values. Names must begin with a
+    ## letter or underscore and contain only letters, numbers, and underscores.
 
   BuildsEnvironmentVariablesResponse* = ref object of RootObj
 
@@ -8322,6 +8424,7 @@ type
     total_pages*: Option[int64]
 
   BuildsSCMProviderType* = enum
+    ## Source control provider.
     github = "github"
     gitlab = "gitlab"
     gitlabInternal = "gitlab_internal"
@@ -9264,7 +9367,10 @@ type
   CcApplicationName* = string
 
   CcApplicationObservability* = ref object of RootObj
-    ## Settings for application observability such as logging.
+    ## Settings for application observability such as logging. Supported fields depend
+    ## on the application's scheduling policy. Durable Object-managed applications
+    ## accept only `logs.enabled`.
+    ##
     logs*: Option[CcObservabilityLogs]
 
   CcApplicationRollout* = ref object of RootObj
@@ -9447,12 +9553,14 @@ type
     ## The public Containers API returns an application.
 
   CcContainersCreateApplicationRequest* = ref object of RootObj
-    ## Create a Containers application. Set `scheduling_policy` to `default` for a
+    ## Create a Containers application.
+    ## Set `scheduling_policy` to `default` for a
     ## scheduler-backed application with deployment configuration, instance counts,
     ## constraints, versions, and rollouts. Set it to `durable_object` for a
     ## Durable Object-managed application where each Durable Object creates and manages
     ## the lifecycle of its container instance. For `durable_object` requests, supply
-    ## only `name`, `scheduling_policy`, and `durable_objects`.
+    ## `name`, `scheduling_policy`, and `durable_objects`, with optional top-level
+    ## `observability` settings.
     ##
 
   CcContainersCreateApplicationRolloutRequest* = ref object of RootObj
@@ -9500,16 +9608,18 @@ type
 
   CcContainersCreateDurableObjectApplicationRequest* = ref object of RootObj
     ## Create a Durable Object-managed Containers application. Each Durable Object
-    ## creates and manages the lifecycle of its container instance. Supply only `name`,
-    ## `scheduling_policy`, and `durable_objects`. Application-level deployment
-    ## configuration, instance counts, scaling, constraints, versions, and rollouts do
-    ## not apply.
+    ## creates and manages the lifecycle of its container instance. Supply `name`,
+    ## `scheduling_policy`, and `durable_objects`, with optional top-level
+    ## `observability`
+    ## settings. Deployment configuration, instance counts, scaling, constraints,
+    ## versions, and rollouts do not apply.
     ##
     durable_objects*: JsonNode
       ## The customer-owned Durable Object namespace that owns this application and its
       ## instances.
     name*: string
       ## The name for this application.
+    observability*: Option[CcDurableObjectApplicationObservability]
     scheduling_policy*: CcDurableObjectApplicationSchedulingPolicy
 
   CcContainersCreateImageRegistryRequestBody* = ref object of RootObj
@@ -9597,16 +9707,24 @@ type
   CcContainersModifyApplicationRequestBody* = ref object of RootObj
     ## Request body for modifying a Containers application without replacing its
     ## instances.
-    ## Deployment configuration changes such as image, resource allocation, command,
-    ## and
-    ## environment variables require an application rollout.
+    ## Durable Object-managed applications support only top-level
+    ## observability.logs.enabled.
+    ## The other fields apply to scheduler-backed applications, where deployment
+    ## configuration
+    ## changes such as image, resource allocation, command, and environment variables
+    ## require
+    ## an application rollout.
     ##
     configuration*: Option[CcContainersModifyApplicationConfiguration]
     constraints*: Option[CcApplicationConstraints]
     max_instances*: Option[int64]
       ## Maximum number of instances that an autoscaling application can run.
     observability*: Option[JsonNode]
-      ## Top-level observability settings to hot-reload across existing instances.
+      ## Top-level application observability settings. Scheduler-backed applications
+      ## hot-reload these settings across existing instances. An existing Durable
+      ## Object-managed application accepts only `logs.enabled` and publishes these
+      ## settings
+      ## to runtime metadata without creating deployments or rollouts.
       ##
     rollout_active_grace_period*: Option[CcApplicationRolloutActiveGracePeriod]
 
@@ -9639,6 +9757,7 @@ type
     health*: Option[CcDurableObjectApplicationHealth]
     id*: CcApplicationID
     name*: CcApplicationName
+    observability*: Option[CcDurableObjectApplicationObservability]
     scheduling_policy*: CcDurableObjectApplicationSchedulingPolicy
     updated_at*: CcISO8601Timestamp
 
@@ -9653,11 +9772,19 @@ type
     summary*: Option[string]
       ## Present as pending until the first activity sweep completes; omitted afterward.
 
+  CcDurableObjectApplicationObservability* = ref object of RootObj
+    ## Application-wide logging settings for a Durable Object-managed application.
+    ## The application publishes these settings to its runtime metadata. Updating
+    ## them does not create a deployment or rollout.
+    ##
+    logs*: Option[JsonNode]
+      ## Application-wide logging settings.
+
   CcDurableObjectApplicationSchedulingPolicy* = enum
     ## Selects a Durable Object-managed application. Each Durable Object creates and
-    ## manages the lifecycle of its container instance. Application-level deployment
-    ## configuration, scaling, placement constraints, versions, and rollouts do not
-    ## apply.
+    ## manages the lifecycle of its container instance. Configure application-wide
+    ## observability settings here. Deployment configuration, scaling, placement
+    ## constraints, versions, and rollouts do not apply.
     ##
     durableObject = "durable_object"
 
@@ -23056,7 +23183,7 @@ type
 
   MagicVisibilityPcapsApiResponseCommonFailure* = ref object of RootObj
     errors*: JsonNode
-    messages*: JsonNode
+    messages*: Option[JsonNode]
     result*: Option[JsonNode]
     success*: bool
       ## Whether the API call was successful.
@@ -26448,6 +26575,11 @@ type
 
   MqIdentifier* = string
 
+  MqJurisdiction* = enum
+    eu = "eu"
+    us = "us"
+    fedramp = "fedramp"
+
   MqLeaseId* = string
 
   MqMaxConcurrency* = float64
@@ -26462,6 +26594,7 @@ type
     consumers*: Option[seq[MqConsumerResponse]]
     consumers_total_count*: Option[float64]
     created_on*: Option[string]
+    jurisdiction*: Option[MqJurisdiction]
     modified_on*: Option[string]
     producers*: Option[seq[MqProducer]]
     producers_total_count*: Option[float64]
@@ -29314,6 +29447,7 @@ type
   R2DataCatalogCatalogMaintenanceConfig* = ref object of RootObj
     ## Configures maintenance for the catalog.
     compaction*: Option[R2DataCatalogCatalogCompactionConfig]
+    interval*: Option[R2DataCatalogMaintenanceInterval]
     snapshot_expiration*: Option[R2DataCatalogSnapshotExpirationConfig]
 
   R2DataCatalogCatalogMaintenanceConfigResponse* = ref object of RootObj
@@ -29376,6 +29510,31 @@ type
     total_snapshots*: int64
       ## Indicates the total number of snapshots stored for the table, before pruning.
 
+  R2DataCatalogMaintenanceInterval* = string
+
+  R2DataCatalogMaintenanceRunOperation* = ref object of RootObj
+    duration_ms*: int64
+    error_code*: Option[int32]
+    metrics*: Option[JsonNode]
+    operation*: string
+    status*: string
+
+  R2DataCatalogMaintenanceRunRecord* = ref object of RootObj
+    completed_at*: Option[string]
+    configuration_type*: string
+    customer_message*: Option[string]
+    duration_ms*: Option[int64]
+    operation_results*: seq[R2DataCatalogMaintenanceRunOperation]
+    outcome*: Option[string]
+    primary_error_code*: Option[int32]
+    run_id*: int64
+    started_at*: string
+    status*: string
+
+  R2DataCatalogMaintenanceRunsResponse* = ref object of RootObj
+    next_page_token*: Option[string]
+    runs*: seq[R2DataCatalogMaintenanceRunRecord]
+
   R2DataCatalogMaintenanceUpdateParams* = ref object of RootObj
     ## Contains maintenance update parameters.
     compaction*: Option[R2DataCatalogCompactionUpdateParams]
@@ -29410,6 +29569,14 @@ type
       ## A null or absent value indicates the last page.
       ##
 
+  R2DataCatalogQueueMaintenanceRequest* = ref object of RootObj
+    request_id*: Option[string]
+
+  R2DataCatalogQueueMaintenanceResponse* = ref object of RootObj
+    message*: string
+    queued*: bool
+    request_id*: Option[string]
+
   R2DataCatalogSnapshotExpirationConfig* = ref object of RootObj
     ## Configures snapshot expiration settings.
     max_snapshot_age*: string
@@ -29435,6 +29602,8 @@ type
 
   R2DataCatalogTableCompactionConfig* = ref object of RootObj
     ## Configures compaction settings for table optimization.
+    next_eligible_at*: Option[string]
+      ## Earliest time when the scheduler can claim this operation. Null when disabled.
     state*: R2DataCatalogCatalogMaintenanceState
     target_size_mb*: R2DataCatalogCatalogTargetFileSize
 
@@ -29483,7 +29652,8 @@ type
   R2DataCatalogTableMaintenanceConfig* = ref object of RootObj
     ## Configures maintenance for the table.
     compaction*: Option[R2DataCatalogTableCompactionConfig]
-    snapshot_expiration*: Option[R2DataCatalogSnapshotExpirationConfig]
+    interval*: Option[JsonNode]
+    snapshot_expiration*: Option[R2DataCatalogTableSnapshotExpirationConfig]
 
   R2DataCatalogTableMaintenanceConfigResponse* = ref object of RootObj
     ## Contains table maintenance configuration.
@@ -29505,6 +29675,15 @@ type
     ## snapshot (via `current-snapshot-id`) even when it falls outside that
     ## window.
     ##
+
+  R2DataCatalogTableSnapshotExpirationConfig* = ref object of RootObj
+    max_snapshot_age*: string
+      ## Specifies the maximum age for snapshots.
+    min_snapshots_to_keep*: int64
+      ## Specifies the minimum number of snapshots to retain. Defaults to 100.
+    next_eligible_at*: Option[string]
+      ## Earliest time when the scheduler can claim this operation. Null when disabled.
+    state*: R2DataCatalogCatalogMaintenanceState
 
   R2SlurperConnectivityResponse* = ref object of RootObj
     connectivity_status*: Option[string]
@@ -29780,6 +29959,7 @@ type
     eu = "eu"
     us = "us"
     fedramp = "fedramp"
+    fedrampHigh = "fedramp-high"
 
   R2LifecycleAgeCondition* = ref object of RootObj
     ## Condition for lifecycle transitions to apply after an object reaches an age in
@@ -29980,6 +30160,26 @@ type
       ## The date and time the object was uploaded.
     version*: Option[string]
       ## The version UUID of the uploaded object.
+
+  R2R2StorageClassMigrationJob* = ref object of RootObj
+    ## Descriptor of a bucket-wide storage-class migration job.
+    end_time*: Option[string]
+      ## When the job finished. Absent while the job is still `ENQUEUED` or `RUNNING`.
+      ##
+    id*: string
+      ## Unique identifier used to poll the job.
+    job_type*: string
+      ## The job kind.
+    start_time*: string
+      ## When the job was created.
+    status*: R2R2BucketJobStatus
+    storage_class_migration*: JsonNode
+
+  R2R2StorageClassMigrationJobsResult* = ref object of RootObj
+    jobs*: seq[R2R2StorageClassMigrationJob]
+      ## Storage-class migration jobs in the current page.
+    next_continuation_token*: Option[string]
+      ## Token to pass as `continuationToken` to retrieve the next page.
 
   R2RemoveCustomDomainResponse* = ref object of RootObj
     domain*: string
@@ -32526,6 +32726,10 @@ type
     alertingPolicy = "alerting_policy"
     alertingWebhook = "alerting_webhook"
     cloudflaredTunnel = "cloudflared_tunnel"
+    cwsDeployment = "cws_deployment"
+    cwsPolicy = "cws_policy"
+    cwsPolicySet = "cws_policy_set"
+    cwsWorkload = "cws_workload"
     d1Database = "d1_database"
     durableObjectNamespace = "durable_object_namespace"
     gatewayList = "gateway_list"
@@ -32556,6 +32760,10 @@ type
     alertingPolicy = "alerting_policy"
     alertingWebhook = "alerting_webhook"
     cloudflaredTunnel = "cloudflared_tunnel"
+    cwsDeployment = "cws_deployment"
+    cwsPolicy = "cws_policy"
+    cwsPolicySet = "cws_policy_set"
+    cwsWorkload = "cws_workload"
     d1Database = "d1_database"
     durableObjectNamespace = "durable_object_namespace"
     gatewayList = "gateway_list"
@@ -32652,6 +32860,10 @@ type
     cloudflaredTunnel = "cloudflared_tunnel"
     customCertificate = "custom_certificate"
     customHostname = "custom_hostname"
+    cwsDeployment = "cws_deployment"
+    cwsPolicy = "cws_policy"
+    cwsPolicySet = "cws_policy_set"
+    cwsWorkload = "cws_workload"
     d1Database = "d1_database"
     dnsRecord = "dns_record"
     durableObjectNamespace = "durable_object_namespace"
@@ -32753,6 +32965,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectAccessApplicationPolicy* = ref object of RootObj
     ## Response for access_application_policy resources
@@ -32762,6 +32975,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
 
   ResourceTaggingTaggedResourceObjectAccessApplicationPolicyBase* = ref object of RootObj
@@ -32771,6 +32985,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
 
   ResourceTaggingTaggedResourceObjectAccessGroup* = ref object of RootObj
@@ -32780,6 +32995,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectAccount* = ref object of RootObj
     ## Response for account resources
@@ -32788,6 +33004,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectAccountLevelBase* = ref object of RootObj
     ## Base schema for account-level resources (without type discriminator)
@@ -32795,6 +33012,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectAccountRuleset* = ref object of RootObj
     ## Response for account_ruleset resources
@@ -32803,6 +33021,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectAiGateway* = ref object of RootObj
     ## Response for ai_gateway resources
@@ -32811,6 +33030,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectAlertingPolicy* = ref object of RootObj
     ## Response for alerting_policy resources
@@ -32819,6 +33039,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectAlertingWebhook* = ref object of RootObj
     ## Response for alerting_webhook resources
@@ -32827,6 +33048,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectApiGatewayOperation* = ref object of RootObj
     ## Response for api_gateway_operation resources
@@ -32835,6 +33057,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
 
   ResourceTaggingTaggedResourceObjectCloudflaredTunnel* = ref object of RootObj
@@ -32844,6 +33067,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectCustomCertificate* = ref object of RootObj
     ## Response for custom_certificate resources
@@ -32852,6 +33076,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
 
   ResourceTaggingTaggedResourceObjectCustomHostname* = ref object of RootObj
@@ -32861,7 +33086,44 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
+
+  ResourceTaggingTaggedResourceObjectCwsDeployment* = ref object of RootObj
+    ## Response for cws_deployment resources
+    `type`*: string
+    etag*: ResourceTaggingEtag
+    id*: ResourceTaggingResourceId
+    name*: ResourceTaggingResourceName
+    tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
+
+  ResourceTaggingTaggedResourceObjectCwsPolicy* = ref object of RootObj
+    ## Response for cws_policy resources
+    `type`*: string
+    etag*: ResourceTaggingEtag
+    id*: ResourceTaggingResourceId
+    name*: ResourceTaggingResourceName
+    tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
+
+  ResourceTaggingTaggedResourceObjectCwsPolicySet* = ref object of RootObj
+    ## Response for cws_policy_set resources
+    `type`*: string
+    etag*: ResourceTaggingEtag
+    id*: ResourceTaggingResourceId
+    name*: ResourceTaggingResourceName
+    tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
+
+  ResourceTaggingTaggedResourceObjectCwsWorkload* = ref object of RootObj
+    ## Response for cws_workload resources
+    `type`*: string
+    etag*: ResourceTaggingEtag
+    id*: ResourceTaggingResourceId
+    name*: ResourceTaggingResourceName
+    tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectD1Database* = ref object of RootObj
     ## Response for d1_database resources
@@ -32870,6 +33132,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectDnsRecord* = ref object of RootObj
     ## Response for dns_record resources
@@ -32878,6 +33141,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
 
   ResourceTaggingTaggedResourceObjectDurableObjectNamespace* = ref object of RootObj
@@ -32887,6 +33151,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectGatewayList* = ref object of RootObj
     ## Response for gateway_list resources
@@ -32895,6 +33160,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectGatewayRule* = ref object of RootObj
     ## Response for gateway_rule resources
@@ -32903,6 +33169,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectHealthcheck* = ref object of RootObj
     ## Response for healthcheck resources
@@ -32911,6 +33178,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
 
   ResourceTaggingTaggedResourceObjectImage* = ref object of RootObj
@@ -32920,6 +33188,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectInfrastructureTarget* = ref object of RootObj
     ## Response for infrastructure_target resources
@@ -32928,6 +33197,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectKvNamespace* = ref object of RootObj
     ## Response for kv_namespace resources
@@ -32936,6 +33206,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectLoadBalancer* = ref object of RootObj
     ## Response for load_balancer resources
@@ -32944,6 +33215,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
 
   ResourceTaggingTaggedResourceObjectLoadBalancerMonitor* = ref object of RootObj
@@ -32953,6 +33225,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectLoadBalancerPool* = ref object of RootObj
     ## Response for load_balancer_pool resources
@@ -32961,6 +33234,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectManagedClientCertificate* = ref object of RootObj
     ## Response for managed_client_certificate resources
@@ -32969,6 +33243,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
 
   ResourceTaggingTaggedResourceObjectPagesProject* = ref object of RootObj
@@ -32978,6 +33253,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectQueue* = ref object of RootObj
     ## Response for queue resources
@@ -32986,6 +33262,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectR2Bucket* = ref object of RootObj
     ## Response for r2_bucket resources
@@ -32994,6 +33271,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectResourceShare* = ref object of RootObj
     ## Response for resource_share resources
@@ -33002,6 +33280,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectStreamLiveInput* = ref object of RootObj
     ## Response for stream_live_input resources
@@ -33010,6 +33289,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectStreamVideo* = ref object of RootObj
     ## Response for stream_video resources
@@ -33018,6 +33298,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectVectorizeIndex* = ref object of RootObj
     ## Response for vectorize_index resources
@@ -33026,6 +33307,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectWorker* = ref object of RootObj
     ## Response for worker resources
@@ -33034,6 +33316,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectWorkerRoute* = ref object of RootObj
     ## Response for worker_route resources
@@ -33042,6 +33325,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
 
   ResourceTaggingTaggedResourceObjectWorkerVersion* = ref object of RootObj
@@ -33051,6 +33335,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     worker_id*: ResourceTaggingWorkerId
 
   ResourceTaggingTaggedResourceObjectWorkerVersionBase* = ref object of RootObj
@@ -33059,6 +33344,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     worker_id*: ResourceTaggingWorkerId
 
   ResourceTaggingTaggedResourceObjectZone* = ref object of RootObj
@@ -33068,6 +33354,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
 
   ResourceTaggingTaggedResourceObjectZoneLevelBase* = ref object of RootObj
@@ -33076,6 +33363,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
 
   ResourceTaggingTaggedResourceObjectZoneRuleset* = ref object of RootObj
@@ -33085,6 +33373,7 @@ type
     id*: ResourceTaggingResourceId
     name*: ResourceTaggingResourceName
     tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
 
   ResourceTaggingTaggedResourceResponseCollection* = ref object of RootObj
@@ -33106,10 +33395,11 @@ type
     ## Contains key-value pairs of tags. Keys may contain at most 256 characters.
     ## Values may contain at most 1024 characters and may be empty for key-only tags.
 
+  ResourceTaggingTagsUpdatedAt* = string
+
   ResourceTaggingWorkerId* = string
 
-  ResourceTaggingZoneId* = ref object of RootObj
-    ## Zone ID is required only for zone-level resources
+  ResourceTaggingZoneId* = string
 
   ResourceTaggingZoneResourceType* = enum
     ## Identifies the type of zone-level resource.
@@ -35326,7 +35616,7 @@ type
       ## Whether the API call was successful.
     result*: Option[JsonNode]
 
-  SpectrumConfigAppIdentifier* = ref object of RootObj
+  SpectrumConfigAppIdentifier* = string
 
   SpectrumConfigAppProtocol* = ref object of RootObj
     description*: string
@@ -35345,7 +35635,7 @@ type
     id*: SpectrumConfigAppIdentifier
     modified_on*: SpectrumConfigModified
 
-  SpectrumConfigCreated* = ref object of RootObj
+  SpectrumConfigCreated* = string
 
   SpectrumConfigDns* = ref object of RootObj
     ## The name and type of DNS record for the Spectrum application.
@@ -35370,7 +35660,7 @@ type
 
   SpectrumConfigMessages* = seq[JsonNode]
 
-  SpectrumConfigModified* = ref object of RootObj
+  SpectrumConfigModified* = string
 
   SpectrumConfigOriginDirect* = seq[string]
 
@@ -35449,7 +35739,7 @@ type
 
   SpectrumConfigVirtualNetworkId* = string
 
-  SpectrumConfigZoneIdentifier* = ref object of RootObj
+  SpectrumConfigZoneIdentifier* = string
 
   SpeedApiResponseCommon* = ref object of RootObj
     errors*: SpeedMessages
@@ -41834,7 +42124,7 @@ type
   WorkersDomain* = ref object of RootObj
     cert_id*: string
       ## ID of the TLS certificate issued for the domain.
-    environment*: Option[string]
+    environment*: string
       ## Worker environment associated with the domain.
     hostname*: string
       ## Hostname of the domain. Can be either the zone apex or a subdomain of the zone.
@@ -41956,6 +42246,10 @@ type
       ## included as modules named `_headers` and `_redirects` with content type
       ## `text/plain`.
       ##
+    author_email*: Option[string]
+      ## Email of the user who created the version.
+    author_id*: Option[string]
+      ## Identifier of the user who created the version.
     bindings*: Option[WorkersBindings]
     cache_options*: Option[WorkersCacheOptions]
     compatibility_date*: Option[WorkersCompatibilityDate]

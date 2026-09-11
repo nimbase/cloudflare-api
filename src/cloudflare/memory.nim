@@ -15,7 +15,7 @@ type
       ## Informational, non-error messages, if any.
     result: seq[JsonNode]
     result_info: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   DeleteAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameResponse* = object
     errors: seq[JsonNode]
@@ -23,7 +23,7 @@ type
     messages: seq[JsonNode]
       ## Informational, non-error messages, if any.
     result: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   PostAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameIngestRequest = object
     messages: seq[JsonNode]
@@ -34,7 +34,7 @@ type
     messages: seq[JsonNode]
       ## Informational, non-error messages, if any.
     result: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   GetAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameMemoriesResponse* = object
     errors: seq[JsonNode]
@@ -43,7 +43,7 @@ type
       ## Informational, non-error messages, if any.
     result: seq[JsonNode]
     result_info: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   GetAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameMemoriesMemoryIdResponse* = object
     errors: seq[JsonNode]
@@ -51,7 +51,7 @@ type
     messages: seq[JsonNode]
       ## Informational, non-error messages, if any.
     result: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   DeleteAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameMemoriesMemoryIdResponse* = object
     errors: seq[JsonNode]
@@ -59,7 +59,7 @@ type
     messages: seq[JsonNode]
       ## Informational, non-error messages, if any.
     result: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   PostAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameRecallRequest = object
     query: string
@@ -72,7 +72,7 @@ type
     messages: seq[JsonNode]
       ## Informational, non-error messages, if any.
     result: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   PostAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameRememberRequest = object
     content: string
@@ -83,7 +83,7 @@ type
     messages: seq[JsonNode]
       ## Informational, non-error messages, if any.
     result: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   DeleteAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameSessionsSessionIdResponse* = object
     errors: seq[JsonNode]
@@ -91,7 +91,7 @@ type
     messages: seq[JsonNode]
       ## Informational, non-error messages, if any.
     result: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   PostAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameSummaryRequest = object
     session_id: Option[string]
@@ -101,7 +101,7 @@ type
     messages: seq[JsonNode]
       ## Informational, non-error messages, if any.
     result: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   MemoryTypeOption* = enum
     typeFact = "fact"

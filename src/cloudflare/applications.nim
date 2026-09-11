@@ -40,9 +40,9 @@ proc postAccountsAccountIdContainersApplications*(client: CloudflareClient,
   ##
   ## Use `scheduling_policy: "durable_object"` for a Durable Object-managed
   ## application. Each Durable Object creates and manages the lifecycle of its
-  ## container instance. This request accepts only `name`, `scheduling_policy`,
-  ## and `durable_objects`. Application-level configuration, scaling, constraints,
-  ## versions, and rollouts do not apply.
+  ## container instance. Supply `name`, `scheduling_policy`, and `durable_objects`,
+  ## with optional top-level `observability` settings. Deployment configuration,
+  ## scaling, constraints, versions, and rollouts do not apply.
 
   let res = await client.httpPOST("/accounts/{account_id}/containers/applications", body)
   let body = await res.body
@@ -79,8 +79,15 @@ proc deleteAccountsAccountIdContainersApplicationsApplicationId*(client: Cloudfl
 proc patchAccountsAccountIdContainersApplicationsApplicationId*(client: CloudflareClient,
                                                                 applicationId: types.CcApplicationID,
                                                                 body: types.CcContainersModifyApplicationRequestBody): Future[JsonNode] {.async.} =
-  ## Modifies a single application by id. Changes that replace instance deployment
-  ## configuration, including the image, must be applied with a rollout.
+  ## Modifies a single application by id. Durable Object-managed application settings
+  ## are
+  ## published to runtime metadata without creating deployments or rollouts.
+  ## Top-level
+  ## `observability` for these applications supports only `logs.enabled`.
+  ## The supported fields depend on the existing
+  ## application's scheduling policy. For scheduler-backed applications, changes that
+  ## replace instance deployment configuration, including the image, require a
+  ## rollout.
 
   let res = await client.httpPATCH(fmt"/accounts/{account_id}/containers/applications/{applicationId}", body)
   let body = await res.body

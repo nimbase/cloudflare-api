@@ -25,6 +25,10 @@ type
     enabled: bool
   PutAccountsAccountIdR2BucketsBucketNameLockRequest = object
     rules: Option[seq[types.R2BucketLockRule]]
+  PostAccountsAccountIdR2BucketsBucketNameStorageClassMigrationJobsRequest = object
+    destination_storage_class: Option[string]
+    job_type: string
+    source_storage_class: Option[string]
   R2BucketOrderOption* = enum
     orderName = "name"
 
@@ -484,6 +488,54 @@ proc deleteAccountsAccountIdR2BucketsBucketNameSippy*(client: CloudflareClient,
   ## Disables Sippy on this bucket.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/sippy")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdR2BucketsBucketNameStorageClassMigrationJobs*(client: CloudflareClient,
+                                                                       accountId: types.R2AccountIdentifier,
+                                                                       bucketName: types.R2BucketName,
+                                                                       status: types.R2R2BucketJobStatus = default(types.R2R2BucketJobStatus),
+                                                                       maxKeys: int64 = default(int64),
+                                                                       continuationToken: string = default(string)): Future[JsonNode] {.async.} =
+  ## Lists storage-class migration jobs for an R2 bucket.
+
+  var q = initOrderedTable[string, string]()
+  q["status"] = $status
+  q["maxKeys"] = $maxKeys
+  q["continuationToken"] = $continuationToken
+  let res = await client.httpGET(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/storage-class-migration-jobs", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdR2BucketsBucketNameStorageClassMigrationJobs*(client: CloudflareClient,
+                                                                        accountId: types.R2AccountIdentifier,
+                                                                        bucketName: types.R2BucketName,
+                                                                        body: PostAccountsAccountIdR2BucketsBucketNameStorageClassMigrationJobsRequest): Future[JsonNode] {.async.} =
+  ## Creates a storage-class migration background job for an R2 bucket.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/storage-class-migration-jobs", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdR2BucketsBucketNameStorageClassMigrationJobsJobId*(client: CloudflareClient,
+                                                                            accountId: types.R2AccountIdentifier,
+                                                                            bucketName: types.R2BucketName,
+                                                                            jobId: string): Future[JsonNode] {.async.} =
+  ## Gets the current status of a storage-class migration job.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/storage-class-migration-jobs/{jobId}")
   let body = await res.body
   case res.code
   of Http200:

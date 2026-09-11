@@ -23,8 +23,7 @@ type
 proc postAccountsAccountIdBuildsWorkers*(client: CloudflareClient,
                                          accountId: types.BuildsAccountId,
                                          body: types.BuildsCreateWorkerRequest): Future[JsonNode] {.async.} =
-  ## Create a new build configuration for a Worker script, linking it to a git
-  ## repository with CI/CD triggers.
+  ## Connect a Worker tag to a repository and production build settings.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/builds/workers", body)
   let body = await res.body
@@ -39,7 +38,7 @@ proc getAccountsAccountIdBuildsWorkersExternalScriptIdBuilds*(client: Cloudflare
                                                               externalScriptId: types.BuildsExternalScriptId,
                                                               page: int64 = 1,
                                                               perPage: int64 = 50): Future[JsonNode] {.async.} =
-  ## Get all builds for a specific worker script with pagination
+  ## List paginated build records associated with a Worker tag.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -55,7 +54,7 @@ proc getAccountsAccountIdBuildsWorkersExternalScriptIdBuilds*(client: Cloudflare
 proc getAccountsAccountIdBuildsWorkersExternalScriptIdTriggers*(client: CloudflareClient,
                                                                 accountId: types.BuildsAccountId,
                                                                 externalScriptId: types.BuildsExternalScriptId): Future[JsonNode] {.async.} =
-  ## Get all triggers for a specific worker script
+  ## List trigger UUIDs and build settings associated with a Worker tag.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/builds/workers/{externalScriptId}/triggers")
   let body = await res.body
@@ -68,8 +67,8 @@ proc getAccountsAccountIdBuildsWorkersExternalScriptIdTriggers*(client: Cloudfla
 proc getAccountsAccountIdBuildsWorkersScriptTag*(client: CloudflareClient,
                                                  accountId: types.BuildsAccountId,
                                                  scriptTag: types.BuildsExternalScriptId): Future[JsonNode] {.async.} =
-  ## Retrieve the build configuration for a specific Worker script, including git
-  ## repository details and production settings.
+  ## Retrieve the repository and production build settings associated with a Worker
+  ## tag.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/builds/workers/{scriptTag}")
   let body = await res.body
@@ -82,7 +81,8 @@ proc getAccountsAccountIdBuildsWorkersScriptTag*(client: CloudflareClient,
 proc deleteAccountsAccountIdBuildsWorkersScriptTag*(client: CloudflareClient,
                                                     accountId: types.BuildsAccountId,
                                                     scriptTag: types.BuildsExternalScriptId): Future[JsonNode] {.async.} =
-  ## Delete the build configuration for a Worker script.
+  ## Delete build settings and triggers for a Worker tag and cancel unfinished
+  ## builds. The Worker is not deleted.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/builds/workers/{scriptTag}")
   let body = await res.body
@@ -96,8 +96,8 @@ proc patchAccountsAccountIdBuildsWorkersScriptTag*(client: CloudflareClient,
                                                    accountId: types.BuildsAccountId,
                                                    scriptTag: types.BuildsExternalScriptId,
                                                    body: types.BuildsUpdateWorkerRequest): Future[JsonNode] {.async.} =
-  ## Update the build configuration for a Worker script. Supports partial updates to
-  ## git repository settings and production build settings.
+  ## Update the repository branch or production build settings associated with a
+  ## Worker tag.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/builds/workers/{scriptTag}", body)
   let body = await res.body

@@ -15,7 +15,7 @@ type
       ## Informational, non-error messages, if any.
     result: seq[JsonNode]
     result_info: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   PostAccountsAccountIdAgentMemoryNamespacesRequest = object
     name: string
@@ -25,7 +25,7 @@ type
     messages: seq[JsonNode]
       ## Informational, non-error messages, if any.
     result: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   GetAccountsAccountIdAgentMemoryNamespacesNamespaceNameResponse* = object
     errors: seq[JsonNode]
@@ -33,7 +33,7 @@ type
     messages: seq[JsonNode]
       ## Informational, non-error messages, if any.
     result: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   DeleteAccountsAccountIdAgentMemoryNamespacesNamespaceNameResponse* = object
     errors: seq[JsonNode]
@@ -41,7 +41,7 @@ type
     messages: seq[JsonNode]
       ## Informational, non-error messages, if any.
     result: JsonNode
-    success: string
+    success: bool
       ## Always true for a successful response.
   NamespaceOrderOption* = enum
     orderId = "id"

@@ -87,6 +87,10 @@ suite "r2_bucket serialization":
     let obj = newR2EditCustomDomainResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2EditCustomDomainResponse)) == openjson.toJson(obj)
 
+  test "round-trips R2R2StorageClassMigrationJob":
+    let obj = newR2R2StorageClassMigrationJob()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2R2StorageClassMigrationJob)) == openjson.toJson(obj)
+
   test "round-trips R2AddCustomDomainResponse":
     let obj = newR2AddCustomDomainResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2AddCustomDomainResponse)) == openjson.toJson(obj)
@@ -118,6 +122,10 @@ suite "r2_bucket serialization":
   test "round-trips R2Sippy":
     let obj = newR2Sippy()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2Sippy)) == openjson.toJson(obj)
+
+  test "round-trips R2R2StorageClassMigrationJobsResult":
+    let obj = newR2R2StorageClassMigrationJobsResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2R2StorageClassMigrationJobsResult)) == openjson.toJson(obj)
 
 suite "r2_bucket endpoints":
   test "GET /accounts/{account_id}/event_notifications/r2/{bucket_name}/configuration":
@@ -234,6 +242,11 @@ suite "r2_bucket endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdR2BucketsBucketNameSippy("test", "test")
+
+  test "GET /accounts/{account_id}/r2/buckets/{bucket_name}/storage-class-migration-jobs/{job_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdR2BucketsBucketNameStorageClassMigrationJobsJobId("test", "test", "test")
 
   test "POST /accounts/{account_id}/r2/temp-access-credentials":
     let client = initCloudflareClient("test-key")

@@ -13,6 +13,7 @@ type
     success: bool
   PostAccountsAccountIdAiGatewayGatewaysRequest = object
     authentication: Option[bool]
+    byok_only: Option[bool]
     cache_invalidate_on_update: bool
     cache_ttl: Option[int64]
     collect_logs: bool
@@ -41,6 +42,7 @@ type
     success: bool
   PutAccountsAccountIdAiGatewayGatewaysIdRequest = object
     authentication: Option[bool]
+    byok_only: Option[bool]
     cache_invalidate_on_update: bool
     cache_ttl: Option[int64]
     collect_logs: bool

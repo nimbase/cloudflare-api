@@ -85,12 +85,13 @@ proc patchAccountsAccountIdAddressingAddressMapsAddressMapId*(client: Cloudflare
   else:
     raise newException(CloudflareClientError, body)
 
-proc putAccountsAccountIdAddressingAddressMapsAddressMapIdAccountsAccountId*(client: CloudflareClient,
-                                                                             accountId: types.AddressingAccountIdentifier,
-                                                                             addressMapId: types.AddressingAddressMapIdentifier): Future[types.AddressingApiResponseCollection] {.async.} =
+proc putAccountsAccountIdAddressingAddressMapsAddressMapIdAccountsMemberAccountId*(client: CloudflareClient,
+                                                                                   accountId: types.AddressingAccountIdentifier,
+                                                                                   addressMapId: types.AddressingAddressMapIdentifier,
+                                                                                   memberAccountId: types.AddressingAccountIdentifier): Future[types.AddressingApiResponseCollection] {.async.} =
   ## Add an account as a member of a particular address map.
 
-  let res = await client.httpPUT(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/accounts/{accountId}")
+  let res = await client.httpPUT(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/accounts/{memberAccountId}")
   let body = await res.body
   case res.code
   of Http200:
@@ -98,12 +99,13 @@ proc putAccountsAccountIdAddressingAddressMapsAddressMapIdAccountsAccountId*(cli
   else:
     raise newException(CloudflareClientError, body)
 
-proc deleteAccountsAccountIdAddressingAddressMapsAddressMapIdAccountsAccountId*(client: CloudflareClient,
-                                                                                accountId: types.AddressingAccountIdentifier,
-                                                                                addressMapId: types.AddressingAddressMapIdentifier): Future[types.AddressingApiResponseCollection] {.async.} =
+proc deleteAccountsAccountIdAddressingAddressMapsAddressMapIdAccountsMemberAccountId*(client: CloudflareClient,
+                                                                                      accountId: types.AddressingAccountIdentifier,
+                                                                                      addressMapId: types.AddressingAddressMapIdentifier,
+                                                                                      memberAccountId: types.AddressingAccountIdentifier): Future[types.AddressingApiResponseCollection] {.async.} =
   ## Remove an account as a member of a particular address map.
 
-  let res = await client.httpDELETE(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/accounts/{accountId}")
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/accounts/{memberAccountId}")
   let body = await res.body
   case res.code
   of Http200:

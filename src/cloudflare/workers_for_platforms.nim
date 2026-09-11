@@ -261,7 +261,10 @@ proc putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                              dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                              scriptName: types.WorkersScriptName,
                                                                                              body: types.WorkersSecret): Future[JsonNode] {.async.} =
-  ## Add a secret to a script uploaded to a Workers for Platforms namespace.
+  ## Add a secret to a script by creating a new version with that secret.
+  ##
+  ## When changing more than one secret at a time, prefer the "Patch multiple
+  ## script secrets" API instead of changing many secrets individually.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/secrets", body)
   let body = await res.body
@@ -278,6 +281,8 @@ proc patchAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScri
                                                                                                    body: types.WorkersSecretPatchRequest): Future[JsonNode] {.async.} =
   ## Create, update, or delete multiple secrets on a script in a single operation
   ## using JSON Merge Patch (RFC 7396).
+  ## This operation creates a single version with all changes included.
+  ## Prefer this API instead of changing many secrets individually.
   ##
   ## Usage:
   ##
@@ -318,7 +323,11 @@ proc deleteAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScr
                                                                                                           scriptName: types.WorkersScriptName,
                                                                                                           secretName: types.WorkersSecretName,
                                                                                                           urlEncoded: types.WorkersSecretNameUrlEncoded = default(types.WorkersSecretNameUrlEncoded)): Future[types.WorkersApiResponseNullResult] {.async.} =
-  ## Remove a secret from a script uploaded to a Workers for Platforms namespace.
+  ## Remove a secret from a script by creating a new version without that
+  ## secret.
+  ##
+  ## When changing more than one secret at a time, prefer the "Patch multiple
+  ## script secrets" API instead of changing many secrets individually.
 
   var q = initOrderedTable[string, string]()
   q["url_encoded"] = $urlEncoded

@@ -18,13 +18,15 @@ type
     enabled: Option[bool]
     meta: Option[seq[types.CloudforceOneMetaInputEntry]]
     name: string
+    status: Option[string]
     strings: Option[seq[JsonNode]]
   PutAccountsAccountIdCloudforceOneRulesStructuredApprovalsIdRequest = object
-    condition: Option[JsonNode]
+    condition: types.CloudforceOneEmailRuleConditionGroup
     description: Option[string]
     enabled: Option[bool]
     meta: Option[seq[types.CloudforceOneMetaInputEntry]]
     name: string
+    status: Option[string]
     strings: Option[seq[JsonNode]]
   PostAccountsAccountIdCloudforceOneRulesStructuredApprovalsIdResubmitRequest = object
     condition: types.CloudforceOneEmailRuleConditionGroup
@@ -32,6 +34,7 @@ type
     enabled: Option[bool]
     meta: Option[seq[types.CloudforceOneMetaInputEntry]]
     name: string
+    status: Option[string]
     strings: Option[seq[JsonNode]]
   GetAccountsAccountIdCloudforceOneRulesStructuredSchemaResponse* = object
     arrays: seq[JsonNode]
@@ -47,6 +50,7 @@ type
     existing_rule_id: Option[string]
     meta: Option[seq[types.CloudforceOneMetaInputEntry]]
     name: string
+    status: Option[string]
     strings: Option[seq[JsonNode]]
   PutAccountsAccountIdCloudforceOneRulesStructuredIdRequest = object
     condition: Option[types.CloudforceOneEmailRuleConditionGroup]
@@ -54,6 +58,7 @@ type
     enabled: Option[bool]
     meta: Option[seq[types.CloudforceOneMetaInputEntry]]
     name: Option[string]
+    status: Option[string]
     strings: Option[seq[JsonNode]]
   PostAccountsAccountIdCloudforceOneRulesStructuredIdTestRequest = object
     sample_json: string

@@ -12,7 +12,8 @@ import ./private/types
 proc getAccountsAccountIdBuildsTriggersTriggerUuidEnvironmentVariables*(client: CloudflareClient,
                                                                         accountId: types.BuildsAccountId,
                                                                         triggerUuid: types.BuildsTriggerUuid): Future[JsonNode] {.async.} =
-  ## Get all environment variables for a trigger
+  ## List build-time variables configured for a trigger. Secret values are not
+  ## returned.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/builds/triggers/{triggerUuid}/environment_variables")
   let body = await res.body
@@ -26,7 +27,8 @@ proc patchAccountsAccountIdBuildsTriggersTriggerUuidEnvironmentVariables*(client
                                                                           accountId: types.BuildsAccountId,
                                                                           triggerUuid: types.BuildsTriggerUuid,
                                                                           body: types.BuildsEnvironmentVariablesRequest): Future[JsonNode] {.async.} =
-  ## Create or update environment variables for a trigger
+  ## Add or replace build-time variables and secrets without changing unspecified
+  ## keys.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/builds/triggers/{triggerUuid}/environment_variables", body)
   let body = await res.body
@@ -40,7 +42,7 @@ proc deleteAccountsAccountIdBuildsTriggersTriggerUuidEnvironmentVariablesEnviron
                                                                                                  accountId: types.BuildsAccountId,
                                                                                                  triggerUuid: types.BuildsTriggerUuid,
                                                                                                  environmentVariableKey: types.BuildsEnvironmentVariableKey): Future[types.BuildsAPIResponse] {.async.} =
-  ## Remove a specific environment variable from a trigger
+  ## Delete one build-time variable or secret by key.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/builds/triggers/{triggerUuid}/environment_variables/{environmentVariableKey}")
   let body = await res.body

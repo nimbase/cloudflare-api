@@ -21,6 +21,7 @@ type
     events: Option[seq[string]]
     name: Option[string]
   PostAccountsAccountIdQueuesRequest = object
+    jurisdiction: Option[types.MqJurisdiction]
     queue_name: types.MqQueueName
   PostAccountsAccountIdQueuesQueueIdMessagesAckRequest = object
     acks: Option[seq[JsonNode]]

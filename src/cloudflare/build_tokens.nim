@@ -12,7 +12,8 @@ import ./private/types
 proc getAccountsAccountIdBuildsTokens*(client: CloudflareClient,
                                        accountId: types.BuildsAccountId,
                                        page: int64 = 1, perPage: int64 = 50): Future[JsonNode] {.async.} =
-  ## Get all build tokens with pagination
+  ## List metadata for build tokens available to the current user without returning
+  ## their secrets.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -41,7 +42,7 @@ proc postAccountsAccountIdBuildsTokens*(client: CloudflareClient,
 proc deleteAccountsAccountIdBuildsTokensBuildTokenUuid*(client: CloudflareClient,
                                                         accountId: types.BuildsAccountId,
                                                         buildTokenUuid: types.BuildsBuildTokenUuid): Future[types.BuildsAPIResponse] {.async.} =
-  ## Remove a build authentication token
+  ## Delete a stored build token owned by the current user.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/builds/tokens/{buildTokenUuid}")
   let body = await res.body

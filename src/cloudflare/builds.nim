@@ -12,7 +12,7 @@ import ./private/types
 proc getAccountsAccountIdBuildsBuilds*(client: CloudflareClient,
                                        accountId: types.BuildsAccountId,
                                        versionIds: types.BuildsVersionIds): Future[JsonNode] {.async.} =
-  ## Retrieve builds for specific version IDs
+  ## Retrieve builds associated with one or more Worker version IDs.
 
   var q = initOrderedTable[string, string]()
   q["version_ids"] = $versionIds
@@ -42,7 +42,8 @@ proc getAccountsAccountIdBuildsBuildsLatest*(client: CloudflareClient,
 proc getAccountsAccountIdBuildsBuildsBuildUuid*(client: CloudflareClient,
                                                 accountId: types.BuildsAccountId,
                                                 buildUuid: types.BuildsBuildUuid): Future[JsonNode] {.async.} =
-  ## Retrieve detailed information about a specific build
+  ## Retrieve status, outcome, timestamps, trigger settings, and source metadata for
+  ## a build UUID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/builds/builds/{buildUuid}")
   let body = await res.body
@@ -55,7 +56,7 @@ proc getAccountsAccountIdBuildsBuildsBuildUuid*(client: CloudflareClient,
 proc putAccountsAccountIdBuildsBuildsBuildUuidCancel*(client: CloudflareClient,
                                                       accountId: types.BuildsAccountId,
                                                       buildUuid: types.BuildsBuildUuid): Future[JsonNode] {.async.} =
-  ## Cancel a running or queued build
+  ## Cancel a queued or running build.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/builds/builds/{buildUuid}/cancel")
   let body = await res.body
@@ -69,7 +70,7 @@ proc getAccountsAccountIdBuildsBuildsBuildUuidLogs*(client: CloudflareClient,
                                                     accountId: types.BuildsAccountId,
                                                     buildUuid: types.BuildsBuildUuid,
                                                     cursor: types.BuildsCursor = default(types.BuildsCursor)): Future[JsonNode] {.async.} =
-  ## Retrieve logs for a specific build with cursor-based pagination
+  ## Retrieve cursor-paginated log lines for a build UUID.
 
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor
