@@ -20519,6 +20519,10 @@ type
       ## - `"verify_ca"` — verify certificate chain only, skip hostname check
       ## - `"disabled"` — do not verify the server certificate at all
 
+  InfraBatchReplaceTargetTagsItem* = ref object of RootObj
+    tags*: JsonNode
+    target_id*: InfraTargetId
+
   InfraConnectivityServiceArray* = seq[InfraServiceConfig]
 
   InfraDualStackHost* = ref object of RootObj
@@ -20593,6 +20597,8 @@ type
     ip*: InfraIPInfo
     modified_at*: string
       ## Date and time at which the target was modified
+    tags*: Option[JsonNode]
+      ## Tags assigned to the target. Empty when no tags are assigned.
 
   InfraTargetArray* = seq[InfraTarget]
 

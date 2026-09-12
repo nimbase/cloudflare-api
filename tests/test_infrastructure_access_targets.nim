@@ -31,11 +31,15 @@ suite "infrastructure_access_targets serialization":
     let obj = newInfraApiResponseSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.InfraApiResponseSingle)) == openjson.toJson(obj)
 
+  test "round-trips InfraBatchReplaceTargetTagsItem":
+    let obj = newInfraBatchReplaceTargetTagsItem()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.InfraBatchReplaceTargetTagsItem)) == openjson.toJson(obj)
+
 suite "infrastructure_access_targets endpoints":
   test "GET /accounts/{account_id}/infrastructure/targets":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdInfrastructureTargets("test", "test", "test", "test", "test", "test", "test", "test", "test", "test", @["test"], @["test"], "test", "test", "test", "test", "test", 1, 1, {}, openjson.newJObject())
+    discard waitFor client.getAccountsAccountIdInfrastructureTargets("test", "test", "test", "test", "test", "test", "test", "test", "test", "test", @["test"], @["test"], "test", "test", "test", "test", "test", @["test"], 1, 1, {}, openjson.newJObject())
 
   test "PUT /accounts/{account_id}/infrastructure/targets/batch":
     let client = initCloudflareClient("test-key")

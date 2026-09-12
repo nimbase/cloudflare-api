@@ -14,6 +14,15 @@ type
     result: seq[JsonNode]
     result_info: JsonNode
     success: bool
+  PostAccountsAccountIdArtifactsNamespacesRequest = object
+    jurisdiction: Option[string]
+    namespace: string
+  PostAccountsAccountIdArtifactsNamespacesResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
   GetAccountsAccountIdArtifactsNamespacesNamespaceResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
@@ -144,6 +153,18 @@ proc getAccountsAccountIdArtifactsNamespaces*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc postAccountsAccountIdArtifactsNamespaces*(client: CloudflareClient,
+                                               body: PostAccountsAccountIdArtifactsNamespacesRequest): Future[PostAccountsAccountIdArtifactsNamespacesResponse] {.async.} =
+  ## Creates an empty Artifacts namespace for an account.
+
+  let res = await client.httpPOST("/accounts/{account_id}/artifacts/namespaces", body)
+  let body = await res.body
+  case res.code
+  of Http201:
+    result = fromJson(body, PostAccountsAccountIdArtifactsNamespacesResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdArtifactsNamespacesNamespace*(client: CloudflareClient,
                                                        namespace: string): Future[GetAccountsAccountIdArtifactsNamespacesNamespaceResponse] {.async.} =
   ## Returns an Artifacts namespace summary.
@@ -155,6 +176,13 @@ proc getAccountsAccountIdArtifactsNamespacesNamespace*(client: CloudflareClient,
     result = fromJson(body, GetAccountsAccountIdArtifactsNamespacesNamespaceResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdArtifactsNamespacesNamespace*(client: CloudflareClient,
+                                                          namespace: string): Future[AsyncResponse] {.async.} =
+  ## Deletes an empty Artifacts namespace.
+
+  let res = await client.httpDELETE(fmt"/accounts/{account_id}/artifacts/namespaces/{namespace}")
+  return res
 
 proc getAccountsAccountIdArtifactsNamespacesNamespaceRepos*(client: CloudflareClient,
                                                             namespace: string,

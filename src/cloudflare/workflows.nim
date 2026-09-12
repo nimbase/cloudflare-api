@@ -538,7 +538,7 @@ proc getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribe*(clie
                                                                             workflowName: string,
                                                                             instanceId: string,
                                                                             cursor: int64 = default(int64),
-                                                                            filter: string = default(string),
+                                                                            filter: seq[string] = default(seq[string]),
                                                                             accountId: string): Future[AsyncResponse] {.async.} =
   ## Opens a WebSocket that streams workflow instance events.
 

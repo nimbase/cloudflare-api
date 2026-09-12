@@ -25,8 +25,6 @@ type
     messages: seq[types.OrganizationsApiV4Message]
     result: types.OrganizationsApiMember
     success: bool
-  DeleteOrganizationsOrganizationIdMembersMemberIdRequest = object
-    member_id: types.OrganizationsApiMemberID
   PostOrganizationsOrganizationIdMembersBatchCreateResponse* = object
     errors: seq[JsonNode]
     messages: seq[types.OrganizationsApiV4Message]
@@ -91,12 +89,11 @@ proc getOrganizationsOrganizationIdMembersMemberId*(client: CloudflareClient,
 
 proc deleteOrganizationsOrganizationIdMembersMemberId*(client: CloudflareClient,
                                                        organizationId: types.OrganizationsApiOrganizationID,
-                                                       memberId: types.OrganizationsApiMemberID,
-                                                       body: DeleteOrganizationsOrganizationIdMembersMemberIdRequest): Future[AsyncResponse] {.async.} =
+                                                       memberId: types.OrganizationsApiMemberID): Future[AsyncResponse] {.async.} =
   ## Delete a membership to a particular Organization. (Currently in Public Beta -
   ## see https://developers.cloudflare.com/fundamentals/organizations/)
 
-  let res = await client.httpDELETE(fmt"/organizations/{organizationId}/members/{memberId}", body)
+  let res = await client.httpDELETE(fmt"/organizations/{organizationId}/members/{memberId}")
   return res
 
 proc postOrganizationsOrganizationIdMembersBatchCreate*(client: CloudflareClient,

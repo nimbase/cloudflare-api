@@ -4,7 +4,7 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[strformat, json]
+import std/[strformat, options, json]
 import ./private/metaclient
 import ./private/types
 
@@ -12,13 +12,17 @@ type
   PostAccountsAccountIdInfrastructureTargetsRequest = object
     hostname: string
     ip: types.InfraIPInfo
+    tags: Option[JsonNode]
   DeleteAccountsAccountIdInfrastructureTargetsBatchRequest = object
     target_ids: seq[types.InfraTargetId]
   PostAccountsAccountIdInfrastructureTargetsBatchDeleteRequest = object
     target_ids: seq[types.InfraTargetId]
+  PostAccountsAccountIdInfrastructureTargetsBatchTagsRequest = object
+    items: seq[types.InfraBatchReplaceTargetTagsItem]
   PutAccountsAccountIdInfrastructureTargetsTargetIdRequest = object
     hostname: string
     ip: types.InfraIPInfo
+    tags: Option[JsonNode]
   InfrastructureAccessTargetOrderOption* = enum
     orderHostname = "hostname"
     orderCreatedAt = "created_at"
@@ -42,6 +46,7 @@ proc getAccountsAccountIdInfrastructureTargets*(client: CloudflareClient,
                                                 ipv4End: string = default(string),
                                                 ipv6Start: string = default(string),
                                                 ipv6End: string = default(string),
+                                                tag: seq[string] = @[],
                                                 page: int32 = 1,
                                                 perPage: int32 = 1000,
                                                 order: InfrastructureAccessTargetOrderOption,
@@ -66,6 +71,7 @@ proc getAccountsAccountIdInfrastructureTargets*(client: CloudflareClient,
   q["ipv4_end"] = $ipv4End
   q["ipv6_start"] = $ipv6Start
   q["ipv6_end"] = $ipv6End
+  for v in tag: q["tag"] = $v
   q["page"] = $page
   q["per_page"] = $perPage
   q["order"] = $order
@@ -118,6 +124,19 @@ proc postAccountsAccountIdInfrastructureTargetsBatchDelete*(client: CloudflareCl
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/infrastructure/targets/batch_delete", body)
   return res
+
+proc postAccountsAccountIdInfrastructureTargetsBatchTags*(client: CloudflareClient,
+                                                          accountId: types.InfraAccountTag,
+                                                          body: PostAccountsAccountIdInfrastructureTargetsBatchTagsRequest): Future[JsonNode] {.async.} =
+  ## Replaces tags for one or more existing infrastructure access targets.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/infrastructure/targets/batch_tags", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdInfrastructureTargetsTargetId*(client: CloudflareClient,
                                                         accountId: types.InfraAccountTag,

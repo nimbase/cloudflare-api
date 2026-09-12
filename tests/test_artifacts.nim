@@ -15,6 +15,10 @@ suite "artifacts serialization":
     let obj = cloudflare.GetAccountsAccountIdArtifactsNamespacesResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdArtifactsNamespacesResponse)) == openjson.toJson(obj)
 
+  test "round-trips PostAccountsAccountIdArtifactsNamespacesResponse":
+    let obj = cloudflare.PostAccountsAccountIdArtifactsNamespacesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdArtifactsNamespacesResponse)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdArtifactsNamespacesNamespaceResponse":
     let obj = cloudflare.GetAccountsAccountIdArtifactsNamespacesNamespaceResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdArtifactsNamespacesNamespaceResponse)) == openjson.toJson(obj)
@@ -77,6 +81,11 @@ suite "artifacts endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdArtifactsNamespacesNamespace("test")
+
+  test "DELETE /accounts/{account_id}/artifacts/namespaces/{namespace}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdArtifactsNamespacesNamespace("test")
 
   test "GET /accounts/{account_id}/artifacts/namespaces/{namespace}/repos":
     let client = initCloudflareClient("test-key")

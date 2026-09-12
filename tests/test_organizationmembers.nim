@@ -62,6 +62,11 @@ suite "organizationmembers endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getOrganizationsOrganizationIdMembersMemberId("test", "test")
 
+  test "DELETE /organizations/{organization_id}/members/{member_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteOrganizationsOrganizationIdMembersMemberId("test", "test")
+
   test "POST /organizations/{organization_id}/members:batchCreate":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
