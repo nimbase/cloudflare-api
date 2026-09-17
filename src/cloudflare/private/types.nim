@@ -2415,6 +2415,20 @@ type
   AccessGeo* = ref object of RootObj
     country*: Option[string]
 
+  AccessGetResponse* = ref object of RootObj
+    errors*: AccessMessages
+    messages*: AccessMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[JsonNode]
+
+  AccessGetResponse2* = ref object of RootObj
+    errors*: AccessMessages
+    messages*: AccessMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[JsonNode]
+
   AccessGithub* = ref object of RootObj
     config*: AccessGenericOauthConfig
     id*: Option[AccessUuid]
@@ -4642,18 +4656,52 @@ type
     ## Contains a map of target attribute keys to target attribute values.
 
   AccessTargetCriteriaBase* = ref object of RootObj
-    port*: AccessPort
-    target_attributes*: AccessTargetAttributes
+    ## Defines targets covered by the application. Use either the legacy top-level
+    ## target_attributes format or the rule format, but not both. The rule format
+    ## requires include; require and exclude are optional.
+    exclude*: Option[JsonNode]
+      ## Target is excluded when any selector in this rule matches.
+    `include`*: Option[JsonNode]
+      ## Target matches when any selector in this rule matches.
+    port*: int64
+    require*: Option[JsonNode]
+      ## Target matches only when every selector in this rule matches.
+    target_attributes*: Option[JsonNode]
 
   AccessTargetCriteriaInfraApp* = ref object of RootObj
-    port*: AccessPort
-    target_attributes*: AccessTargetAttributes
-    protocol*: AccessProtocolInfraApp
+    exclude*: Option[JsonNode]
+      ## Target is excluded when any selector in this rule matches.
+    `include`*: Option[JsonNode]
+      ## Target matches when any selector in this rule matches.
+    port*: int64
+    require*: Option[JsonNode]
+      ## Target matches only when every selector in this rule matches.
+    target_attributes*: Option[JsonNode]
+    protocol*: string
 
   AccessTargetCriteriaSelfHostedApp* = ref object of RootObj
-    port*: AccessPort
-    target_attributes*: AccessTargetAttributes
-    protocol*: AccessProtocolSelfHostedApp
+    exclude*: Option[JsonNode]
+      ## Target is excluded when any selector in this rule matches.
+    `include`*: Option[JsonNode]
+      ## Target matches when any selector in this rule matches.
+    port*: int64
+    require*: Option[JsonNode]
+      ## Target matches only when every selector in this rule matches.
+    target_attributes*: Option[JsonNode]
+    protocol*: string
+
+  AccessTargetRule* = ref object of RootObj
+    ## Selectors within an include, require, or exclude rule. At least one of
+    ## target_attributes or tags must be non-empty.
+    tags*: Option[JsonNode]
+      ## Map of target tag keys to values. Values within a key are OR'd.
+    target_attributes*: Option[JsonNode]
+
+  AccessTargetRuleAttributes* = ref object of RootObj
+    ## Hostname selector map for include, require, or exclude rules. This is distinct
+    ## from the deprecated top-level target_attributes field and only supports the
+    ## hostname key.
+    hostname*: Option[seq[string]]
 
   AccessTemplateViolation* = ref object of RootObj
     ## A single validation finding for a template.
@@ -5704,6 +5752,86 @@ type
       ##
     rows*: int64
       ## Total number of rows in the result set.
+
+  AnalyticsSqlApiErrorResponse* = ref object of RootObj
+    code*: int64
+      ## Machine-readable error code.
+    error_chain*: Option[seq[AnalyticsSqlApiErrorResponse]]
+      ## Additional errors that caused this error.
+    message*: string
+      ## Human-readable error message.
+
+  AnalyticsSqlIntrospectionColumn* = ref object of RootObj
+    data_type*: string
+      ## SQL data type of the column.
+    description*: string
+      ## Human-readable description of the column.
+    name*: string
+      ## Column name used in SQL queries.
+
+  AnalyticsSqlIntrospectionDataset* = ref object of RootObj
+    columns*: Option[seq[AnalyticsSqlIntrospectionColumn]]
+      ## Present when `include_columns` is true.
+    description*: string
+      ## Human-readable description of the dataset.
+    name*: string
+      ## Dataset name used in SQL queries.
+    title*: string
+      ## Human-readable title of the dataset.
+
+  AnalyticsSqlIntrospectionResponse* = ref object of RootObj
+    datasets*: seq[AnalyticsSqlIntrospectionDataset]
+      ## Datasets visible through the Analytics SQL API.
+
+  AnalyticsSqlSqlQueryAccountScope* = ref object of RootObj
+    account_tag*: string
+      ## Account tag used to authorize and scope the query.
+
+  AnalyticsSqlSqlQueryRequest* = ref object of RootObj
+    params*: Option[JsonNode]
+      ## Positional array values for `$1`, `$2`, and similar placeholders, or named
+      ## object values for placeholders such as `$status`.
+      ##
+    query*: string
+      ## SQL query to execute.
+    scope*: Option[AnalyticsSqlSqlQueryScope]
+    time_range*: Option[AnalyticsSqlSqlQueryTimeRange]
+
+  AnalyticsSqlSqlQueryResponse* = ref object of RootObj
+    data*: seq[JsonNode]
+      ## Query result rows keyed by the selected column names.
+    rows*: int64
+      ## Number of rows in `data`.
+    statistics*: AnalyticsSqlSqlQueryStatistics
+
+  AnalyticsSqlSqlQueryScope* = ref object of RootObj
+    ## Account or zone scope applied to the query. Include exactly one scope tag. Do
+    ## not include account or zone tenancy predicates in the SQL query when this field
+    ## is present.
+    ##
+
+  AnalyticsSqlSqlQueryStatistics* = ref object of RootObj
+    bytes_read*: int64
+      ## Number of source bytes read while executing the query.
+    elapsed_ms*: int64
+      ## Backend execution time in milliseconds.
+    rows_read*: int64
+      ## Number of source rows read while executing the query.
+
+  AnalyticsSqlSqlQueryTimeRange* = ref object of RootObj
+    ## Time bounds applied to the dataset's timestamp column. Do not include timestamp
+    ## predicates in the SQL query when this field is present.
+    ##
+    `end`*: Option[string]
+      ## Inclusive upper bound for the dataset's timestamp column.
+    start*: string
+      ## Inclusive lower bound for the dataset's timestamp column.
+
+  AnalyticsSqlSqlQueryZoneScope* = ref object of RootObj
+    zone_tag*: string
+      ## Zone tag used to authorize and scope the query. Must be a 32-character lowercase
+      ## hex string or a UUID with hyphens (8-4-4-4-12 format).
+      ##
 
   ApiShieldRule* = ref object of RootObj
     ## A Token Validation rule that can enforce security policies using JWT Tokens.
@@ -8145,6 +8273,67 @@ type
     result*: Option[JsonNode]
     success*: bool
 
+  BrexExtensionEventField* = enum
+    timestamp = "timestamp"
+    durationMs = "durationMs"
+    eventName = "eventName"
+    action = "action"
+    userEmail = "userEmail"
+    registrationId = "registrationId"
+    policyId = "policyId"
+    url = "url"
+    matchedDlpProfiles = "matchedDlpProfiles"
+    inventoryExtensionId = "inventoryExtensionId"
+    inventoryExtensionName = "inventoryExtensionName"
+    inventoryExtensionVersion = "inventoryExtensionVersion"
+
+  BrexExtensionEventFilter* = ref object of RootObj
+    field*: BrexExtensionEventField
+    op*: BrexExtensionEventFilterOperator
+    value*: JsonNode
+
+  BrexExtensionEventFilterOperator* = enum
+    eq = "eq"
+    neq = "neq"
+    In = "in"
+    notIn = "notIn"
+    contains = "contains"
+    notContains = "notContains"
+    includes = "includes"
+    notIncludes = "notIncludes"
+    gte = "gte"
+    lte = "lte"
+
+  BrexExtensionEventLogRow* = ref object of RootObj
+    action*: Option[string]
+    duration_ms*: Option[float64]
+    event_name*: Option[string]
+    inventory_extension_id*: Option[string]
+    inventory_extension_name*: Option[string]
+    inventory_extension_version*: Option[string]
+    matched_dlp_profiles*: Option[seq[string]]
+    policy_id*: Option[string]
+    registration_id*: Option[string]
+    timestamp*: Option[string]
+    url*: Option[string]
+    user_email*: Option[string]
+
+  BrexExtensionEventsSearchRequest* = ref object of RootObj
+    fields*: Option[seq[BrexExtensionEventField]]
+    filters*: Option[seq[BrexExtensionEventFilter]]
+    `from`*: string
+    include_total*: Option[bool]
+    limit*: Option[int64]
+    page*: Option[int64]
+    to*: string
+
+  BrexExtensionEventsSearchResponse* = ref object of RootObj
+    errors*: seq[BrexApiMessage]
+    messages*: seq[BrexApiMessage]
+    result*: seq[BrexExtensionEventLogRow]
+    result_info*: BrexPagePaginationInfo
+    success*: bool
+
   BrexInstalledExtension* = ref object of RootObj
     enabled*: bool
       ## Whether the extension is enabled.
@@ -8173,6 +8362,12 @@ type
     messages*: seq[BrexApiMessage]
     result*: BrexDeviceState
     success*: bool
+
+  BrexPagePaginationInfo* = ref object of RootObj
+    count*: int64
+    page*: int64
+    per_page*: int64
+    total_count*: Option[int64]
 
   BrexPaginationInfo* = ref object of RootObj
     cursor*: Option[string]
@@ -8660,7 +8855,7 @@ type
 
   CachePurgeMessages* = seq[JsonNode]
 
-  CacheRulesAegis* = ref object of RootObj
+  CacheSettingsAegis* = ref object of RootObj
     ## Aegis provides dedicated egress IPs (from Cloudflare to your origin) for your
     ## layer 7 WAF and CDN services. The egress IPs are reserved exclusively for your
     ## account so that you can increase your origin security by only allowing traffic
@@ -8669,12 +8864,12 @@ type
       ## ID of the zone setting.
     modified_on*: Option[string]
       ## Last time this setting was modified.
-    value*: Option[CacheRulesAegisValue]
+    value*: Option[CacheSettingsAegisValue]
 
-  CacheRulesAegisResponseValue* = ref object of RootObj
-    result*: Option[CacheRulesAegis]
+  CacheSettingsAegisResponseValue* = ref object of RootObj
+    result*: Option[CacheSettingsAegis]
 
-  CacheRulesAegisValue* = ref object of RootObj
+  CacheSettingsAegisValue* = ref object of RootObj
     ## Value of the zone setting.
     enabled*: Option[bool]
       ## Whether the feature is enabled or not.
@@ -8682,26 +8877,26 @@ type
       ## Egress pool id which refers to a grouping of dedicated egress IPs through which
       ## Cloudflare will connect to origin.
 
-  CacheRulesApiResponseCommon* = ref object of RootObj
-    errors*: CacheRulesMessages
-    messages*: CacheRulesMessages
+  CacheSettingsApiResponseCommon* = ref object of RootObj
+    errors*: CacheSettingsMessages
+    messages*: CacheSettingsMessages
     success*: bool
       ## Whether the API call was successful.
 
-  CacheRulesApiResponseCommonFailure* = ref object of RootObj
+  CacheSettingsApiResponseCommonFailure* = ref object of RootObj
     errors*: seq[JsonNode]
     messages*: seq[JsonNode]
     result*: Option[JsonNode]
     success*: bool
       ## Whether the API call was successful.
 
-  CacheRulesBase* = ref object of RootObj
+  CacheSettingsBase* = ref object of RootObj
     id*: string
       ## Identifier of the zone setting.
     modified_on*: Option[string]
       ## Last time this setting was modified.
 
-  CacheRulesCacheReserve* = ref object of RootObj
+  CacheSettingsCacheReserve* = ref object of RootObj
     ## Increase cache lifetimes by automatically storing all cacheable files into
     ## Cloudflare's persistent object storage buckets. Requires Cache Reserve
     ## subscription. Note: using Tiered Cache with Cache Reserve is highly recommended
@@ -8713,7 +8908,7 @@ type
     modified_on*: Option[string]
       ## Last time this setting was modified.
 
-  CacheRulesCacheReserveClear* = ref object of RootObj
+  CacheSettingsCacheReserveClear* = ref object of RootObj
     ## You can use Cache Reserve Clear to clear your Cache Reserve, but you must first
     ## disable Cache Reserve. In most cases, this will be accomplished within 24 hours.
     ## You cannot re-enable Cache Reserve while this process is ongoing. Keep in mind
@@ -8723,35 +8918,35 @@ type
     modified_on*: Option[string]
       ## Last time this setting was modified.
 
-  CacheRulesCacheReserveClearEndTs* = string
+  CacheSettingsCacheReserveClearEndTs* = string
 
-  CacheRulesCacheReserveClearResponseValue* = ref object of RootObj
+  CacheSettingsCacheReserveClearResponseValue* = ref object of RootObj
     result*: Option[JsonNode]
 
-  CacheRulesCacheReserveClearStartTs* = string
+  CacheSettingsCacheReserveClearStartTs* = string
 
-  CacheRulesCacheReserveClearState* = enum
+  CacheSettingsCacheReserveClearState* = enum
     ## The current state of the Cache Reserve Clear operation.
     InProgress = "In-progress"
     Completed = "Completed"
 
-  CacheRulesCacheReserveResponseValue* = ref object of RootObj
+  CacheSettingsCacheReserveResponseValue* = ref object of RootObj
     result*: Option[JsonNode]
 
-  CacheRulesCacheReserveValue* = enum
+  CacheSettingsCacheReserveValue* = enum
     ## Value of the Cache Reserve zone setting.
     on = "on"
     off = "off"
 
-  CacheRulesEditable* = bool
+  CacheSettingsEditable* = bool
 
-  CacheRulesIdentifier* = string
+  CacheSettingsIdentifier* = string
 
-  CacheRulesMessages* = seq[JsonNode]
+  CacheSettingsMessages* = seq[JsonNode]
 
-  CacheRulesModifiedOn* = string
+  CacheSettingsModifiedOn* = string
 
-  CacheRulesOriginCloudRegionBatchItemResult* = ref object of RootObj
+  CacheSettingsOriginCloudRegionBatchItemResult* = ref object of RootObj
     ## Result for a single item in a batch operation.
     error*: Option[string]
       ## Error message explaining why the item failed. Present only on failed items.
@@ -8762,7 +8957,7 @@ type
     vendor*: Option[string]
       ## Cloud vendor identifier. Present on succeeded items for patch operations.
 
-  CacheRulesOriginCloudRegionBatchResult* = ref object of RootObj
+  CacheSettingsOriginCloudRegionBatchResult* = ref object of RootObj
     ## Response result for a batch origin cloud region operation.
     editable*: bool
       ## Whether the setting can be modified by the current user.
@@ -8772,7 +8967,7 @@ type
       ## applied.
     value*: JsonNode
 
-  CacheRulesOriginCloudRegionEntry* = ref object of RootObj
+  CacheSettingsOriginCloudRegionEntry* = ref object of RootObj
     ## A single origin IP-to-cloud-region mapping.
     modified_on*: Option[string]
       ## Time this mapping was last modified.
@@ -8783,7 +8978,7 @@ type
     vendor*: string
       ## Cloud vendor hosting the origin.
 
-  CacheRulesOriginCloudRegionRequest* = ref object of RootObj
+  CacheSettingsOriginCloudRegionRequest* = ref object of RootObj
     ## Request body for creating or updating an origin cloud region mapping.
     ip*: string
       ## Origin IP address (IPv4 or IPv6). Normalized to canonical form before storage
@@ -8794,16 +8989,16 @@ type
     vendor*: string
       ## Cloud vendor hosting the origin. Must be one of the supported vendors.
 
-  CacheRulesOriginCloudRegionSingleResult* = ref object of RootObj
+  CacheSettingsOriginCloudRegionSingleResult* = ref object of RootObj
     ## Response result for a single origin cloud region mapping.
     editable*: bool
       ## Whether the setting can be modified by the current user.
     id*: string
     modified_on*: Option[string]
       ## Time the mapping was last modified.
-    value*: CacheRulesOriginCloudRegionEntry
+    value*: CacheSettingsOriginCloudRegionEntry
 
-  CacheRulesOriginCloudRegionV2BatchItemResult* = ref object of RootObj
+  CacheSettingsOriginCloudRegionV2BatchItemResult* = ref object of RootObj
     ## Result for a single item in a batch operation.
     error*: Option[string]
       ## Error message explaining why the item failed. Present only on failed items.
@@ -8816,19 +9011,19 @@ type
       ## Cloud vendor identifier. Present on succeeded items (the new value for upsert,
       ## the deleted value for delete).
 
-  CacheRulesOriginCloudRegionV2BatchResult* = ref object of RootObj
+  CacheSettingsOriginCloudRegionV2BatchResult* = ref object of RootObj
     ## Response result for a batch origin cloud region operation.
-    failed*: seq[CacheRulesOriginCloudRegionV2BatchItemResult]
+    failed*: seq[CacheSettingsOriginCloudRegionV2BatchItemResult]
       ## Items that could not be applied, with error details.
-    succeeded*: seq[CacheRulesOriginCloudRegionV2BatchItemResult]
+    succeeded*: seq[CacheSettingsOriginCloudRegionV2BatchItemResult]
       ## Items that were successfully applied.
 
-  CacheRulesOriginCloudRegionV2DeleteResult* = ref object of RootObj
+  CacheSettingsOriginCloudRegionV2DeleteResult* = ref object of RootObj
     ## Response result for a delete operation. Identifies the deleted mapping.
     origin_ip*: string
       ## The origin IP address whose mapping was deleted.
 
-  CacheRulesOriginCloudRegionV2Entry* = ref object of RootObj
+  CacheSettingsOriginCloudRegionV2Entry* = ref object of RootObj
     ## A single origin IP-to-cloud-region mapping.
     modified_on*: Option[string]
       ## Time this mapping was last modified.
@@ -8840,7 +9035,7 @@ type
     vendor*: string
       ## Cloud vendor hosting the origin.
 
-  CacheRulesOriginCloudRegionV2Request* = ref object of RootObj
+  CacheSettingsOriginCloudRegionV2Request* = ref object of RootObj
     ## Request body for creating or replacing an origin cloud region mapping.
     origin_ip*: string
       ## Origin IP address (IPv4 or IPv6). For the single PUT endpoint (`PUT
@@ -8853,7 +9048,7 @@ type
     vendor*: string
       ## Cloud vendor hosting the origin. Must be one of the supported vendors.
 
-  CacheRulesOriginCloudRegionV2ResultInfo* = ref object of RootObj
+  CacheSettingsOriginCloudRegionV2ResultInfo* = ref object of RootObj
     ## Pagination metadata for list responses.
     count*: int64
       ## Number of items returned in this response.
@@ -8866,16 +9061,16 @@ type
     total_pages*: int64
       ## Total number of pages.
 
-  CacheRulesOriginCloudRegionsListResult* = ref object of RootObj
+  CacheSettingsOriginCloudRegionsListResult* = ref object of RootObj
     ## Response result for a list of origin cloud region mappings.
     editable*: bool
       ## Whether the setting can be modified by the current user.
     id*: string
     modified_on*: Option[string]
       ## Time the mapping set was last modified. Null when no mappings exist.
-    value*: seq[CacheRulesOriginCloudRegionEntry]
+    value*: seq[CacheSettingsOriginCloudRegionEntry]
 
-  CacheRulesOriginH2MaxStreams* = ref object of RootObj
+  CacheSettingsOriginH2MaxStreams* = ref object of RootObj
     ## Origin H2 Max Streams configures the max number of concurrent requests that
     ## Cloudflare will send within the same connection when communicating with the
     ## origin server, if the origin supports it. Note that if your origin does not
@@ -8886,18 +9081,18 @@ type
       ## Value of the zone setting.
     modified_on*: Option[string]
       ## Last time this setting was modified.
-    value*: Option[CacheRulesOriginH2MaxStreamsValue]
+    value*: Option[CacheSettingsOriginH2MaxStreamsValue]
 
-  CacheRulesOriginH2MaxStreamsResponseValue* = ref object of RootObj
-    errors*: CacheRulesMessages
-    messages*: CacheRulesMessages
+  CacheSettingsOriginH2MaxStreamsResponseValue* = ref object of RootObj
+    errors*: CacheSettingsMessages
+    messages*: CacheSettingsMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[CacheRulesOriginH2MaxStreams]
+    result*: Option[CacheSettingsOriginH2MaxStreams]
 
-  CacheRulesOriginH2MaxStreamsValue* = int64
+  CacheSettingsOriginH2MaxStreamsValue* = int64
 
-  CacheRulesOriginMaxHttpVersion* = ref object of RootObj
+  CacheSettingsOriginMaxHttpVersion* = ref object of RootObj
     ## Origin Max HTTP Setting Version sets the highest HTTP version Cloudflare will
     ## attempt to use with your origin. This setting allows Cloudflare to make HTTP/2
     ## requests to your origin. (Refer to [Enable HTTP/2 to
@@ -8908,17 +9103,17 @@ type
       ## Value of the zone setting.
     modified_on*: Option[string]
       ## Last time this setting was modified.
-    value*: Option[CacheRulesOriginMaxHttpVersionValue]
+    value*: Option[CacheSettingsOriginMaxHttpVersionValue]
 
-  CacheRulesOriginMaxHttpVersionResponseValue* = ref object of RootObj
-    result*: Option[CacheRulesOriginMaxHttpVersion]
+  CacheSettingsOriginMaxHttpVersionResponseValue* = ref object of RootObj
+    result*: Option[CacheSettingsOriginMaxHttpVersion]
 
-  CacheRulesOriginMaxHttpVersionValue* = enum
+  CacheSettingsOriginMaxHttpVersionValue* = enum
     ## Value of the Origin Max HTTP Version Setting.
     f2 = "2"
     f1 = "1"
 
-  CacheRulesOriginPostQuantumEncryption* = ref object of RootObj
+  CacheSettingsOriginPostQuantumEncryption* = ref object of RootObj
     ## Instructs Cloudflare to use Post-Quantum (PQ) key agreement algorithms when
     ## connecting to your origin. Preferred instructs Cloudflare to opportunistically
     ## send a Post-Quantum keyshare in the first message to the origin (for fastest
@@ -8930,16 +9125,16 @@ type
     modified_on*: Option[string]
       ## Last time this setting was modified.
 
-  CacheRulesOriginPostQuantumEncryptionResponseValue* = ref object of RootObj
+  CacheSettingsOriginPostQuantumEncryptionResponseValue* = ref object of RootObj
     result*: Option[JsonNode]
 
-  CacheRulesOriginPostQuantumEncryptionValue* = enum
+  CacheSettingsOriginPostQuantumEncryptionValue* = enum
     ## Value of the Origin Post Quantum Encryption Setting.
     preferred = "preferred"
     supported = "supported"
     off = "off"
 
-  CacheRulesOriginTlsComplianceModes* = ref object of RootObj
+  CacheSettingsOriginTlsComplianceModes* = ref object of RootObj
     ## Origin TLS Compliance Modes constrains the set of TLS key-exchange algorithms
     ## Cloudflare may use when establishing the TLS connection to the zone's origin.
     ## The value is a list of named compliance modes (currently `fips` and `pqh`).
@@ -8950,16 +9145,16 @@ type
     modified_on*: Option[string]
       ## Last time this setting was modified.
 
-  CacheRulesOriginTlsComplianceModesResponseValue* = ref object of RootObj
+  CacheSettingsOriginTlsComplianceModesResponseValue* = ref object of RootObj
     result*: Option[JsonNode]
 
-  CacheRulesOriginTlsComplianceModesValue* = seq[string]
+  CacheSettingsOriginTlsComplianceModesValue* = seq[string]
 
-  CacheRulesPatch* = ref object of RootObj
+  CacheSettingsPatch* = ref object of RootObj
     ## Update enablement of Tiered Caching.
-    value*: CacheRulesValue
+    value*: CacheSettingsValue
 
-  CacheRulesRegionalTieredCache* = ref object of RootObj
+  CacheSettingsRegionalTieredCache* = ref object of RootObj
     ## Instructs Cloudflare to check a regional hub data center on the way to your
     ## upper tier. This can help improve performance for smart and custom tiered cache
     ## topologies.
@@ -8968,49 +9163,49 @@ type
     modified_on*: Option[string]
       ## Last time this setting was modified.
 
-  CacheRulesRegionalTieredCacheResponseValue* = ref object of RootObj
+  CacheSettingsRegionalTieredCacheResponseValue* = ref object of RootObj
     result*: Option[JsonNode]
 
-  CacheRulesRegionalTieredCacheValue* = enum
+  CacheSettingsRegionalTieredCacheValue* = enum
     ## Value of the Regional Tiered Cache zone setting.
     on = "on"
     off = "off"
 
-  CacheRulesResultObject* = ref object of RootObj
-    editable*: CacheRulesEditable
-    id*: CacheRulesSettingId
-    modified_on*: Option[CacheRulesModifiedOn]
-    value*: CacheRulesSettingValue
+  CacheSettingsResultObject* = ref object of RootObj
+    editable*: CacheSettingsEditable
+    id*: CacheSettingsSettingId
+    modified_on*: Option[CacheSettingsModifiedOn]
+    value*: CacheSettingsSettingValue
 
-  CacheRulesResultObjectDelete* = ref object of RootObj
-    editable*: CacheRulesEditable
-    id*: CacheRulesSettingId
-    modified_on*: Option[CacheRulesModifiedOn]
+  CacheSettingsResultObjectDelete* = ref object of RootObj
+    editable*: CacheSettingsEditable
+    id*: CacheSettingsSettingId
+    modified_on*: Option[CacheSettingsModifiedOn]
 
-  CacheRulesSettingId* = string
+  CacheSettingsSettingId* = string
 
-  CacheRulesSettingValue* = string
+  CacheSettingsSettingValue* = string
 
-  CacheRulesSmartTieredCache* = ref object of RootObj
+  CacheSettingsSmartTieredCache* = ref object of RootObj
     id*: string
       ## ID of the zone setting.
     modified_on*: Option[string]
       ## Last time this setting was modified.
 
-  CacheRulesSmartTieredCachePatch* = ref object of RootObj
+  CacheSettingsSmartTieredCachePatch* = ref object of RootObj
     ## Update enablement of Smart Tiered Cache.
     value*: string
       ## Enable or disable the Smart Tiered Cache.
 
-  CacheRulesSmartTieredCacheResponseValue* = ref object of RootObj
+  CacheSettingsSmartTieredCacheResponseValue* = ref object of RootObj
     result*: Option[JsonNode]
 
-  CacheRulesSmartTieredCacheValue* = enum
+  CacheSettingsSmartTieredCacheValue* = enum
     ## Value of the Smart Tiered Cache zone setting.
     on = "on"
     off = "off"
 
-  CacheRulesSupportedCloudRegion* = ref object of RootObj
+  CacheSettingsSupportedCloudRegion* = ref object of RootObj
     ## A single supported cloud region with associated Tiered Cache upper-tier
     ## colocations.
     name*: string
@@ -9020,7 +9215,7 @@ type
       ## region. Requests from zones with a matching origin mapping will be routed
       ## through these colos.
 
-  CacheRulesSupportedCloudRegionsResult* = ref object of RootObj
+  CacheSettingsSupportedCloudRegionsResult* = ref object of RootObj
     ## Cloud vendors and their supported regions for origin cloud region mappings.
     obtained_codes*: bool
       ## Whether Cloudflare airport codes (IATA colo identifiers) were successfully
@@ -9029,26 +9224,26 @@ type
     vendors*: JsonNode
       ## Map of vendor name to list of supported regions.
 
-  CacheRulesTieredCache* = ref object of RootObj
+  CacheSettingsTieredCache* = ref object of RootObj
     id*: string
       ## ID of the zone setting.
     modified_on*: Option[string]
       ## Last time this setting was modified.
 
-  CacheRulesTieredCacheResponseValue* = ref object of RootObj
+  CacheSettingsTieredCacheResponseValue* = ref object of RootObj
     result*: Option[JsonNode]
 
-  CacheRulesTieredCacheValue* = enum
+  CacheSettingsTieredCacheValue* = enum
     ## Value of the Tiered Cache zone setting.
     on = "on"
     off = "off"
 
-  CacheRulesValue* = enum
+  CacheSettingsValue* = enum
     ## Enables Tiered Caching.
     on = "on"
     off = "off"
 
-  CacheRulesVariants* = ref object of RootObj
+  CacheSettingsVariants* = ref object of RootObj
     ## Variant support enables caching variants of images with certain file extensions
     ## in addition to the original. This only applies when the origin server sends the
     ## 'Vary: Accept' response header. If the origin server sends 'Vary: Accept' but
@@ -9059,10 +9254,10 @@ type
     modified_on*: Option[string]
       ## Last time this setting was modified.
 
-  CacheRulesVariantsResponseValue* = ref object of RootObj
+  CacheSettingsVariantsResponseValue* = ref object of RootObj
     result*: Option[JsonNode]
 
-  CacheRulesVariantsValue* = ref object of RootObj
+  CacheSettingsVariantsValue* = ref object of RootObj
     ## Value of the zone setting.
     avif*: Option[seq[string]]
       ## List of strings with the MIME types of all the variants that should be served
@@ -9098,19 +9293,19 @@ type
       ## List of strings with the MIME types of all the variants that should be served
       ## for webp.
 
-  CacheRulesZoneCacheSettingsDeleteResponseSingle* = ref object of RootObj
-    errors*: CacheRulesMessages
-    messages*: CacheRulesMessages
+  CacheSettingsZoneCacheSettingsDeleteResponseSingle* = ref object of RootObj
+    errors*: CacheSettingsMessages
+    messages*: CacheSettingsMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[CacheRulesResultObjectDelete]
+    result*: Option[CacheSettingsResultObjectDelete]
 
-  CacheRulesZoneCacheSettingsResponseSingle* = ref object of RootObj
-    errors*: CacheRulesMessages
-    messages*: CacheRulesMessages
+  CacheSettingsZoneCacheSettingsResponseSingle* = ref object of RootObj
+    errors*: CacheSettingsMessages
+    messages*: CacheSettingsMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[CacheRulesResultObject]
+    result*: Option[CacheSettingsResultObject]
 
   CacheApiResponseCommonFailure* = ref object of RootObj
     errors*: JsonNode
@@ -10533,9 +10728,17 @@ type
       ## Specifies the format of source data.
     `type`*: string
 
+  CloudforceOneEventsArticleTagDiagnosticJsonValue* = ref object of RootObj
+
   CloudforceOneEventsFieldDefinition* = ref object of RootObj
     allowed_values*: Option[seq[string]]
     annotations*: Option[JsonNode]
+    deprecated*: Option[bool]
+      ## Marks a field as unavailable for new values while retaining its definition for
+      ## historical values.
+    deprecated_values*: Option[seq[string]]
+      ## Enum values unavailable for new writes but retained in allowedValues for
+      ## historical display.
     element*: Option[JsonNode]
       ## Nested FieldDefinition describing the element type of an array field. Required
       ## when kind is 'array'. See FieldDefinition (recursive).
@@ -16690,8 +16893,12 @@ type
   EmailSendingEmailBuilder* = ref object of RootObj
     attachments*: Option[seq[JsonNode]]
       ## File attachments and inline images.
-    bcc*: Option[EmailSendingNamedRecipientList]
-    cc*: Option[EmailSendingNamedRecipientList]
+    bcc*: Option[JsonNode]
+      ## Blind carbon copy recipient(s). Optional. A single email string, a named address
+      ## object, or an array of either.
+    cc*: Option[JsonNode]
+      ## Carbon copy recipient(s). Optional. A single email string, a named address
+      ## object, or an array of either.
     `from`*: JsonNode
       ## Sender email address. Either a plain string or an object with address and name.
     headers*: Option[JsonNode]
@@ -16704,7 +16911,9 @@ type
       ## Email subject line.
     text*: Option[string]
       ## Plain text body of the email. Provide at least one of text or html (non-empty).
-    to*: Option[EmailSendingNamedRecipientList]
+    to*: Option[JsonNode]
+      ## Recipient(s). Optional if cc or bcc is provided. A single email string, a named
+      ## address object, or an array of either.
 
   EmailSendingEmailInlineAttachment* = ref object of RootObj
     content*: string
@@ -16732,10 +16941,6 @@ type
       ## Email addresses dropped because they are on the suppression list. Returned when
       ## suppressed-recipient dropping is enabled for the sending subdomain; otherwise
       ## the request fails instead.
-
-  EmailSendingNamedRecipientList* = ref object of RootObj
-    ## Recipient(s). Optional if cc or bcc is provided. A single email string, a named
-    ## address object, or an array of either.
 
   EmailSendingSendRawRequest* = ref object of RootObj
     `from`*: string
@@ -20797,16 +21002,6 @@ type
       ## Whether the API call was successful.
     result*: Option[IntelAsn]
 
-  IntelAsnCountry* = string
-
-  IntelAsnDescription* = string
-
-  IntelAsnType* = enum
-    ## Infrastructure type of this ASN.
-    hostingProvider = "hosting_provider"
-    isp = "isp"
-    organization = "organization"
-
   IntelCategoriesWithSuperCategoryIdsExampleEmpty* = seq[IntelCategoryWithSuperCategoryId]
 
   IntelCategoryWithSuperCategoryId* = ref object of RootObj
@@ -20913,46 +21108,6 @@ type
 
   IntelPerPage* = float64
 
-  IntelPhishingUrlInfo* = ref object of RootObj
-    categorizations*: Option[seq[JsonNode]]
-      ## List of categorizations applied to this submission.
-    model_results*: Option[seq[JsonNode]]
-      ## List of model results for completed scans.
-    rule_matches*: Option[seq[JsonNode]]
-      ## List of signatures that matched against site content found when crawling the
-      ## URL.
-    scan_status*: Option[JsonNode]
-      ## Status of the most recent scan found.
-    screenshot_download_signature*: Option[string]
-      ## For internal use.
-    screenshot_path*: Option[string]
-      ## For internal use.
-    url*: Option[string]
-      ## URL that was submitted.
-
-  IntelPhishingUrlInfoComponentsSchemasSingleResponse* = ref object of RootObj
-    errors*: IntelSchemasMessages
-    messages*: IntelSchemasMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[IntelPhishingUrlInfo]
-
-  IntelPhishingUrlSubmit* = ref object of RootObj
-    excluded_urls*: Option[seq[JsonNode]]
-      ## URLs that were excluded from scanning because their domain is in our no-scan
-      ## list.
-    skipped_urls*: Option[seq[JsonNode]]
-      ## URLs that were skipped because the same URL is currently being scanned.
-    submitted_urls*: Option[seq[JsonNode]]
-      ## URLs that were successfully submitted for scanning.
-
-  IntelPhishingUrlSubmitComponentsSchemasSingleResponse* = ref object of RootObj
-    errors*: IntelSchemasMessages
-    messages*: IntelSchemasMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[IntelPhishingUrlSubmit]
-
   IntelPopularityRank* = int64
 
   IntelResolvesToRef* = ref object of RootObj
@@ -20997,14 +21152,6 @@ type
     success*: bool
       ## Whether the API call was successful.
 
-  IntelSchemasAsn* = ref object of RootObj
-    asn*: Option[IntelAsn]
-    country*: Option[IntelAsnCountry]
-    description*: Option[IntelAsnDescription]
-    domain_count*: Option[int64]
-    top_domains*: Option[seq[string]]
-    `type`*: Option[IntelAsnType]
-
   IntelSchemasIp* = ref object of RootObj
     belongs_to_ref*: Option[JsonNode]
       ## Specifies a reference to the autonomous systems (AS) that the IP address belongs
@@ -21032,13 +21179,6 @@ type
     total_count*: Option[float64]
       ## Total results available without any search parameters.
 
-  IntelSchemasSingleResponse* = ref object of RootObj
-    errors*: IntelSchemasMessages
-    messages*: IntelSchemasMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[IntelWhois]
-
   IntelSingleResponse* = ref object of RootObj
     errors*: IntelSchemasMessages
     messages*: IntelSchemasMessages
@@ -21053,8 +21193,6 @@ type
       ## Defaults to 30 days before the end parameter value.
 
   IntelStixIdentifier* = string
-
-  IntelUrl* = string
 
   IntelUrlIntelligence* = ref object of RootObj
     content_categories*: seq[IntelUrlIntelligenceCategoryWithSource]
@@ -21080,20 +21218,6 @@ type
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IntelUrlIntelligence]
-
-  IntelUrlParam* = ref object of RootObj
-    url*: Option[IntelUrl]
-
-  IntelWhois* = ref object of RootObj
-    created_date*: Option[string]
-    domain*: Option[IntelDomainName]
-    nameservers*: Option[seq[string]]
-    registrant*: Option[string]
-    registrant_country*: Option[string]
-    registrant_email*: Option[string]
-    registrant_org*: Option[string]
-    registrar*: Option[string]
-    updated_date*: Option[string]
 
   KaminoEnvironment* = ref object of RootObj
     expression*: string
@@ -26171,8 +26295,6 @@ type
     code*: int64
     message*: string
 
-  MconnConnectorInterruptsCreateRequest* = MconnInterrupt
-
   MconnConnectorInterruptsCreateResponse* = ref object of RootObj
     messages*: seq[MconnCodedMessage]
     success*: bool
@@ -28189,6 +28311,8 @@ type
       ## Direct link to the asset.
     name*: string
       ## Human-readable name of the asset.
+    updated*: Option[string]
+      ## Timestamp of the asset row version represented by this data.
 
   PostureApiAssetCategory* = ref object of RootObj
     ## Category information for an asset.
@@ -35112,6 +35236,13 @@ type
 
   SecurityCenterPage* = int64
 
+  SecurityCenterPartnerInsightCountResponse* = ref object of RootObj
+    errors*: SecurityCenterMessages
+    messages*: SecurityCenterMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[JsonNode]
+
   SecurityCenterPerPage* = int64
 
   SecurityCenterProducts* = seq[string]
@@ -35149,6 +35280,8 @@ type
     preferred_languages*: Option[string]
 
   SecurityCenterSeverityQueryParam* = seq[string]
+
+  SecurityCenterSources* = seq[string]
 
   SecurityCenterSubject* = string
 
@@ -37587,6 +37720,7 @@ type
     last_seen_at*: string
       ## The RFC3339 timestamp when the registration was last seen.
     policy*: Option[TeamsDevicesPolicySummary]
+    registration_type*: TeamsDevicesRegistrationType
     revoked_at*: Option[string]
       ## The RFC3339 timestamp when the registration was revoked.
     tunnel_type*: Option[string]
@@ -37616,6 +37750,11 @@ type
       ## The name of the device.
 
   TeamsDevicesRegistrationId* = string
+
+  TeamsDevicesRegistrationType* = enum
+    ## The registration client type, derived from device_type.
+    warp = "warp"
+    browserExtension = "browser_extension"
 
   TeamsDevicesRequireAll* = bool
 
@@ -39422,14 +39561,6 @@ type
 
   TunnelArch* = string
 
-  TunnelArgoTunnel* = ref object of RootObj
-    connections*: seq[TunnelConnection]
-      ## The tunnel connections between your origin and Cloudflare's edge.
-    created_at*: TunnelCreatedAt
-    deleted_at*: Option[TunnelDeletedAt]
-    id*: TunnelTunnelId
-    name*: TunnelTunnelName
-
   TunnelCfdTunnelResponseCollection* = ref object of RootObj
     errors*: TunnelMessages
     messages*: TunnelMessages
@@ -39510,11 +39641,6 @@ type
     success*: bool
       ## Whether the API call was successful.
     result*: Option[TunnelConfiguration]
-
-  TunnelConnection* = ref object of RootObj
-    colo_name*: Option[TunnelColoName]
-    is_pending_reconnect*: Option[TunnelIsPendingReconnect]
-    uuid*: Option[TunnelConnectionId]
 
   TunnelConnectionId* = string
 
@@ -39608,21 +39734,6 @@ type
   TunnelIsDefaultNetworkOptional* = bool
 
   TunnelIsPendingReconnect* = bool
-
-  TunnelLegacyTunnelResponseCollection* = ref object of RootObj
-    errors*: TunnelMessages
-    messages*: TunnelMessages
-    result*: seq[TunnelArgoTunnel]
-    success*: bool
-      ## Whether the API call was successful
-    result_info*: Option[TunnelResultInfo]
-
-  TunnelLegacyTunnelResponseSingle* = ref object of RootObj
-    errors*: TunnelMessages
-    messages*: TunnelMessages
-    result*: TunnelArgoTunnel
-    success*: bool
-      ## Whether the API call was successful
 
   TunnelManagementResources* = enum
     ## Management resources the token will have access to.
@@ -39930,19 +40041,6 @@ type
   TunnelTunnelId2* = string
 
   TunnelTunnelId3* = string
-
-  TunnelTunnelLink* = ref object of RootObj
-    ## The id of the tunnel linked and the date that link was created.
-    created_at*: Option[TunnelCreatedAt]
-    linked_tunnel_id*: Option[TunnelTunnelId]
-
-  TunnelTunnelLinksResponse* = ref object of RootObj
-    errors*: TunnelMessages
-    messages*: TunnelMessages
-    result*: seq[TunnelTunnelLink]
-    success*: bool
-      ## Whether the API call was successful
-    result_info*: Option[TunnelResultInfo]
 
   TunnelTunnelName* = string
 
@@ -43242,6 +43340,8 @@ type
     head_sampling_rate*: Option[float64]
       ## The sampling rate for incoming requests. From 0 to 1 (1 = 100%, 0.1 = 10%).
       ## Default is 1.
+    issues*: Option[JsonNode]
+      ## Real-time Issues settings for the Worker.
     logs*: Option[JsonNode]
       ## Log settings for the Worker.
     redact_query_string*: Option[bool]

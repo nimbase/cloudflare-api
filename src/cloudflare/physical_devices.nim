@@ -71,6 +71,7 @@ proc getAccountsAccountIdDevicesPhysicalDevices*(client: CloudflareClient,
                                                  perPage: int64 = default(int64),
                                                  search: string = default(string),
                                                  activeRegistrations: PhysicalDeviceActiveRegistrationsOption,
+                                                 hasRegistrationType: types.TeamsDevicesRegistrationType = default(types.TeamsDevicesRegistrationType),
                                                  id: seq[string] = @[],
                                                  lastSeenRegistrationPolicyId: string = default(string),
                                                  `include`: string = default(string)): Future[GetAccountsAccountIdDevicesPhysicalDevicesResponse] {.async.} =
@@ -86,6 +87,7 @@ proc getAccountsAccountIdDevicesPhysicalDevices*(client: CloudflareClient,
   q["per_page"] = $perPage
   q["search"] = $search
   q["active_registrations"] = $activeRegistrations
+  q["has_registration_type"] = $hasRegistrationType
   for v in id: q["id"] = $v
   q["last_seen_registration.policy.id"] = $lastSeenRegistrationPolicyId
   q["include"] = $`include`

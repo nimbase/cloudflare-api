@@ -55,7 +55,7 @@ proc getAccountsAccountIdWorkersScriptsScriptNameVersionsVersionId*(client: Clou
                                                                     accountId: types.WorkersIdentifier,
                                                                     scriptName: types.WorkersScriptName2,
                                                                     versionId: types.WorkersVersionIdentifier): Future[types.WorkersVersionsSingleResponse] {.async.} =
-  ## Retrieves detailed information about a specific version of a Workers script.
+  ## Retrieves detailed information about a specific version of a Worker script.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/versions/{versionId}")
   let body = await res.body

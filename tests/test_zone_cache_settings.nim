@@ -11,45 +11,45 @@ import cloudflare
 import ./common
 
 suite "zone_cache_settings serialization":
-  test "round-trips CacheRulesApiResponseCommonFailure":
-    let obj = newCacheRulesApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsCacheReserveResponseValue":
+    let obj = newCacheSettingsCacheReserveResponseValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsCacheReserveResponseValue)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesZoneCacheSettingsResponseSingle":
-    let obj = newCacheRulesZoneCacheSettingsResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesZoneCacheSettingsResponseSingle)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsZoneCacheSettingsDeleteResponseSingle":
+    let obj = newCacheSettingsZoneCacheSettingsDeleteResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsZoneCacheSettingsDeleteResponseSingle)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesZoneCacheSettingsDeleteResponseSingle":
-    let obj = newCacheRulesZoneCacheSettingsDeleteResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesZoneCacheSettingsDeleteResponseSingle)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsApiResponseCommon":
+    let obj = newCacheSettingsApiResponseCommon()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsApiResponseCommon)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesCacheReserveClearResponseValue":
-    let obj = newCacheRulesCacheReserveClearResponseValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesCacheReserveClearResponseValue)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsRegionalTieredCacheResponseValue":
+    let obj = newCacheSettingsRegionalTieredCacheResponseValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsRegionalTieredCacheResponseValue)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesVariants":
-    let obj = newCacheRulesVariants()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesVariants)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsApiResponseCommonFailure":
+    let obj = newCacheSettingsApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesApiResponseCommon":
-    let obj = newCacheRulesApiResponseCommon()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesApiResponseCommon)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsVariants":
+    let obj = newCacheSettingsVariants()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsVariants)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesRegionalTieredCacheResponseValue":
-    let obj = newCacheRulesRegionalTieredCacheResponseValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesRegionalTieredCacheResponseValue)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsZoneCacheSettingsResponseSingle":
+    let obj = newCacheSettingsZoneCacheSettingsResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsZoneCacheSettingsResponseSingle)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesCacheReserveResponseValue":
-    let obj = newCacheRulesCacheReserveResponseValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesCacheReserveResponseValue)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsCacheReserveClearResponseValue":
+    let obj = newCacheSettingsCacheReserveClearResponseValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsCacheReserveClearResponseValue)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesVariantsResponseValue":
-    let obj = newCacheRulesVariantsResponseValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesVariantsResponseValue)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsVariantsValue":
+    let obj = newCacheSettingsVariantsValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsVariantsValue)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesVariantsValue":
-    let obj = newCacheRulesVariantsValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesVariantsValue)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsVariantsResponseValue":
+    let obj = newCacheSettingsVariantsResponseValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsVariantsResponseValue)) == openjson.toJson(obj)
 
 suite "zone_cache_settings endpoints":
   test "GET /zones/{zone_id}/cache/cache_reserve":

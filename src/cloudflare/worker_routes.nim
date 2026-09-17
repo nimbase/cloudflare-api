@@ -11,7 +11,7 @@ import ./private/types
 
 proc getZonesZoneIdWorkersRoutes*(client: CloudflareClient,
                                   zoneId: types.WorkersIdentifier): Future[JsonNode] {.async.} =
-  ## Returns routes for a zone.
+  ## Returns Worker routes for a zone.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/workers/routes")
   let body = await res.body
@@ -37,7 +37,7 @@ proc postZonesZoneIdWorkersRoutes*(client: CloudflareClient,
 proc getZonesZoneIdWorkersRoutesRouteId*(client: CloudflareClient,
                                          routeId: types.WorkersIdentifier,
                                          zoneId: types.WorkersIdentifier): Future[JsonNode] {.async.} =
-  ## Returns information about a route, including URL pattern and Worker.
+  ## Returns information about a Worker route, including URL pattern and Worker.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/workers/routes/{routeId}")
   let body = await res.body
@@ -51,7 +51,7 @@ proc putZonesZoneIdWorkersRoutesRouteId*(client: CloudflareClient,
                                          routeId: types.WorkersIdentifier,
                                          zoneId: types.WorkersIdentifier,
                                          body: types.WorkersRoute): Future[JsonNode] {.async.} =
-  ## Updates the URL pattern or Worker associated with a route.
+  ## Replaces the URL pattern or Worker associated with a Worker route.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/workers/routes/{routeId}", body)
   let body = await res.body
@@ -64,7 +64,7 @@ proc putZonesZoneIdWorkersRoutesRouteId*(client: CloudflareClient,
 proc deleteZonesZoneIdWorkersRoutesRouteId*(client: CloudflareClient,
                                             routeId: types.WorkersIdentifier,
                                             zoneId: types.WorkersIdentifier): Future[JsonNode] {.async.} =
-  ## Deletes a route.
+  ## Deletes a Worker route.
 
   let res = await client.httpDELETE(fmt"/zones/{zoneId}/workers/routes/{routeId}")
   let body = await res.body

@@ -98,7 +98,7 @@ proc getRadarEntitiesAsnsBotnetThreatFeed*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc getRadarEntitiesAsnsIp*(client: CloudflareClient, ip: string,
+proc getRadarEntitiesAsnsIp*(client: CloudflareClient, ip: JsonNode,
                              format: RadarAutonomousSystemFormatOption): Future[GetRadarEntitiesAsnsIpResponse] {.async.} =
   ## Retrieves the requested autonomous system information based on IP address.
   ## Population estimates come from APNIC (refer to https://labs.apnic.net/?p=526).

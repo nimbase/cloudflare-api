@@ -95,7 +95,7 @@ suite "sessions endpoints":
   test "GET /accounts/{account_id}/realtime/kit/{app_id}/sessions/{session_id}/participants":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdSessionsSessionIdParticipants("test", "test", "test", 1.0, 1.0, {}, {}, true, {}, "test")
+    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdSessionsSessionIdParticipants("test", "test", "test", 1.0, 1, {}, {}, true, {}, "test")
 
   test "GET /accounts/{account_id}/realtime/kit/{app_id}/sessions/{session_id}/participants/{participant_id}":
     let client = initCloudflareClient("test-key")

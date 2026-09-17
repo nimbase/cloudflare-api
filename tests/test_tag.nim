@@ -27,6 +27,10 @@ suite "tag serialization":
     let obj = cloudflare.GetAccountsAccountIdCloudforceOneEventsTagsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneEventsTagsResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdCloudforceOneEventsTagsCategoriesActorsResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneEventsTagsCategoriesActorsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneEventsTagsCategoriesActorsResponse)) == openjson.toJson(obj)
+
   test "round-trips PostAccountsAccountIdCloudforceOneEventsTagsCreateResponse":
     let obj = cloudflare.PostAccountsAccountIdCloudforceOneEventsTagsCreateResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneEventsTagsCreateResponse)) == openjson.toJson(obj)
@@ -73,6 +77,11 @@ suite "tag endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdCloudforceOneEventsTags("test", 1.0, 1.0, "test", "test", @["test"], {})
+
+  test "GET /accounts/{account_id}/cloudforce-one/events/tags/categories/actors":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneEventsTagsCategoriesActors("test", 1.0, 1.0, "test", @["test"])
 
   test "GET /accounts/{account_id}/cloudforce-one/events/tags/{tag_uuid}":
     let client = initCloudflareClient("test-key")

@@ -13,7 +13,7 @@ proc getAccountsAccountIdWorkersServicesServiceNameEnvironmentsEnvironmentNameCo
                                                                                        accountId: types.WorkersIdentifier,
                                                                                        serviceName: types.WorkersService,
                                                                                        environmentName: types.WorkersEnvironment): Future[AsyncResponse] {.async.} =
-  ## Get script content from a worker with an environment.
+  ## Get Worker script content for an environment.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/services/{serviceName}/environments/{environmentName}/content")
   return res
@@ -22,7 +22,7 @@ proc putAccountsAccountIdWorkersServicesServiceNameEnvironmentsEnvironmentNameCo
                                                                                        accountId: types.WorkersIdentifier,
                                                                                        serviceName: types.WorkersService,
                                                                                        environmentName: types.WorkersEnvironment): Future[types.WorkersScriptResponseSingle] {.async.} =
-  ## Put script content from a worker with an environment.
+  ## Replace Worker script content for an environment.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/workers/services/{serviceName}/environments/{environmentName}/content")
   let body = await res.body
@@ -36,7 +36,7 @@ proc getAccountsAccountIdWorkersServicesServiceNameEnvironmentsEnvironmentNameSe
                                                                                         accountId: types.WorkersIdentifier,
                                                                                         serviceName: types.WorkersService,
                                                                                         environmentName: types.WorkersEnvironment): Future[types.WorkersScriptSettingsResponse] {.async.} =
-  ## Get script settings from a worker with an environment.
+  ## Get Worker script settings for an environment.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/services/{serviceName}/environments/{environmentName}/settings")
   let body = await res.body
@@ -51,7 +51,7 @@ proc patchAccountsAccountIdWorkersServicesServiceNameEnvironmentsEnvironmentName
                                                                                           serviceName: types.WorkersService,
                                                                                           environmentName: types.WorkersEnvironment,
                                                                                           body: types.WorkersScriptSettingsResponse): Future[types.WorkersScriptSettingsResponse] {.async.} =
-  ## Patch script metadata, such as bindings.
+  ## Patch Worker script metadata for an environment, such as bindings.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/workers/services/{serviceName}/environments/{environmentName}/settings", body)
   let body = await res.body

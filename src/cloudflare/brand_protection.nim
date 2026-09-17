@@ -12,6 +12,10 @@ type
   GetAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesResponse* = object
     matches: seq[JsonNode]
     total: int64
+  PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesBulkDismissRequest = object
+    action: string
+    match_ids: Option[seq[int64]]
+    matches: Option[seq[JsonNode]]
   GetAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
@@ -46,6 +50,13 @@ type
     message: string
     query_id: int64
     success: bool
+  PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainTrialRequest = object
+    brand: string
+  PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainTrialResponse* = object
+    matches: seq[JsonNode]
+    total_analyzed: float64
+    total_matches: float64
+    truncated: bool
   PostAccountsAccountIdCloudforceOneV2BrandProtectionLetterGenerateRequest = object
     create_notice: Option[bool]
     fields: JsonNode
@@ -121,6 +132,12 @@ type
     top_k: Option[int64]
   PostAccountsAccountIdCloudforceOneV2BrandProtectionLogoSearchResponse* = object
     matches: seq[JsonNode]
+  PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdDismissResponse* = object
+    result: JsonNode
+    success: bool
+  PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdUndismissResponse* = object
+    result: JsonNode
+    success: bool
   GetAccountsAccountIdCloudforceOneV2BrandProtectionTakedownNoticesResponse* = object
     notices: seq[JsonNode]
   PostAccountsAccountIdCloudforceOneV2BrandProtectionTakedownNoticesRequest = object
@@ -371,6 +388,22 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatches*(client: Cl
   else:
     raise newException(CloudflareClientError, body)
 
+proc postAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesBulkDismiss*(client: CloudflareClient,
+                                                                                  accountId: string,
+                                                                                  body: PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesBulkDismissRequest): Future[JsonNode] {.async.} =
+  ## Dismiss or undismiss multiple matches in a single request. Accepts either the
+  ## new format (matches: [{query_id, domain_id}]) for per-query control, or the
+  ## legacy format (match_ids: [number]) which dismisses for all queries sharing each
+  ## match's hash. Returns per-item success/error results.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/domain/matches/bulk-dismiss", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueries*(client: CloudflareClient,
                                                                       accountId: string,
                                                                       id: string = default(string),
@@ -429,6 +462,20 @@ proc patchAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesQueryId*(c
   case res.code
   of Http200:
     result = fromJson(body, PatchAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesQueryIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdCloudforceOneV2BrandProtectionDomainTrial*(client: CloudflareClient,
+                                                                     accountId: string,
+                                                                     body: PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainTrialRequest): Future[PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainTrialResponse] {.async.} =
+  ## Uses AI to scan all domains in the lookback table and identify potential
+  ## phishing or impersonation attempts against the given brand string.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/domain/trial", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainTrialResponse)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -617,6 +664,37 @@ proc postAccountsAccountIdCloudforceOneV2BrandProtectionLogoSearch*(client: Clou
   case res.code
   of Http200:
     result = fromJson(body, PostAccountsAccountIdCloudforceOneV2BrandProtectionLogoSearchResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdDismiss*(client: CloudflareClient,
+                                                                                              accountId: string,
+                                                                                              queryId: int64,
+                                                                                              domainId: int64): Future[PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdDismissResponse] {.async.} =
+  ## Mark a specific domain as dismissed for a given query. Dismissals are per-query
+  ## — dismissing a domain in one query does not affect other queries.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/queries/{queryId}/matches/{domainId}/dismiss")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdDismissResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdUndismiss*(client: CloudflareClient,
+                                                                                                accountId: string,
+                                                                                                queryId: int64,
+                                                                                                domainId: int64): Future[PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdUndismissResponse] {.async.} =
+  ## Remove the dismissed status from a specific domain for a given query.
+  ## Undismissals are per-query — undismissing a domain in one query does not affect
+  ## other queries.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/queries/{queryId}/matches/{domainId}/undismiss")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdUndismissResponse)
   else:
     raise newException(CloudflareClientError, body)
 

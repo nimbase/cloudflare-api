@@ -31,6 +31,9 @@ proc getZonesZoneIdFirewallRules*(client: CloudflareClient,
                                   perPage: float64 = default(float64),
                                   id: string = default(string),
                                   paused: bool = default(bool)): Future[types.FirewallFilterRulesResponseCollection] {.async.} =
+  ## **This endpoint has been deprecated and returns 410 Gone. Please use the
+  ## [Rulesets API](https://developers.cloudflare.com/ruleset-engine/) instead.**
+  ##
   ## Fetches firewall rules in a zone. You can filter the results using several
   ## optional parameters.
 
@@ -52,6 +55,9 @@ proc getZonesZoneIdFirewallRules*(client: CloudflareClient,
 proc postZonesZoneIdFirewallRules*(client: CloudflareClient,
                                    zoneId: types.FirewallIdentifier,
                                    body: PostZonesZoneIdFirewallRulesRequest): Future[types.FirewallFilterRulesResponseCollection] {.async.} =
+  ## **This endpoint has been deprecated and returns 410 Gone. Please use the
+  ## [Rulesets API](https://developers.cloudflare.com/ruleset-engine/) instead.**
+  ##
   ## Create one or more firewall rules.
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/firewall/rules", body)
@@ -64,6 +70,9 @@ proc postZonesZoneIdFirewallRules*(client: CloudflareClient,
 
 proc putZonesZoneIdFirewallRules*(client: CloudflareClient,
                                   zoneId: types.FirewallIdentifier): Future[types.FirewallFilterRulesResponseCollection] {.async.} =
+  ## **This endpoint has been deprecated and returns 410 Gone. Please use the
+  ## [Rulesets API](https://developers.cloudflare.com/ruleset-engine/) instead.**
+  ##
   ## Updates one or more existing firewall rules.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/firewall/rules", body)
@@ -77,6 +86,9 @@ proc putZonesZoneIdFirewallRules*(client: CloudflareClient,
 proc deleteZonesZoneIdFirewallRules*(client: CloudflareClient,
                                      zoneId: types.FirewallIdentifier,
                                      body: DeleteZonesZoneIdFirewallRulesRequest): Future[types.FirewallFilterRulesResponseCollectionDelete] {.async.} =
+  ## **This endpoint has been deprecated and returns 410 Gone. Please use the
+  ## [Rulesets API](https://developers.cloudflare.com/ruleset-engine/) instead.**
+  ##
   ## Deletes existing firewall rules.
 
   let res = await client.httpDELETE(fmt"/zones/{zoneId}/firewall/rules", body)
@@ -89,6 +101,9 @@ proc deleteZonesZoneIdFirewallRules*(client: CloudflareClient,
 
 proc patchZonesZoneIdFirewallRules*(client: CloudflareClient,
                                     zoneId: types.FirewallIdentifier): Future[types.FirewallFilterRulesResponseCollection] {.async.} =
+  ## **This endpoint has been deprecated and returns 410 Gone. Please use the
+  ## [Rulesets API](https://developers.cloudflare.com/ruleset-engine/) instead.**
+  ##
   ## Updates the priority of existing firewall rules.
 
   let res = await client.httpPATCH(fmt"/zones/{zoneId}/firewall/rules", body)
@@ -103,6 +118,9 @@ proc getZonesZoneIdFirewallRulesRuleId*(client: CloudflareClient,
                                         ruleId: types.FirewallFirewallRulesComponentsSchemasId,
                                         zoneId: types.FirewallIdentifier,
                                         id: JsonNode = default(JsonNode)): Future[types.FirewallFilterRulesSingleResponse] {.async.} =
+  ## **This endpoint has been deprecated and returns 410 Gone. Please use the
+  ## [Rulesets API](https://developers.cloudflare.com/ruleset-engine/) instead.**
+  ##
   ## Fetches the details of a firewall rule.
 
   var q = initOrderedTable[string, string]()
@@ -119,6 +137,9 @@ proc putZonesZoneIdFirewallRulesRuleId*(client: CloudflareClient,
                                         ruleId: types.FirewallFirewallRulesComponentsSchemasId,
                                         zoneId: types.FirewallIdentifier,
                                         body: PutZonesZoneIdFirewallRulesRuleIdRequest): Future[types.FirewallFilterRulesSingleResponse] {.async.} =
+  ## **This endpoint has been deprecated and returns 410 Gone. Please use the
+  ## [Rulesets API](https://developers.cloudflare.com/ruleset-engine/) instead.**
+  ##
   ## Updates an existing firewall rule.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/firewall/rules/{ruleId}", body)
@@ -133,6 +154,9 @@ proc deleteZonesZoneIdFirewallRulesRuleId*(client: CloudflareClient,
                                            ruleId: types.FirewallFirewallRulesComponentsSchemasId,
                                            zoneId: types.FirewallIdentifier,
                                            body: DeleteZonesZoneIdFirewallRulesRuleIdRequest): Future[types.FirewallFilterRulesSingleResponseDelete] {.async.} =
+  ## **This endpoint has been deprecated and returns 410 Gone. Please use the
+  ## [Rulesets API](https://developers.cloudflare.com/ruleset-engine/) instead.**
+  ##
   ## Deletes an existing firewall rule.
 
   let res = await client.httpDELETE(fmt"/zones/{zoneId}/firewall/rules/{ruleId}", body)
@@ -147,6 +171,9 @@ proc patchZonesZoneIdFirewallRulesRuleId*(client: CloudflareClient,
                                           ruleId: types.FirewallFirewallRulesComponentsSchemasId,
                                           zoneId: types.FirewallIdentifier,
                                           body: PatchZonesZoneIdFirewallRulesRuleIdRequest): Future[types.FirewallFilterRulesResponseCollection] {.async.} =
+  ## **This endpoint has been deprecated and returns 410 Gone. Please use the
+  ## [Rulesets API](https://developers.cloudflare.com/ruleset-engine/) instead.**
+  ##
   ## Updates the priority of an existing firewall rule.
 
   let res = await client.httpPATCH(fmt"/zones/{zoneId}/firewall/rules/{ruleId}", body)

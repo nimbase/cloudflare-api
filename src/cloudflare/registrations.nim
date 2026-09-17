@@ -65,6 +65,7 @@ proc getAccountsAccountIdDevicesRegistrations*(client: CloudflareClient,
                                                seenAfter: string = default(string),
                                                seenBefore: string = default(string),
                                                status: RegistrationStatusOption,
+                                               registrationType: types.TeamsDevicesRegistrationType = default(types.TeamsDevicesRegistrationType),
                                                perPage: int64 = default(int64),
                                                search: string = default(string),
                                                sortBy: RegistrationSortByOption,
@@ -81,6 +82,7 @@ proc getAccountsAccountIdDevicesRegistrations*(client: CloudflareClient,
   q["seen_after"] = $seenAfter
   q["seen_before"] = $seenBefore
   q["status"] = $status
+  q["registration_type"] = $registrationType
   q["per_page"] = $perPage
   q["search"] = $search
   q["sort_by"] = $sortBy

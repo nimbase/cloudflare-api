@@ -10,9 +10,9 @@ import ./private/types
 
 type
   PutZonesZoneIdSettingsOriginTlsComplianceModesRequest = object
-    value: types.CacheRulesOriginTlsComplianceModesValue
+    value: types.CacheSettingsOriginTlsComplianceModesValue
   PatchZonesZoneIdSettingsOriginTlsComplianceModesRequest = object
-    value: types.CacheRulesOriginTlsComplianceModesValue
+    value: types.CacheSettingsOriginTlsComplianceModesValue
 
 proc getZonesZoneIdSettingsAutoOriginTlsKex*(client: CloudflareClient,
                                              zoneId: types.CacheIdentifier): Future[types.CacheAutoOriginTlsKexResponse] {.async.} =
@@ -48,7 +48,7 @@ proc patchZonesZoneIdSettingsAutoOriginTlsKex*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdSettingsOriginTlsComplianceModes*(client: CloudflareClient,
-                                                     zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                                     zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Origin TLS Compliance Modes constrains the set of TLS key-exchange algorithms
   ## Cloudflare may use when establishing the TLS connection to the zone's origin.
   ## The value is a list of named compliance modes (currently `fips` and `pqh`).
@@ -65,7 +65,7 @@ proc getZonesZoneIdSettingsOriginTlsComplianceModes*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc putZonesZoneIdSettingsOriginTlsComplianceModes*(client: CloudflareClient,
-                                                     zoneId: types.CacheRulesIdentifier,
+                                                     zoneId: types.CacheSettingsIdentifier,
                                                      body: PutZonesZoneIdSettingsOriginTlsComplianceModesRequest): Future[JsonNode] {.async.} =
   ## Replace the entire set of TLS compliance modes for the zone with the list
   ## provided in the request body. PUT performs a full replace, not a merge — any
@@ -84,7 +84,7 @@ proc putZonesZoneIdSettingsOriginTlsComplianceModes*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdSettingsOriginTlsComplianceModes*(client: CloudflareClient,
-                                                        zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                                        zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Delete the Origin TLS Compliance Modes setting for the zone, removing any
   ## configured compliance constraint. After deletion, Cloudflare's default behavior
   ## applies (no compliance filtering of the key-exchange algorithm list sent to the
@@ -99,7 +99,7 @@ proc deleteZonesZoneIdSettingsOriginTlsComplianceModes*(client: CloudflareClient
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdSettingsOriginTlsComplianceModes*(client: CloudflareClient,
-                                                       zoneId: types.CacheRulesIdentifier,
+                                                       zoneId: types.CacheSettingsIdentifier,
                                                        body: PatchZonesZoneIdSettingsOriginTlsComplianceModesRequest): Future[JsonNode] {.async.} =
   ## Update the set of TLS compliance modes for the zone. PATCH performs a full
   ## replace of the modes list, not a merge — the request body is treated as the

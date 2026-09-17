@@ -12,7 +12,7 @@ import ./private/types
 proc getAccountsAccountIdWorkersScriptsScriptNameTails*(client: CloudflareClient,
                                                         accountId: types.WorkersIdentifier,
                                                         scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
-  ## Get list of tails currently deployed on a Worker.
+  ## Get a list of tails currently deployed on a Worker.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/tails")
   let body = await res.body
@@ -25,7 +25,7 @@ proc getAccountsAccountIdWorkersScriptsScriptNameTails*(client: CloudflareClient
 proc postAccountsAccountIdWorkersScriptsScriptNameTails*(client: CloudflareClient,
                                                          accountId: types.WorkersIdentifier,
                                                          scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
-  ## Starts a tail that receives logs and exception from a Worker.
+  ## Starts a tail that receives logs and exceptions from a Worker.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/tails")
   let body = await res.body

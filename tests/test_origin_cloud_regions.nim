@@ -11,53 +11,53 @@ import cloudflare
 import ./common
 
 suite "origin_cloud_regions serialization":
-  test "round-trips CacheRulesApiResponseCommonFailure":
-    let obj = newCacheRulesApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsOriginCloudRegionV2ResultInfo":
+    let obj = newCacheSettingsOriginCloudRegionV2ResultInfo()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginCloudRegionV2ResultInfo)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesApiResponseCommon":
-    let obj = newCacheRulesApiResponseCommon()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesApiResponseCommon)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsOriginCloudRegionsListResult":
+    let obj = newCacheSettingsOriginCloudRegionsListResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginCloudRegionsListResult)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginCloudRegionBatchResult":
-    let obj = newCacheRulesOriginCloudRegionBatchResult()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginCloudRegionBatchResult)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsApiResponseCommon":
+    let obj = newCacheSettingsApiResponseCommon()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsApiResponseCommon)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginCloudRegionV2ResultInfo":
-    let obj = newCacheRulesOriginCloudRegionV2ResultInfo()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginCloudRegionV2ResultInfo)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsSupportedCloudRegionsResult":
+    let obj = newCacheSettingsSupportedCloudRegionsResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsSupportedCloudRegionsResult)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginCloudRegionSingleResult":
-    let obj = newCacheRulesOriginCloudRegionSingleResult()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginCloudRegionSingleResult)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsApiResponseCommonFailure":
+    let obj = newCacheSettingsApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginCloudRegionRequest":
-    let obj = newCacheRulesOriginCloudRegionRequest()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginCloudRegionRequest)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsOriginCloudRegionV2Entry":
+    let obj = newCacheSettingsOriginCloudRegionV2Entry()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginCloudRegionV2Entry)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginCloudRegionV2BatchResult":
-    let obj = newCacheRulesOriginCloudRegionV2BatchResult()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginCloudRegionV2BatchResult)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsOriginCloudRegionV2Request":
+    let obj = newCacheSettingsOriginCloudRegionV2Request()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginCloudRegionV2Request)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginCloudRegionV2Entry":
-    let obj = newCacheRulesOriginCloudRegionV2Entry()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginCloudRegionV2Entry)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsOriginCloudRegionV2BatchResult":
+    let obj = newCacheSettingsOriginCloudRegionV2BatchResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginCloudRegionV2BatchResult)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesSupportedCloudRegionsResult":
-    let obj = newCacheRulesSupportedCloudRegionsResult()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesSupportedCloudRegionsResult)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsOriginCloudRegionV2DeleteResult":
+    let obj = newCacheSettingsOriginCloudRegionV2DeleteResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginCloudRegionV2DeleteResult)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginCloudRegionsListResult":
-    let obj = newCacheRulesOriginCloudRegionsListResult()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginCloudRegionsListResult)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsOriginCloudRegionSingleResult":
+    let obj = newCacheSettingsOriginCloudRegionSingleResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginCloudRegionSingleResult)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginCloudRegionV2Request":
-    let obj = newCacheRulesOriginCloudRegionV2Request()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginCloudRegionV2Request)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsOriginCloudRegionRequest":
+    let obj = newCacheSettingsOriginCloudRegionRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginCloudRegionRequest)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginCloudRegionV2DeleteResult":
-    let obj = newCacheRulesOriginCloudRegionV2DeleteResult()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginCloudRegionV2DeleteResult)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsOriginCloudRegionBatchResult":
+    let obj = newCacheSettingsOriginCloudRegionBatchResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginCloudRegionBatchResult)) == openjson.toJson(obj)
 
 suite "origin_cloud_regions endpoints":
   test "GET /zones/{zone_id}/cache/origin_cloud_regions":
@@ -68,12 +68,12 @@ suite "origin_cloud_regions endpoints":
   test "POST /zones/{zone_id}/cache/origin_cloud_regions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postZonesZoneIdCacheOriginCloudRegions("test", newCacheRulesOriginCloudRegionRequest())
+    discard waitFor client.postZonesZoneIdCacheOriginCloudRegions("test", newCacheSettingsOriginCloudRegionRequest())
 
   test "PATCH /zones/{zone_id}/cache/origin_cloud_regions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchZonesZoneIdCacheOriginCloudRegions("test", newCacheRulesOriginCloudRegionRequest())
+    discard waitFor client.patchZonesZoneIdCacheOriginCloudRegions("test", newCacheSettingsOriginCloudRegionRequest())
 
   test "DELETE /zones/{zone_id}/cache/origin_cloud_regions/batch":
     let client = initCloudflareClient("test-key")
@@ -128,7 +128,7 @@ suite "origin_cloud_regions endpoints":
   test "PUT /zones/{zone_id}/origin/cloud_regions/{origin_ip}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putZonesZoneIdOriginCloudRegionsOriginIp("test", "test", newCacheRulesOriginCloudRegionV2Request())
+    discard waitFor client.putZonesZoneIdOriginCloudRegionsOriginIp("test", "test", newCacheSettingsOriginCloudRegionV2Request())
 
   test "DELETE /zones/{zone_id}/origin/cloud_regions/{origin_ip}":
     let client = initCloudflareClient("test-key")

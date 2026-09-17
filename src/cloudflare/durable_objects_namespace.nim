@@ -31,7 +31,7 @@ proc getAccountsAccountIdWorkersDurableObjectsNamespacesIdObjects*(client: Cloud
                                                                    id: types.WorkersSchemasId,
                                                                    limit: float64 = default(float64),
                                                                    cursor: string = default(string)): Future[JsonNode] {.async.} =
-  ## Returns the Durable Objects in a given namespace.
+  ## Returns the Durable Objects in a given Durable Object namespace.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit

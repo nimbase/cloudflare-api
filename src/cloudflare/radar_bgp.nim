@@ -107,7 +107,7 @@ proc getRadarBgpHijacksEvents*(client: CloudflareClient, page: int64 = 1,
                                victimAsn: int64 = default(int64),
                                involvedAsn: int64 = default(int64),
                                involvedCountry: string = default(string),
-                               prefix: string = default(string),
+                               prefix: JsonNode = default(JsonNode),
                                minConfidence: int64 = default(int64),
                                maxConfidence: int64 = default(int64),
                                dateRange: string = default(string),
@@ -254,7 +254,7 @@ proc getRadarBgpRoutesAses*(client: CloudflareClient,
 
 proc getRadarBgpRoutesMoas*(client: CloudflareClient,
                             origin: int64 = default(int64),
-                            prefix: string = default(string),
+                            prefix: JsonNode = default(JsonNode),
                             invalidOnly: bool = default(bool),
                             format: RadarBgpFormatOption): Future[GetRadarBgpRoutesMoasResponse] {.async.} =
   ## Retrieves all Multi-Origin AS (MOAS) prefixes in the global routing tables.
@@ -297,7 +297,7 @@ proc getRadarBgpRoutesPathsAsn*(client: CloudflareClient, asn: int64,
     raise newException(CloudflareClientError, body)
 
 proc getRadarBgpRoutesPfx2as*(client: CloudflareClient,
-                              prefix: string = default(string),
+                              prefix: JsonNode = default(JsonNode),
                               origin: int64 = default(int64),
                               rpkiStatus: RadarBgpRpkiStatusOption,
                               longestPrefixMatch: bool = default(bool),
@@ -319,7 +319,7 @@ proc getRadarBgpRoutesPfx2as*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarBgpRoutesRealtime*(client: CloudflareClient,
-                                prefix: string = default(string),
+                                prefix: JsonNode = default(JsonNode),
                                 format: RadarBgpFormatOption): Future[GetRadarBgpRoutesRealtimeResponse] {.async.} =
   ## Retrieves real-time BGP routes for a prefix, using public real-time data
   ## collectors (RouteViews and RIPE RIS).

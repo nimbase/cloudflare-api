@@ -91,7 +91,7 @@ suite "radar_bgp endpoints":
   test "GET /radar/bgp/hijacks/events":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpHijacksEvents(1, 1, 1, 1, 1, 1, "test", "test", 1, 1, "test", "test", "test", {}, {}, {})
+    discard waitFor client.getRadarBgpHijacksEvents(1, 1, 1, 1, 1, 1, "test", openjson.newJObject(), 1, 1, "test", "test", "test", {}, {}, {})
 
   test "GET /radar/bgp/ips/top/ases":
     let client = initCloudflareClient("test-key")
@@ -111,7 +111,7 @@ suite "radar_bgp endpoints":
   test "GET /radar/bgp/routes/moas":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpRoutesMoas(1, "test", true, {})
+    discard waitFor client.getRadarBgpRoutesMoas(1, openjson.newJObject(), true, {})
 
   test "GET /radar/bgp/routes/paths/{asn}":
     let client = initCloudflareClient("test-key")
@@ -121,12 +121,12 @@ suite "radar_bgp endpoints":
   test "GET /radar/bgp/routes/pfx2as":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpRoutesPfx2as("test", 1, {}, true, {})
+    discard waitFor client.getRadarBgpRoutesPfx2as(openjson.newJObject(), 1, {}, true, {})
 
   test "GET /radar/bgp/routes/realtime":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpRoutesRealtime("test", {})
+    discard waitFor client.getRadarBgpRoutesRealtime(openjson.newJObject(), {})
 
   test "GET /radar/bgp/routes/stats":
     let client = initCloudflareClient("test-key")

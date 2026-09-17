@@ -156,7 +156,7 @@ proc getAccountsAccountIdRealtimeKitAppIdSessionsSessionIdParticipants*(client: 
                                                                         appId: types.RealtimekitAppId,
                                                                         search: string = default(string),
                                                                         pageNo: float64 = default(float64),
-                                                                        perPage: float64 = default(float64),
+                                                                        perPage: int64 = 25,
                                                                         sortOrder: SessionSortOrderOption,
                                                                         sortBy: SessionSortByOption,
                                                                         includePeerEvents: bool = false,
@@ -186,8 +186,8 @@ proc getAccountsAccountIdRealtimeKitAppIdSessionsSessionIdParticipantsParticipan
                                                                                      includePeerEvents: bool = false,
                                                                                      participantId: string,
                                                                                      sessionId: string): Future[GetAccountsAccountIdRealtimeKitAppIdSessionsSessionIdParticipantsParticipantIdResponse] {.async.} =
-  ## Returns details of the given participant ID along with call statistics for the
-  ## given session ID.
+  ## Returns details of the given participant ID for the given session ID. Use the
+  ## peer report endpoint to retrieve call statistics.
 
   var q = initOrderedTable[string, string]()
   q["include_peer_events"] = $includePeerEvents

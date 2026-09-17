@@ -11,21 +11,21 @@ import cloudflare
 import ./common
 
 suite "tiered_caching serialization":
-  test "round-trips CacheRulesApiResponseCommonFailure":
-    let obj = newCacheRulesApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsTieredCacheResponseValue":
+    let obj = newCacheSettingsTieredCacheResponseValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsTieredCacheResponseValue)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesZoneCacheSettingsResponseSingle":
-    let obj = newCacheRulesZoneCacheSettingsResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesZoneCacheSettingsResponseSingle)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsPatch":
+    let obj = newCacheSettingsPatch()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsPatch)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesTieredCacheResponseValue":
-    let obj = newCacheRulesTieredCacheResponseValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesTieredCacheResponseValue)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsApiResponseCommonFailure":
+    let obj = newCacheSettingsApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesPatch":
-    let obj = newCacheRulesPatch()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesPatch)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsZoneCacheSettingsResponseSingle":
+    let obj = newCacheSettingsZoneCacheSettingsResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsZoneCacheSettingsResponseSingle)) == openjson.toJson(obj)
 
 suite "tiered_caching endpoints":
   test "GET /zones/{zone_id}/argo/tiered_caching":
@@ -36,5 +36,5 @@ suite "tiered_caching endpoints":
   test "PATCH /zones/{zone_id}/argo/tiered_caching":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchZonesZoneIdArgoTieredCaching("test", newCacheRulesPatch())
+    discard waitFor client.patchZonesZoneIdArgoTieredCaching("test", newCacheSettingsPatch())
 

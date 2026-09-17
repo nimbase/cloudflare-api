@@ -12,7 +12,7 @@ import ./private/types
 proc getAccountsAccountIdWorkersScriptsScriptNameSchedules*(client: CloudflareClient,
                                                             accountId: types.WorkersIdentifier,
                                                             scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
-  ## Fetches Cron Triggers for a Worker.
+  ## Get the schedules (Cron Triggers) for a Worker script.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/schedules")
   let body = await res.body
@@ -25,7 +25,7 @@ proc getAccountsAccountIdWorkersScriptsScriptNameSchedules*(client: CloudflareCl
 proc putAccountsAccountIdWorkersScriptsScriptNameSchedules*(client: CloudflareClient,
                                                             accountId: types.WorkersIdentifier,
                                                             scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
-  ## Updates Cron Triggers for a Worker.
+  ## Update the schedules (Cron Triggers) for a Worker script.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/schedules", body)
   let body = await res.body

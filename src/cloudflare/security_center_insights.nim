@@ -15,6 +15,9 @@ type
     dismiss: Option[bool]
   PutZonesZoneIdSecurityCenterInsightsIssueIdDismissRequest = object
     dismiss: Option[bool]
+  SecurityCenterInsightSourceOption* = enum
+    sourceRiskrecon = "riskrecon"
+
 
 proc getAccountsAccountIdIntelAttackSurfaceReportIssueTypes*(client: CloudflareClient,
                                                              accountId: types.SecurityCenterIdentifier): Future[JsonNode] {.async.} =
@@ -35,6 +38,7 @@ proc getAccountsAccountIdIntelAttackSurfaceReportIssues*(client: CloudflareClien
                                                          issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
                                                          issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
                                                          product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                         source: types.SecurityCenterSources = default(types.SecurityCenterSources),
                                                          severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
                                                          subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
                                                          issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
@@ -52,6 +56,7 @@ proc getAccountsAccountIdIntelAttackSurfaceReportIssues*(client: CloudflareClien
   q["issue_class"] = $issueClass
   q["issue_type"] = $issueType
   q["product"] = $product
+  q["source"] = $source
   q["severity"] = $severity
   q["subject"] = $subject
   q["issue_class~neq"] = $issueClassNeq
@@ -75,6 +80,7 @@ proc getAccountsAccountIdIntelAttackSurfaceReportIssuesClass*(client: Cloudflare
                                                               issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
                                                               issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
                                                               product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                              source: types.SecurityCenterSources = default(types.SecurityCenterSources),
                                                               severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
                                                               subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
                                                               issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
@@ -89,6 +95,7 @@ proc getAccountsAccountIdIntelAttackSurfaceReportIssuesClass*(client: Cloudflare
   q["issue_class"] = $issueClass
   q["issue_type"] = $issueType
   q["product"] = $product
+  q["source"] = $source
   q["severity"] = $severity
   q["subject"] = $subject
   q["issue_class~neq"] = $issueClassNeq
@@ -110,6 +117,7 @@ proc getAccountsAccountIdIntelAttackSurfaceReportIssuesSeverity*(client: Cloudfl
                                                                  issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
                                                                  issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
                                                                  product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                                 source: types.SecurityCenterSources = default(types.SecurityCenterSources),
                                                                  severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
                                                                  subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
                                                                  issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
@@ -124,6 +132,7 @@ proc getAccountsAccountIdIntelAttackSurfaceReportIssuesSeverity*(client: Cloudfl
   q["issue_class"] = $issueClass
   q["issue_type"] = $issueType
   q["product"] = $product
+  q["source"] = $source
   q["severity"] = $severity
   q["subject"] = $subject
   q["issue_class~neq"] = $issueClassNeq
@@ -145,6 +154,7 @@ proc getAccountsAccountIdIntelAttackSurfaceReportIssuesType*(client: CloudflareC
                                                              issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
                                                              issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
                                                              product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                             source: types.SecurityCenterSources = default(types.SecurityCenterSources),
                                                              severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
                                                              subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
                                                              issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
@@ -159,6 +169,7 @@ proc getAccountsAccountIdIntelAttackSurfaceReportIssuesType*(client: CloudflareC
   q["issue_class"] = $issueClass
   q["issue_type"] = $issueType
   q["product"] = $product
+  q["source"] = $source
   q["severity"] = $severity
   q["subject"] = $subject
   q["issue_class~neq"] = $issueClassNeq
@@ -195,6 +206,7 @@ proc getAccountsAccountIdSecurityCenterInsights*(client: CloudflareClient,
                                                  issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
                                                  issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
                                                  product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                 source: types.SecurityCenterSources = default(types.SecurityCenterSources),
                                                  severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
                                                  subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
                                                  issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
@@ -212,6 +224,7 @@ proc getAccountsAccountIdSecurityCenterInsights*(client: CloudflareClient,
   q["issue_class"] = $issueClass
   q["issue_type"] = $issueType
   q["product"] = $product
+  q["source"] = $source
   q["severity"] = $severity
   q["subject"] = $subject
   q["issue_class~neq"] = $issueClassNeq
@@ -235,6 +248,7 @@ proc getAccountsAccountIdSecurityCenterInsightsClass*(client: CloudflareClient,
                                                       issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
                                                       issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
                                                       product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                      source: types.SecurityCenterSources = default(types.SecurityCenterSources),
                                                       severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
                                                       subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
                                                       issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
@@ -249,6 +263,7 @@ proc getAccountsAccountIdSecurityCenterInsightsClass*(client: CloudflareClient,
   q["issue_class"] = $issueClass
   q["issue_type"] = $issueType
   q["product"] = $product
+  q["source"] = $source
   q["severity"] = $severity
   q["subject"] = $subject
   q["issue_class~neq"] = $issueClassNeq
@@ -264,12 +279,29 @@ proc getAccountsAccountIdSecurityCenterInsightsClass*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc getAccountsAccountIdSecurityCenterInsightsCount*(client: CloudflareClient,
+                                                      accountId: types.SecurityCenterIdentifier,
+                                                      source: SecurityCenterInsightSourceOption): Future[types.SecurityCenterPartnerInsightCountResponse] {.async.} =
+  ## Retrieves the uncapped count of active, non-dismissed, unclassified RiskRecon
+  ## insights for the account.
+
+  var q = initOrderedTable[string, string]()
+  q["source"] = $source
+  let res = await client.httpGET(fmt"/accounts/{accountId}/security-center/insights/count", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.SecurityCenterPartnerInsightCountResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdSecurityCenterInsightsSeverity*(client: CloudflareClient,
                                                          accountId: types.SecurityCenterIdentifier,
                                                          dismissed: types.SecurityCenterDismissed = default(types.SecurityCenterDismissed),
                                                          issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
                                                          issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
                                                          product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                         source: types.SecurityCenterSources = default(types.SecurityCenterSources),
                                                          severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
                                                          subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
                                                          issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
@@ -285,6 +317,7 @@ proc getAccountsAccountIdSecurityCenterInsightsSeverity*(client: CloudflareClien
   q["issue_class"] = $issueClass
   q["issue_type"] = $issueType
   q["product"] = $product
+  q["source"] = $source
   q["severity"] = $severity
   q["subject"] = $subject
   q["issue_class~neq"] = $issueClassNeq
@@ -306,6 +339,7 @@ proc getAccountsAccountIdSecurityCenterInsightsType*(client: CloudflareClient,
                                                      issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
                                                      issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
                                                      product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                     source: types.SecurityCenterSources = default(types.SecurityCenterSources),
                                                      severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
                                                      subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
                                                      issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
@@ -320,6 +354,7 @@ proc getAccountsAccountIdSecurityCenterInsightsType*(client: CloudflareClient,
   q["issue_class"] = $issueClass
   q["issue_type"] = $issueType
   q["product"] = $product
+  q["source"] = $source
   q["severity"] = $severity
   q["subject"] = $subject
   q["issue_class~neq"] = $issueClassNeq
@@ -413,6 +448,7 @@ proc getZonesZoneIdSecurityCenterInsights*(client: CloudflareClient,
                                            issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
                                            issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
                                            product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                           source: types.SecurityCenterSources = default(types.SecurityCenterSources),
                                            severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
                                            subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
                                            issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
@@ -430,6 +466,7 @@ proc getZonesZoneIdSecurityCenterInsights*(client: CloudflareClient,
   q["issue_class"] = $issueClass
   q["issue_type"] = $issueType
   q["product"] = $product
+  q["source"] = $source
   q["severity"] = $severity
   q["subject"] = $subject
   q["issue_class~neq"] = $issueClassNeq
@@ -453,6 +490,7 @@ proc getZonesZoneIdSecurityCenterInsightsClass*(client: CloudflareClient,
                                                 issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
                                                 issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
                                                 product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                source: types.SecurityCenterSources = default(types.SecurityCenterSources),
                                                 severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
                                                 subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
                                                 issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
@@ -468,6 +506,7 @@ proc getZonesZoneIdSecurityCenterInsightsClass*(client: CloudflareClient,
   q["issue_class"] = $issueClass
   q["issue_type"] = $issueType
   q["product"] = $product
+  q["source"] = $source
   q["severity"] = $severity
   q["subject"] = $subject
   q["issue_class~neq"] = $issueClassNeq
@@ -489,6 +528,7 @@ proc getZonesZoneIdSecurityCenterInsightsSeverity*(client: CloudflareClient,
                                                    issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
                                                    issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
                                                    product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                   source: types.SecurityCenterSources = default(types.SecurityCenterSources),
                                                    severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
                                                    subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
                                                    issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
@@ -504,6 +544,7 @@ proc getZonesZoneIdSecurityCenterInsightsSeverity*(client: CloudflareClient,
   q["issue_class"] = $issueClass
   q["issue_type"] = $issueType
   q["product"] = $product
+  q["source"] = $source
   q["severity"] = $severity
   q["subject"] = $subject
   q["issue_class~neq"] = $issueClassNeq
@@ -525,6 +566,7 @@ proc getZonesZoneIdSecurityCenterInsightsType*(client: CloudflareClient,
                                                issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
                                                issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
                                                product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                               source: types.SecurityCenterSources = default(types.SecurityCenterSources),
                                                severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
                                                subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
                                                issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
@@ -540,6 +582,7 @@ proc getZonesZoneIdSecurityCenterInsightsType*(client: CloudflareClient,
   q["issue_class"] = $issueClass
   q["issue_type"] = $issueType
   q["product"] = $product
+  q["source"] = $source
   q["severity"] = $severity
   q["subject"] = $subject
   q["issue_class~neq"] = $issueClassNeq

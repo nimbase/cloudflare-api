@@ -11,17 +11,17 @@ import cloudflare
 import ./common
 
 suite "origin_post_quantum serialization":
-  test "round-trips CacheRulesApiResponseCommonFailure":
-    let obj = newCacheRulesApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsOriginPostQuantumEncryptionResponseValue":
+    let obj = newCacheSettingsOriginPostQuantumEncryptionResponseValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginPostQuantumEncryptionResponseValue)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesZoneCacheSettingsResponseSingle":
-    let obj = newCacheRulesZoneCacheSettingsResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesZoneCacheSettingsResponseSingle)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsApiResponseCommonFailure":
+    let obj = newCacheSettingsApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginPostQuantumEncryptionResponseValue":
-    let obj = newCacheRulesOriginPostQuantumEncryptionResponseValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginPostQuantumEncryptionResponseValue)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsZoneCacheSettingsResponseSingle":
+    let obj = newCacheSettingsZoneCacheSettingsResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsZoneCacheSettingsResponseSingle)) == openjson.toJson(obj)
 
 suite "origin_post_quantum endpoints":
   test "GET /zones/{zone_id}/cache/origin_post_quantum_encryption":

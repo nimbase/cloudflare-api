@@ -39,6 +39,10 @@ suite "event serialization":
     let obj = cloudflare.PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdMoveResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdMoveResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdCloudforceOneEventsDatasetsDatasetIdEventsEventIdRawResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneEventsDatasetsDatasetIdEventsEventIdRawResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneEventsDatasetsDatasetIdEventsEventIdRawResponse)) == openjson.toJson(obj)
+
   test "round-trips DeleteAccountsAccountIdCloudforceOneEventsEventTagEventIdResponse":
     let obj = cloudflare.DeleteAccountsAccountIdCloudforceOneEventsEventTagEventIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdCloudforceOneEventsEventTagEventIdResponse)) == openjson.toJson(obj)
@@ -126,10 +130,25 @@ suite "event endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdCloudforceOneEventsAggregate("test", "test", @["test"], "test", "test", true, 1.0)
 
+  test "GET /accounts/{account_id}/cloudforce-one/events/by-id/{event_id}/relationships":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneEventsByIdEventIdRelationships("test", "test", {}, 1.0, openjson.newJObject(), @["test"], "test", true, 1.0, 1.0)
+
   test "GET /accounts/{account_id}/cloudforce-one/events/dataset/{dataset_id}/events/{event_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdCloudforceOneEventsDatasetDatasetIdEventsEventId("test", "test", "test")
+
+  test "DELETE /accounts/{account_id}/cloudforce-one/events/datasets/{dataset_id}/events":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdCloudforceOneEventsDatasetsDatasetIdEvents("test", "test", @["test"])
+
+  test "GET /accounts/{account_id}/cloudforce-one/events/datasets/{dataset_id}/events/{event_id}/raw":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneEventsDatasetsDatasetIdEventsEventIdRaw("test", "test", "test")
 
   test "POST /accounts/{account_id}/cloudforce-one/events/graphql":
     let client = initCloudflareClient("test-key")

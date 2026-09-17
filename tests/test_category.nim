@@ -43,6 +43,22 @@ suite "category serialization":
     let obj = cloudflare.PatchAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips PostAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse":
+    let obj = cloudflare.PostAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips DeleteAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse":
+    let obj = cloudflare.DeleteAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips PatchAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse":
+    let obj = cloudflare.PatchAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse)) == openjson.toJson(obj)
+
 suite "category endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/events/categories":
     let client = initCloudflareClient("test-key")
@@ -63,6 +79,16 @@ suite "category endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdCloudforceOneEventsCategoriesCategoryId("test", "test")
+
+  test "GET /accounts/{account_id}/cloudforce-one/events/event-categories/by-id/{category_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryId("test", "test")
+
+  test "DELETE /accounts/{account_id}/cloudforce-one/events/event-categories/by-id/{category_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryId("test", "test")
 
   test "GET /accounts/{account_id}/resource-library/categories":
     let client = initCloudflareClient("test-key")

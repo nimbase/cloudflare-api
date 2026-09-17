@@ -27,6 +27,10 @@ suite "security_center_insights serialization":
     let obj = newSecurityCenterApiResponseCommon()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterApiResponseCommon)) == openjson.toJson(obj)
 
+  test "round-trips SecurityCenterPartnerInsightCountResponse":
+    let obj = newSecurityCenterPartnerInsightCountResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterPartnerInsightCountResponse)) == openjson.toJson(obj)
+
   test "round-trips SecurityCenterUserClassificationUpdate":
     let obj = newSecurityCenterUserClassificationUpdate()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterUserClassificationUpdate)) == openjson.toJson(obj)
@@ -44,6 +48,11 @@ suite "security_center_insights endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdIntelAttackSurfaceReportIssueTypes("test")
+
+  test "GET /accounts/{account_id}/security-center/insights/count":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdSecurityCenterInsightsCount("test", {})
 
   test "PATCH /accounts/{account_id}/security-center/insights/{issue_id}/classification":
     let client = initCloudflareClient("test-key")

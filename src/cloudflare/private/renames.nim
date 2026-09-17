@@ -90,6 +90,18 @@ proc renameHook*(v: AigBillingGetTopupConfigResult, fieldName: var string) {.inl
   elif fieldName == "last_failed_at":
     fieldName = "lastFailedAt"
 
+proc renameHook*(v: AnalyticsSqlSqlQueryAccountScope, fieldName: var string) {.inline.} =
+  if fieldName == "accountTag":
+    fieldName = "account_tag"
+  elif fieldName == "account_tag":
+    fieldName = "accountTag"
+
+proc renameHook*(v: AnalyticsSqlSqlQueryZoneScope, fieldName: var string) {.inline.} =
+  if fieldName == "zoneTag":
+    fieldName = "zone_tag"
+  elif fieldName == "zone_tag":
+    fieldName = "zoneTag"
+
 proc renameHook*(v: ApiShieldOperationSchemaFragment, fieldName: var string) {.inline.} =
   if fieldName == "requestBody":
     fieldName = "request_body"
@@ -448,6 +460,50 @@ proc renameHook*(v: BillableUsageApiV2UsageQuery, fieldName: var string) {.inlin
   elif fieldName == "time_period":
     fieldName = "TimePeriod"
 
+proc renameHook*(v: BrexExtensionEventLogRow, fieldName: var string) {.inline.} =
+  if fieldName == "durationMs":
+    fieldName = "duration_ms"
+  elif fieldName == "duration_ms":
+    fieldName = "durationMs"
+  elif fieldName == "eventName":
+    fieldName = "event_name"
+  elif fieldName == "event_name":
+    fieldName = "eventName"
+  elif fieldName == "inventoryExtensionId":
+    fieldName = "inventory_extension_id"
+  elif fieldName == "inventory_extension_id":
+    fieldName = "inventoryExtensionId"
+  elif fieldName == "inventoryExtensionName":
+    fieldName = "inventory_extension_name"
+  elif fieldName == "inventory_extension_name":
+    fieldName = "inventoryExtensionName"
+  elif fieldName == "inventoryExtensionVersion":
+    fieldName = "inventory_extension_version"
+  elif fieldName == "inventory_extension_version":
+    fieldName = "inventoryExtensionVersion"
+  elif fieldName == "matchedDlpProfiles":
+    fieldName = "matched_dlp_profiles"
+  elif fieldName == "matched_dlp_profiles":
+    fieldName = "matchedDlpProfiles"
+  elif fieldName == "policyId":
+    fieldName = "policy_id"
+  elif fieldName == "policy_id":
+    fieldName = "policyId"
+  elif fieldName == "registrationId":
+    fieldName = "registration_id"
+  elif fieldName == "registration_id":
+    fieldName = "registrationId"
+  elif fieldName == "userEmail":
+    fieldName = "user_email"
+  elif fieldName == "user_email":
+    fieldName = "userEmail"
+
+proc renameHook*(v: BrexExtensionEventsSearchRequest, fieldName: var string) {.inline.} =
+  if fieldName == "includeTotal":
+    fieldName = "include_total"
+  elif fieldName == "include_total":
+    fieldName = "includeTotal"
+
 proc renameHook*(v: BrexInstalledExtension, fieldName: var string) {.inline.} =
   if fieldName == "hostPermissions":
     fieldName = "host_permissions"
@@ -464,13 +520,13 @@ proc renameHook*(v: BuildsBuildSeedRepoInputFile, fieldName: var string) {.inlin
   elif fieldName == "is_base64":
     fieldName = "isBase64"
 
-proc renameHook*(v: CacheRulesOriginCloudRegionBatchItemResult, fieldName: var string) {.inline.} =
+proc renameHook*(v: CacheSettingsOriginCloudRegionBatchItemResult, fieldName: var string) {.inline.} =
   if fieldName == "origin-ip":
     fieldName = "origin_ip"
   elif fieldName == "origin_ip":
     fieldName = "origin-ip"
 
-proc renameHook*(v: CacheRulesOriginCloudRegionEntry, fieldName: var string) {.inline.} =
+proc renameHook*(v: CacheSettingsOriginCloudRegionEntry, fieldName: var string) {.inline.} =
   if fieldName == "origin-ip":
     fieldName = "origin_ip"
   elif fieldName == "origin_ip":
@@ -487,6 +543,10 @@ proc renameHook*(v: CloudforceOneEventsFieldDefinition, fieldName: var string) {
     fieldName = "allowed_values"
   elif fieldName == "allowed_values":
     fieldName = "allowedValues"
+  elif fieldName == "deprecatedValues":
+    fieldName = "deprecated_values"
+  elif fieldName == "deprecated_values":
+    fieldName = "deprecatedValues"
   elif fieldName == "maxLength":
     fieldName = "max_length"
   elif fieldName == "max_length":

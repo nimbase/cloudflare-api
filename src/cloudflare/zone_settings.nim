@@ -10,7 +10,7 @@ import ./private/types
 
 type
   PatchZonesZoneIdSettingsAegisRequest = object
-    value: types.CacheRulesAegisValue
+    value: types.CacheSettingsAegisValue
   PatchZonesZoneIdSettingsAutomaticPlatformOptimizationRequest = object
     value: types.SpeedAutomaticPlatformOptimizationValue
   PatchZonesZoneIdSettingsBinaryAstRequest = object
@@ -22,9 +22,9 @@ type
   PatchZonesZoneIdSettingsImageResizingRequest = object
     value: types.SpeedImageResizingValue
   PatchZonesZoneIdSettingsOriginH2MaxStreamsRequest = object
-    value: types.CacheRulesOriginH2MaxStreamsValue
+    value: types.CacheSettingsOriginH2MaxStreamsValue
   PatchZonesZoneIdSettingsOriginMaxHttpVersionRequest = object
-    value: types.CacheRulesOriginMaxHttpVersionValue
+    value: types.CacheSettingsOriginMaxHttpVersionValue
   PatchZonesZoneIdSettingsSpeedBrainRequest = object
     value: string
   PatchZonesZoneIdSettingsTransformationsAllowedOriginsRequest = object
@@ -60,7 +60,7 @@ proc patchZonesZoneIdSettings*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdSettingsAegis*(client: CloudflareClient,
-                                  zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                  zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Aegis provides dedicated egress IPs (from Cloudflare to your origin) for your
   ## layer 7 WAF and CDN services. The egress IPs are reserved exclusively for your
   ## account so that you can increase your origin security by only allowing traffic
@@ -75,7 +75,7 @@ proc getZonesZoneIdSettingsAegis*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdSettingsAegis*(client: CloudflareClient,
-                                    zoneId: types.CacheRulesIdentifier,
+                                    zoneId: types.CacheSettingsIdentifier,
                                     body: PatchZonesZoneIdSettingsAegisRequest): Future[JsonNode] {.async.} =
   ## Aegis provides dedicated egress IPs (from Cloudflare to your origin) for your
   ## layer 7 WAF and CDN services. The egress IPs are reserved exclusively for your
@@ -244,7 +244,7 @@ proc patchZonesZoneIdSettingsImageResizing*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdSettingsOriginH2MaxStreams*(client: CloudflareClient,
-                                               zoneId: types.CacheRulesIdentifier): Future[types.CacheRulesOriginH2MaxStreamsResponseValue] {.async.} =
+                                               zoneId: types.CacheSettingsIdentifier): Future[types.CacheSettingsOriginH2MaxStreamsResponseValue] {.async.} =
   ## Origin H2 Max Streams configures the max number of concurrent requests that
   ## Cloudflare will send within the same connection when communicating with the
   ## origin server, if the origin supports it. Note that if your origin does not
@@ -256,13 +256,13 @@ proc getZonesZoneIdSettingsOriginH2MaxStreams*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.CacheRulesOriginH2MaxStreamsResponseValue)
+    result = fromJson(body, types.CacheSettingsOriginH2MaxStreamsResponseValue)
   else:
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdSettingsOriginH2MaxStreams*(client: CloudflareClient,
-                                                 zoneId: types.CacheRulesIdentifier,
-                                                 body: PatchZonesZoneIdSettingsOriginH2MaxStreamsRequest): Future[types.CacheRulesOriginH2MaxStreamsResponseValue] {.async.} =
+                                                 zoneId: types.CacheSettingsIdentifier,
+                                                 body: PatchZonesZoneIdSettingsOriginH2MaxStreamsRequest): Future[types.CacheSettingsOriginH2MaxStreamsResponseValue] {.async.} =
   ## Origin H2 Max Streams configures the max number of concurrent requests that
   ## Cloudflare will send within the same connection when communicating with the
   ## origin server, if the origin supports it. Note that if your origin does not
@@ -274,12 +274,12 @@ proc patchZonesZoneIdSettingsOriginH2MaxStreams*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.CacheRulesOriginH2MaxStreamsResponseValue)
+    result = fromJson(body, types.CacheSettingsOriginH2MaxStreamsResponseValue)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdSettingsOriginMaxHttpVersion*(client: CloudflareClient,
-                                                 zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                                 zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Origin Max HTTP Setting Version sets the highest HTTP version Cloudflare will
   ## attempt to use with your origin. This setting allows Cloudflare to make HTTP/2
   ## requests to your origin. (Refer to [Enable HTTP/2 to
@@ -296,7 +296,7 @@ proc getZonesZoneIdSettingsOriginMaxHttpVersion*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdSettingsOriginMaxHttpVersion*(client: CloudflareClient,
-                                                   zoneId: types.CacheRulesIdentifier,
+                                                   zoneId: types.CacheSettingsIdentifier,
                                                    body: PatchZonesZoneIdSettingsOriginMaxHttpVersionRequest): Future[JsonNode] {.async.} =
   ## Origin Max HTTP Setting Version sets the highest HTTP version Cloudflare will
   ## attempt to use with your origin. This setting allows Cloudflare to make HTTP/2

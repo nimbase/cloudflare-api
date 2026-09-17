@@ -12,7 +12,7 @@ import ./private/types
 proc getAccountsAccountIdWorkersScriptsScriptNameDeployments*(client: CloudflareClient,
                                                               accountId: types.WorkersIdentifier,
                                                               scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
-  ## List of Worker Deployments. The first deployment in the list is the latest
+  ## List Worker deployments. The first deployment in the list is the latest
   ## deployment actively serving traffic.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/deployments")
@@ -30,7 +30,7 @@ proc postAccountsAccountIdWorkersScriptsScriptNameDeployments*(client: Cloudflar
                                                                body: types.WorkersDeployment): Future[JsonNode] {.async.} =
   ## Deployments configure how [WorkerVersions](https://developers.cloudflare.com/ap
   ## i/operations/worker-versions-list-versions) are deployed to traffic. A
-  ## deployment can consist of one or two versions of a Worker.
+  ## deployment can consist of multiple versions of a Worker.
 
   var q = initOrderedTable[string, string]()
   q["force"] = $force

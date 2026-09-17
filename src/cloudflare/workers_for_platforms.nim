@@ -23,7 +23,7 @@ type
 
 proc getAccountsAccountIdWorkersDispatchNamespaces*(client: CloudflareClient,
                                                     accountId: types.WorkersIdentifier): Future[types.WorkersNamespaceListResponse] {.async.} =
-  ## Fetch a list of Workers for Platforms namespaces.
+  ## Fetch a list of Workers for Platforms dispatch namespaces.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/dispatch/namespaces")
   let body = await res.body
@@ -36,7 +36,7 @@ proc getAccountsAccountIdWorkersDispatchNamespaces*(client: CloudflareClient,
 proc postAccountsAccountIdWorkersDispatchNamespaces*(client: CloudflareClient,
                                                      accountId: types.WorkersIdentifier,
                                                      body: PostAccountsAccountIdWorkersDispatchNamespacesRequest): Future[types.WorkersNamespaceSingleResponse] {.async.} =
-  ## Create a new Workers for Platforms namespace.
+  ## Create a new Workers for Platforms dispatch namespace.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/workers/dispatch/namespaces", body)
   let body = await res.body
@@ -49,7 +49,7 @@ proc postAccountsAccountIdWorkersDispatchNamespaces*(client: CloudflareClient,
 proc getAccountsAccountIdWorkersDispatchNamespacesDispatchNamespace*(client: CloudflareClient,
                                                                      accountId: types.WorkersIdentifier,
                                                                      dispatchNamespace: types.WorkersDispatchNamespaceName): Future[types.WorkersNamespaceSingleResponse] {.async.} =
-  ## Get a Workers for Platforms namespace.
+  ## Get a Workers for Platforms dispatch namespace.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}")
   let body = await res.body
@@ -63,7 +63,7 @@ proc putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespace*(client: Clo
                                                                      accountId: types.WorkersIdentifier,
                                                                      dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                      body: PutAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceRequest): Future[types.WorkersNamespaceSingleResponse] {.async.} =
-  ## Update a Workers for Platforms namespace.
+  ## Update a Workers for Platforms dispatch namespace.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}", body)
   let body = await res.body
@@ -76,7 +76,7 @@ proc putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespace*(client: Clo
 proc deleteAccountsAccountIdWorkersDispatchNamespacesDispatchNamespace*(client: CloudflareClient,
                                                                         accountId: types.WorkersIdentifier,
                                                                         dispatchNamespace: types.WorkersDispatchNamespaceName): Future[types.WorkersApiResponseNullResult] {.async.} =
-  ## Delete a Workers for Platforms namespace.
+  ## Delete a Workers for Platforms dispatch namespace.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}")
   let body = await res.body
@@ -90,7 +90,8 @@ proc patchAccountsAccountIdWorkersDispatchNamespacesDispatchNamespace*(client: C
                                                                        accountId: types.WorkersIdentifier,
                                                                        dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                        body: PatchAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceRequest): Future[types.WorkersNamespaceSingleResponse] {.async.} =
-  ## Patch a Workers for Platforms namespace. Omitted fields are left unchanged.
+  ## Patch a Workers for Platforms dispatch namespace. Omitted fields are left
+  ## unchanged.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}", body)
   let body = await res.body
@@ -104,7 +105,7 @@ proc getAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScripts*(clie
                                                                             accountId: types.WorkersIdentifier,
                                                                             dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                             tags: string = default(string)): Future[JsonNode] {.async.} =
-  ## Fetch a list of scripts uploaded to a Workers for Platforms namespace.
+  ## Fetch a list of scripts uploaded to a Workers for Platforms dispatch namespace.
 
   var q = initOrderedTable[string, string]()
   q["tags"] = $tags
@@ -121,8 +122,8 @@ proc deleteAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScripts*(c
                                                                                dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                tags: string = default(string),
                                                                                limit: int64 = default(int64)): Future[types.WorkersNamespaceScriptDeleteBulkResponse] {.async.} =
-  ## Delete multiple scripts from a Workers for Platforms namespace based on optional
-  ## tag filters.
+  ## Delete multiple scripts from a Workers for Platforms dispatch namespace based on
+  ## optional tag filters.
 
   var q = initOrderedTable[string, string]()
   q["tags"] = $tags
@@ -139,7 +140,8 @@ proc getAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                       accountId: types.WorkersIdentifier,
                                                                                       dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                       scriptName: types.WorkersScriptName): Future[types.WorkersNamespaceScriptResponseSingle] {.async.} =
-  ## Fetch information about a script uploaded to a Workers for Platforms namespace.
+  ## Fetch information about a script uploaded to a Workers for Platforms dispatch
+  ## namespace.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}")
   let body = await res.body
@@ -154,9 +156,9 @@ proc putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                       dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                       scriptName: types.WorkersScriptName,
                                                                                       bindingsInherit: WorkersForPlatformBindingsInheritOption): Future[JsonNode] {.async.} =
-  ## Upload a worker module to a Workers for Platforms namespace. You can find more
-  ## about the multipart metadata on our docs:https://developers.cloudflare.com/work
-  ## ers/configuration/multipart-upload-metadata/.
+  ## Upload a Workers for Platforms script module to a dispatch namespace. You can
+  ## find more about the multipart metadata on our docs:https://developers.cloudflar
+  ## e.com/workers/configuration/multipart-upload-metadata/.
 
   var q = initOrderedTable[string, string]()
   q["bindings_inherit"] = $bindingsInherit
@@ -173,8 +175,8 @@ proc deleteAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScr
                                                                                          dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                          scriptName: types.WorkersScriptName,
                                                                                          force: bool = default(bool)): Future[types.WorkersApiResponseNullResult] {.async.} =
-  ## Delete a worker from a Workers for Platforms namespace. This call has no
-  ## response body on a successful delete.
+  ## Delete a script from a Workers for Platforms dispatch namespace. This call has
+  ## no response body on a successful delete.
 
   var q = initOrderedTable[string, string]()
   q["force"] = $force
@@ -191,8 +193,8 @@ proc postAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScrip
                                                                                                           dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                                           scriptName: types.WorkersScriptName,
                                                                                                           body: types.WorkersCreateAssetsUploadSessionObject): Future[types.WorkersCreateAssetsUploadSessionResponse] {.async.} =
-  ## Start uploading a collection of assets for use in a Worker version. To learn
-  ## more about the direct uploads of assets, see
+  ## Start uploading a collection of assets for use in a Workers for Platforms script
+  ## version. To learn more about the direct uploads of assets, see
   ## https://developers.cloudflare.com/workers/static-assets/direct-upload/.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/assets-upload-session", body)
@@ -207,7 +209,7 @@ proc getAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                               accountId: types.WorkersIdentifier,
                                                                                               dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                               scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
-  ## Fetch script bindings from a script uploaded to a Workers for Platforms
+  ## Fetch bindings from a script uploaded to a Workers for Platforms dispatch
   ## namespace.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/bindings")
@@ -222,7 +224,7 @@ proc getAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                              accountId: types.WorkersIdentifier,
                                                                                              dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                              scriptName: types.WorkersScriptName): Future[AsyncResponse] {.async.} =
-  ## Fetch script content from a script uploaded to a Workers for Platforms
+  ## Fetch content from a script uploaded to a Workers for Platforms dispatch
   ## namespace.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/content")
@@ -232,7 +234,8 @@ proc putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                              accountId: types.WorkersIdentifier,
                                                                                              dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                              scriptName: types.WorkersScriptName): Future[types.WorkersScriptResponseSingle] {.async.} =
-  ## Put script content for a script uploaded to a Workers for Platforms namespace.
+  ## Replace content for a script uploaded to a Workers for Platforms dispatch
+  ## namespace.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/content")
   let body = await res.body
@@ -246,7 +249,8 @@ proc getAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                              accountId: types.WorkersIdentifier,
                                                                                              dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                              scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
-  ## List secrets bound to a script uploaded to a Workers for Platforms namespace.
+  ## List secrets bound to a script uploaded to a Workers for Platforms dispatch
+  ## namespace.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/secrets")
   let body = await res.body
@@ -261,7 +265,8 @@ proc putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                              dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                              scriptName: types.WorkersScriptName,
                                                                                              body: types.WorkersSecret): Future[JsonNode] {.async.} =
-  ## Add a secret to a script by creating a new version with that secret.
+  ## Add a secret to a Workers for Platforms script by creating a new version with
+  ## that secret.
   ##
   ## When changing more than one secret at a time, prefer the "Patch multiple
   ## script secrets" API instead of changing many secrets individually.
@@ -279,8 +284,8 @@ proc patchAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScri
                                                                                                    dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                                    scriptName: types.WorkersScriptName,
                                                                                                    body: types.WorkersSecretPatchRequest): Future[JsonNode] {.async.} =
-  ## Create, update, or delete multiple secrets on a script in a single operation
-  ## using JSON Merge Patch (RFC 7396).
+  ## Create, update, or delete multiple secrets on a Workers for Platforms script in
+  ## a single operation using JSON Merge Patch (RFC 7396).
   ## This operation creates a single version with all changes included.
   ## Prefer this API instead of changing many secrets individually.
   ##
@@ -305,7 +310,7 @@ proc getAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                                        secretName: types.WorkersSecretName,
                                                                                                        urlEncoded: types.WorkersSecretNameUrlEncoded = default(types.WorkersSecretNameUrlEncoded)): Future[JsonNode] {.async.} =
   ## Get a given secret binding (value omitted) on a script uploaded to a Workers for
-  ## Platforms namespace.
+  ## Platforms dispatch namespace.
 
   var q = initOrderedTable[string, string]()
   q["url_encoded"] = $urlEncoded
@@ -323,7 +328,8 @@ proc deleteAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScr
                                                                                                           scriptName: types.WorkersScriptName,
                                                                                                           secretName: types.WorkersSecretName,
                                                                                                           urlEncoded: types.WorkersSecretNameUrlEncoded = default(types.WorkersSecretNameUrlEncoded)): Future[types.WorkersApiResponseNullResult] {.async.} =
-  ## Remove a secret from a script by creating a new version without that
+  ## Remove a secret from a Workers for Platforms script by creating a new version
+  ## without that
   ## secret.
   ##
   ## When changing more than one secret at a time, prefer the "Patch multiple
@@ -343,7 +349,8 @@ proc getAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                               accountId: types.WorkersIdentifier,
                                                                                               dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                               scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
-  ## Get script settings from a script uploaded to a Workers for Platforms namespace.
+  ## Get settings for a script uploaded to a Workers for Platforms dispatch
+  ## namespace.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/settings")
   let body = await res.body
@@ -357,7 +364,8 @@ proc patchAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScri
                                                                                                 accountId: types.WorkersIdentifier,
                                                                                                 dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                                 scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
-  ## Patch script metadata, such as bindings.
+  ## Patch metadata for a script uploaded to a Workers for Platforms dispatch
+  ## namespace, such as bindings.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/settings")
   let body = await res.body
@@ -371,7 +379,7 @@ proc getAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                           accountId: types.WorkersIdentifier,
                                                                                           dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                           scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
-  ## Fetch tags from a script uploaded to a Workers for Platforms namespace.
+  ## Fetch tags from a script uploaded to a Workers for Platforms dispatch namespace.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/tags")
   let body = await res.body
@@ -386,7 +394,8 @@ proc putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                           dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                           scriptName: types.WorkersScriptName,
                                                                                           body: types.WorkersTags): Future[JsonNode] {.async.} =
-  ## Put script tags for a script uploaded to a Workers for Platforms namespace.
+  ## Replace tags for a script uploaded to a Workers for Platforms dispatch
+  ## namespace.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/tags", body)
   let body = await res.body
@@ -401,7 +410,8 @@ proc putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                              dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                              scriptName: types.WorkersScriptName,
                                                                                              tag: types.WorkersTag): Future[types.WorkersApiResponseNullResult] {.async.} =
-  ## Put a single tag on a script uploaded to a Workers for Platforms namespace.
+  ## Add a single tag to a script uploaded to a Workers for Platforms dispatch
+  ## namespace.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/tags/{tag}")
   let body = await res.body
@@ -416,7 +426,8 @@ proc deleteAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScr
                                                                                                 dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                                 scriptName: types.WorkersScriptName,
                                                                                                 tag: types.WorkersTag): Future[types.WorkersApiResponseNullResult] {.async.} =
-  ## Delete script tag for a script uploaded to a Workers for Platforms namespace.
+  ## Delete a tag from a script uploaded to a Workers for Platforms dispatch
+  ## namespace.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/tags/{tag}")
   let body = await res.body

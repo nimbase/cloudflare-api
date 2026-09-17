@@ -10,14 +10,14 @@ import ./private/types
 
 type
   PatchZonesZoneIdCacheCacheReserveRequest = object
-    value: types.CacheRulesCacheReserveValue
+    value: types.CacheSettingsCacheReserveValue
   PatchZonesZoneIdCacheRegionalTieredCacheRequest = object
-    value: types.CacheRulesRegionalTieredCacheValue
+    value: types.CacheSettingsRegionalTieredCacheValue
   PatchZonesZoneIdCacheVariantsRequest = object
-    value: types.CacheRulesVariantsValue
+    value: types.CacheSettingsVariantsValue
 
 proc getZonesZoneIdCacheCacheReserve*(client: CloudflareClient,
-                                      zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                      zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Increase cache lifetimes by automatically storing all cacheable files into
   ## Cloudflare's persistent object storage buckets. Requires Cache Reserve
   ## subscription. Note: using Tiered Cache with Cache Reserve is highly recommended
@@ -34,7 +34,7 @@ proc getZonesZoneIdCacheCacheReserve*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdCacheCacheReserve*(client: CloudflareClient,
-                                        zoneId: types.CacheRulesIdentifier,
+                                        zoneId: types.CacheSettingsIdentifier,
                                         body: PatchZonesZoneIdCacheCacheReserveRequest): Future[JsonNode] {.async.} =
   ## Increase cache lifetimes by automatically storing all cacheable files into
   ## Cloudflare's persistent object storage buckets. Requires Cache Reserve
@@ -52,7 +52,7 @@ proc patchZonesZoneIdCacheCacheReserve*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdCacheCacheReserveClear*(client: CloudflareClient,
-                                           zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                           zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## You can use Cache Reserve Clear to clear your Cache Reserve, but you must first
   ## disable Cache Reserve. In most cases, this will be accomplished within 24 hours.
   ## You cannot re-enable Cache Reserve while this process is ongoing. Keep in mind
@@ -67,7 +67,7 @@ proc getZonesZoneIdCacheCacheReserveClear*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc postZonesZoneIdCacheCacheReserveClear*(client: CloudflareClient,
-                                            zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                            zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## You can use Cache Reserve Clear to clear your Cache Reserve, but you must first
   ## disable Cache Reserve. In most cases, this will be accomplished within 24 hours.
   ## You cannot re-enable Cache Reserve while this process is ongoing. Keep in mind
@@ -82,7 +82,7 @@ proc postZonesZoneIdCacheCacheReserveClear*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdCacheRegionalTieredCache*(client: CloudflareClient,
-                                             zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                             zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Instructs Cloudflare to check a regional hub data center on the way to your
   ## upper tier. This can help improve performance for smart and custom tiered cache
   ## topologies.
@@ -96,7 +96,7 @@ proc getZonesZoneIdCacheRegionalTieredCache*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdCacheRegionalTieredCache*(client: CloudflareClient,
-                                               zoneId: types.CacheRulesIdentifier,
+                                               zoneId: types.CacheSettingsIdentifier,
                                                body: PatchZonesZoneIdCacheRegionalTieredCacheRequest): Future[JsonNode] {.async.} =
   ## Instructs Cloudflare to check a regional hub data center on the way to your
   ## upper tier. This can help improve performance for smart and custom tiered cache
@@ -111,7 +111,7 @@ proc patchZonesZoneIdCacheRegionalTieredCache*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdCacheVariants*(client: CloudflareClient,
-                                  zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                  zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Variant support enables caching variants of images with certain file extensions
   ## in addition to the original. This only applies when the origin server sends the
   ## 'Vary: Accept' response header. If the origin server sends 'Vary: Accept' but
@@ -127,7 +127,7 @@ proc getZonesZoneIdCacheVariants*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdCacheVariants*(client: CloudflareClient,
-                                     zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                     zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Variant support enables caching variants of images with certain file extensions
   ## in addition to the original. This only applies when the origin server sends the
   ## 'Vary: Accept' response header. If the origin server sends 'Vary: Accept' but
@@ -143,7 +143,7 @@ proc deleteZonesZoneIdCacheVariants*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdCacheVariants*(client: CloudflareClient,
-                                    zoneId: types.CacheRulesIdentifier,
+                                    zoneId: types.CacheSettingsIdentifier,
                                     body: PatchZonesZoneIdCacheVariantsRequest): Future[JsonNode] {.async.} =
   ## Variant support enables caching variants of images with certain file extensions
   ## in addition to the original. This only applies when the origin server sends the

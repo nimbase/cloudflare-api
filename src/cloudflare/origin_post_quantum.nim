@@ -10,10 +10,10 @@ import ./private/types
 
 type
   PutZonesZoneIdCacheOriginPostQuantumEncryptionRequest = object
-    value: types.CacheRulesOriginPostQuantumEncryptionValue
+    value: types.CacheSettingsOriginPostQuantumEncryptionValue
 
 proc getZonesZoneIdCacheOriginPostQuantumEncryption*(client: CloudflareClient,
-                                                     zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                                     zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Instructs Cloudflare to use Post-Quantum (PQ) key agreement algorithms when
   ## connecting to your origin. Preferred instructs Cloudflare to opportunistically
   ## send a Post-Quantum keyshare in the first message to the origin (for fastest
@@ -30,7 +30,7 @@ proc getZonesZoneIdCacheOriginPostQuantumEncryption*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc putZonesZoneIdCacheOriginPostQuantumEncryption*(client: CloudflareClient,
-                                                     zoneId: types.CacheRulesIdentifier,
+                                                     zoneId: types.CacheSettingsIdentifier,
                                                      body: PutZonesZoneIdCacheOriginPostQuantumEncryptionRequest): Future[JsonNode] {.async.} =
   ## Instructs Cloudflare to use Post-Quantum (PQ) key agreement algorithms when
   ## connecting to your origin. Preferred instructs Cloudflare to opportunistically

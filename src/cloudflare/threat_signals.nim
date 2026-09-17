@@ -17,6 +17,11 @@ type
     read: bool
   PatchAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdRequest = object
     read: bool
+  PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkillIdDiagnosticResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    success: bool
   PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTagResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
@@ -184,6 +189,20 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdContent*(c
   q["format"] = $format
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/{articleId}/content", q)
   return res
+
+proc postAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkillIdDiagnostic*(client: CloudflareClient,
+                                                                                                accountId: string,
+                                                                                                articleId: string,
+                                                                                                skillId: SkillId): Future[PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkillIdDiagnosticResponse] {.async.} =
+  ## Diagnose Threat Signals default tag skill.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/{articleId}/skills/{skillId}/diagnostic")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkillIdDiagnosticResponse)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkillIdOutput*(client: CloudflareClient,
                                                                                            accountId: string,

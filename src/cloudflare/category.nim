@@ -57,6 +57,41 @@ type
     name: string
     shortname: string
     uuid: string
+  GetAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse* = object
+    kill_chain: float64
+    mitre_attack: seq[string]
+    mitre_capec: seq[string]
+    name: string
+    shortname: string
+    uuid: string
+  PostAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdRequest = object
+    kill_chain: Option[float64]
+    mitre_attack: Option[seq[string]]
+    mitre_capec: Option[seq[string]]
+    name: Option[string]
+    shortname: Option[string]
+  PostAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse* = object
+    kill_chain: float64
+    mitre_attack: seq[string]
+    mitre_capec: seq[string]
+    name: string
+    shortname: string
+    uuid: string
+  DeleteAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse* = object
+    uuid: string
+  PatchAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdRequest = object
+    kill_chain: Option[float64]
+    mitre_attack: Option[seq[string]]
+    mitre_capec: Option[seq[string]]
+    name: Option[string]
+    shortname: Option[string]
+  PatchAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse* = object
+    kill_chain: float64
+    mitre_attack: seq[string]
+    mitre_capec: seq[string]
+    name: string
+    shortname: string
+    uuid: string
 
 proc getAccountsAccountIdCloudforceOneEventsCategories*(client: CloudflareClient,
                                                         accountId: string,
@@ -103,7 +138,8 @@ proc postAccountsAccountIdCloudforceOneEventsCategoriesCreate*(client: Cloudflar
 proc getAccountsAccountIdCloudforceOneEventsCategoriesCategoryId*(client: CloudflareClient,
                                                                   accountId: string,
                                                                   categoryId: string): Future[GetAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdResponse] {.async.} =
-  ## Retrieves details for a specific threat event category.
+  ## Deprecated; use GET /events/event-categories/by-id/{category_id}. Available
+  ## through 2026-11-28.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/categories/{categoryId}")
   let body = await res.body
@@ -117,7 +153,8 @@ proc postAccountsAccountIdCloudforceOneEventsCategoriesCategoryId*(client: Cloud
                                                                    accountId: string,
                                                                    categoryId: string,
                                                                    body: PostAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdRequest): Future[PostAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdResponse] {.async.} =
-  ## Updates a category
+  ## Deprecated; use POST /events/event-categories/by-id/{category_id}. Available
+  ## through 2026-11-28.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/categories/{categoryId}", body)
   let body = await res.body
@@ -130,7 +167,8 @@ proc postAccountsAccountIdCloudforceOneEventsCategoriesCategoryId*(client: Cloud
 proc deleteAccountsAccountIdCloudforceOneEventsCategoriesCategoryId*(client: CloudflareClient,
                                                                      accountId: string,
                                                                      categoryId: string): Future[DeleteAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdResponse] {.async.} =
-  ## Removes a threat event category from Cloudforce One.
+  ## Deprecated; use DELETE /events/event-categories/by-id/{category_id}. Available
+  ## through 2026-11-28.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/categories/{categoryId}")
   let body = await res.body
@@ -144,14 +182,69 @@ proc patchAccountsAccountIdCloudforceOneEventsCategoriesCategoryId*(client: Clou
                                                                     accountId: string,
                                                                     categoryId: string,
                                                                     body: PatchAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdRequest): Future[PatchAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdResponse] {.async.} =
-  ## Partially updates a threat event category in Cloudforce One, modifying specific
-  ## fields without replacing the entire category.
+  ## Deprecated; use PATCH /events/event-categories/by-id/{category_id}. Available
+  ## through 2026-11-28.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/categories/{categoryId}", body)
   let body = await res.body
   case res.code
   of Http200:
     result = fromJson(body, PatchAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryId*(client: CloudflareClient,
+                                                                           accountId: string,
+                                                                           categoryId: string): Future[GetAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse] {.async.} =
+  ## Retrieves details for a specific threat event category.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/event-categories/by-id/{categoryId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryId*(client: CloudflareClient,
+                                                                            accountId: string,
+                                                                            categoryId: string,
+                                                                            body: PostAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdRequest): Future[PostAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse] {.async.} =
+  ## Updates a category
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/event-categories/by-id/{categoryId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryId*(client: CloudflareClient,
+                                                                              accountId: string,
+                                                                              categoryId: string): Future[DeleteAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse] {.async.} =
+  ## Removes a threat event category from Cloudforce One.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/event-categories/by-id/{categoryId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, DeleteAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryId*(client: CloudflareClient,
+                                                                             accountId: string,
+                                                                             categoryId: string,
+                                                                             body: PatchAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdRequest): Future[PatchAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse] {.async.} =
+  ## Partially updates a threat event category in Cloudforce One, modifying specific
+  ## fields without replacing the entire category.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/event-categories/by-id/{categoryId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PatchAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse)
   else:
     raise newException(CloudflareClientError, body)
 

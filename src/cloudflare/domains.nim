@@ -16,7 +16,7 @@ proc getAccountsAccountIdWorkersDomains*(client: CloudflareClient,
                                          service: string = default(string),
                                          hostname: string = default(string),
                                          environment: string = default(string)): Future[JsonNode] {.async.} =
-  ## Lists all domains for an account.
+  ## Lists all Worker domains for an account.
 
   var q = initOrderedTable[string, string]()
   q["zone_id"] = $zoneId
@@ -47,7 +47,7 @@ proc putAccountsAccountIdWorkersDomains*(client: CloudflareClient,
 proc getAccountsAccountIdWorkersDomainsDomainId*(client: CloudflareClient,
                                                  accountId: types.WorkersIdentifier,
                                                  domainId: string): Future[JsonNode] {.async.} =
-  ## Gets information about a domain.
+  ## Gets information about a Worker domain.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/domains/{domainId}")
   let body = await res.body

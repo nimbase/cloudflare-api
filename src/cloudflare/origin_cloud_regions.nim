@@ -10,7 +10,7 @@ import ./private/types
 
 
 proc getZonesZoneIdCacheOriginCloudRegions*(client: CloudflareClient,
-                                            zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                            zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Returns all IP-to-cloud-region mappings configured for the zone. Each mapping
   ## tells Cloudflare which cloud vendor and region hosts the origin at that IP,
   ## enabling the edge to route via the nearest Tiered Cache upper-tier co-located
@@ -25,8 +25,8 @@ proc getZonesZoneIdCacheOriginCloudRegions*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc postZonesZoneIdCacheOriginCloudRegions*(client: CloudflareClient,
-                                             zoneId: types.CacheRulesIdentifier,
-                                             body: types.CacheRulesOriginCloudRegionRequest): Future[JsonNode] {.async.} =
+                                             zoneId: types.CacheSettingsIdentifier,
+                                             body: types.CacheSettingsOriginCloudRegionRequest): Future[JsonNode] {.async.} =
   ## Adds a single IP-to-cloud-region mapping for the zone. The IP must be a valid
   ## IPv4 or IPv6 address and is normalized to canonical form before storage (RFC
   ## 5952 for IPv6). Returns 400 (code 1145) if a mapping for that IP already exists
@@ -43,8 +43,8 @@ proc postZonesZoneIdCacheOriginCloudRegions*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdCacheOriginCloudRegions*(client: CloudflareClient,
-                                              zoneId: types.CacheRulesIdentifier,
-                                              body: types.CacheRulesOriginCloudRegionRequest): Future[JsonNode] {.async.} =
+                                              zoneId: types.CacheSettingsIdentifier,
+                                              body: types.CacheSettingsOriginCloudRegionRequest): Future[JsonNode] {.async.} =
   ## Adds or updates a single IP-to-cloud-region mapping for the zone. Unlike POST,
   ## this operation is idempotent — if a mapping for the IP already exists it is
   ## overwritten. Returns the complete updated list of all mappings for the zone.
@@ -60,7 +60,7 @@ proc patchZonesZoneIdCacheOriginCloudRegions*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdCacheOriginCloudRegionsBatch*(client: CloudflareClient,
-                                                    zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                                    zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Removes up to 100 IP-to-cloud-region mappings in a single request. Each IP is
   ## validated independently — successfully deleted items are returned in the
   ## `succeeded` array and IPs that could not be found or are invalid are returned in
@@ -75,7 +75,7 @@ proc deleteZonesZoneIdCacheOriginCloudRegionsBatch*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdCacheOriginCloudRegionsBatch*(client: CloudflareClient,
-                                                   zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                                   zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Adds or updates up to 100 IP-to-cloud-region mappings in a single request. Each
   ## item is validated independently — valid items are applied and invalid items are
   ## returned in the `failed` array. The vendor and region for every item are
@@ -91,7 +91,7 @@ proc patchZonesZoneIdCacheOriginCloudRegionsBatch*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdCacheOriginCloudRegionsSupportedRegions*(client: CloudflareClient,
-                                                            zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                                            zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Returns the cloud vendors and regions that are valid values for origin cloud
   ## region mappings. Each region includes the Tiered Cache upper-tier colocation
   ## codes that will be used for cache routing when a mapping targeting that region
@@ -106,7 +106,7 @@ proc getZonesZoneIdCacheOriginCloudRegionsSupportedRegions*(client: CloudflareCl
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdCacheOriginCloudRegionsOriginIp*(client: CloudflareClient,
-                                                    zoneId: types.CacheRulesIdentifier,
+                                                    zoneId: types.CacheSettingsIdentifier,
                                                     originIp: string): Future[JsonNode] {.async.} =
   ## Returns the cloud region mapping for a single origin IP address. The IP path
   ## parameter is normalized before lookup (RFC 5952 for IPv6). Returns 404 (code
@@ -121,7 +121,7 @@ proc getZonesZoneIdCacheOriginCloudRegionsOriginIp*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdCacheOriginCloudRegionsOriginIp*(client: CloudflareClient,
-                                                       zoneId: types.CacheRulesIdentifier,
+                                                       zoneId: types.CacheSettingsIdentifier,
                                                        originIp: string): Future[JsonNode] {.async.} =
   ## Removes the cloud region mapping for a single origin IP address. The IP path
   ## parameter is normalized before lookup. Returns the deleted entry on success.
@@ -137,7 +137,7 @@ proc deleteZonesZoneIdCacheOriginCloudRegionsOriginIp*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdOriginCloudRegions*(client: CloudflareClient,
-                                       zoneId: types.CacheRulesIdentifier,
+                                       zoneId: types.CacheSettingsIdentifier,
                                        page: int64 = 1, perPage: int64 = 20): Future[JsonNode] {.async.} =
   ## Returns all IP-to-cloud-region mappings configured for the zone with pagination
   ## support. Each mapping tells Cloudflare which cloud vendor and region hosts the
@@ -157,7 +157,7 @@ proc getZonesZoneIdOriginCloudRegions*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc putZonesZoneIdOriginCloudRegionsBatch*(client: CloudflareClient,
-                                            zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                            zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Upserts up to 100 IP-to-cloud-region mappings in a single request. Items in the
   ## request body are created or replaced; mappings not included in the request body
   ## are preserved unchanged (this is a merge operation, not a full collection
@@ -175,7 +175,7 @@ proc putZonesZoneIdOriginCloudRegionsBatch*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdOriginCloudRegionsBatch*(client: CloudflareClient,
-                                               zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                               zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Removes up to 100 IP-to-cloud-region mappings in a single request. Each IP is
   ## validated independently — successfully deleted items are returned in the
   ## `succeeded` array and IPs that could not be found or are invalid are returned in
@@ -190,7 +190,7 @@ proc deleteZonesZoneIdOriginCloudRegionsBatch*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdOriginCloudRegionsSupportedRegions*(client: CloudflareClient,
-                                                       zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                                       zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Returns the cloud vendors and regions that are valid values for origin cloud
   ## region mappings. Each region includes the Tiered Cache upper-tier colocation
   ## codes that will be used for cache routing when a mapping targeting that region
@@ -205,7 +205,7 @@ proc getZonesZoneIdOriginCloudRegionsSupportedRegions*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdOriginCloudRegionsOriginIp*(client: CloudflareClient,
-                                               zoneId: types.CacheRulesIdentifier,
+                                               zoneId: types.CacheSettingsIdentifier,
                                                originIp: string): Future[JsonNode] {.async.} =
   ## Returns the cloud region mapping for a single origin IP address. The IP path
   ## parameter is normalized before lookup (RFC 5952 for IPv6). Returns 404 if the
@@ -220,9 +220,9 @@ proc getZonesZoneIdOriginCloudRegionsOriginIp*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc putZonesZoneIdOriginCloudRegionsOriginIp*(client: CloudflareClient,
-                                               zoneId: types.CacheRulesIdentifier,
+                                               zoneId: types.CacheSettingsIdentifier,
                                                originIp: string,
-                                               body: types.CacheRulesOriginCloudRegionV2Request): Future[JsonNode] {.async.} =
+                                               body: types.CacheSettingsOriginCloudRegionV2Request): Future[JsonNode] {.async.} =
   ## Creates a new IP-to-cloud-region mapping or replaces the existing mapping for
   ## the specified IP. PUT is idempotent — calling it repeatedly with the same body
   ## produces the same result. The IP path parameter is normalized to canonical form
@@ -241,7 +241,7 @@ proc putZonesZoneIdOriginCloudRegionsOriginIp*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdOriginCloudRegionsOriginIp*(client: CloudflareClient,
-                                                  zoneId: types.CacheRulesIdentifier,
+                                                  zoneId: types.CacheSettingsIdentifier,
                                                   originIp: string): Future[JsonNode] {.async.} =
   ## Removes the cloud region mapping for a single origin IP address. The IP path
   ## parameter is normalized before lookup. Returns the deleted IP on success.

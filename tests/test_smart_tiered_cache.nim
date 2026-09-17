@@ -11,29 +11,29 @@ import cloudflare
 import ./common
 
 suite "smart_tiered_cache serialization":
-  test "round-trips CacheRulesApiResponseCommonFailure":
-    let obj = newCacheRulesApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsZoneCacheSettingsDeleteResponseSingle":
+    let obj = newCacheSettingsZoneCacheSettingsDeleteResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsZoneCacheSettingsDeleteResponseSingle)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesZoneCacheSettingsResponseSingle":
-    let obj = newCacheRulesZoneCacheSettingsResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesZoneCacheSettingsResponseSingle)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsApiResponseCommonFailure":
+    let obj = newCacheSettingsApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesZoneCacheSettingsDeleteResponseSingle":
-    let obj = newCacheRulesZoneCacheSettingsDeleteResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesZoneCacheSettingsDeleteResponseSingle)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsSmartTieredCache":
+    let obj = newCacheSettingsSmartTieredCache()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsSmartTieredCache)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesSmartTieredCachePatch":
-    let obj = newCacheRulesSmartTieredCachePatch()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesSmartTieredCachePatch)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsSmartTieredCachePatch":
+    let obj = newCacheSettingsSmartTieredCachePatch()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsSmartTieredCachePatch)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesSmartTieredCacheResponseValue":
-    let obj = newCacheRulesSmartTieredCacheResponseValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesSmartTieredCacheResponseValue)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsZoneCacheSettingsResponseSingle":
+    let obj = newCacheSettingsZoneCacheSettingsResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsZoneCacheSettingsResponseSingle)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesSmartTieredCache":
-    let obj = newCacheRulesSmartTieredCache()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesSmartTieredCache)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsSmartTieredCacheResponseValue":
+    let obj = newCacheSettingsSmartTieredCacheResponseValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsSmartTieredCacheResponseValue)) == openjson.toJson(obj)
 
 suite "smart_tiered_cache endpoints":
   test "GET /zones/{zone_id}/cache/tiered_cache_smart_topology_enable":
@@ -44,7 +44,7 @@ suite "smart_tiered_cache endpoints":
   test "POST /zones/{zone_id}/cache/tiered_cache_smart_topology_enable":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postZonesZoneIdCacheTieredCacheSmartTopologyEnable("test", newCacheRulesSmartTieredCachePatch())
+    discard waitFor client.postZonesZoneIdCacheTieredCacheSmartTopologyEnable("test", newCacheSettingsSmartTieredCachePatch())
 
   test "DELETE /zones/{zone_id}/cache/tiered_cache_smart_topology_enable":
     let client = initCloudflareClient("test-key")
@@ -54,5 +54,5 @@ suite "smart_tiered_cache endpoints":
   test "PATCH /zones/{zone_id}/cache/tiered_cache_smart_topology_enable":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchZonesZoneIdCacheTieredCacheSmartTopologyEnable("test", newCacheRulesSmartTieredCachePatch())
+    discard waitFor client.patchZonesZoneIdCacheTieredCacheSmartTopologyEnable("test", newCacheSettingsSmartTieredCachePatch())
 

@@ -8,6 +8,14 @@ import std/[strformat, options, json]
 import ./private/metaclient
 
 type
+  PostAccountsAccountIdCloudforceOneEventsRequest = object
+    cursor: Option[string]
+    dataset_id: Option[seq[string]]
+    order: Option[string]
+    order_by: Option[string]
+    page: Option[float64]
+    page_size: Option[float64]
+    search: Option[seq[JsonNode]]
   GetAccountsAccountIdCloudforceOneEventsAggregateResponse* = object
     aggregate_by: string
       ## Column(s) that were aggregated by
@@ -157,6 +165,13 @@ type
       ## Number of events successfully moved
     relationships_copied: float64
       ## Number of relationships successfully copied
+  GetAccountsAccountIdCloudforceOneEventsDatasetsDatasetIdEventsEventIdRawResponse* = object
+    account_id: float64
+    created: string
+    data: string
+    id: float64
+    source: string
+    tlp: string
   DeleteAccountsAccountIdCloudforceOneEventsEventTagEventIdRequest = object
     tags: seq[string]
   DeleteAccountsAccountIdCloudforceOneEventsEventTagEventIdResponse* = object
@@ -546,6 +561,33 @@ proc getAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc postAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
+                                               accountId: string,
+                                               forceRefresh: bool = default(bool),
+                                               format: EventFormatOption,
+                                               cache: EventCacheOption,
+                                               body: PostAccountsAccountIdCloudforceOneEventsRequest): Future[seq[JsonNode]] {.async.} =
+  ## Use `datasetId: ["all"]` or `datasetId: ["*"]` for the legacy all-datasets
+  ## scope, `datasetId: ["analytics"]` for datasets with `isAnalytics=true`, or
+  ## `datasetId: ["operational"]` for datasets with `isAnalytics=false` (limited to
+  ## 50). Scope values must be used alone. When `datasetId` is unspecified, events
+  ## are listed from the default Cloudforce One Threat Events dataset. To list
+  ## existing datasets, use the [`ListDatasets`](https://developers.cloudflare.com/a
+  ## pi/resources/cloudforce_one/subresources/threat_events/subresources/datasets/met
+  ## hods/list/) endpoint.
+
+  var q = initOrderedTable[string, string]()
+  q["forceRefresh"] = $forceRefresh
+  q["format"] = $format
+  q["cache"] = $cache
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, seq[JsonNode])
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdCloudforceOneEventsAggregate*(client: CloudflareClient,
                                                        accountId: string,
                                                        aggregateBy: string,
@@ -570,6 +612,39 @@ proc getAccountsAccountIdCloudforceOneEventsAggregate*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, GetAccountsAccountIdCloudforceOneEventsAggregateResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdCloudforceOneEventsByIdEventIdRelationships*(client: CloudflareClient,
+                                                                      accountId: string,
+                                                                      eventId: string,
+                                                                      direction: EventDirectionOption = directionBoth,
+                                                                      maxDepth: float64 = default(float64),
+                                                                      relationshipTypes: JsonNode = default(JsonNode),
+                                                                      indicatorTypeIds: seq[string] = @[],
+                                                                      datasetId: string,
+                                                                      includeParent: bool = true,
+                                                                      page: float64 = default(float64),
+                                                                      pageSize: float64 = default(float64)): Future[seq[JsonNode]] {.async.} =
+  ## The `event_id` must be defined (to list existing events (and their IDs), use the
+  ## [`Filter and ListEvents`](https://developers.cloudflare.com/api/resources/cloud
+  ## force_one/subresources/threat_events/methods/list/) endpoint). Also, must
+  ## provide query parameters.
+
+  var q = initOrderedTable[string, string]()
+  q["direction"] = $direction
+  q["maxDepth"] = $maxDepth
+  q["relationshipTypes"] = $relationshipTypes
+  for v in indicatorTypeIds: q["indicatorTypeIds"] = $v
+  q["datasetId"] = $datasetId
+  q["includeParent"] = $includeParent
+  q["page"] = $page
+  q["pageSize"] = $pageSize
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/by-id/{eventId}/relationships", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, seq[JsonNode])
   else:
     raise newException(CloudflareClientError, body)
 
@@ -663,6 +738,37 @@ proc postAccountsAccountIdCloudforceOneEventsDatasetDatasetIdMove*(client: Cloud
   case res.code
   of Http200:
     result = fromJson(body, PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdMoveResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdCloudforceOneEventsDatasetsDatasetIdEvents*(client: CloudflareClient,
+                                                                        accountId: string,
+                                                                        datasetId: string,
+                                                                        eventIds: seq[string] = @[]): Future[float64] {.async.} =
+  ## Deletes one or more events
+
+  var q = initOrderedTable[string, string]()
+  for v in eventIds: q["eventIds"] = $v
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/datasets/{datasetId}/events", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, float64)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdCloudforceOneEventsDatasetsDatasetIdEventsEventIdRaw*(client: CloudflareClient,
+                                                                               accountId: string,
+                                                                               eventId: string,
+                                                                               datasetId: string): Future[GetAccountsAccountIdCloudforceOneEventsDatasetsDatasetIdEventsEventIdRawResponse] {.async.} =
+  ## Retrieves the raw data associated with an event. Searches across all shards in
+  ## the dataset.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/datasets/{datasetId}/events/{eventId}/raw")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneEventsDatasetsDatasetIdEventsEventIdRawResponse)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -785,8 +891,8 @@ proc getAccountsAccountIdCloudforceOneEventsRawDatasetIdEventId*(client: Cloudfl
                                                                  accountId: string,
                                                                  eventId: string,
                                                                  datasetId: string): Future[GetAccountsAccountIdCloudforceOneEventsRawDatasetIdEventIdResponse] {.async.} =
-  ## Retrieves the raw data associated with an event. Searches across all shards in
-  ## the dataset.
+  ## Deprecated; use GET /events/datasets/{dataset_id}/events/{event_id}/raw.
+  ## Available through 2026-11-28.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/raw/{datasetId}/{eventId}")
   let body = await res.body
@@ -856,7 +962,8 @@ proc deleteAccountsAccountIdCloudforceOneEventsDatasetIdDelete*(client: Cloudfla
                                                                 accountId: string,
                                                                 datasetId: string,
                                                                 eventIds: seq[string] = @[]): Future[float64] {.async.} =
-  ## Deletes one or more events
+  ## Deprecated; use DELETE /events/datasets/{dataset_id}/events. Available through
+  ## 2026-11-28.
 
   var q = initOrderedTable[string, string]()
   for v in eventIds: q["eventIds"] = $v
@@ -967,10 +1074,8 @@ proc getAccountsAccountIdCloudforceOneEventsEventIdRelationships*(client: Cloudf
                                                                   includeParent: bool = true,
                                                                   page: float64 = default(float64),
                                                                   pageSize: float64 = default(float64)): Future[seq[JsonNode]] {.async.} =
-  ## The `event_id` must be defined (to list existing events (and their IDs), use the
-  ## [`Filter and ListEvents`](https://developers.cloudflare.com/api/resources/cloud
-  ## force_one/subresources/threat_events/methods/list/) endpoint). Also, must
-  ## provide query parameters.
+  ## Deprecated; use GET /events/by-id/{event_id}/relationships. Available through
+  ## 2026-11-28.
 
   var q = initOrderedTable[string, string]()
   q["direction"] = $direction

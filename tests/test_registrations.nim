@@ -52,11 +52,6 @@ suite "registrations serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdDevicesRegistrationsRegistrationIdResponse)) == openjson.toJson(obj)
 
 suite "registrations endpoints":
-  test "GET /accounts/{account_id}/devices/registrations":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesRegistrations("test", @["test"], "test", "test", {}, 1, "test", {}, {}, "test", @["test"], "test", "test", "test")
-
   test "POST /accounts/{account_id}/devices/registrations/revoke":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

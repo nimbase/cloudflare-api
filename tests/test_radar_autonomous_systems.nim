@@ -49,7 +49,7 @@ suite "radar_autonomous_systems endpoints":
   test "GET /radar/entities/asns/ip":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarEntitiesAsnsIp("test", {})
+    discard waitFor client.getRadarEntitiesAsnsIp(openjson.newJObject(), {})
 
   test "GET /radar/entities/asns/{asn}":
     let client = initCloudflareClient("test-key")

@@ -10,7 +10,7 @@ import ./private/types
 
 
 proc getZonesZoneIdCacheTieredCacheSmartTopologyEnable*(client: CloudflareClient,
-                                                        zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                                        zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Smart Tiered Cache dynamically selects the single closest upper tier for each of
   ## your website’s origins with no configuration required, using our in-house
   ## performance and routing data. Cloudflare collects latency data for each request
@@ -27,8 +27,8 @@ proc getZonesZoneIdCacheTieredCacheSmartTopologyEnable*(client: CloudflareClient
     raise newException(CloudflareClientError, body)
 
 proc postZonesZoneIdCacheTieredCacheSmartTopologyEnable*(client: CloudflareClient,
-                                                         zoneId: types.CacheRulesIdentifier,
-                                                         body: types.CacheRulesSmartTieredCachePatch): Future[JsonNode] {.async.} =
+                                                         zoneId: types.CacheSettingsIdentifier,
+                                                         body: types.CacheSettingsSmartTieredCachePatch): Future[JsonNode] {.async.} =
   ## Smart Tiered Cache dynamically selects the single closest upper tier for each of
   ## your website's origins with no configuration required, using our in-house
   ## performance and routing data. Cloudflare collects latency data for each request
@@ -45,7 +45,7 @@ proc postZonesZoneIdCacheTieredCacheSmartTopologyEnable*(client: CloudflareClien
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdCacheTieredCacheSmartTopologyEnable*(client: CloudflareClient,
-                                                           zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                                           zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Smart Tiered Cache dynamically selects the single closest upper tier for each of
   ## your website’s origins with no configuration required, using our in-house
   ## performance and routing data. Cloudflare collects latency data for each request
@@ -62,8 +62,8 @@ proc deleteZonesZoneIdCacheTieredCacheSmartTopologyEnable*(client: CloudflareCli
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdCacheTieredCacheSmartTopologyEnable*(client: CloudflareClient,
-                                                          zoneId: types.CacheRulesIdentifier,
-                                                          body: types.CacheRulesSmartTieredCachePatch): Future[JsonNode] {.async.} =
+                                                          zoneId: types.CacheSettingsIdentifier,
+                                                          body: types.CacheSettingsSmartTieredCachePatch): Future[JsonNode] {.async.} =
   ## Smart Tiered Cache dynamically selects the single closest upper tier for each of
   ## your website’s origins with no configuration required, using our in-house
   ## performance and routing data. Cloudflare collects latency data for each request

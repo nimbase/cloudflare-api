@@ -11,37 +11,37 @@ import cloudflare
 import ./common
 
 suite "origin_tls serialization":
-  test "round-trips CacheRulesApiResponseCommonFailure":
-    let obj = newCacheRulesApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesApiResponseCommonFailure)) == openjson.toJson(obj)
-
-  test "round-trips CacheRulesZoneCacheSettingsResponseSingle":
-    let obj = newCacheRulesZoneCacheSettingsResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesZoneCacheSettingsResponseSingle)) == openjson.toJson(obj)
-
   test "round-trips CacheAutoOriginTlsKexPatch":
     let obj = newCacheAutoOriginTlsKexPatch()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheAutoOriginTlsKexPatch)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesZoneCacheSettingsDeleteResponseSingle":
-    let obj = newCacheRulesZoneCacheSettingsDeleteResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesZoneCacheSettingsDeleteResponseSingle)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsZoneCacheSettingsDeleteResponseSingle":
+    let obj = newCacheSettingsZoneCacheSettingsDeleteResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsZoneCacheSettingsDeleteResponseSingle)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginTlsComplianceModesResponseValue":
-    let obj = newCacheRulesOriginTlsComplianceModesResponseValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginTlsComplianceModesResponseValue)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsApiResponseCommonFailure":
+    let obj = newCacheSettingsApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsApiResponseCommonFailure)) == openjson.toJson(obj)
 
   test "round-trips CacheAutoOriginTlsKexFailureResponse":
     let obj = newCacheAutoOriginTlsKexFailureResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheAutoOriginTlsKexFailureResponse)) == openjson.toJson(obj)
 
+  test "round-trips CacheSettingsOriginTlsComplianceModes":
+    let obj = newCacheSettingsOriginTlsComplianceModes()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginTlsComplianceModes)) == openjson.toJson(obj)
+
+  test "round-trips CacheSettingsZoneCacheSettingsResponseSingle":
+    let obj = newCacheSettingsZoneCacheSettingsResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsZoneCacheSettingsResponseSingle)) == openjson.toJson(obj)
+
   test "round-trips CacheAutoOriginTlsKexResponse":
     let obj = newCacheAutoOriginTlsKexResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheAutoOriginTlsKexResponse)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginTlsComplianceModes":
-    let obj = newCacheRulesOriginTlsComplianceModes()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginTlsComplianceModes)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsOriginTlsComplianceModesResponseValue":
+    let obj = newCacheSettingsOriginTlsComplianceModesResponseValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginTlsComplianceModesResponseValue)) == openjson.toJson(obj)
 
 suite "origin_tls endpoints":
   test "GET /zones/{zone_id}/settings/auto_origin_tls_kex":

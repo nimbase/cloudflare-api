@@ -27,6 +27,7 @@ type
     messages: seq[JsonNode]
     result: seq[JsonNode]
     result_info: JsonNode
+      ## Pagination metadata.
     success: bool
   PostAccountsAccountIdEmailSendingSuppressionsRequest = object
     email: string

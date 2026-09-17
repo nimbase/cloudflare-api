@@ -30,7 +30,7 @@ type
 proc postAccountsAccountIdWorkersAssetsUpload*(client: CloudflareClient,
                                                accountId: types.WorkersIdentifier,
                                                base64: WorkerScriptBase64Option): Future[types.WorkersCompletedUploadAssetsResponse] {.async.} =
-  ## Upload assets ahead of creating a Worker version.  To learn more about the
+  ## Upload Worker assets ahead of creating a Worker version. To learn more about the
   ## direct uploads of assets, see
   ## https://developers.cloudflare.com/workers/static-assets/direct-upload/.
 
@@ -47,7 +47,7 @@ proc postAccountsAccountIdWorkersAssetsUpload*(client: CloudflareClient,
 proc getAccountsAccountIdWorkersScripts*(client: CloudflareClient,
                                          accountId: types.WorkersIdentifier,
                                          tags: string = default(string)): Future[types.WorkersScriptResponseCollection] {.async.} =
-  ## Fetch a list of uploaded workers.
+  ## Fetch a list of uploaded Worker scripts.
 
   var q = initOrderedTable[string, string]()
   q["tags"] = $tags
@@ -66,7 +66,7 @@ proc getAccountsAccountIdWorkersScriptsSearch*(client: CloudflareClient,
                                                orderBy: WorkerScriptOrderByOption = orderByName,
                                                page: int64 = 1,
                                                perPage: int64 = 10): Future[JsonNode] {.async.} =
-  ## Search for Workers in an account.
+  ## Search for Worker scripts in an account.
 
   var q = initOrderedTable[string, string]()
   q["name"] = $name
@@ -85,8 +85,8 @@ proc getAccountsAccountIdWorkersScriptsSearch*(client: CloudflareClient,
 proc getAccountsAccountIdWorkersScriptsScriptName*(client: CloudflareClient,
                                                    accountId: types.WorkersIdentifier,
                                                    scriptName: types.WorkersScriptName): Future[AsyncResponse] {.async.} =
-  ## Fetch raw script content for your worker. Note this is the original script
-  ## content, not JSON encoded.
+  ## Fetch raw content for a Worker script. Note this is the original script content,
+  ## not JSON encoded.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts/{scriptName}")
   return res
@@ -144,7 +144,7 @@ proc postAccountsAccountIdWorkersScriptsScriptNameAssetsUploadSession*(client: C
 proc putAccountsAccountIdWorkersScriptsScriptNameContent*(client: CloudflareClient,
                                                           accountId: types.WorkersIdentifier,
                                                           scriptName: types.WorkersScriptName): Future[types.WorkersScriptResponseSingle] {.async.} =
-  ## Put script content without touching config or metadata.
+  ## Replace Worker script content without touching config or metadata.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/content")
   let body = await res.body
@@ -157,7 +157,7 @@ proc putAccountsAccountIdWorkersScriptsScriptNameContent*(client: CloudflareClie
 proc getAccountsAccountIdWorkersScriptsScriptNameContentV2*(client: CloudflareClient,
                                                             accountId: types.WorkersIdentifier,
                                                             scriptName: types.WorkersScriptName): Future[AsyncResponse] {.async.} =
-  ## Fetch script content only.
+  ## Fetch Worker script content only.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/content/v2")
   return res
@@ -165,9 +165,9 @@ proc getAccountsAccountIdWorkersScriptsScriptNameContentV2*(client: CloudflareCl
 proc getAccountsAccountIdWorkersScriptsScriptNameScriptSettings*(client: CloudflareClient,
                                                                  accountId: types.WorkersIdentifier,
                                                                  scriptName: types.WorkersScriptName): Future[types.WorkersScriptSettingsResponse] {.async.} =
-  ## Get script-level settings when using [WorkerVersions](https://developers.cloudf
-  ## lare.com/api/operations/worker-versions-list-versions). Includes Logpush and
-  ## Tail Consumers.
+  ## Get Worker script-level settings when using [WorkerVersions](https://developers
+  ## .cloudflare.com/api/operations/worker-versions-list-versions). Includes Logpush
+  ## and Tail Consumers.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/script-settings")
   let body = await res.body
@@ -181,9 +181,9 @@ proc patchAccountsAccountIdWorkersScriptsScriptNameScriptSettings*(client: Cloud
                                                                    accountId: types.WorkersIdentifier,
                                                                    scriptName: types.WorkersScriptName,
                                                                    body: types.WorkersScriptSettingsItem): Future[types.WorkersScriptSettingsResponse] {.async.} =
-  ## Patch script-level settings when using [WorkerVersions](https://developers.clou
-  ## dflare.com/api/operations/worker-versions-list-versions). Including but not
-  ## limited to Logpush and Tail Consumers.
+  ## Patch Worker script-level settings when using [WorkerVersions](https://develope
+  ## rs.cloudflare.com/api/operations/worker-versions-list-versions). Including but
+  ## not limited to Logpush and Tail Consumers.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/script-settings", body)
   let body = await res.body
@@ -196,7 +196,7 @@ proc patchAccountsAccountIdWorkersScriptsScriptNameScriptSettings*(client: Cloud
 proc getAccountsAccountIdWorkersScriptsScriptNameSecrets*(client: CloudflareClient,
                                                           accountId: types.WorkersIdentifier,
                                                           scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
-  ## List secrets bound to a script.
+  ## List the names of secrets bound to a Worker script.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/secrets")
   let body = await res.body
@@ -210,7 +210,7 @@ proc putAccountsAccountIdWorkersScriptsScriptNameSecrets*(client: CloudflareClie
                                                           accountId: types.WorkersIdentifier,
                                                           scriptName: types.WorkersScriptName,
                                                           body: types.WorkersSecret): Future[JsonNode] {.async.} =
-  ## Add a secret to a script by creating a new version with that secret.
+  ## Add a secret to a Worker script by creating a new version with that secret.
   ##
   ## When changing more than one secret at a time, prefer the "Patch multiple
   ## script secrets" API instead of changing many secrets individually.
@@ -227,8 +227,8 @@ proc patchAccountsAccountIdWorkersScriptsScriptNameSecretsBulk*(client: Cloudfla
                                                                 accountId: types.WorkersIdentifier,
                                                                 scriptName: types.WorkersScriptName,
                                                                 body: types.WorkersSecretPatchRequest): Future[JsonNode] {.async.} =
-  ## Create, update, or delete multiple secrets on a script in a single operation
-  ## using JSON Merge Patch (RFC 7396).
+  ## Create, update, or delete multiple secrets on a Worker script in a single
+  ## operation using JSON Merge Patch (RFC 7396).
   ## This operation creates a single version with all changes included.
   ## Prefer this API instead of changing many secrets individually.
   ##
@@ -251,7 +251,7 @@ proc getAccountsAccountIdWorkersScriptsScriptNameSecretsSecretName*(client: Clou
                                                                     scriptName: types.WorkersScriptName,
                                                                     secretName: types.WorkersSecretName,
                                                                     urlEncoded: types.WorkersSecretNameUrlEncoded = default(types.WorkersSecretNameUrlEncoded)): Future[JsonNode] {.async.} =
-  ## Get a given secret binding (value omitted) on a script.
+  ## Get a given secret binding (value omitted) on a Worker script.
 
   var q = initOrderedTable[string, string]()
   q["url_encoded"] = $urlEncoded
@@ -268,7 +268,7 @@ proc deleteAccountsAccountIdWorkersScriptsScriptNameSecretsSecretName*(client: C
                                                                        scriptName: types.WorkersScriptName,
                                                                        secretName: types.WorkersSecretName,
                                                                        urlEncoded: types.WorkersSecretNameUrlEncoded = default(types.WorkersSecretNameUrlEncoded)): Future[types.WorkersApiResponseNullResult] {.async.} =
-  ## Remove a secret from a script by creating a new version without that
+  ## Remove a secret from a Worker script by creating a new version without that
   ## secret.
   ##
   ## When changing more than one secret at a time, prefer the "Patch multiple
@@ -287,7 +287,7 @@ proc deleteAccountsAccountIdWorkersScriptsScriptNameSecretsSecretName*(client: C
 proc getAccountsAccountIdWorkersScriptsScriptNameSettings*(client: CloudflareClient,
                                                            accountId: types.WorkersIdentifier,
                                                            scriptName: types.WorkersScriptName): Future[types.WorkersScriptAndVersionSettingsResponse] {.async.} =
-  ## Get metadata and config, such as bindings or usage model.
+  ## Get Worker script metadata and config, such as bindings or usage model.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/settings")
   let body = await res.body
@@ -300,7 +300,7 @@ proc getAccountsAccountIdWorkersScriptsScriptNameSettings*(client: CloudflareCli
 proc patchAccountsAccountIdWorkersScriptsScriptNameSettings*(client: CloudflareClient,
                                                              accountId: types.WorkersIdentifier,
                                                              scriptName: types.WorkersScriptName): Future[types.WorkersScriptAndVersionSettingsResponse] {.async.} =
-  ## Patch metadata or config, such as bindings or usage model.
+  ## Patch Worker script metadata or config, such as bindings or usage model.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/settings")
   let body = await res.body
@@ -313,7 +313,7 @@ proc patchAccountsAccountIdWorkersScriptsScriptNameSettings*(client: CloudflareC
 proc getAccountsAccountIdWorkersScriptsScriptNameSubdomain*(client: CloudflareClient,
                                                             accountId: types.WorkersIdentifier,
                                                             scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
-  ## Get if the Worker is available on the workers.dev subdomain.
+  ## Get whether a Worker script is available on the workers.dev subdomain.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/subdomain")
   let body = await res.body
@@ -327,7 +327,7 @@ proc postAccountsAccountIdWorkersScriptsScriptNameSubdomain*(client: CloudflareC
                                                              accountId: types.WorkersIdentifier,
                                                              scriptName: types.WorkersScriptName,
                                                              body: PostAccountsAccountIdWorkersScriptsScriptNameSubdomainRequest): Future[JsonNode] {.async.} =
-  ## Enable or disable the Worker on the workers.dev subdomain.
+  ## Enable or disable a Worker script on the workers.dev subdomain.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/subdomain", body)
   let body = await res.body
@@ -340,7 +340,7 @@ proc postAccountsAccountIdWorkersScriptsScriptNameSubdomain*(client: CloudflareC
 proc deleteAccountsAccountIdWorkersScriptsScriptNameSubdomain*(client: CloudflareClient,
                                                                accountId: types.WorkersIdentifier,
                                                                scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
-  ## Disable all workers.dev subdomains for a Worker.
+  ## Disable all workers.dev subdomains for a Worker script.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/subdomain")
   let body = await res.body
@@ -353,7 +353,7 @@ proc deleteAccountsAccountIdWorkersScriptsScriptNameSubdomain*(client: Cloudflar
 proc getAccountsAccountIdWorkersScriptsScriptNameUsageModel*(client: CloudflareClient,
                                                              accountId: types.WorkersIdentifier,
                                                              scriptName: types.WorkersScriptName): Future[types.WorkersUsageModelResponse] {.async.} =
-  ## Fetches the Usage Model for a given Worker.
+  ## Fetches the usage model for a Worker script.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/usage-model")
   let body = await res.body
@@ -367,7 +367,7 @@ proc putAccountsAccountIdWorkersScriptsScriptNameUsageModel*(client: CloudflareC
                                                              accountId: types.WorkersIdentifier,
                                                              scriptName: types.WorkersScriptName,
                                                              body: PutAccountsAccountIdWorkersScriptsScriptNameUsageModelRequest): Future[types.WorkersUsageModelResponse] {.async.} =
-  ## Updates the Usage Model for a given Worker. Requires a Workers Paid
+  ## Replaces the usage model for a Worker script. Requires a Workers Paid
   ## subscription.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/usage-model", body)

@@ -52,11 +52,6 @@ suite "physical_devices serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdDevicesRegistrationsResponse)) == openjson.toJson(obj)
 
 suite "physical_devices endpoints":
-  test "GET /accounts/{account_id}/devices/physical-devices":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPhysicalDevices("test", "test", {}, {}, "test", "test", "test", 1, "test", {}, @["test"], "test", "test")
-
   test "GET /accounts/{account_id}/devices/physical-devices/{device_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

@@ -456,6 +456,19 @@ proc putAccountsAccountIdR2BucketsBucketNameLock*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc deleteAccountsAccountIdR2BucketsBucketNameLock*(client: CloudflareClient,
+                                                     bucketName: types.R2BucketName,
+                                                     accountId: types.R2AccountIdentifier): Future[JsonNode] {.async.} =
+  ## Delete all lock rules for a bucket.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/lock")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdR2BucketsBucketNameSippy*(client: CloudflareClient,
                                                    accountId: types.R2AccountIdentifier,
                                                    bucketName: types.R2BucketName): Future[JsonNode] {.async.} =

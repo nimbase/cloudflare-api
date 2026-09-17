@@ -16,7 +16,7 @@ type
     formatCSV = "CSV"
 
 
-proc getRadarEntitiesIp*(client: CloudflareClient, ip: string,
+proc getRadarEntitiesIp*(client: CloudflareClient, ip: JsonNode,
                          format: RadarIpFormatOption): Future[GetRadarEntitiesIpResponse] {.async.} =
   ## Retrieves IP address information.
 

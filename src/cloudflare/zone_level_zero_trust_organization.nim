@@ -27,14 +27,14 @@ type
     email: string
 
 proc getZonesZoneIdAccessOrganizations*(client: CloudflareClient,
-                                        zoneId: types.AccessIdentifier4): Future[types.AccessSingleResponse15] {.async.} =
+                                        zoneId: types.AccessIdentifier4): Future[types.AccessGetResponse2] {.async.} =
   ## Returns the configuration for your Zero Trust organization.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/access/organizations")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse15)
+    result = fromJson(body, types.AccessGetResponse2)
   else:
     raise newException(CloudflareClientError, body)
 

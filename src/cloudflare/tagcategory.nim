@@ -9,6 +9,30 @@ import ./private/metaclient
 import ./private/types
 
 type
+  GetAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuidResponse* = object
+    created_at: string
+    description: string
+    name: string
+    schema: seq[types.CloudforceOneEventsFieldDefinition]
+      ## Parsed FieldDefinition[] defining custom fields for this category, or null if
+      ## none.
+    updated_at: string
+    uuid: string
+  DeleteAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuidResponse* = object
+    uuid: string
+  PatchAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuidRequest = object
+    description: Option[string]
+    name: Option[string]
+    schema: Option[seq[types.CloudforceOneEventsFieldDefinition]]
+  PatchAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuidResponse* = object
+    created_at: string
+    description: string
+    name: string
+    schema: seq[types.CloudforceOneEventsFieldDefinition]
+      ## Parsed FieldDefinition[] defining custom fields for this category, or null if
+      ## none.
+    updated_at: string
+    uuid: string
   GetAccountsAccountIdCloudforceOneEventsTagsCategoriesResponse* = object
     categories: seq[JsonNode]
   PostAccountsAccountIdCloudforceOneEventsTagsCategoriesCreateRequest = object
@@ -49,6 +73,47 @@ type
     updated_at: string
     uuid: string
 
+proc getAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuid*(client: CloudflareClient,
+                                                                       accountId: string,
+                                                                       categoryUuid: string): Future[GetAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuidResponse] {.async.} =
+  ## Returns a single Source-of-Truth tag category by UUID, including its full
+  ## schema.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/tag-categories/{categoryUuid}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuidResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuid*(client: CloudflareClient,
+                                                                          accountId: string,
+                                                                          categoryUuid: string): Future[DeleteAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuidResponse] {.async.} =
+  ## Deletes a Source-of-Truth tag category by UUID.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/tag-categories/{categoryUuid}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, DeleteAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuidResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuid*(client: CloudflareClient,
+                                                                         accountId: string,
+                                                                         categoryUuid: string,
+                                                                         body: PatchAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuidRequest): Future[PatchAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuidResponse] {.async.} =
+  ## Updates a Source-of-Truth tag category by UUID.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/tag-categories/{categoryUuid}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PatchAccountsAccountIdCloudforceOneEventsTagCategoriesCategoryUuidResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdCloudforceOneEventsTagsCategories*(client: CloudflareClient,
                                                             accountId: string,
                                                             search: string = default(string)): Future[GetAccountsAccountIdCloudforceOneEventsTagsCategoriesResponse] {.async.} =
@@ -80,8 +145,8 @@ proc postAccountsAccountIdCloudforceOneEventsTagsCategoriesCreate*(client: Cloud
 proc getAccountsAccountIdCloudforceOneEventsTagsCategoriesCategoryUuid*(client: CloudflareClient,
                                                                         accountId: string,
                                                                         categoryUuid: string): Future[GetAccountsAccountIdCloudforceOneEventsTagsCategoriesCategoryUuidResponse] {.async.} =
-  ## Returns a single Source-of-Truth tag category by UUID, including its full
-  ## schema.
+  ## Deprecated; use GET /events/tag-categories/{category_uuid}. Available through
+  ## 2026-11-28.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/tags/categories/{categoryUuid}")
   let body = await res.body
@@ -94,7 +159,8 @@ proc getAccountsAccountIdCloudforceOneEventsTagsCategoriesCategoryUuid*(client: 
 proc deleteAccountsAccountIdCloudforceOneEventsTagsCategoriesCategoryUuid*(client: CloudflareClient,
                                                                            accountId: string,
                                                                            categoryUuid: string): Future[DeleteAccountsAccountIdCloudforceOneEventsTagsCategoriesCategoryUuidResponse] {.async.} =
-  ## Deletes a Source-of-Truth tag category by UUID.
+  ## Deprecated; use DELETE /events/tag-categories/{category_uuid}. Available through
+  ## 2026-11-28.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/tags/categories/{categoryUuid}")
   let body = await res.body
@@ -108,7 +174,8 @@ proc patchAccountsAccountIdCloudforceOneEventsTagsCategoriesCategoryUuid*(client
                                                                           accountId: string,
                                                                           categoryUuid: string,
                                                                           body: PatchAccountsAccountIdCloudforceOneEventsTagsCategoriesCategoryUuidRequest): Future[PatchAccountsAccountIdCloudforceOneEventsTagsCategoriesCategoryUuidResponse] {.async.} =
-  ## Updates a Source-of-Truth tag category by UUID.
+  ## Deprecated; use PATCH /events/tag-categories/{category_uuid}. Available through
+  ## 2026-11-28.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/tags/categories/{categoryUuid}", body)
   let body = await res.body

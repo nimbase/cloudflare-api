@@ -15,6 +15,10 @@ suite "threat_signals serialization":
     let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesResponse)) == openjson.toJson(obj)
 
+  test "round-trips PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkillIdDiagnosticResponse":
+    let obj = cloudflare.PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkillIdDiagnosticResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkillIdDiagnosticResponse)) == openjson.toJson(obj)
+
   test "round-trips PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTagResponse":
     let obj = cloudflare.PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTagResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTagResponse)) == openjson.toJson(obj)

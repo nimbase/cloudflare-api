@@ -36,7 +36,7 @@ proc postAccountsAccountIdWorkersWorkersWorkerIdVersions*(client: CloudflareClie
                                                           workerId: string,
                                                           deploy: bool = default(bool),
                                                           body: types.WorkersVersion): Future[JsonNode] {.async.} =
-  ## Create a new version.
+  ## Create a new version for a Worker.
 
   var q = initOrderedTable[string, string]()
   q["deploy"] = $deploy
@@ -52,9 +52,9 @@ proc patchAccountsAccountIdWorkersWorkersWorkerIdVersionsLatest*(client: Cloudfl
                                                                  accountId: types.WorkersIdentifier,
                                                                  workerId: string,
                                                                  deploy: bool = default(bool)): Future[JsonNode] {.async.} =
-  ## Only `/versions/latest` is supported. Creates a new version by applying a JSON
-  ## Merge Patch (RFC 7396) to the latest version. Patching a specific version ID is
-  ## not supported. Omitted fields are inherited from the latest version.
+  ## Only `/versions/latest` is supported. Creates a new Worker version by applying a
+  ## JSON Merge Patch (RFC 7396) to the latest version. Patching a specific version
+  ## ID is not supported. Omitted fields are inherited from the latest version.
 
   var q = initOrderedTable[string, string]()
   q["deploy"] = $deploy
@@ -71,7 +71,7 @@ proc getAccountsAccountIdWorkersWorkersWorkerIdVersionsVersionId*(client: Cloudf
                                                                   workerId: string,
                                                                   versionId: string,
                                                                   `include`: VersionIncludeOption): Future[JsonNode] {.async.} =
-  ## Get details about a specific version.
+  ## Get details about a specific Worker version.
 
   var q = initOrderedTable[string, string]()
   q["include"] = $`include`
@@ -87,7 +87,7 @@ proc deleteAccountsAccountIdWorkersWorkersWorkerIdVersionsVersionId*(client: Clo
                                                                      accountId: types.WorkersIdentifier,
                                                                      workerId: string,
                                                                      versionId: string): Future[types.WorkersApiResponseCommon] {.async.} =
-  ## Delete a version.
+  ## Delete a Worker version.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/workers/workers/{workerId}/versions/{versionId}")
   let body = await res.body

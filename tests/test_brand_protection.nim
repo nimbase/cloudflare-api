@@ -43,6 +43,10 @@ suite "brand_protection serialization":
     let obj = cloudflare.PatchAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesQueryIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesQueryIdResponse)) == openjson.toJson(obj)
 
+  test "round-trips PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainTrialResponse":
+    let obj = cloudflare.PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainTrialResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainTrialResponse)) == openjson.toJson(obj)
+
   test "round-trips PostAccountsAccountIdCloudforceOneV2BrandProtectionLetterGenerateResponse":
     let obj = cloudflare.PostAccountsAccountIdCloudforceOneV2BrandProtectionLetterGenerateResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneV2BrandProtectionLetterGenerateResponse)) == openjson.toJson(obj)
@@ -86,6 +90,14 @@ suite "brand_protection serialization":
   test "round-trips PostAccountsAccountIdCloudforceOneV2BrandProtectionLogoSearchResponse":
     let obj = cloudflare.PostAccountsAccountIdCloudforceOneV2BrandProtectionLogoSearchResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneV2BrandProtectionLogoSearchResponse)) == openjson.toJson(obj)
+
+  test "round-trips PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdDismissResponse":
+    let obj = cloudflare.PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdDismissResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdDismissResponse)) == openjson.toJson(obj)
+
+  test "round-trips PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdUndismissResponse":
+    let obj = cloudflare.PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdUndismissResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdUndismissResponse)) == openjson.toJson(obj)
 
   test "round-trips GetAccountsAccountIdCloudforceOneV2BrandProtectionTakedownNoticesResponse":
     let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2BrandProtectionTakedownNoticesResponse()
@@ -277,6 +289,16 @@ suite "brand_protection endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdCloudforceOneV2BrandProtectionLogoQueriesQueryId("test", "test")
+
+  test "POST /accounts/{account_id}/cloudforce-one/v2/brand-protection/queries/{query_id}/matches/{domain_id}/dismiss":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdDismiss("test", 1, 1)
+
+  test "POST /accounts/{account_id}/cloudforce-one/v2/brand-protection/queries/{query_id}/matches/{domain_id}/undismiss":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdUndismiss("test", 1, 1)
 
   test "GET /accounts/{account_id}/cloudforce-one/v2/brand-protection/takedown-notices":
     let client = initCloudflareClient("test-key")

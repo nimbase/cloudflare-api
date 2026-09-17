@@ -11,6 +11,14 @@ import cloudflare
 import ./common
 
 suite "browser_extension_config serialization":
+  test "round-trips BrexExtensionEventsSearchRequest":
+    let obj = newBrexExtensionEventsSearchRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BrexExtensionEventsSearchRequest)) == openjson.toJson(obj)
+
+  test "round-trips BrexExtensionEventsSearchResponse":
+    let obj = newBrexExtensionEventsSearchResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BrexExtensionEventsSearchResponse)) == openjson.toJson(obj)
+
   test "round-trips BrexUpdateConfigRequest":
     let obj = newBrexUpdateConfigRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BrexUpdateConfigRequest)) == openjson.toJson(obj)
@@ -51,4 +59,9 @@ suite "browser_extension_config endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdBrowserExtensionConfig()
+
+  test "POST /accounts/{account_id}/browser-extension/config/logs/extension-events/search":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdBrowserExtensionConfigLogsExtensionEventsSearch(newBrexExtensionEventsSearchRequest())
 

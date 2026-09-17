@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "zone_level_zero_trust_organization serialization":
+  test "round-trips AccessGetResponse2":
+    let obj = newAccessGetResponse2()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessGetResponse2)) == openjson.toJson(obj)
+
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)

@@ -14,6 +14,9 @@ type
   GetAccountsAccountIdCloudforceOneEventsTagsResponse* = object
     pagination: JsonNode
     tags: seq[JsonNode]
+  GetAccountsAccountIdCloudforceOneEventsTagsCategoriesActorsResponse* = object
+    pagination: JsonNode
+    tags: seq[JsonNode]
   PostAccountsAccountIdCloudforceOneEventsTagsCreateRequest = object
     active_duration: Option[JsonNode]
     actor_category: Option[JsonNode]
@@ -298,6 +301,34 @@ proc getAccountsAccountIdCloudforceOneEventsTags*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, GetAccountsAccountIdCloudforceOneEventsTagsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdCloudforceOneEventsTagsCategoriesActors*(client: CloudflareClient,
+                                                                  accountId: string,
+                                                                  page: float64 = default(float64),
+                                                                  pageSize: float64 = default(float64),
+                                                                  value: string = default(string),
+                                                                  filters: seq[string] = @[]): Future[GetAccountsAccountIdCloudforceOneEventsTagsCategoriesActorsResponse] {.async.} =
+  ## Returns all known Actors from the shared CFONE catalog. Non-CFONE accounts
+  ## receive a redacted public projection: identity (`uuid`, `value`, `categoryUuid`,
+  ## `categoryName`), metadata (`description`, `dateOfDiscovery`, `tlp`,
+  ## `confidence`, `properties`), origin (`originCountryISO`,
+  ## `originCountryISO_annotated`), and public aliases/references (`aliasGroupNames`,
+  ## `aliases`, `externalReferences`, `externalReferences_annotated`). CFONE-internal
+  ## fields (internal aliases, attribution, motive, opsec level, etc.) are stripped
+  ## from the response.
+
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["pageSize"] = $pageSize
+  q["value"] = $value
+  for v in filters: q["filters"] = $v
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/tags/categories/actors", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneEventsTagsCategoriesActorsResponse)
   else:
     raise newException(CloudflareClientError, body)
 

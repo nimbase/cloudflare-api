@@ -19,6 +19,10 @@ suite "zero_trust_organization serialization":
     let obj = newAccessMfaPivKeyRequirements()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessMfaPivKeyRequirements)) == openjson.toJson(obj)
 
+  test "round-trips AccessGetResponse":
+    let obj = newAccessGetResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessGetResponse)) == openjson.toJson(obj)
+
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)

@@ -11,21 +11,13 @@ import cloudflare
 import ./common
 
 suite "zone_settings serialization":
-  test "round-trips CacheRulesApiResponseCommonFailure":
-    let obj = newCacheRulesApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesApiResponseCommonFailure)) == openjson.toJson(obj)
-
-  test "round-trips CacheRulesZoneCacheSettingsResponseSingle":
-    let obj = newCacheRulesZoneCacheSettingsResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesZoneCacheSettingsResponseSingle)) == openjson.toJson(obj)
+  test "round-trips ZonesSetting":
+    let obj = newZonesSetting()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ZonesSetting)) == openjson.toJson(obj)
 
   test "round-trips SpeedCloudflareSpeedBrainResponse":
     let obj = newSpeedCloudflareSpeedBrainResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedCloudflareSpeedBrainResponse)) == openjson.toJson(obj)
-
-  test "round-trips ZonesSetting":
-    let obj = newZonesSetting()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ZonesSetting)) == openjson.toJson(obj)
 
   test "round-trips SpeedTransformationsC2paResponse":
     let obj = newSpeedTransformationsC2paResponse()
@@ -35,25 +27,29 @@ suite "zone_settings serialization":
     let obj = newSpeedAutomaticPlatformOptimizationValue()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedAutomaticPlatformOptimizationValue)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesAegisValue":
-    let obj = newCacheRulesAegisValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesAegisValue)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsOriginMaxHttpVersionResponseValue":
+    let obj = newCacheSettingsOriginMaxHttpVersionResponseValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginMaxHttpVersionResponseValue)) == openjson.toJson(obj)
 
   test "round-trips SpeedH2PrioritizationResponse":
     let obj = newSpeedH2PrioritizationResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedH2PrioritizationResponse)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesAegisResponseValue":
-    let obj = newCacheRulesAegisResponseValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesAegisResponseValue)) == openjson.toJson(obj)
-
   test "round-trips SpeedBinaryAstResponse":
     let obj = newSpeedBinaryAstResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedBinaryAstResponse)) == openjson.toJson(obj)
 
+  test "round-trips CacheSettingsAegisValue":
+    let obj = newCacheSettingsAegisValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsAegisValue)) == openjson.toJson(obj)
+
   test "round-trips ZonesZoneSettingsSingleRequest":
     let obj = newZonesZoneSettingsSingleRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ZonesZoneSettingsSingleRequest)) == openjson.toJson(obj)
+
+  test "round-trips CacheSettingsApiResponseCommonFailure":
+    let obj = newCacheSettingsApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsApiResponseCommonFailure)) == openjson.toJson(obj)
 
   test "round-trips SpeedApiResponseCommon":
     let obj = newSpeedApiResponseCommon()
@@ -79,9 +75,9 @@ suite "zone_settings serialization":
     let obj = newZonesApiResponseCommon4()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ZonesApiResponseCommon4)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginMaxHttpVersionResponseValue":
-    let obj = newCacheRulesOriginMaxHttpVersionResponseValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginMaxHttpVersionResponseValue)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsZoneCacheSettingsResponseSingle":
+    let obj = newCacheSettingsZoneCacheSettingsResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsZoneCacheSettingsResponseSingle)) == openjson.toJson(obj)
 
   test "round-trips SpeedTransformationsConfigResponse":
     let obj = newSpeedTransformationsConfigResponse()
@@ -99,13 +95,17 @@ suite "zone_settings serialization":
     let obj = newZonesZoneSettingsResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ZonesZoneSettingsResponseCollection)) == openjson.toJson(obj)
 
+  test "round-trips CacheSettingsAegisResponseValue":
+    let obj = newCacheSettingsAegisResponseValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsAegisResponseValue)) == openjson.toJson(obj)
+
   test "round-trips SpeedImageResizingResponse":
     let obj = newSpeedImageResizingResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedImageResizingResponse)) == openjson.toJson(obj)
 
-  test "round-trips CacheRulesOriginH2MaxStreamsResponseValue":
-    let obj = newCacheRulesOriginH2MaxStreamsResponseValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheRulesOriginH2MaxStreamsResponseValue)) == openjson.toJson(obj)
+  test "round-trips CacheSettingsOriginH2MaxStreamsResponseValue":
+    let obj = newCacheSettingsOriginH2MaxStreamsResponseValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsOriginH2MaxStreamsResponseValue)) == openjson.toJson(obj)
 
 suite "zone_settings endpoints":
   test "GET /zones/{zone_id}/settings":

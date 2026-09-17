@@ -10,7 +10,7 @@ import ./private/types
 
 
 proc getZonesZoneIdArgoTieredCaching*(client: CloudflareClient,
-                                      zoneId: types.CacheRulesIdentifier): Future[JsonNode] {.async.} =
+                                      zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
   ## Tiered Cache works by dividing Cloudflare's data centers into a hierarchy of
   ## lower-tiers and upper-tiers. If content is not cached in lower-tier data centers
   ## (generally the ones closest to a visitor), the lower-tier must ask an upper-tier
@@ -32,8 +32,8 @@ proc getZonesZoneIdArgoTieredCaching*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdArgoTieredCaching*(client: CloudflareClient,
-                                        zoneId: types.CacheRulesIdentifier,
-                                        body: types.CacheRulesPatch): Future[JsonNode] {.async.} =
+                                        zoneId: types.CacheSettingsIdentifier,
+                                        body: types.CacheSettingsPatch): Future[JsonNode] {.async.} =
   ## Tiered Cache works by dividing Cloudflare's data centers into a hierarchy of
   ## lower-tiers and upper-tiers. If content is not cached in lower-tier data centers
   ## (generally the ones closest to a visitor), the lower-tier must ask an upper-tier

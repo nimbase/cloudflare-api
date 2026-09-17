@@ -55,3 +55,16 @@ proc deleteAccountsAccountIdBrowserExtensionConfig*(client: CloudflareClient): F
     result = fromJson(body, types.BrexDeleteResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdBrowserExtensionConfigLogsExtensionEventsSearch*(client: CloudflareClient,
+                                                                           body: types.BrexExtensionEventsSearchRequest): Future[types.BrexExtensionEventsSearchResponse] {.async.} =
+  ## Searches browser extension event logs for an account. The request accepts
+  ## only supported fields and filters; raw SQL is not accepted.
+
+  let res = await client.httpPOST("/accounts/{account_id}/browser-extension/config/logs/extension-events/search", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.BrexExtensionEventsSearchResponse)
+  else:
+    raise newException(CloudflareClientError, body)

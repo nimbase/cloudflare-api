@@ -54,14 +54,14 @@ type
     warp_session_reauth: Option[bool]
 
 proc getAccountsAccountIdAccessOrganizations*(client: CloudflareClient,
-                                              accountId: types.AccessIdentifier): Future[types.AccessSingleResponse] {.async.} =
+                                              accountId: types.AccessIdentifier): Future[types.AccessGetResponse] {.async.} =
   ## Returns the configuration for your Zero Trust organization.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/organizations")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse)
+    result = fromJson(body, types.AccessGetResponse)
   else:
     raise newException(CloudflareClientError, body)
 
