@@ -23,7 +23,7 @@ on:
       - 'nimbase.oapi.config.yaml'
       - '.github/workflows/nimbase.yml'
   schedule:
-    - cron: '0 3 * * *'   # nightly re-check for upstream spec changes
+    - cron: '0 0 * * 5'   # nightly re-check for upstream spec changes
   workflow_dispatch:
 
 concurrency:
