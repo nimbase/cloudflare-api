@@ -48,6 +48,22 @@ proc postAccountsAccountIdWorkersWorkersWorkerIdVersions*(client: CloudflareClie
   else:
     raise newException(CloudflareClientError, body)
 
+proc getAccountsAccountIdWorkersWorkersWorkerIdVersionsLatest*(client: CloudflareClient,
+                                                               accountId: types.WorkersIdentifier,
+                                                               workerId: string,
+                                                               `include`: VersionIncludeOption): Future[JsonNode] {.async.} =
+  ## Get details about the most recently created Worker version.
+
+  var q = initOrderedTable[string, string]()
+  q["include"] = $`include`
+  let res = await client.httpGET(fmt"/accounts/{accountId}/workers/workers/{workerId}/versions/latest", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc patchAccountsAccountIdWorkersWorkersWorkerIdVersionsLatest*(client: CloudflareClient,
                                                                  accountId: types.WorkersIdentifier,
                                                                  workerId: string,

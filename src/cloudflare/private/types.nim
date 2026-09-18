@@ -15533,16 +15533,6 @@ type
 
   DosAsn* = int64
 
-  DosAsnCountry* = string
-
-  DosAsnDescription* = string
-
-  DosAsnType* = enum
-    ## Infrastructure type of this ASN.
-    hostingProvider = "hosting_provider"
-    isp = "isp"
-    organization = "organization"
-
   DosDnsProtectionRuleListResponse* = ref object of RootObj
     errors*: DosMessages
     messages*: DosMessages
@@ -18627,7 +18617,6 @@ type
   HyperdriveApiResponseCollection* = ref object of RootObj
     errors*: HyperdriveMessages
     messages*: HyperdriveMessages
-    result*: JsonNode
     success*: bool
       ## Return the status of the API call success.
     result_info*: Option[HyperdriveResultInfo]
@@ -18635,7 +18624,6 @@ type
   HyperdriveApiResponseCommon* = ref object of RootObj
     errors*: HyperdriveMessages
     messages*: HyperdriveMessages
-    result*: JsonNode
     success*: bool
       ## Return the status of the API call success.
 
@@ -18649,7 +18637,6 @@ type
   HyperdriveApiResponseSingle* = ref object of RootObj
     errors*: HyperdriveMessages
     messages*: HyperdriveMessages
-    result*: JsonNode
     success*: bool
       ## Return the status of the API call success.
 
@@ -18658,6 +18645,22 @@ type
   HyperdriveHyperdriveCachingCommon* = ref object of RootObj
     disabled*: Option[bool]
       ## Set to true to disable caching of SQL responses. Default is false.
+
+  HyperdriveHyperdriveCachingCreate* = ref object of RootObj
+
+  HyperdriveHyperdriveCachingCreateDisabled* = ref object of RootObj
+    disabled*: bool
+    max_age*: Option[int64]
+    stale_while_revalidate*: Option[int64]
+
+  HyperdriveHyperdriveCachingCreateEnabled* = ref object of RootObj
+    disabled*: Option[bool]
+    max_age*: Option[int64]
+      ## Specify the maximum duration (in seconds) items should persist in the cache.
+      ## Defaults to 60 seconds if not specified.
+    stale_while_revalidate*: Option[int64]
+      ## Specify the number of seconds the cache may serve a stale response. Defaults to
+      ## 15 seconds if not specified.
 
   HyperdriveHyperdriveCachingDisabled* = ref object of RootObj
     disabled*: Option[bool]
@@ -18673,6 +18676,14 @@ type
       ## Specify the number of seconds the cache may serve a stale response. Defaults to
       ## 15 seconds if not specified.
 
+  HyperdriveHyperdriveCachingResponse* = ref object of RootObj
+    disabled*: bool
+      ## Defines whether caching is disabled.
+    max_age*: Option[int64]
+      ## Defines the maximum duration (in seconds) items persist in the cache.
+    stale_while_revalidate*: Option[int64]
+      ## Defines the number of seconds the cache may serve a stale response.
+
   HyperdriveHyperdriveConfig* = ref object of RootObj
     caching*: Option[HyperdriveHyperdriveCaching]
     created_on*: Option[string]
@@ -18682,30 +18693,59 @@ type
       ## Defines the last modified time of the Hyperdrive configuration.
     mtls*: Option[HyperdriveHyperdriveMtls]
     name*: HyperdriveHyperdriveName
-    origin*: JsonNode
+    origin*: HyperdriveHyperdriveOriginFull
     origin_connection_limit*: Option[HyperdriveHyperdriveOriginConnectionLimit]
     restarted_on*: Option[string]
       ## Defines the last time the Hyperdrive connection pool was explicitly restarted
       ## via the restart endpoint. Omitted if the pool has never been explicitly
       ## restarted.
 
+  HyperdriveHyperdriveConfigCreate* = ref object of RootObj
+    ## A request to create a Hyperdrive configuration using exactly one of
+    ## caller-supplied origin credentials or a managed integration.
+
+  HyperdriveHyperdriveConfigCreateCommon* = ref object of RootObj
+    caching*: Option[HyperdriveHyperdriveCachingCreate]
+    mtls*: Option[HyperdriveHyperdriveMtls]
+    name*: HyperdriveHyperdriveName
+    origin_connection_limit*: Option[HyperdriveHyperdriveOriginConnectionLimit]
+
+  HyperdriveHyperdriveConfigCreateWithIntegration* = ref object of RootObj
+    caching*: Option[HyperdriveHyperdriveCachingCreate]
+    mtls*: Option[HyperdriveHyperdriveMtls]
+    name*: HyperdriveHyperdriveName
+    origin_connection_limit*: Option[HyperdriveHyperdriveOriginConnectionLimit]
+    integration*: HyperdriveHyperdrivePlanetScaleIntegration
+    origin*: Option[JsonNode]
+
+  HyperdriveHyperdriveConfigCreateWithOrigin* = ref object of RootObj
+    caching*: Option[HyperdriveHyperdriveCachingCreate]
+    mtls*: Option[HyperdriveHyperdriveMtls]
+    name*: HyperdriveHyperdriveName
+    origin_connection_limit*: Option[HyperdriveHyperdriveOriginConnectionLimit]
+    integration*: Option[JsonNode]
+    origin*: HyperdriveHyperdriveOriginFull
+
   HyperdriveHyperdriveConfigPatch* = ref object of RootObj
     caching*: Option[HyperdriveHyperdriveCaching]
     mtls*: Option[HyperdriveHyperdriveMtls]
-    name*: Option[HyperdriveHyperdriveName]
+    name*: Option[string]
+      ## The name of the Hyperdrive configuration. Used to identify the configuration in
+      ## the Cloudflare dashboard and API. An empty value leaves the name unchanged.
     origin*: Option[JsonNode]
     origin_connection_limit*: Option[HyperdriveHyperdriveOriginConnectionLimit]
 
   HyperdriveHyperdriveConfigResponse* = ref object of RootObj
-    caching*: HyperdriveHyperdriveCaching
+    caching*: HyperdriveHyperdriveCachingResponse
     created_on*: Option[string]
       ## Defines the creation time of the Hyperdrive configuration.
     id*: HyperdriveIdentifier
+    integration*: Option[JsonNode]
     modified_on*: Option[string]
       ## Defines the last modified time of the Hyperdrive configuration.
     mtls*: Option[HyperdriveHyperdriveMtls]
     name*: HyperdriveHyperdriveName
-    origin*: JsonNode
+    origin*: HyperdriveHyperdriveOriginFull
     origin_connection_limit*: Option[HyperdriveHyperdriveOriginConnectionLimit]
     restarted_on*: Option[string]
       ## Defines the last time the Hyperdrive connection pool was explicitly restarted
@@ -18743,8 +18783,8 @@ type
       ## partner uses it to verify the signature and reject stale authorizations.
 
   HyperdriveHyperdriveIntegration* = enum
-    ## The database integration that bills the new database through Cloudflare.
-    planetScale = "planetScale"
+    ## The database integration used by this operation.
+    planetscale = "planetscale"
 
   HyperdriveHyperdriveMtls* = ref object of RootObj
     ## mTLS configuration for the origin connection. Cannot be used with VPC Service
@@ -18754,21 +18794,32 @@ type
     mtls_certificate_id*: Option[string]
       ## Define mTLS certificate ID obtained after uploading client cert.
     sslmode*: Option[string]
-      ## Set SSL mode to 'require', 'verify-ca', or 'verify-full' to verify the CA.
+      ## PostgreSQL accepts `require`, `verify-ca`, and `verify-full`. MySQL accepts
+      ## `REQUIRED`, `VERIFY_CA`, and `VERIFY_IDENTITY`. The verify modes require a CA
+      ## certificate; the require modes cannot be used with a CA certificate.
 
   HyperdriveHyperdriveName* = string
 
-  HyperdriveHyperdriveOrigin* = ref object of RootObj
-    database*: Option[string]
-      ## Set the name of your origin database.
-    password*: Option[string]
-      ## Set the password needed to access your origin database. The API never returns
-      ## this write-only value.
-    scheme*: Option[HyperdriveHyperdriveScheme]
-    user*: Option[string]
-      ## Set the user of your origin database.
-
   HyperdriveHyperdriveOriginConnectionLimit* = int64
+
+  HyperdriveHyperdriveOriginFull* = ref object of RootObj
+    ## Combines database connection fields with exactly one supported network location.
+
+  HyperdriveHyperdrivePlanetScaleIntegration* = ref object of RootObj
+    ## Connects to a PlanetScale database using credentials managed by Cloudflare. The
+    ## Cloudflare account must already be linked to PlanetScale in the Hyperdrive
+    ## dashboard.
+    custom_database_name*: Option[string]
+      ## The database name to use when connecting. Defaults to `postgres` for PostgreSQL
+      ## and `mysql` for MySQL.
+    database_branch_name*: string
+      ## The name of the PlanetScale database branch.
+    database_name*: string
+      ## The name of the PlanetScale database.
+    integration*: HyperdriveHyperdriveIntegration
+    organization_name*: string
+      ## The name of the PlanetScale organization.
+    scheme*: HyperdriveHyperdriveScheme
 
   HyperdriveHyperdriveScheme* = enum
     ## Specifies the URL scheme used to connect to your origin database.
@@ -18780,7 +18831,8 @@ type
 
   HyperdriveInternetOrigin* = ref object of RootObj
     host*: string
-      ## Defines the host (hostname or IP) of your origin database.
+      ## Defines the publicly reachable hostname or IP of your origin database. Private,
+      ## loopback, and link-local IP addresses are not allowed.
     port*: int64
       ## Defines the port of your origin database. Defaults to 5432 for PostgreSQL or
       ## 3306 for MySQL if not specified.
@@ -18978,11 +19030,14 @@ type
   IamCreateAccount* = ref object of RootObj
     name*: string
       ## Account name
+    standalone*: Option[bool]
+      ## Set to `true` and omit `unit` to create a standalone Free Account. If provided,
+      ## this field must be `true`.
     `type`*: Option[IamAccountType]
     unit*: Option[JsonNode]
-      ## information related to the tenant unit, and optionally, an id of the unit to
-      ## create the account on. see
-      ## https://developers.cloudflare.com/tenant/how-to/manage-accounts/
+      ## Information related to the tenant unit. Provide its ID and omit `standalone` to
+      ## create the Account within an Organization. See
+      ## https://developers.cloudflare.com/tenant/how-to/manage-accounts/.
 
   IamCreateMemberWithPolicies* = ref object of RootObj
     email*: IamEmail
@@ -19694,6 +19749,20 @@ type
       ## The value(s) for the operation. For member add/replace operations, an array of
       ## member value objects. For `displayName` or `externalId` updates, a string value.
       ##
+
+  IamScimGroupReplaceRequest* = ref object of RootObj
+    ## Request body for replacing a SCIM Group (PUT).
+    display_name*: string
+      ## A human-readable name for the Group.
+    external_id*: Option[string]
+      ## Identifier for the Group as defined by the provisioning client (IdP). Omission
+      ## clears the existing value.
+      ##
+    members*: Option[seq[IamScimGroupPatchMemberValue]]
+      ## The complete replacement member set. Omission is treated as an empty list.
+      ##
+    schemas*: seq[string]
+      ## Must contain `urn:ietf:params:scim:schemas:core:2.0:Group`.
 
   IamScimGroupSummary* = ref object of RootObj
     ## A SCIM 2.0 Group resource as returned in list responses. Does not include
@@ -30640,9 +30709,14 @@ type
     f5_or_greater_event_fraction*: Option[float64]
     avg*: Option[float64]
 
+  RealtimekitPagingInfo* = ref object of RootObj
+    end_offset*: float64
+    start_offset*: float64
+    total_count*: float64
+
   RealtimekitPagingResponse* = ref object of RootObj
     data*: seq[JsonNode]
-    paging*: JsonNode
+    paging*: RealtimekitPagingInfo
     success*: bool
 
   RealtimekitParticipant* = ref object of RootObj
@@ -35567,8 +35641,6 @@ type
     ## Return all API responses using this object.
     errors*: SnippetsErrors
     messages*: SnippetsMessages
-    result*: JsonNode
-      ## Contain the response result.
     success*: bool
       ## Indicate whether the API call was successful.
 
@@ -44918,7 +44990,7 @@ type
     enabled*: ZeroTrustGatewayEnabled
     expiration*: Option[ZeroTrustGatewayExpiration]
     filters*: ZeroTrustGatewayFilters
-    id*: Option[ZeroTrustGatewayUuid2]
+    id*: Option[ZeroTrustGatewayUuid4]
     identity*: Option[ZeroTrustGatewayIdentity]
     name*: ZeroTrustGatewayName3
     precedence*: ZeroTrustGatewayPrecedence
@@ -44988,7 +45060,7 @@ type
   ZeroTrustGatewaySettings* = ref object of RootObj
     created_at*: Option[ZeroTrustGatewayReadOnlyTimestamp]
     public_key*: Option[ZeroTrustGatewayPublicKey]
-    seed_id*: Option[ZeroTrustGatewayUuid4]
+    seed_id*: Option[ZeroTrustGatewayUuid5]
     updated_at*: Option[ZeroTrustGatewayReadOnlyTimestamp]
 
   ZeroTrustGatewaySharable* = bool
@@ -45101,6 +45173,8 @@ type
   ZeroTrustGatewayUuid3* = string
 
   ZeroTrustGatewayUuid4* = string
+
+  ZeroTrustGatewayUuid5* = string
 
   ZeroTrustGatewayValue* = string
 

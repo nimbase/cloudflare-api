@@ -1086,6 +1086,16 @@ proc renameHook*(v: IamScimGroupPatchOpRequest, fieldName: var string) {.inline.
   elif fieldName == "operations":
     fieldName = "Operations"
 
+proc renameHook*(v: IamScimGroupReplaceRequest, fieldName: var string) {.inline.} =
+  if fieldName == "displayName":
+    fieldName = "display_name"
+  elif fieldName == "display_name":
+    fieldName = "displayName"
+  elif fieldName == "externalId":
+    fieldName = "external_id"
+  elif fieldName == "external_id":
+    fieldName = "externalId"
+
 proc renameHook*(v: IamScimGroupSummary, fieldName: var string) {.inline.} =
   if fieldName == "displayName":
     fieldName = "display_name"

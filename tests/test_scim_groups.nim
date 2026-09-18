@@ -15,6 +15,10 @@ suite "scim_groups serialization":
     let obj = newIamScimGroupCreateRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamScimGroupCreateRequest)) == openjson.toJson(obj)
 
+  test "round-trips IamScimGroupReplaceRequest":
+    let obj = newIamScimGroupReplaceRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamScimGroupReplaceRequest)) == openjson.toJson(obj)
+
   test "round-trips IamAccountIdentifier":
     let obj = newIamAccountIdentifier()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamAccountIdentifier)) == openjson.toJson(obj)
@@ -50,6 +54,11 @@ suite "scim_groups endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdScimV2GroupsGroupId(newIamAccountIdentifier(), "test")
+
+  test "PUT /accounts/{account_id}/scim/v2/Groups/{group_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.putAccountsAccountIdScimV2GroupsGroupId(newIamAccountIdentifier(), "test")
 
   test "DELETE /accounts/{account_id}/scim/v2/Groups/{group_id}":
     let client = initCloudflareClient("test-key")

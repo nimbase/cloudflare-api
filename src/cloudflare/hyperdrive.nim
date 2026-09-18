@@ -27,8 +27,10 @@ proc getAccountsAccountIdHyperdriveConfigs*(client: CloudflareClient,
 
 proc postAccountsAccountIdHyperdriveConfigs*(client: CloudflareClient,
                                              accountId: types.HyperdriveIdentifier,
-                                             body: types.HyperdriveHyperdriveConfig): Future[JsonNode] {.async.} =
-  ## Creates and returns a new Hyperdrive configuration.
+                                             body: types.HyperdriveHyperdriveConfigCreate): Future[JsonNode] {.async.} =
+  ## Creates and returns a new Hyperdrive configuration. For a PlanetScale
+  ## integration, the Cloudflare account must already be linked to PlanetScale in the
+  ## Hyperdrive dashboard.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/hyperdrive/configs", body)
   let body = await res.body

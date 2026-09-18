@@ -43,6 +43,10 @@ suite "hyperdrive serialization":
     let obj = newHyperdriveHyperdriveConfigPatch()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.HyperdriveHyperdriveConfigPatch)) == openjson.toJson(obj)
 
+  test "round-trips HyperdriveHyperdriveConfigCreate":
+    let obj = newHyperdriveHyperdriveConfigCreate()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.HyperdriveHyperdriveConfigCreate)) == openjson.toJson(obj)
+
 suite "hyperdrive endpoints":
   test "GET /accounts/{account_id}/hyperdrive/configs":
     let client = initCloudflareClient("test-key")
@@ -52,7 +56,7 @@ suite "hyperdrive endpoints":
   test "POST /accounts/{account_id}/hyperdrive/configs":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdHyperdriveConfigs("test", newHyperdriveHyperdriveConfig())
+    discard waitFor client.postAccountsAccountIdHyperdriveConfigs("test", newHyperdriveHyperdriveConfigCreate())
 
   test "GET /accounts/{account_id}/hyperdrive/configs/{hyperdrive_id}":
     let client = initCloudflareClient("test-key")

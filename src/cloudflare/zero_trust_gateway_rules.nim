@@ -113,7 +113,7 @@ proc getAccountsAccountIdGatewayRulesTenant*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdGatewayRulesRuleId*(client: CloudflareClient,
-                                             ruleId: types.ZeroTrustGatewayUuid2,
+                                             ruleId: types.ZeroTrustGatewayUuid4,
                                              accountId: types.ZeroTrustGatewayIdentifier2): Future[types.ZeroTrustGatewaySingleResponse4] {.async.} =
   ## Get a single Zero Trust Gateway rule.
 
@@ -126,7 +126,7 @@ proc getAccountsAccountIdGatewayRulesRuleId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc putAccountsAccountIdGatewayRulesRuleId*(client: CloudflareClient,
-                                             ruleId: types.ZeroTrustGatewayUuid2,
+                                             ruleId: types.ZeroTrustGatewayUuid4,
                                              accountId: types.ZeroTrustGatewayIdentifier2,
                                              body: PutAccountsAccountIdGatewayRulesRuleIdRequest): Future[types.ZeroTrustGatewaySingleResponse4] {.async.} =
   ## Update a configured Zero Trust Gateway rule.
@@ -140,7 +140,7 @@ proc putAccountsAccountIdGatewayRulesRuleId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteAccountsAccountIdGatewayRulesRuleId*(client: CloudflareClient,
-                                                ruleId: types.ZeroTrustGatewayUuid2,
+                                                ruleId: types.ZeroTrustGatewayUuid4,
                                                 accountId: types.ZeroTrustGatewayIdentifier2): Future[types.ZeroTrustGatewayEmptyResponse] {.async.} =
   ## Delete a Zero Trust Gateway rule.
 
@@ -153,7 +153,7 @@ proc deleteAccountsAccountIdGatewayRulesRuleId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc patchAccountsAccountIdGatewayRulesRuleId*(client: CloudflareClient,
-                                               ruleId: types.ZeroTrustGatewayUuid2,
+                                               ruleId: types.ZeroTrustGatewayUuid4,
                                                accountId: types.ZeroTrustGatewayIdentifier2,
                                                body: PatchAccountsAccountIdGatewayRulesRuleIdRequest): Future[types.ZeroTrustGatewaySingleResponse4] {.async.} =
   ## Update select fields of an existing Zero Trust Gateway rule. Only the fields
@@ -172,7 +172,7 @@ proc patchAccountsAccountIdGatewayRulesRuleId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdGatewayRulesRuleIdResetExpiration*(client: CloudflareClient,
-                                                             ruleId: types.ZeroTrustGatewayUuid2,
+                                                             ruleId: types.ZeroTrustGatewayUuid4,
                                                              accountId: types.ZeroTrustGatewayIdentifier2): Future[types.ZeroTrustGatewaySingleResponse4] {.async.} =
   ## Resets the expiration of a Zero Trust Gateway Rule if its duration elapsed and
   ## it has a default duration. The Zero Trust Gateway Rule must have values  for

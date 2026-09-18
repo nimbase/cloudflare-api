@@ -41,6 +41,17 @@ proc getAccountsAccountIdScimV2GroupsGroupId*(client: CloudflareClient,
   let res = await client.httpGET(fmt"/accounts/{accountId}/scim/v2/Groups/{groupId}")
   return res
 
+proc putAccountsAccountIdScimV2GroupsGroupId*(client: CloudflareClient,
+                                              accountId: types.IamAccountIdentifier,
+                                              groupId: types.IamScimGroupIdentifier): Future[AsyncResponse] {.async.} =
+  ## Replaces the mutable attributes of a SCIM Group (RFC 7644 Section 3.5.1),
+  ## including its complete member set. Omitting `externalId` clears it, and omitting
+  ## `members` replaces the member set with an empty list. For system groups
+  ## (prefixed `cloudflare-v1-`), only the member set is replaced.
+
+  let res = await client.httpPUT(fmt"/accounts/{accountId}/scim/v2/Groups/{groupId}")
+  return res
+
 proc deleteAccountsAccountIdScimV2GroupsGroupId*(client: CloudflareClient,
                                                  accountId: types.IamAccountIdentifier,
                                                  groupId: types.IamScimGroupIdentifier): Future[AsyncResponse] {.async.} =

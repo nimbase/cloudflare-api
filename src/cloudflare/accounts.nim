@@ -59,7 +59,12 @@ proc getAccounts*(client: CloudflareClient, name: string = default(string),
     raise newException(CloudflareClientError, body)
 
 proc postAccounts*(client: CloudflareClient, body: types.IamCreateAccount): Future[types.IamResponseSingleAccount] {.async.} =
-  ## Create an account (only available for tenant admins at this time)
+  ## Create an Account. To create the Account within an Organization, provide
+  ## `unit.id` and omit `standalone`. To create a standalone Free Account, provide
+  ## `standalone: true` and omit `unit`. Providing both fields is invalid. If you
+  ## omit both fields, Cloudflare can determine the destination only when the User is
+  ## an administrator of exactly one Organization. Cloudflare creates the Account in
+  ## that Organization; otherwise, the request returns an error.
 
   let res = await client.httpPOST("/accounts", body)
   let body = await res.body

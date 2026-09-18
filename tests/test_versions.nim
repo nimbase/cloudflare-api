@@ -38,6 +38,11 @@ suite "versions endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdWorkersWorkersWorkerIdVersions("test", "test", true, newWorkersVersion())
 
+  test "GET /accounts/{account_id}/workers/workers/{worker_id}/versions/latest":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdWorkersWorkersWorkerIdVersionsLatest("test", "test", {})
+
   test "PATCH /accounts/{account_id}/workers/workers/{worker_id}/versions/latest":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

@@ -100,6 +100,10 @@ proc getOrganizationsOrganizationIdBillableUsage*(client: CloudflareClient,
   ##
   ## When `from` and `to` are omitted, defaults to the start of the current
   ## month through today. The maximum date range is 31 days.
+  ##
+  ## An organization with no accounts, or an organization ID that does not
+  ## exist, returns a successful response with an empty result set rather
+  ## than an error.
 
   var q = initOrderedTable[string, string]()
   q["from"] = $`from`
