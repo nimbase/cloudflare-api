@@ -35,7 +35,7 @@ suite "page_rules endpoints":
   test "GET /zones/{zone_id}/pagerules":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdPagerules("test", {}, {}, {}, {})
+    discard waitFor client.getZonesZoneIdPagerules("test", orderStatus, directionAsc, matchAny, statusActive)
 
   test "GET /zones/{zone_id}/pagerules/{pagerule_id}":
     let client = initCloudflareClient("test-key")

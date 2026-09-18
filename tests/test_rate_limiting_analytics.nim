@@ -23,5 +23,5 @@ suite "rate_limiting_analytics endpoints":
   test "GET /zones/{zone_id}/rate_limit_analytics":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdRateLimitAnalytics("test", "test", "test", {})
+    discard waitFor client.getZonesZoneIdRateLimitAnalytics("test", "test", "test", timeDelta60)
 

@@ -27,7 +27,7 @@ suite "regions endpoints":
   test "GET /accounts/{account_id}/dls/regions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDlsRegions("test", "test", 1, {})
+    discard waitFor client.getAccountsAccountIdDlsRegions("test", "test", 1, typeManaged)
 
   test "GET /accounts/{account_id}/dls/regions/{region_id}":
     let client = initCloudflareClient("test-key")

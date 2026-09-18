@@ -39,30 +39,30 @@ suite "radar_quality endpoints":
   test "GET /radar/quality/iqi/summary":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarQualityIqiSummary(@["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], {}, {})
+    discard waitFor client.getRadarQualityIqiSummary(@["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], metricBANDWIDTH, formatJSON)
 
   test "GET /radar/quality/iqi/timeseries_groups":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarQualityIqiTimeseriesGroups({}, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], true, {}, {})
+    discard waitFor client.getRadarQualityIqiTimeseriesGroups(aggInterval15m, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], true, metricBANDWIDTH, formatJSON)
 
   test "GET /radar/quality/speed/histogram":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarQualitySpeedHistogram(@["test"], @["test"], @["test"], @["test"], @["test"], 1, {}, {})
+    discard waitFor client.getRadarQualitySpeedHistogram(@["test"], @["test"], @["test"], @["test"], @["test"], 1, metricGroupBANDWIDTH, formatJSON)
 
   test "GET /radar/quality/speed/summary":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarQualitySpeedSummary(@["test"], @["test"], @["test"], @["test"], @["test"], {})
+    discard waitFor client.getRadarQualitySpeedSummary(@["test"], @["test"], @["test"], @["test"], @["test"], formatJSON)
 
   test "GET /radar/quality/speed/top/ases":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarQualitySpeedTopAses(1, @["test"], @["test"], @["test"], @["test"], @["test"], {}, true, {})
+    discard waitFor client.getRadarQualitySpeedTopAses(1, @["test"], @["test"], @["test"], @["test"], @["test"], orderByBANDWIDTHDOWNLOAD, true, formatJSON)
 
   test "GET /radar/quality/speed/top/locations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarQualitySpeedTopLocations(1, @["test"], @["test"], @["test"], @["test"], @["test"], {}, true, {})
+    discard waitFor client.getRadarQualitySpeedTopLocations(1, @["test"], @["test"], @["test"], @["test"], @["test"], orderByBANDWIDTHDOWNLOAD, true, formatJSON)
 

@@ -69,7 +69,7 @@ suite "live_streams endpoints":
   test "GET /accounts/{account_id}/realtime/kit/{app_id}/livestreams":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdLivestreams(true, 1, 1, {}, "test", "test", {})
+    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdLivestreams(true, 1, 1, statusLIVE, "test", "test", sortOrderASC)
 
   test "GET /accounts/{account_id}/realtime/kit/{app_id}/livestreams/sessions/{livestream-session-id}":
     let client = initCloudflareClient("test-key")

@@ -59,7 +59,7 @@ suite "account_owned_api_tokens endpoints":
   test "GET /accounts/{account_id}/tokens":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdTokens(newIamAccountIdentifier(), 1.0, 1.0, {}, true)
+    discard waitFor client.getAccountsAccountIdTokens(newIamAccountIdentifier(), 1.0, 1.0, directionAsc, true)
 
   test "POST /accounts/{account_id}/tokens":
     let client = initCloudflareClient("test-key")

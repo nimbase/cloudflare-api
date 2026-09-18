@@ -43,7 +43,7 @@ suite "threat_signals endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/v2/threat-signals/articles":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles("test", "test", 1, "test", "test", true, "test", "test", "test", true, "test", "test", "test", "test", "test", "test", {}, {}, "test")
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles("test", "test", 1, "test", "test", true, "test", "test", "test", true, "test", "test", "test", "test", "test", "test", sourceTypeCurated, tagAppliedByAi, "test")
 
   test "GET /accounts/{account_id}/cloudforce-one/v2/threat-signals/articles/{article_id}":
     let client = initCloudflareClient("test-key")
@@ -53,7 +53,7 @@ suite "threat_signals endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/v2/threat-signals/articles/{article_id}/content":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdContent("test", "test", {})
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdContent("test", "test", formatText)
 
   test "GET /accounts/{account_id}/cloudforce-one/v2/threat-signals/articles/{article_id}/skills/{skill_id}/output":
     let client = initCloudflareClient("test-key")
@@ -83,7 +83,7 @@ suite "threat_signals endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/v2/threat-signals/feeds":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneV2ThreatSignalsFeeds("test", 1, 1, 1, "test", "test", {}, true, "test")
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2ThreatSignalsFeeds("test", 1, 1, 1, "test", "test", sourceTypeCurated, true, "test")
 
   test "POST /accounts/{account_id}/cloudforce-one/v2/threat-signals/feeds/poll":
     let client = initCloudflareClient("test-key")
@@ -98,7 +98,7 @@ suite "threat_signals endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/v2/threat-signals/feeds/{feed_id}/raw":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdRaw("test", "test", {})
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdRaw("test", "test", formatText)
 
   test "GET /accounts/{account_id}/cloudforce-one/v2/threat-signals/feeds/{feed_id}/skills":
     let client = initCloudflareClient("test-key")

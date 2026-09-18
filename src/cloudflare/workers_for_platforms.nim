@@ -155,7 +155,7 @@ proc putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                       accountId: types.WorkersIdentifier,
                                                                                       dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                       scriptName: types.WorkersScriptName,
-                                                                                      bindingsInherit: WorkersForPlatformBindingsInheritOption): Future[JsonNode] {.async.} =
+                                                                                      bindingsInherit: WorkersForPlatformBindingsInheritOption = bindingsInheritStrict): Future[JsonNode] {.async.} =
   ## Upload a Workers for Platforms script module to a dispatch namespace. You can
   ## find more about the multipart metadata on our docs:https://developers.cloudflar
   ## e.com/workers/configuration/multipart-upload-metadata/.

@@ -7814,6 +7814,22 @@ type
     success*: bool
       ## Indicates whether the API call was successful.
 
+  BillableUsageApiV2AccountBillableMetric* = ref object of RootObj
+    dimension_keys*: seq[string]
+    id*: string
+      ## Public catalog identifier of the billable metric.
+    name*: string
+      ## Human-readable billable metric name.
+    product_category*: seq[BillableUsageApiV2ProductCategory]
+    product_family*: seq[BillableUsageApiV2ProductFamily]
+
+  BillableUsageApiV2AccountBillableMetricsResponse* = ref object of RootObj
+    ## Successful response containing account-visible billable metrics.
+    errors*: Option[seq[BillableUsageApiMessage]]
+    messages*: Option[seq[BillableUsageApiMessage]]
+    result*: seq[BillableUsageApiV2AccountBillableMetric]
+    success*: bool
+
   BillableUsageApiV2FilterBy* = ref object of RootObj
     ## Usage filters. Filters of different kinds are combined with AND, so a record
     ## must match every filter present to be returned.
@@ -7834,6 +7850,14 @@ type
       ## Case-sensitive customer resource-tag key.
     `type`*: string
       ## Dimension category. Currently only customer resource tags are supported.
+
+  BillableUsageApiV2ProductCategory* = ref object of RootObj
+    id*: string
+    name*: string
+
+  BillableUsageApiV2ProductFamily* = ref object of RootObj
+    id*: string
+    name*: string
 
   BillableUsageApiV2TagFilter* = ref object of RootObj
     ## Values accepted for one customer resource-tag key.
@@ -9754,8 +9778,9 @@ type
     ## constraints, versions, and rollouts. Set it to `durable_object` for a
     ## Durable Object-managed application where each Durable Object creates and manages
     ## the lifecycle of its container instance. For `durable_object` requests, supply
-    ## `name`, `scheduling_policy`, and `durable_objects`, with optional top-level
-    ## `observability` settings.
+    ## `name`, `scheduling_policy`, and `durable_objects`, with optional
+    ## `configuration`
+    ## and top-level `observability` settings.
     ##
 
   CcContainersCreateApplicationRolloutRequest* = ref object of RootObj
@@ -9804,11 +9829,12 @@ type
   CcContainersCreateDurableObjectApplicationRequest* = ref object of RootObj
     ## Create a Durable Object-managed Containers application. Each Durable Object
     ## creates and manages the lifecycle of its container instance. Supply `name`,
-    ## `scheduling_policy`, and `durable_objects`, with optional top-level
-    ## `observability`
-    ## settings. Deployment configuration, instance counts, scaling, constraints,
-    ## versions, and rollouts do not apply.
+    ## `scheduling_policy`, and `durable_objects`, with optional `configuration` and
+    ## top-level `observability` settings. Deployment configuration, instance counts,
+    ## scaling, constraints, versions, and rollouts do not apply.
     ##
+    configuration*: Option[JsonNode]
+      ## Configuration for a Durable Object-managed application.
     durable_objects*: JsonNode
       ## The customer-owned Durable Object namespace that owns this application and its
       ## instances.
@@ -9898,6 +9924,7 @@ type
   CcContainersModifyApplicationConfiguration* = ref object of RootObj
     ## Application configuration fields you can change without creating a rollout.
     authorized_keys*: Option[seq[CcUserSSHPublicKey]]
+    wrangler_ssh*: Option[CcWranglerSSHConfig]
 
   CcContainersModifyApplicationRequestBody* = ref object of RootObj
     ## Request body for modifying a Containers application without replacing its
@@ -9947,6 +9974,7 @@ type
   CcDurableObjectApplication* = ref object of RootObj
     ## Each Durable Object creates and manages the lifecycle of its container instance.
     account_id*: CcAccountID
+    configuration*: Option[CcDurableObjectApplicationConfiguration]
     created_at*: CcISO8601Timestamp
     durable_objects*: CcDurableObjectsConfigurationNamespaceId
     health*: Option[CcDurableObjectApplicationHealth]
@@ -9955,6 +9983,11 @@ type
     observability*: Option[CcDurableObjectApplicationObservability]
     scheduling_policy*: CcDurableObjectApplicationSchedulingPolicy
     updated_at*: CcISO8601Timestamp
+
+  CcDurableObjectApplicationConfiguration* = ref object of RootObj
+    ## Application-wide settings for a Durable Object-managed application.
+    authorized_keys*: Option[seq[CcUserSSHPublicKey]]
+    wrangler_ssh*: Option[CcWranglerSSHConfig]
 
   CcDurableObjectApplicationHealth* = ref object of RootObj
     ## Aggregate current activity for the latest observed placement of each instance.
@@ -10245,6 +10278,11 @@ type
     messages*: CcMessages
     success*: bool
       ## Whether the API call was successful.
+
+  CcWranglerSSHConfig* = ref object of RootObj
+    ## Configuration properties for connecting with SSH to a container using Wrangler.
+    enabled*: Option[bool]
+    port*: Option[int64]
 
   ClientSideSecurityApiGetResponseCollection* = ref object of RootObj
     errors*: Option[ClientSideSecurityMessages]
@@ -42192,6 +42230,18 @@ type
 
   WorkersObservabilityFilterNode* = ref object of RootObj
     ## Supports nested groups via kind: 'group'.
+
+  WorkersObservabilityIssueOccurrence* = ref object of RootObj
+    context*: Option[JsonNode]
+    error*: JsonNode
+    id*: string
+      ## Unique occurrence ID.
+    invocation*: JsonNode
+    request*: Option[JsonNode]
+    timestamp*: float64
+      ## Occurrence timestamp as Unix epoch milliseconds.
+    trail*: seq[JsonNode]
+    worker*: JsonNode
 
   WorkersObservabilityPerformanceInformation* = ref object of RootObj
     ## Query performance statistics from the database. Includes execution time, rows

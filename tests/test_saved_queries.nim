@@ -43,7 +43,7 @@ suite "saved_queries endpoints":
   test "GET /accounts/{account_id}/workers/observability/queries":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersObservabilityQueries(1.0, 1.0, {}, {})
+    discard waitFor client.getAccountsAccountIdWorkersObservabilityQueries(1.0, 1.0, orderAsc, orderByCreated)
 
   test "GET /accounts/{account_id}/workers/observability/queries/{queryId}":
     let client = initCloudflareClient("test-key")

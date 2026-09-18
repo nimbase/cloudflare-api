@@ -67,7 +67,7 @@ proc getAccountsAccountIdRealtimeKitAppIdMeetings*(client: CloudflareClient,
                                                    startTime: string = default(string),
                                                    endTime: string = default(string),
                                                    search: string = default(string),
-                                                   status: MeetingStatusOption): Future[JsonNode] {.async.} =
+                                                   status: MeetingStatusOption = statusACTIVE): Future[JsonNode] {.async.} =
   ## Returns all meetings for the given App ID.
 
   var q = initOrderedTable[string, string]()

@@ -67,7 +67,7 @@ suite "workers_kv_namespace endpoints":
   test "GET /accounts/{account_id}/storage/kv/namespaces":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdStorageKvNamespaces("test", 1.0, 1.0, {}, {})
+    discard waitFor client.getAccountsAccountIdStorageKvNamespaces("test", 1.0, 1.0, orderId, directionAsc)
 
   test "POST /accounts/{account_id}/storage/kv/namespaces":
     let client = initCloudflareClient("test-key")

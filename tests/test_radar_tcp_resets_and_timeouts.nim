@@ -23,10 +23,10 @@ suite "radar_tcp_resets_and_timeouts endpoints":
   test "GET /radar/tcp_resets_timeouts/summary":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarTcpResetsTimeoutsSummary(@["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], {})
+    discard waitFor client.getRadarTcpResetsTimeoutsSummary(@["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], formatJSON)
 
   test "GET /radar/tcp_resets_timeouts/timeseries_groups":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarTcpResetsTimeoutsTimeseriesGroups({}, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], {})
+    discard waitFor client.getRadarTcpResetsTimeoutsTimeseriesGroups(aggInterval15m, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], formatJSON)
 

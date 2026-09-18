@@ -11,11 +11,20 @@ import ./private/types
 
 proc getAccountsAccountIdWorkersScriptsScriptNameDeployments*(client: CloudflareClient,
                                                               accountId: types.WorkersIdentifier,
-                                                              scriptName: types.WorkersScriptName): Future[JsonNode] {.async.} =
+                                                              scriptName: types.WorkersScriptName,
+                                                              since: string = default(string),
+                                                              until: string = default(string),
+                                                              page: int64 = 1,
+                                                              perPage: int64 = 10): Future[JsonNode] {.async.} =
   ## List Worker deployments. The first deployment in the list is the latest
   ## deployment actively serving traffic.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/deployments")
+  var q = initOrderedTable[string, string]()
+  q["since"] = $since
+  q["until"] = $until
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/accounts/{accountId}/workers/scripts/{scriptName}/deployments", q)
   let body = await res.body
   case res.code
   of Http200:

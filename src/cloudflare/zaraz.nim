@@ -77,8 +77,8 @@ proc getZonesZoneIdSettingsZarazHistory*(client: CloudflareClient,
                                          zoneId: types.ZarazIdentifier,
                                          offset: int64 = default(int64),
                                          limit: int64 = default(int64),
-                                         sortField: ZarazSortFieldOption,
-                                         sortOrder: ZarazSortOrderOption): Future[types.ZarazZarazHistoryResponse] {.async.} =
+                                         sortField: ZarazSortFieldOption = sortFieldId,
+                                         sortOrder: ZarazSortOrderOption = sortOrderDESC): Future[types.ZarazZarazHistoryResponse] {.async.} =
   ## Lists a history of published Zaraz configuration records for a zone.
 
   var q = initOrderedTable[string, string]()

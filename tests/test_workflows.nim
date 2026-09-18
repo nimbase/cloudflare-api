@@ -159,7 +159,7 @@ suite "workflows endpoints":
   test "GET /accounts/{account_id}/workflows/{workflow_name}/instances":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkflowsWorkflowNameInstances("test", 1.0, 1.0, "test", {}, {}, "test", "test", "test")
+    discard waitFor client.getAccountsAccountIdWorkflowsWorkflowNameInstances("test", 1.0, 1.0, "test", directionAsc, statusQueued, "test", "test", "test")
 
   test "POST /accounts/{account_id}/workflows/{workflow_name}/instances/batch":
     let client = initCloudflareClient("test-key")
@@ -179,7 +179,7 @@ suite "workflows endpoints":
   test "GET /accounts/{account_id}/workflows/{workflow_name}/instances/{instance_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceId("test", "test", {}, {}, "test")
+    discard waitFor client.getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceId("test", "test", simpleTrue, orderAsc, "test")
 
   test "DELETE /accounts/{account_id}/workflows/{workflow_name}/instances/{instance_id}":
     let client = initCloudflareClient("test-key")
@@ -199,7 +199,7 @@ suite "workflows endpoints":
   test "GET /accounts/{account_id}/workflows/{workflow_name}/instances/{instance_id}/step":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdStep("test", "test", "test", {}, 1, "test")
+    discard waitFor client.getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdStep("test", "test", "test", typeStep, 1, "test")
 
   test "GET /accounts/{account_id}/workflows/{workflow_name}/instances/{instance_id}/subscribe/token":
     let client = initCloudflareClient("test-key")

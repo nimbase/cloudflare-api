@@ -31,12 +31,12 @@ suite "ai_gateway_logs endpoints":
   test "GET /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/logs":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiGatewayGatewaysGatewayIdLogs("test", "test", "test", 1, 1, {}, {}, @["test"], true, {}, "test", "test", 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, openjson.newJObject(), true, true, "test", "test", "test", "test", "test")
+    discard waitFor client.getAccountsAccountIdAiGatewayGatewaysGatewayIdLogs("test", "test", "test", 1, 1, orderByCreatedAt, orderByDirectionAsc, @["test"], true, directionAsc, "test", "test", 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, openjson.newJObject(), true, true, "test", "test", "test", "test", "test")
 
   test "DELETE /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/logs":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdAiGatewayGatewaysGatewayIdLogs("test", "test", {}, {}, @["test"], 1)
+    discard waitFor client.deleteAccountsAccountIdAiGatewayGatewaysGatewayIdLogs("test", "test", orderByCreatedAt, orderByDirectionAsc, @["test"], 1)
 
   test "GET /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/logs/{id}":
     let client = initCloudflareClient("test-key")

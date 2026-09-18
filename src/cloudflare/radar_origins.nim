@@ -48,7 +48,7 @@ type
 
 proc getRadarOrigins*(client: CloudflareClient, limit: int64 = 5,
                       offset: int64 = default(int64),
-                      format: RadarOriginFormatOption): Future[GetRadarOriginsResponse] {.async.} =
+                      format: RadarOriginFormatOption = formatJSON): Future[GetRadarOriginsResponse] {.async.} =
   ## Retrieves a list of origins with their regions.
 
   var q = initOrderedTable[string, string]()
@@ -73,7 +73,7 @@ proc getRadarOriginsSummaryDimension*(client: CloudflareClient,
                                       origin: seq[string] = default(seq[string]),
                                       metric: RadarOriginMetricOption,
                                       region: seq[string] = @[],
-                                      format: RadarOriginFormatOption): Future[GetRadarOriginsSummaryDimensionResponse] {.async.} =
+                                      format: RadarOriginFormatOption = formatJSON): Future[GetRadarOriginsSummaryDimensionResponse] {.async.} =
   ## Retrieves an aggregated summary of origin metrics grouped by the specified
   ## dimension.
 
@@ -96,14 +96,14 @@ proc getRadarOriginsSummaryDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarOriginsTimeseries*(client: CloudflareClient,
-                                aggInterval: RadarOriginAggIntervalOption,
+                                aggInterval: RadarOriginAggIntervalOption = aggInterval15m,
                                 name: seq[string] = @[],
                                 dateRange: seq[string] = @[],
                                 dateStart: seq[string] = @[],
                                 dateEnd: seq[string] = @[], origin: seq[string],
                                 metric: RadarOriginMetricOption,
                                 region: seq[string] = @[],
-                                format: RadarOriginFormatOption): Future[GetRadarOriginsTimeseriesResponse] {.async.} =
+                                format: RadarOriginFormatOption = formatJSON): Future[GetRadarOriginsTimeseriesResponse] {.async.} =
   ## Retrieves the time series of origin metrics for the specified origin.
 
   var q = initOrderedTable[string, string]()
@@ -126,7 +126,7 @@ proc getRadarOriginsTimeseries*(client: CloudflareClient,
 
 proc getRadarOriginsTimeseriesGroupsDimension*(client: CloudflareClient,
                                                dimension: Dimension,
-                                               aggInterval: RadarOriginAggIntervalOption,
+                                               aggInterval: RadarOriginAggIntervalOption = aggInterval15m,
                                                name: seq[string] = @[],
                                                dateRange: seq[string] = @[],
                                                dateStart: seq[string] = @[],
@@ -136,7 +136,7 @@ proc getRadarOriginsTimeseriesGroupsDimension*(client: CloudflareClient,
                                                metric: RadarOriginMetricOption,
                                                region: seq[string] = @[],
                                                normalization: RadarOriginNormalizationOption = normalizationPERCENTAGE,
-                                               format: RadarOriginFormatOption): Future[GetRadarOriginsTimeseriesGroupsDimensionResponse] {.async.} =
+                                               format: RadarOriginFormatOption = formatJSON): Future[GetRadarOriginsTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of origin metrics grouped by the specified dimension
   ## over time.
 
@@ -161,7 +161,7 @@ proc getRadarOriginsTimeseriesGroupsDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarOriginsSlug*(client: CloudflareClient, slug: Slug,
-                          format: RadarOriginFormatOption): Future[GetRadarOriginsSlugResponse] {.async.} =
+                          format: RadarOriginFormatOption = formatJSON): Future[GetRadarOriginsSlugResponse] {.async.} =
   ## Retrieves the requested origin information with its regions.
 
   var q = initOrderedTable[string, string]()

@@ -31,7 +31,7 @@ suite "destinations endpoints":
   test "GET /accounts/{account_id}/workers/observability/destinations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersObservabilityDestinations(1.0, 1.0, {}, {})
+    discard waitFor client.getAccountsAccountIdWorkersObservabilityDestinations(1.0, 1.0, orderAsc, orderByCreated)
 
   test "DELETE /accounts/{account_id}/workers/observability/destinations/{slug}":
     let client = initCloudflareClient("test-key")

@@ -61,11 +61,11 @@ type
 
 proc getRadarBots*(client: CloudflareClient, limit: int64 = 5,
                    offset: int64 = default(int64),
-                   botCategory: RadarBotBotCategoryOption,
+                   botCategory: RadarBotBotCategoryOption = botCategorySEARCHENGINECRAWLER,
                    botOperator: string = default(string),
-                   kind: RadarBotKindOption,
-                   botVerificationStatus: RadarBotBotVerificationStatusOption,
-                   format: RadarBotFormatOption): Future[GetRadarBotsResponse] {.async.} =
+                   kind: RadarBotKindOption = kindAGENT,
+                   botVerificationStatus: RadarBotBotVerificationStatusOption = botVerificationStatusVERIFIED,
+                   format: RadarBotFormatOption = formatJSON): Future[GetRadarBotsResponse] {.async.} =
   ## Retrieves a list of bots.
 
   var q = initOrderedTable[string, string]()
@@ -98,7 +98,7 @@ proc getRadarBotsSummaryDimension*(client: CloudflareClient,
                                    botCategory: seq[string] = default(seq[string]),
                                    botKind: seq[string] = default(seq[string]),
                                    botVerificationStatus: seq[string] = default(seq[string]),
-                                   format: RadarBotFormatOption): Future[GetRadarBotsSummaryDimensionResponse] {.async.} =
+                                   format: RadarBotFormatOption = formatJSON): Future[GetRadarBotsSummaryDimensionResponse] {.async.} =
   ## Retrieves an aggregated summary of bots HTTP requests grouped by the specified
   ## dimension.
 
@@ -126,7 +126,7 @@ proc getRadarBotsSummaryDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarBotsTimeseries*(client: CloudflareClient,
-                             aggInterval: RadarBotAggIntervalOption,
+                             aggInterval: RadarBotAggIntervalOption = aggInterval15m,
                              name: seq[string] = @[],
                              dateRange: seq[string] = @[],
                              dateStart: seq[string] = @[],
@@ -138,7 +138,7 @@ proc getRadarBotsTimeseries*(client: CloudflareClient,
                              botCategory: seq[string] = default(seq[string]),
                              botKind: seq[string] = default(seq[string]),
                              botVerificationStatus: seq[string] = default(seq[string]),
-                             format: RadarBotFormatOption): Future[GetRadarBotsTimeseriesResponse] {.async.} =
+                             format: RadarBotFormatOption = formatJSON): Future[GetRadarBotsTimeseriesResponse] {.async.} =
   ## Retrieves bots HTTP request volume over time.
 
   var q = initOrderedTable[string, string]()
@@ -166,7 +166,7 @@ proc getRadarBotsTimeseries*(client: CloudflareClient,
 
 proc getRadarBotsTimeseriesGroupsDimension*(client: CloudflareClient,
                                             dimension: Dimension,
-                                            aggInterval: RadarBotAggIntervalOption,
+                                            aggInterval: RadarBotAggIntervalOption = aggInterval15m,
                                             name: seq[string] = @[],
                                             dateRange: seq[string] = @[],
                                             dateStart: seq[string] = @[],
@@ -180,7 +180,7 @@ proc getRadarBotsTimeseriesGroupsDimension*(client: CloudflareClient,
                                             botCategory: seq[string] = default(seq[string]),
                                             botKind: seq[string] = default(seq[string]),
                                             botVerificationStatus: seq[string] = default(seq[string]),
-                                            format: RadarBotFormatOption): Future[GetRadarBotsTimeseriesGroupsDimensionResponse] {.async.} =
+                                            format: RadarBotFormatOption = formatJSON): Future[GetRadarBotsTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of HTTP requests from bots, grouped by the specified
   ## dimension over time.
 
@@ -209,7 +209,7 @@ proc getRadarBotsTimeseriesGroupsDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarBotsBotSlug*(client: CloudflareClient, botSlug: string,
-                          format: RadarBotFormatOption): Future[GetRadarBotsBotSlugResponse] {.async.} =
+                          format: RadarBotFormatOption = formatJSON): Future[GetRadarBotsBotSlugResponse] {.async.} =
   ## Retrieves the requested bot information.
 
   var q = initOrderedTable[string, string]()

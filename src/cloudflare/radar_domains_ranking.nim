@@ -33,7 +33,7 @@ proc getRadarRankingDomainDomain*(client: CloudflareClient, domain: string,
                                   name: seq[string] = @[],
                                   includeTopLocations: bool = default(bool),
                                   date: seq[string] = @[],
-                                  format: RadarDomainsRankingFormatOption): Future[GetRadarRankingDomainDomainResponse] {.async.} =
+                                  format: RadarDomainsRankingFormatOption = formatJSON): Future[GetRadarRankingDomainDomainResponse] {.async.} =
   ## Retrieves domain rank details. Cloudflare provides an ordered rank for the top
   ## 100 domains, but for the remainder it only provides ranking buckets like top 200
   ## thousand, top one million, etc.. These are available through Radar datasets
@@ -63,7 +63,7 @@ proc getRadarRankingTimeseriesGroups*(client: CloudflareClient, limit: int64 = 5
                                       dateRange: seq[string] = @[],
                                       dateStart: seq[string] = @[],
                                       dateEnd: seq[string] = @[],
-                                      format: RadarDomainsRankingFormatOption): Future[GetRadarRankingTimeseriesGroupsResponse] {.async.} =
+                                      format: RadarDomainsRankingFormatOption = formatJSON): Future[GetRadarRankingTimeseriesGroupsResponse] {.async.} =
   ## Retrieves domains rank over time.
 
   var q = initOrderedTable[string, string]()
@@ -90,7 +90,7 @@ proc getRadarRankingTop*(client: CloudflareClient, limit: int64 = default(int64)
                          domainCategory: seq[string] = @[],
                          date: seq[string] = @[],
                          rankingType: RadarDomainsRankingRankingTypeOption = rankingTypePOPULAR,
-                         format: RadarDomainsRankingFormatOption): Future[GetRadarRankingTopResponse] {.async.} =
+                         format: RadarDomainsRankingFormatOption = formatJSON): Future[GetRadarRankingTopResponse] {.async.} =
   ## Retrieves the top or trending domains based on their rank. Popular domains are
   ## domains of broad appeal based on how people use the Internet. Trending domains
   ## are domains that are generating a surge in interest. For more information on top

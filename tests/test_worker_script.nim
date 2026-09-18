@@ -103,7 +103,7 @@ suite "worker_script endpoints":
   test "POST /accounts/{account_id}/workers/assets/upload":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdWorkersAssetsUpload("test", {})
+    discard waitFor client.postAccountsAccountIdWorkersAssetsUpload("test", base64True)
 
   test "GET /accounts/{account_id}/workers/scripts":
     let client = initCloudflareClient("test-key")
@@ -113,7 +113,7 @@ suite "worker_script endpoints":
   test "GET /accounts/{account_id}/workers/scripts-search":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersScriptsSearch("test", "test", "test", {}, 1, 1)
+    discard waitFor client.getAccountsAccountIdWorkersScriptsSearch("test", "test", "test", orderByCreatedOn, 1, 1)
 
   test "GET /accounts/{account_id}/workers/scripts/{script_name}":
     let client = initCloudflareClient("test-key")
@@ -123,7 +123,7 @@ suite "worker_script endpoints":
   test "PUT /accounts/{account_id}/workers/scripts/{script_name}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdWorkersScriptsScriptName("test", "test", {})
+    discard waitFor client.putAccountsAccountIdWorkersScriptsScriptName("test", "test", bindingsInheritStrict)
 
   test "DELETE /accounts/{account_id}/workers/scripts/{script_name}":
     let client = initCloudflareClient("test-key")

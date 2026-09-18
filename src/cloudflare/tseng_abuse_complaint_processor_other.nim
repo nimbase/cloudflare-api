@@ -183,7 +183,7 @@ proc getAccountsAccountIdAbuseReportsReportIdMitigations*(client: CloudflareClie
                                                           reportId: string,
                                                           page: int64 = default(int64),
                                                           perPage: int64 = default(int64),
-                                                          sort: TsengAbuseComplaintProcessorOtherSortOption,
+                                                          sort: TsengAbuseComplaintProcessorOtherSortOption = sortTypeAsc,
                                                           `type`: types.AbuseReportsMitigationType = default(types.AbuseReportsMitigationType),
                                                           effectiveBefore: string = default(string),
                                                           effectiveAfter: string = default(string),

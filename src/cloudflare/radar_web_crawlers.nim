@@ -43,7 +43,7 @@ proc getRadarBotsCrawlersSummaryDimension*(client: CloudflareClient,
                                            clientType: seq[string] = default(seq[string]),
                                            responseStatus: seq[string] = @[],
                                            responseStatusCategory: seq[string] = default(seq[string]),
-                                           format: RadarWebCrawlerFormatOption): Future[GetRadarBotsCrawlersSummaryDimensionResponse] {.async.} =
+                                           format: RadarWebCrawlerFormatOption = formatJSON): Future[GetRadarBotsCrawlersSummaryDimensionResponse] {.async.} =
   ## Retrieves an aggregated summary of HTTP requests from crawlers, grouped by the
   ## specified dimension.
 
@@ -70,7 +70,7 @@ proc getRadarBotsCrawlersSummaryDimension*(client: CloudflareClient,
 
 proc getRadarBotsCrawlersTimeseriesGroupsDimension*(client: CloudflareClient,
                                                     dimension: Dimension,
-                                                    aggInterval: RadarWebCrawlerAggIntervalOption,
+                                                    aggInterval: RadarWebCrawlerAggIntervalOption = aggInterval15m,
                                                     name: seq[string] = @[],
                                                     dateRange: seq[string] = @[],
                                                     dateStart: seq[string] = @[],
@@ -83,7 +83,7 @@ proc getRadarBotsCrawlersTimeseriesGroupsDimension*(client: CloudflareClient,
                                                     clientType: seq[string] = default(seq[string]),
                                                     responseStatus: seq[string] = @[],
                                                     responseStatusCategory: seq[string] = default(seq[string]),
-                                                    format: RadarWebCrawlerFormatOption): Future[GetRadarBotsCrawlersTimeseriesGroupsDimensionResponse] {.async.} =
+                                                    format: RadarWebCrawlerFormatOption = formatJSON): Future[GetRadarBotsCrawlersTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of HTTP requests from crawlers, grouped by the
   ## specified dimension over time.
 

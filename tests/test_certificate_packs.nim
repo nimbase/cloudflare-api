@@ -39,7 +39,7 @@ suite "certificate_packs endpoints":
   test "GET /zones/{zone_id}/ssl/certificate_packs":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdSslCertificatePacks("test", 1.0, 1.0, {}, {})
+    discard waitFor client.getZonesZoneIdSslCertificatePacks("test", 1.0, 1.0, statusAll, deployStaging)
 
   test "GET /zones/{zone_id}/ssl/certificate_packs/quota":
     let client = initCloudflareClient("test-key")

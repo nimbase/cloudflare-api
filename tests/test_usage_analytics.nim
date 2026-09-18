@@ -27,25 +27,25 @@ suite "usage_analytics endpoints":
   test "GET /accounts/{account_id}/billing/usage":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdBillingUsage("test", "test", "test", "test", {}, 1, "test")
+    discard waitFor client.getAccountsAccountIdBillingUsage("test", "test", "test", "test", timeDeltaHour, 1, "test")
 
   test "GET /accounts/{account_id}/media/usage":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdMediaUsage("test", "test", "test", "test", {}, 1, "test")
+    discard waitFor client.getAccountsAccountIdMediaUsage("test", "test", "test", "test", timeDeltaHour, 1, "test")
 
   test "GET /accounts/{account_id}/stream/usage":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdStreamUsage("test", "test", "test", "test", {}, 1, "test")
+    discard waitFor client.getAccountsAccountIdStreamUsage("test", "test", "test", "test", timeDeltaHour, 1, "test")
 
   test "GET /zones/{zone_id}/media/usage":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdMediaUsage("test", "test", "test", "test", {}, 1, "test")
+    discard waitFor client.getZonesZoneIdMediaUsage("test", "test", "test", "test", timeDeltaHour, 1, "test")
 
   test "GET /zones/{zone_id}/stream/usage":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdStreamUsage("test", "test", "test", "test", {}, 1, "test")
+    discard waitFor client.getZonesZoneIdStreamUsage("test", "test", "test", "test", timeDeltaHour, 1, "test")
 

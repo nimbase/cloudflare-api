@@ -18,7 +18,7 @@ proc getAccountsAccountIdDlsRegions*(client: CloudflareClient,
                                      accountId: types.DlsAccountIdentifier,
                                      cursor: string = default(string),
                                      perPage: int64 = 25,
-                                     `type`: RegionTypeOption): Future[types.DlsRegionPublicPaginatedListResponse] {.async.} =
+                                     `type`: RegionTypeOption = typeManaged): Future[types.DlsRegionPublicPaginatedListResponse] {.async.} =
   ## List DLS regions for an account
 
   var q = initOrderedTable[string, string]()

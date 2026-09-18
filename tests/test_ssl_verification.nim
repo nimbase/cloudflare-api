@@ -31,7 +31,7 @@ suite "ssl_verification endpoints":
   test "GET /zones/{zone_id}/ssl/verification":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdSslVerification("test", {})
+    discard waitFor client.getZonesZoneIdSslVerification("test", retryTrue)
 
   test "PATCH /zones/{zone_id}/ssl/verification/{certificate_pack_id}":
     let client = initCloudflareClient("test-key")

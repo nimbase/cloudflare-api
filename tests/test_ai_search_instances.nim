@@ -83,7 +83,7 @@ suite "ai_search_instances endpoints":
   test "GET /accounts/{account_id}/ai-search/instances":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiSearchInstances("test", 1, 1, "test", "test", {}, {})
+    discard waitFor client.getAccountsAccountIdAiSearchInstances("test", 1, 1, "test", "test", orderByCreatedAt, orderByDirectionAsc)
 
   test "GET /accounts/{account_id}/ai-search/instances/{id}":
     let client = initCloudflareClient("test-key")
@@ -103,7 +103,7 @@ suite "ai_search_instances endpoints":
   test "GET /accounts/{account_id}/ai-search/namespaces/{name}/instances":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiSearchNamespacesNameInstances("test", 1, 1, "test", "test", {}, {}, "test")
+    discard waitFor client.getAccountsAccountIdAiSearchNamespacesNameInstances("test", 1, 1, "test", "test", orderByCreatedAt, orderByDirectionAsc, "test")
 
   test "GET /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}":
     let client = initCloudflareClient("test-key")

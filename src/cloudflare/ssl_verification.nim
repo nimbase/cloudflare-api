@@ -15,7 +15,7 @@ type
 
 proc getZonesZoneIdSslVerification*(client: CloudflareClient,
                                     zoneId: types.TlsCertificatesAndHostnamesIdentifier,
-                                    retry: SslVerificationRetryOption): Future[types.TlsCertificatesAndHostnamesSslVerificationResponseCollection] {.async.} =
+                                    retry: SslVerificationRetryOption = retryTrue): Future[types.TlsCertificatesAndHostnamesSslVerificationResponseCollection] {.async.} =
   ## Get SSL Verification Info for a Zone.
 
   var q = initOrderedTable[string, string]()

@@ -17,7 +17,7 @@ type
 
 
 proc getRadarEntitiesIp*(client: CloudflareClient, ip: JsonNode,
-                         format: RadarIpFormatOption): Future[GetRadarEntitiesIpResponse] {.async.} =
+                         format: RadarIpFormatOption = formatJSON): Future[GetRadarEntitiesIpResponse] {.async.} =
   ## Retrieves IP address information.
 
   var q = initOrderedTable[string, string]()

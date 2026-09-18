@@ -95,7 +95,7 @@ suite "magic_connectors endpoints":
   test "GET /accounts/{account_id}/magic/connectors":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdMagicConnectors("test", {})
+    discard waitFor client.getAccountsAccountIdMagicConnectors("test", deviceTypeMANAGED)
 
   test "POST /accounts/{account_id}/magic/connectors":
     let client = initCloudflareClient("test-key")

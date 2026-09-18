@@ -48,7 +48,7 @@ proc getRadarNetflowsSummary*(client: CloudflareClient, name: seq[string] = @[],
                               location: seq[string] = @[],
                               continent: seq[string] = @[],
                               geoId: seq[string] = @[],
-                              format: RadarNetflowFormatOption): Future[GetRadarNetflowsSummaryResponse] {.async.} =
+                              format: RadarNetflowFormatOption = formatJSON): Future[GetRadarNetflowsSummaryResponse] {.async.} =
   ## Retrieves the distribution of network traffic (NetFlows) by HTTP vs other
   ## protocols.
 
@@ -82,7 +82,7 @@ proc getRadarNetflowsSummaryDimension*(client: CloudflareClient,
                                        geoId: seq[string] = @[],
                                        product: seq[string] = default(seq[string]),
                                        limitPerGroup: int64 = default(int64),
-                                       format: RadarNetflowFormatOption): Future[GetRadarNetflowsSummaryDimensionResponse] {.async.} =
+                                       format: RadarNetflowFormatOption = formatJSON): Future[GetRadarNetflowsSummaryDimensionResponse] {.async.} =
   ## Retrieves the distribution of network traffic (NetFlows) by the specified
   ## dimension.
 
@@ -107,7 +107,7 @@ proc getRadarNetflowsSummaryDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarNetflowsTimeseries*(client: CloudflareClient,
-                                 aggInterval: RadarNetflowAggIntervalOption,
+                                 aggInterval: RadarNetflowAggIntervalOption = aggInterval15m,
                                  name: seq[string] = @[],
                                  dateRange: seq[string] = @[],
                                  dateStart: seq[string] = @[],
@@ -117,8 +117,8 @@ proc getRadarNetflowsTimeseries*(client: CloudflareClient,
                                  location: seq[string] = @[],
                                  continent: seq[string] = @[],
                                  geoId: seq[string] = @[],
-                                 normalization: RadarNetflowNormalizationOption,
-                                 format: RadarNetflowFormatOption): Future[GetRadarNetflowsTimeseriesResponse] {.async.} =
+                                 normalization: RadarNetflowNormalizationOption = normalizationPERCENTAGECHANGE,
+                                 format: RadarNetflowFormatOption = formatJSON): Future[GetRadarNetflowsTimeseriesResponse] {.async.} =
   ## Retrieves network traffic (NetFlows) over time.
 
   var q = initOrderedTable[string, string]()
@@ -144,7 +144,7 @@ proc getRadarNetflowsTimeseries*(client: CloudflareClient,
 
 proc getRadarNetflowsTimeseriesGroupsDimension*(client: CloudflareClient,
                                                 dimension: Dimension,
-                                                aggInterval: RadarNetflowAggIntervalOption,
+                                                aggInterval: RadarNetflowAggIntervalOption = aggInterval15m,
                                                 name: seq[string] = @[],
                                                 dateRange: seq[string] = @[],
                                                 dateStart: seq[string] = @[],
@@ -154,9 +154,9 @@ proc getRadarNetflowsTimeseriesGroupsDimension*(client: CloudflareClient,
                                                 continent: seq[string] = @[],
                                                 geoId: seq[string] = @[],
                                                 limitPerGroup: int64 = default(int64),
-                                                normalization: RadarNetflowNormalizationOption = normalizationPERCENTAGE,
+                                                normalization: RadarNetflowNormalizationOption = normalizationPERCENTAGECHANGE,
                                                 product: seq[string] = default(seq[string]),
-                                                format: RadarNetflowFormatOption): Future[GetRadarNetflowsTimeseriesGroupsDimensionResponse] {.async.} =
+                                                format: RadarNetflowFormatOption = formatJSON): Future[GetRadarNetflowsTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of NetFlows traffic, grouped by the specified
   ## dimension over time.
 
@@ -190,7 +190,7 @@ proc getRadarNetflowsTopAses*(client: CloudflareClient, limit: int64 = 5,
                               location: seq[string] = @[],
                               continent: seq[string] = @[],
                               geoId: seq[string] = @[],
-                              format: RadarNetflowFormatOption): Future[GetRadarNetflowsTopAsesResponse] {.async.} =
+                              format: RadarNetflowFormatOption = formatJSON): Future[GetRadarNetflowsTopAsesResponse] {.async.} =
   ## Retrieves the top autonomous systems by network traffic (NetFlows).
 
   var q = initOrderedTable[string, string]()
@@ -221,7 +221,7 @@ proc getRadarNetflowsTopLocations*(client: CloudflareClient, limit: int64 = 5,
                                    location: seq[string] = @[],
                                    continent: seq[string] = @[],
                                    geoId: seq[string] = @[],
-                                   format: RadarNetflowFormatOption): Future[GetRadarNetflowsTopLocationsResponse] {.async.} =
+                                   format: RadarNetflowFormatOption = formatJSON): Future[GetRadarNetflowsTopLocationsResponse] {.async.} =
   ## Retrieves the top locations by network traffic (NetFlows).
 
   var q = initOrderedTable[string, string]()

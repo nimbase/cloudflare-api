@@ -23,7 +23,7 @@ proc getAccountsAccountIdEmailRoutingAddresses*(client: CloudflareClient,
                                                 page: float64 = default(float64),
                                                 perPage: float64 = default(float64),
                                                 direction: EmailRoutingDestinationAddresseDirectionOption = directionAsc,
-                                                verified: EmailRoutingDestinationAddresseVerifiedOption = verified): Future[types.EmailDestinationAddressesResponseCollection] {.async.} =
+                                                verified: EmailRoutingDestinationAddresseVerifiedOption = verifiedTrue): Future[types.EmailDestinationAddressesResponseCollection] {.async.} =
   ## Lists existing destination addresses.
 
   var q = initOrderedTable[string, string]()

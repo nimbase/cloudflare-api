@@ -23,5 +23,5 @@ suite "warp_change_events endpoints":
   test "GET /accounts/{account_id}/dex/warp-change-events":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDexWarpChangeEvents("test", 1.0, 1.0, "test", "test", {}, {}, "test", "test", {})
+    discard waitFor client.getAccountsAccountIdDexWarpChangeEvents("test", 1.0, 1.0, "test", "test", typeConfig, toggleOn, "test", "test", sortOrderASC)
 

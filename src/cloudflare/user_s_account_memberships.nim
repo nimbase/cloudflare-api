@@ -30,10 +30,10 @@ proc getMemberships*(client: CloudflareClient,
                      accountName: types.IamPropertiesName = default(types.IamPropertiesName),
                      page: float64 = default(float64),
                      perPage: float64 = default(float64),
-                     order: UserSAccountMembershipOrderOption,
-                     direction: UserSAccountMembershipDirectionOption,
+                     order: UserSAccountMembershipOrderOption = orderId,
+                     direction: UserSAccountMembershipDirectionOption = directionAsc,
                      name: types.IamPropertiesName = default(types.IamPropertiesName),
-                     status: UserSAccountMembershipStatusOption): Future[JsonNode] {.async.} =
+                     status: UserSAccountMembershipStatusOption = statusAccepted): Future[JsonNode] {.async.} =
   ## List memberships of accounts the user can access.
 
   var q = initOrderedTable[string, string]()

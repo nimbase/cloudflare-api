@@ -45,5 +45,5 @@ suite "access_policy_tester endpoints":
   test "GET /accounts/{account_id}/access/policy-tests/{policy_test_id}/users":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAccessPolicyTestsPolicyTestIdUsers("test", "test", 1, 1, {})
+    discard waitFor client.getAccountsAccountIdAccessPolicyTestsPolicyTestIdUsers("test", "test", 1, 1, statusSuccess)
 

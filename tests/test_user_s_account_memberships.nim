@@ -27,7 +27,7 @@ suite "user_s_account_memberships endpoints":
   test "GET /memberships":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getMemberships("test", 1.0, 1.0, {}, {}, "test", {})
+    discard waitFor client.getMemberships("test", 1.0, 1.0, orderId, directionAsc, "test", statusAccepted)
 
   test "GET /memberships/{membership_id}":
     let client = initCloudflareClient("test-key")

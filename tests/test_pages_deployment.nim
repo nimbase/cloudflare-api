@@ -39,7 +39,7 @@ suite "pages_deployment endpoints":
   test "GET /accounts/{account_id}/pages/projects/{project_name}/deployments":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdPagesProjectsProjectNameDeployments("test", "test", {}, 1, 1)
+    discard waitFor client.getAccountsAccountIdPagesProjectsProjectNameDeployments("test", "test", envProduction, 1, 1)
 
   test "POST /accounts/{account_id}/pages/projects/{project_name}/deployments":
     let client = initCloudflareClient("test-key")

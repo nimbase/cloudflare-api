@@ -62,7 +62,7 @@ proc getAccountsAccountIdAiSearchNamespacesNameInstancesIdItems*(client: Cloudfl
                                                                  perPage: int64 = 20,
                                                                  search: string = default(string),
                                                                  sortBy: AiSearchInstancesItemSortByOption = sortByStatus,
-                                                                 status: AiSearchInstancesItemStatusOption,
+                                                                 status: AiSearchInstancesItemStatusOption = statusQueued,
                                                                  source: string = default(string),
                                                                  metadataFilter: string = default(string),
                                                                  itemId: string = default(string),

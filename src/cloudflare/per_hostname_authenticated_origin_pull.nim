@@ -28,7 +28,7 @@ proc getZonesZoneIdOriginTlsClientAuthHostnames*(client: CloudflareClient,
                                                  zoneId: types.TlsCertificatesAndHostnamesIdentifier,
                                                  page: float64 = default(float64),
                                                  perPage: float64 = default(float64),
-                                                 status: PerHostnameAuthenticatedOriginPullStatusOption): Future[types.TlsCertificatesAndHostnamesHostnameAssocResponseCollection] {.async.} =
+                                                 status: PerHostnameAuthenticatedOriginPullStatusOption = statusActive): Future[types.TlsCertificatesAndHostnamesHostnameAssocResponseCollection] {.async.} =
   ## List certificate ID - hostname associations for the given zone. Shows which
   ## hostnames are associated to which certificates for authenticated origin pulls.
 

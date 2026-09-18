@@ -123,7 +123,7 @@ suite "event endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/events":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneEvents("test", "test", @["test"], 1.0, 1.0, "test", {}, @["test"], true, {}, {})
+    discard waitFor client.getAccountsAccountIdCloudforceOneEvents("test", "test", @["test"], 1.0, 1.0, "test", orderAsc, @["test"], true, formatJson, cacheFromGraph)
 
   test "GET /accounts/{account_id}/cloudforce-one/events/aggregate":
     let client = initCloudflareClient("test-key")
@@ -133,7 +133,7 @@ suite "event endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/events/by-id/{event_id}/relationships":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneEventsByIdEventIdRelationships("test", "test", {}, 1.0, openjson.newJObject(), @["test"], "test", true, 1.0, 1.0)
+    discard waitFor client.getAccountsAccountIdCloudforceOneEventsByIdEventIdRelationships("test", "test", directionAncestors, 1.0, openjson.newJObject(), @["test"], "test", true, 1.0, 1.0)
 
   test "GET /accounts/{account_id}/cloudforce-one/events/dataset/{dataset_id}/events/{event_id}":
     let client = initCloudflareClient("test-key")
@@ -193,7 +193,7 @@ suite "event endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/events/{event_id}/relationships":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneEventsEventIdRelationships("test", "test", {}, 1.0, openjson.newJObject(), @["test"], "test", true, 1.0, 1.0)
+    discard waitFor client.getAccountsAccountIdCloudforceOneEventsEventIdRelationships("test", "test", directionAncestors, 1.0, openjson.newJObject(), @["test"], "test", true, 1.0, 1.0)
 
   test "POST /accounts/{account_id}/cloudforce-one/v2/events/graphql":
     let client = initCloudflareClient("test-key")

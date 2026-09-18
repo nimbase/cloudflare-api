@@ -64,7 +64,7 @@ proc getRadarQualityIqiSummary*(client: CloudflareClient,
                                 location: seq[string] = @[],
                                 continent: seq[string] = @[],
                                 metric: RadarQualityMetricOption,
-                                format: RadarQualityFormatOption): Future[GetRadarQualityIqiSummaryResponse] {.async.} =
+                                format: RadarQualityFormatOption = formatJSON): Future[GetRadarQualityIqiSummaryResponse] {.async.} =
   ## Retrieves a summary (percentiles) of bandwidth, latency, or DNS response time
   ## from the Radar Internet Quality Index (IQI).
 
@@ -87,7 +87,7 @@ proc getRadarQualityIqiSummary*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarQualityIqiTimeseriesGroups*(client: CloudflareClient,
-                                         aggInterval: RadarQualityAggIntervalOption,
+                                         aggInterval: RadarQualityAggIntervalOption = aggInterval15m,
                                          name: seq[string] = @[],
                                          dateRange: seq[string] = @[],
                                          dateStart: seq[string] = @[],
@@ -97,7 +97,7 @@ proc getRadarQualityIqiTimeseriesGroups*(client: CloudflareClient,
                                          continent: seq[string] = @[],
                                          interpolation: bool = default(bool),
                                          metric: RadarQualityMetricOption,
-                                         format: RadarQualityFormatOption): Future[GetRadarQualityIqiTimeseriesGroupsResponse] {.async.} =
+                                         format: RadarQualityFormatOption = formatJSON): Future[GetRadarQualityIqiTimeseriesGroupsResponse] {.async.} =
   ## Retrieves a time series (percentiles) of bandwidth, latency, or DNS response
   ## time from the Radar Internet Quality Index (IQI).
 
@@ -128,8 +128,8 @@ proc getRadarQualitySpeedHistogram*(client: CloudflareClient,
                                     location: seq[string] = @[],
                                     continent: seq[string] = @[],
                                     bucketSize: int64 = default(int64),
-                                    metricGroup: RadarQualityMetricGroupOption = metricGroupBandwidth,
-                                    format: RadarQualityFormatOption): Future[GetRadarQualitySpeedHistogramResponse] {.async.} =
+                                    metricGroup: RadarQualityMetricGroupOption = metricGroupBANDWIDTH,
+                                    format: RadarQualityFormatOption = formatJSON): Future[GetRadarQualitySpeedHistogramResponse] {.async.} =
   ## Retrieves a histogram from the previous 90 days of Cloudflare Speed Test data,
   ## split into fixed bandwidth (Mbps), latency (ms), or jitter (ms) buckets.
 
@@ -156,7 +156,7 @@ proc getRadarQualitySpeedSummary*(client: CloudflareClient,
                                   asn: seq[string] = @[],
                                   location: seq[string] = @[],
                                   continent: seq[string] = @[],
-                                  format: RadarQualityFormatOption): Future[GetRadarQualitySpeedSummaryResponse] {.async.} =
+                                  format: RadarQualityFormatOption = formatJSON): Future[GetRadarQualitySpeedSummaryResponse] {.async.} =
   ## Retrieves a summary of bandwidth, latency, jitter, and packet loss, from the
   ## previous 90 days of Cloudflare Speed Test data.
 
@@ -183,7 +183,7 @@ proc getRadarQualitySpeedTopAses*(client: CloudflareClient, limit: int64 = 5,
                                   continent: seq[string] = @[],
                                   orderBy: RadarQualityOrderByOption = orderByBANDWIDTHDOWNLOAD,
                                   reverse: bool = default(bool),
-                                  format: RadarQualityFormatOption): Future[GetRadarQualitySpeedTopAsesResponse] {.async.} =
+                                  format: RadarQualityFormatOption = formatJSON): Future[GetRadarQualitySpeedTopAsesResponse] {.async.} =
   ## Retrieves the top autonomous systems by bandwidth, latency, jitter, or packet
   ## loss, from the previous 90 days of Cloudflare Speed Test data.
 
@@ -213,7 +213,7 @@ proc getRadarQualitySpeedTopLocations*(client: CloudflareClient,
                                        continent: seq[string] = @[],
                                        orderBy: RadarQualityOrderByOption = orderByBANDWIDTHDOWNLOAD,
                                        reverse: bool = default(bool),
-                                       format: RadarQualityFormatOption): Future[GetRadarQualitySpeedTopLocationsResponse] {.async.} =
+                                       format: RadarQualityFormatOption = formatJSON): Future[GetRadarQualitySpeedTopLocationsResponse] {.async.} =
   ## Retrieves the top locations by bandwidth, latency, jitter, or packet loss, from
   ## the previous 90 days of Cloudflare Speed Test data.
 

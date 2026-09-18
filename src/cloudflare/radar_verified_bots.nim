@@ -27,7 +27,7 @@ proc getRadarVerifiedBotsTopBots*(client: CloudflareClient, limit: int64 = 5,
                                   asn: seq[string] = @[],
                                   location: seq[string] = @[],
                                   continent: seq[string] = @[],
-                                  format: RadarVerifiedBotFormatOption): Future[GetRadarVerifiedBotsTopBotsResponse] {.async.} =
+                                  format: RadarVerifiedBotFormatOption = formatJSON): Future[GetRadarVerifiedBotsTopBotsResponse] {.async.} =
   ## Retrieves the top verified bots by HTTP requests, with owner and category.
 
   var q = initOrderedTable[string, string]()
@@ -57,7 +57,7 @@ proc getRadarVerifiedBotsTopCategories*(client: CloudflareClient,
                                         asn: seq[string] = @[],
                                         location: seq[string] = @[],
                                         continent: seq[string] = @[],
-                                        format: RadarVerifiedBotFormatOption): Future[GetRadarVerifiedBotsTopCategoriesResponse] {.async.} =
+                                        format: RadarVerifiedBotFormatOption = formatJSON): Future[GetRadarVerifiedBotsTopCategoriesResponse] {.async.} =
   ## Retrieves the top verified bot categories by HTTP requests, along with their
   ## corresponding percentage, over the total verified bot HTTP requests.
 

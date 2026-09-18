@@ -23,7 +23,7 @@ suite "autorag_rag endpoints":
   test "GET /accounts/{account_id}/autorag/rags/{id}/files":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAutoragRagsIdFiles("test", "test", 1, 1, "test", {})
+    discard waitFor client.getAccountsAccountIdAutoragRagsIdFiles("test", "test", 1, 1, "test", statusCompleted)
 
   test "PATCH /accounts/{account_id}/autorag/rags/{id}/sync":
     let client = initCloudflareClient("test-key")

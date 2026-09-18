@@ -38,14 +38,14 @@ type
 
 proc getUserFirewallAccessRulesRules*(client: CloudflareClient,
                                       mode: types.FirewallSchemasMode = default(types.FirewallSchemasMode),
-                                      configurationTarget: IpAccessRulesForAUserConfigurationTargetOption,
+                                      configurationTarget: IpAccessRulesForAUserConfigurationTargetOption = configurationTargetIp,
                                       configurationValue: string = default(string),
                                       notes: string = default(string),
                                       match: IpAccessRulesForAUserMatchOption = matchAll,
                                       page: float64 = default(float64),
                                       perPage: float64 = default(float64),
-                                      order: IpAccessRulesForAUserOrderOption,
-                                      direction: IpAccessRulesForAUserDirectionOption): Future[types.FirewallRuleCollectionResponse] {.async.} =
+                                      order: IpAccessRulesForAUserOrderOption = orderConfigurationTarget,
+                                      direction: IpAccessRulesForAUserDirectionOption = directionAsc): Future[types.FirewallRuleCollectionResponse] {.async.} =
   ## Fetches IP Access rules of the user. You can filter the results using several
   ## optional parameters.
 

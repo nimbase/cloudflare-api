@@ -91,70 +91,70 @@ suite "radar_bgp endpoints":
   test "GET /radar/bgp/hijacks/events":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpHijacksEvents(1, 1, 1, 1, 1, 1, "test", openjson.newJObject(), 1, 1, "test", "test", "test", {}, {}, {})
+    discard waitFor client.getRadarBgpHijacksEvents(1, 1, 1, 1, 1, 1, "test", openjson.newJObject(), 1, 1, "test", "test", "test", sortByID, sortOrderASC, formatJSON)
 
   test "GET /radar/bgp/ips/top/ases":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpIpsTopAses("test", 1, {}, "test", {})
+    discard waitFor client.getRadarBgpIpsTopAses("test", 1, metricV424s, "test", formatJSON)
 
   test "GET /radar/bgp/leaks/events":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpLeaksEvents(1, 1, 1, 1, 1, "test", "test", "test", "test", {}, {}, {})
+    discard waitFor client.getRadarBgpLeaksEvents(1, 1, 1, 1, 1, "test", "test", "test", "test", sortByID, sortOrderASC, formatJSON)
 
   test "GET /radar/bgp/routes/ases":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpRoutesAses("test", 1, {}, {}, {})
+    discard waitFor client.getRadarBgpRoutesAses("test", 1, sortByID, sortOrderASC, formatJSON)
 
   test "GET /radar/bgp/routes/moas":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpRoutesMoas(1, openjson.newJObject(), true, {})
+    discard waitFor client.getRadarBgpRoutesMoas(1, openjson.newJObject(), true, formatJSON)
 
   test "GET /radar/bgp/routes/paths/{asn}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpRoutesPathsAsn(1, {}, "test", {})
+    discard waitFor client.getRadarBgpRoutesPathsAsn(1, ipVersionIPv4, "test", formatJSON)
 
   test "GET /radar/bgp/routes/pfx2as":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpRoutesPfx2as(openjson.newJObject(), 1, {}, true, {})
+    discard waitFor client.getRadarBgpRoutesPfx2as(openjson.newJObject(), 1, rpkiStatusVALID, true, formatJSON)
 
   test "GET /radar/bgp/routes/realtime":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpRoutesRealtime(openjson.newJObject(), {})
+    discard waitFor client.getRadarBgpRoutesRealtime(openjson.newJObject(), formatJSON)
 
   test "GET /radar/bgp/routes/stats":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpRoutesStats(1, "test", {})
+    discard waitFor client.getRadarBgpRoutesStats(1, "test", formatJSON)
 
   test "GET /radar/bgp/routes/upstreams/{asn}/timeseries":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpRoutesUpstreamsAsnTimeseries(1, {}, "test", "test", 1, {})
+    discard waitFor client.getRadarBgpRoutesUpstreamsAsnTimeseries(1, ipVersionIPv4, "test", "test", 1, formatJSON)
 
   test "GET /radar/bgp/rpki/aspa/changes":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpRpkiAspaChanges("test", "test", 1, true, {})
+    discard waitFor client.getRadarBgpRpkiAspaChanges("test", "test", 1, true, formatJSON)
 
   test "GET /radar/bgp/rpki/aspa/snapshot":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpRpkiAspaSnapshot(1, 1, "test", true, {})
+    discard waitFor client.getRadarBgpRpkiAspaSnapshot(1, 1, "test", true, formatJSON)
 
   test "GET /radar/bgp/rpki/roas/timeseries":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpRpkiRoasTimeseries("test", "test", {}, @["test"], @["test"], @["test"], {})
+    discard waitFor client.getRadarBgpRpkiRoasTimeseries("test", "test", metricV424s, @["test"], @["test"], @["test"], formatJSON)
 
   test "GET /radar/bgp/top/ases/prefixes":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBgpTopAsesPrefixes("test", 1, {})
+    discard waitFor client.getRadarBgpTopAsesPrefixes("test", 1, formatJSON)
 

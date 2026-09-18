@@ -23,6 +23,10 @@ suite "billable_usage_v2 serialization":
     let obj = newBillableUsageApiApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillableUsageApiApiResponseCommonFailure)) == openjson.toJson(obj)
 
+  test "round-trips BillableUsageApiV2AccountBillableMetricsResponse":
+    let obj = newBillableUsageApiV2AccountBillableMetricsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillableUsageApiV2AccountBillableMetricsResponse)) == openjson.toJson(obj)
+
 suite "billable_usage_v2 endpoints":
   test "GET /accounts/{account_id}/billable/usage":
     let client = initCloudflareClient("test-key")
@@ -33,6 +37,11 @@ suite "billable_usage_v2 endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdBillableUsage("test", newBillableUsageApiV2UsageQuery())
+
+  test "GET /accounts/{account_id}/billable/usage/billable-metrics":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdBillableUsageBillableMetrics("test", "test", "test")
 
   test "GET /organizations/{organization_id}/billable/usage":
     let client = initCloudflareClient("test-key")

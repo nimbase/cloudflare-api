@@ -116,7 +116,7 @@ proc getZonesZoneIdSchemaValidationSchemasSchemaIdOperations*(client: Cloudflare
                                                               endpoint: string = default(string),
                                                               page: int64 = 1,
                                                               perPage: int64 = 20,
-                                                              operationStatus: SchemaValidationOperationStatusOption): Future[JsonNode] {.async.} =
+                                                              operationStatus: SchemaValidationOperationStatusOption = operationStatusNew): Future[JsonNode] {.async.} =
   ## Retrieves all operations from the schema. Operations that already exist in API
   ## Shield Endpoint Management will be returned as full operations.
 

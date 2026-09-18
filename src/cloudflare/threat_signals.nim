@@ -122,8 +122,8 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles*(client: Cloudflar
                                                                fetchedAfter: string = default(string),
                                                                fetchedBefore: string = default(string),
                                                                feedCategory: string = default(string),
-                                                               sourceType: ThreatSignalSourceTypeOption,
-                                                               tagAppliedBy: ThreatSignalTagAppliedByOption,
+                                                               sourceType: ThreatSignalSourceTypeOption = sourceTypeCurated,
+                                                               tagAppliedBy: ThreatSignalTagAppliedByOption = tagAppliedByAi,
                                                                sort: string = "-fetched_at"): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesResponse] {.async.} =
   ## List Threat Signals articles.
 
@@ -182,7 +182,7 @@ proc patchAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleId*(client
 proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdContent*(client: CloudflareClient,
                                                                                accountId: string,
                                                                                articleId: string,
-                                                                               format: ThreatSignalFormatOption): Future[AsyncResponse] {.async.} =
+                                                                               format: ThreatSignalFormatOption = formatText): Future[AsyncResponse] {.async.} =
   ## Get Threat Signals article content.
 
   var q = initOrderedTable[string, string]()
@@ -304,7 +304,7 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsFeeds*(client: CloudflareCl
                                                             limit: int64 = default(int64),
                                                             sort: string = "-created_at",
                                                             category: string = default(string),
-                                                            sourceType: ThreatSignalSourceTypeOption,
+                                                            sourceType: ThreatSignalSourceTypeOption = sourceTypeCurated,
                                                             enabled: bool = default(bool),
                                                             status: string = default(string)): Future[AsyncResponse] {.async.} =
   ## List Threat Signals feeds.
@@ -364,7 +364,7 @@ proc patchAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedId*(client: Clou
 proc getAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdRaw*(client: CloudflareClient,
                                                                      accountId: string,
                                                                      feedId: string,
-                                                                     format: ThreatSignalFormatOption): Future[AsyncResponse] {.async.} =
+                                                                     format: ThreatSignalFormatOption = formatText): Future[AsyncResponse] {.async.} =
   ## Get Threat Signals feed XML.
 
   var q = initOrderedTable[string, string]()

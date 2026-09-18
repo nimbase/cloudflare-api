@@ -141,7 +141,8 @@ proc getAccountsAccountIdAiGatewayBillingTopupConfig*(client: CloudflareClient,
 proc postAccountsAccountIdAiGatewayBillingTopupConfig*(client: CloudflareClient,
                                                        accountId: string,
                                                        body: PostAccountsAccountIdAiGatewayBillingTopupConfigRequest): Future[types.AigBillingSetTopupConfigResponse] {.async.} =
-  ## Configure auto top-up with a balance threshold and top-up amount.
+  ## Configure auto top-up with a balance threshold and top-up amount. Dashboard
+  ## sessions only: API token, OAuth, and service credentials are rejected with 403.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/billing/topup/config", body)
   let body = await res.body
@@ -153,7 +154,8 @@ proc postAccountsAccountIdAiGatewayBillingTopupConfig*(client: CloudflareClient,
 
 proc deleteAccountsAccountIdAiGatewayBillingTopupConfig*(client: CloudflareClient,
                                                          accountId: string): Future[types.AigBillingDeleteTopupConfigResponse] {.async.} =
-  ## Remove the auto top-up configuration for the account.
+  ## Remove the auto top-up configuration for the account. Dashboard sessions only:
+  ## API token, OAuth, and service credentials are rejected with 403.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai-gateway/billing/topup/config")
   let body = await res.body

@@ -103,8 +103,8 @@ proc getAccountsAccountIdR2Buckets*(client: CloudflareClient,
                                     nameContains: string = default(string),
                                     startAfter: string = default(string),
                                     perPage: float64 = default(float64),
-                                    order: R2BucketOrderOption,
-                                    direction: R2BucketDirectionOption,
+                                    order: R2BucketOrderOption = orderName,
+                                    direction: R2BucketDirectionOption = directionAsc,
                                     cursor: string = default(string)): Future[JsonNode] {.async.} =
   ## Lists all R2 buckets on your account.
 
@@ -333,7 +333,7 @@ proc putAccountsAccountIdR2BucketsBucketNameDomainsManaged*(client: CloudflareCl
 proc getAccountsAccountIdR2BucketsBucketNameJobs*(client: CloudflareClient,
                                                   accountId: types.R2AccountIdentifier,
                                                   bucketName: types.R2BucketName,
-                                                  jobType: R2BucketJobTypeOption,
+                                                  jobType: R2BucketJobTypeOption = jobTypePrefixDelete,
                                                   status: types.R2R2BucketJobStatus = default(types.R2R2BucketJobStatus),
                                                   maxKeys: int64 = default(int64),
                                                   continuationToken: string = default(string)): Future[JsonNode] {.async.} =

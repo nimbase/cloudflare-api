@@ -35,7 +35,7 @@ suite "custom_ssl_for_a_zone endpoints":
   test "GET /zones/{zone_id}/custom_certificates":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdCustomCertificates("test", 1.0, 1.0, {}, {})
+    discard waitFor client.getZonesZoneIdCustomCertificates("test", 1.0, 1.0, matchAny, statusActive)
 
   test "GET /zones/{zone_id}/custom_certificates/{custom_certificate_id}":
     let client = initCloudflareClient("test-key")

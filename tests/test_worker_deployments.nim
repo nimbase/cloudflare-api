@@ -23,11 +23,15 @@ suite "worker_deployments serialization":
     let obj = newWorkersApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersApiResponseCommonFailure)) == openjson.toJson(obj)
 
+  test "round-trips WorkersApiResponseCollection":
+    let obj = newWorkersApiResponseCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersApiResponseCollection)) == openjson.toJson(obj)
+
 suite "worker_deployments endpoints":
   test "GET /accounts/{account_id}/workers/scripts/{script_name}/deployments":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersScriptsScriptNameDeployments("test", "test")
+    discard waitFor client.getAccountsAccountIdWorkersScriptsScriptNameDeployments("test", "test", "test", "test", 1, 1)
 
   test "POST /accounts/{account_id}/workers/scripts/{script_name}/deployments":
     let client = initCloudflareClient("test-key")

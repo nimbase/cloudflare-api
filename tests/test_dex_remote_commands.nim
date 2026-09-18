@@ -39,7 +39,7 @@ suite "dex_remote_commands endpoints":
   test "GET /accounts/{account_id}/dex/commands":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDexCommands("test", 1.0, 1.0, "test", "test", "test", "test", {}, {})
+    discard waitFor client.getAccountsAccountIdDexCommands("test", 1.0, 1.0, "test", "test", "test", "test", commandTypePcap, statusPENDINGEXEC)
 
   test "GET /accounts/{account_id}/dex/commands/devices":
     let client = initCloudflareClient("test-key")

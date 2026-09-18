@@ -39,7 +39,7 @@ suite "infrastructure_access_targets endpoints":
   test "GET /accounts/{account_id}/infrastructure/targets":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdInfrastructureTargets("test", "test", "test", "test", "test", "test", "test", "test", "test", "test", @["test"], @["test"], "test", "test", "test", "test", "test", @["test"], 1, 1, {}, openjson.newJObject())
+    discard waitFor client.getAccountsAccountIdInfrastructureTargets("test", "test", "test", "test", "test", "test", "test", "test", "test", "test", @["test"], @["test"], "test", "test", "test", "test", "test", @["test"], 1, 1, orderHostname, openjson.newJObject())
 
   test "PUT /accounts/{account_id}/infrastructure/targets/batch":
     let client = initCloudflareClient("test-key")

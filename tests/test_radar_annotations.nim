@@ -31,10 +31,10 @@ suite "radar_annotations endpoints":
   test "GET /radar/annotations/outages/locations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarAnnotationsOutagesLocations(1, "test", "test", "test", {})
+    discard waitFor client.getRadarAnnotationsOutagesLocations(1, "test", "test", "test", formatJSON)
 
   test "GET /radar/annotations/{id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarAnnotationsId("test", {})
+    discard waitFor client.getRadarAnnotationsId("test", formatJSON)
 

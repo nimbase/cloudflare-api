@@ -441,7 +441,7 @@ proc getAccountsAccountIdBrowserRenderingCrawlJobId*(client: CloudflareClient,
                                                      accountId: string,
                                                      jobId: string,
                                                      cacheTTL: float64 = default(float64),
-                                                     status: BrapiStatusOption,
+                                                     status: BrapiStatusOption = statusQueued,
                                                      cursor: float64 = default(float64),
                                                      limit: float64 = default(float64)): Future[GetAccountsAccountIdBrowserRenderingCrawlJobIdResponse] {.async.} =
   ## Returns the result of a crawl job.

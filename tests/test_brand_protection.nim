@@ -243,7 +243,7 @@ suite "brand_protection endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/v2/brand-protection/domain/matches":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatches("test", "test", "test", @["test"], "test", "test", "test", {}, {})
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatches("test", "test", "test", @["test"], "test", "test", "test", orderByDomain, orderAsc)
 
   test "GET /accounts/{account_id}/cloudforce-one/v2/brand-protection/domain/queries":
     let client = initCloudflareClient("test-key")
@@ -278,7 +278,7 @@ suite "brand_protection endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/v2/brand-protection/logo/matches":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneV2BrandProtectionLogoMatches("test", "test", "test", "test", "test", {}, {})
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2BrandProtectionLogoMatches("test", "test", "test", "test", "test", orderByDomain, orderAsc)
 
   test "GET /accounts/{account_id}/cloudforce-one/v2/brand-protection/logo/queries":
     let client = initCloudflareClient("test-key")

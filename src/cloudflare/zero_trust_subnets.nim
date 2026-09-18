@@ -46,8 +46,8 @@ proc getAccountsAccountIdZerotrustSubnets*(client: CloudflareClient,
                                            addressFamily: types.TunnelAddressFamily = default(types.TunnelAddressFamily),
                                            isDefaultNetwork: bool = default(bool),
                                            isDeleted: bool = default(bool),
-                                           sortOrder: ZeroTrustSubnetSortOrderOption,
-                                           subnetTypes: ZeroTrustSubnetSubnetTypesOption,
+                                           sortOrder: ZeroTrustSubnetSortOrderOption = sortOrderAsc,
+                                           subnetTypes: ZeroTrustSubnetSubnetTypesOption = subnetTypesCloudflareSource,
                                            perPage: types.TunnelPerPage = default(types.TunnelPerPage),
                                            page: types.TunnelPageNumber = default(types.TunnelPageNumber)): Future[types.TunnelSubnetResponseCollection] {.async.} =
   ## Lists and filters subnets in an account.

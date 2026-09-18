@@ -23,8 +23,8 @@ type
 
 proc getZonesZoneIdApiGatewayLabels*(client: CloudflareClient, page: int64 = 1,
                                      perPage: int64 = 20,
-                                     order: ApiShieldLabelOrderOption,
-                                     direction: ApiShieldLabelDirectionOption,
+                                     order: ApiShieldLabelOrderOption = orderName,
+                                     direction: ApiShieldLabelDirectionOption = directionAsc,
                                      source: types.ApiShieldLabelSource = default(types.ApiShieldLabelSource),
                                      filter: string = default(string),
                                      withMappedResourceCounts: bool = false): Future[JsonNode] {.async.} =

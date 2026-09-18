@@ -28,7 +28,7 @@ proc getRadarPostQuantumOriginSummaryDimension*(client: CloudflareClient,
                                                 dateRange: seq[string] = @[],
                                                 dateStart: seq[string] = @[],
                                                 dateEnd: seq[string] = @[],
-                                                format: RadarPostQuantumFormatOption): Future[GetRadarPostQuantumOriginSummaryDimensionResponse] {.async.} =
+                                                format: RadarPostQuantumFormatOption = formatJSON): Future[GetRadarPostQuantumOriginSummaryDimensionResponse] {.async.} =
   ## Returns a summary of origin post-quantum data grouped by the specified
   ## dimension.
 
@@ -52,7 +52,7 @@ proc getRadarPostQuantumOriginTimeseriesGroupsDimension*(client: CloudflareClien
                                                          dateRange: seq[string] = @[],
                                                          dateStart: seq[string] = @[],
                                                          dateEnd: seq[string] = @[],
-                                                         format: RadarPostQuantumFormatOption): Future[GetRadarPostQuantumOriginTimeseriesGroupsDimensionResponse] {.async.} =
+                                                         format: RadarPostQuantumFormatOption = formatJSON): Future[GetRadarPostQuantumOriginTimeseriesGroupsDimensionResponse] {.async.} =
   ## Returns a timeseries of origin post-quantum data grouped by the specified
   ## dimension.
 

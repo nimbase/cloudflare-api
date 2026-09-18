@@ -29,13 +29,13 @@ type
 proc getAccountsAccountIdOneIntegrations*(client: CloudflareClient,
                                           accountId: string,
                                           application: string = default(string),
-                                          direction: IntegrationDirectionOption,
+                                          direction: IntegrationDirectionOption = directionAsc,
                                           dlpEnabled: bool = default(bool),
-                                          order: IntegrationOrderOption,
+                                          order: IntegrationOrderOption = orderApplication,
                                           page: int64 = default(int64),
                                           pageSize: int64 = default(int64),
                                           search: string = default(string),
-                                          status: IntegrationStatusOption,
+                                          status: IntegrationStatusOption = statusHealthy,
                                           useCases: string = default(string)): Future[types.OnePaginatedIntegrationV2ListItemList] {.async.} =
   ## Returns a paginated list of integrations for the account.
 

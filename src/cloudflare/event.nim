@@ -528,11 +528,11 @@ proc getAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
                                               page: float64 = default(float64),
                                               pageSize: float64 = default(float64),
                                               orderBy: string = default(string),
-                                              order: EventOrderOption,
+                                              order: EventOrderOption = orderAsc,
                                               datasetId: seq[string] = @[],
                                               forceRefresh: bool = default(bool),
-                                              format: EventFormatOption,
-                                              cache: EventCacheOption): Future[seq[JsonNode]] {.async.} =
+                                              format: EventFormatOption = formatJson,
+                                              cache: EventCacheOption = cacheFromGraph): Future[seq[JsonNode]] {.async.} =
   ## Use `datasetId=all` or `datasetId=*` for the legacy all-datasets scope,
   ## `datasetId=analytics` for datasets with `isAnalytics=true`, or
   ## `datasetId=operational` for datasets with `isAnalytics=false` (limited to 50).
@@ -564,8 +564,8 @@ proc getAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
 proc postAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
                                                accountId: string,
                                                forceRefresh: bool = default(bool),
-                                               format: EventFormatOption,
-                                               cache: EventCacheOption,
+                                               format: EventFormatOption = formatJson,
+                                               cache: EventCacheOption = cacheFromGraph,
                                                body: PostAccountsAccountIdCloudforceOneEventsRequest): Future[seq[JsonNode]] {.async.} =
   ## Use `datasetId: ["all"]` or `datasetId: ["*"]` for the legacy all-datasets
   ## scope, `datasetId: ["analytics"]` for datasets with `isAnalytics=true`, or

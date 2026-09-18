@@ -27,15 +27,15 @@ suite "radar_domains_ranking endpoints":
   test "GET /radar/ranking/domain/{domain}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarRankingDomainDomain("test", 1, {}, @["test"], true, @["test"], {})
+    discard waitFor client.getRadarRankingDomainDomain("test", 1, rankingTypePOPULAR, @["test"], true, @["test"], formatJSON)
 
   test "GET /radar/ranking/timeseries_groups":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarRankingTimeseriesGroups(1, {}, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], {})
+    discard waitFor client.getRadarRankingTimeseriesGroups(1, rankingTypePOPULAR, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], formatJSON)
 
   test "GET /radar/ranking/top":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarRankingTop(1, @["test"], @["test"], @["test"], @["test"], {}, {})
+    discard waitFor client.getRadarRankingTop(1, @["test"], @["test"], @["test"], @["test"], rankingTypePOPULAR, formatJSON)
 

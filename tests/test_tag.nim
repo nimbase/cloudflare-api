@@ -76,7 +76,7 @@ suite "tag endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/events/tags":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneEventsTags("test", 1.0, 1.0, "test", "test", @["test"], {})
+    discard waitFor client.getAccountsAccountIdCloudforceOneEventsTags("test", 1.0, 1.0, "test", "test", @["test"], cacheFromGraph)
 
   test "GET /accounts/{account_id}/cloudforce-one/events/tags/categories/actors":
     let client = initCloudflareClient("test-key")

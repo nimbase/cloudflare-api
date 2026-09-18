@@ -28,8 +28,8 @@ proc getZonesZoneIdFirewallWafPackages*(client: CloudflareClient,
                                         zoneId: types.FirewallIdentifier,
                                         page: float64 = default(float64),
                                         perPage: float64 = default(float64),
-                                        order: WafPackageOrderOption,
-                                        direction: WafPackageDirectionOption,
+                                        order: WafPackageOrderOption = orderName,
+                                        direction: WafPackageDirectionOption = directionAsc,
                                         match: WafPackageMatchOption = matchAll,
                                         name: string = default(string)): Future[types.FirewallPackageResponseCollection] {.async.} =
   ## Fetches WAF packages for a zone.

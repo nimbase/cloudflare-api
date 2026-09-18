@@ -55,7 +55,7 @@ suite "user_api_tokens endpoints":
   test "GET /user/tokens":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getUserTokens(1.0, 1.0, {}, true)
+    discard waitFor client.getUserTokens(1.0, 1.0, directionAsc, true)
 
   test "POST /user/tokens":
     let client = initCloudflareClient("test-key")

@@ -98,9 +98,9 @@ proc getAccountsAccountIdCloudforceOneRules*(client: CloudflareClient,
                                              accountId: string,
                                              namespace: JsonNode = default(JsonNode),
                                              path: JsonNode = default(JsonNode),
-                                             recursive: RuleRecursiveOption,
+                                             recursive: RuleRecursiveOption = recursiveTrue,
                                              search: string = default(string),
-                                             isPublic: RuleIsPublicOption,
+                                             isPublic: RuleIsPublicOption = isPublicTrue,
                                              limit: float64 = default(float64),
                                              offset: float64 = default(float64)): Future[types.CloudforceOneRulesPreviewListResponse] {.async.} =
   ## Returns all rules for an account with optional filtering.
@@ -217,14 +217,14 @@ proc getAccountsAccountIdCloudforceOneRulesSearch*(client: CloudflareClient,
                                                    accountId: string,
                                                    namespace: JsonNode = default(JsonNode),
                                                    path: JsonNode = default(JsonNode),
-                                                   recursive: RuleRecursiveOption,
+                                                   recursive: RuleRecursiveOption = recursiveTrue,
                                                    search: string = default(string),
-                                                   isPublic: RuleIsPublicOption,
+                                                   isPublic: RuleIsPublicOption = isPublicTrue,
                                                    limit: float64 = default(float64),
                                                    offset: float64 = default(float64),
                                                    query: string,
                                                    mode: RuleModeOption = modeHybrid,
-                                                   language: RuleLanguageOption): Future[types.CloudforceOneRulesSearchResponse] {.async.} =
+                                                   language: RuleLanguageOption = languageYara): Future[types.CloudforceOneRulesSearchResponse] {.async.} =
   ## Search rules using hybrid, vector, keyword, or exact retrieval, backed by AI
   ## Search with a SQL fallback.
 

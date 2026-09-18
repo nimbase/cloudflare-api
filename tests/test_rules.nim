@@ -123,7 +123,7 @@ suite "rules endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/rules":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneRules("test", openjson.newJObject(), openjson.newJObject(), {}, "test", {}, 1.0, 1.0)
+    discard waitFor client.getAccountsAccountIdCloudforceOneRules("test", openjson.newJObject(), openjson.newJObject(), recursiveTrue, "test", isPublicTrue, 1.0, 1.0)
 
   test "POST /accounts/{account_id}/cloudforce-one/rules":
     let client = initCloudflareClient("test-key")
@@ -163,7 +163,7 @@ suite "rules endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/rules/search":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneRulesSearch("test", openjson.newJObject(), openjson.newJObject(), {}, "test", {}, 1.0, 1.0, "test", {}, {})
+    discard waitFor client.getAccountsAccountIdCloudforceOneRulesSearch("test", openjson.newJObject(), openjson.newJObject(), recursiveTrue, "test", isPublicTrue, 1.0, 1.0, "test", modeExact, languageYara)
 
   test "GET /accounts/{account_id}/cloudforce-one/rules/stats":
     let client = initCloudflareClient("test-key")

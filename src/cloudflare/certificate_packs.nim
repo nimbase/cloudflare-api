@@ -30,8 +30,8 @@ proc getZonesZoneIdSslCertificatePacks*(client: CloudflareClient,
                                         zoneId: types.TlsCertificatesAndHostnamesIdentifier,
                                         page: float64 = default(float64),
                                         perPage: float64 = default(float64),
-                                        status: CertificatePackStatusOption,
-                                        deploy: CertificatePackDeployOption): Future[types.TlsCertificatesAndHostnamesCertificatePackResponseCollection] {.async.} =
+                                        status: CertificatePackStatusOption = statusAll,
+                                        deploy: CertificatePackDeployOption = deployStaging): Future[types.TlsCertificatesAndHostnamesCertificatePackResponseCollection] {.async.} =
   ## For a given zone, list all active certificate packs.
 
   var q = initOrderedTable[string, string]()

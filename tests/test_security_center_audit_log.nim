@@ -23,20 +23,20 @@ suite "security_center_audit_log endpoints":
   test "GET /accounts/{account_id}/security-center/insights/audit-log":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdSecurityCenterInsightsAuditLog("test", 1, "test", {}, "test", "test", "test", {})
+    discard waitFor client.getAccountsAccountIdSecurityCenterInsightsAuditLog("test", 1, "test", fieldChangedStatus, "test", "test", "test", orderAsc)
 
   test "GET /accounts/{account_id}/security-center/insights/{issue_id}/audit-log":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdSecurityCenterInsightsIssueIdAuditLog("test", "test", 1, "test", {}, "test", "test", "test", {})
+    discard waitFor client.getAccountsAccountIdSecurityCenterInsightsIssueIdAuditLog("test", "test", 1, "test", fieldChangedStatus, "test", "test", "test", orderAsc)
 
   test "GET /zones/{zone_id}/security-center/insights/audit-log":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdSecurityCenterInsightsAuditLog("test", 1, "test", {}, "test", "test", "test", {})
+    discard waitFor client.getZonesZoneIdSecurityCenterInsightsAuditLog("test", 1, "test", fieldChangedStatus, "test", "test", "test", orderAsc)
 
   test "GET /zones/{zone_id}/security-center/insights/{issue_id}/audit-log":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdSecurityCenterInsightsIssueIdAuditLog("test", "test", 1, "test", {}, "test", "test", "test", {})
+    discard waitFor client.getZonesZoneIdSecurityCenterInsightsIssueIdAuditLog("test", "test", 1, "test", fieldChangedStatus, "test", "test", "test", orderAsc)
 

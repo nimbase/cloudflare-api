@@ -162,7 +162,7 @@ proc getAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameMe
                                                                                         perPage: int64 = default(int64),
                                                                                         cursor: string = default(string),
                                                                                         sessionId: string = default(string),
-                                                                                        `type`: MemoryTypeOption): Future[GetAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameMemoriesResponse] {.async.} =
+                                                                                        `type`: MemoryTypeOption = typeFact): Future[GetAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameMemoriesResponse] {.async.} =
   ## List memories stored in a profile.
 
   var q = initOrderedTable[string, string]()

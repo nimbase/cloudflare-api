@@ -23,5 +23,5 @@ suite "user_billing_history endpoints":
   test "GET /user/billing/history":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getUserBillingHistory(1.0, 1.0, {}, "test", "test", "test")
+    discard waitFor client.getUserBillingHistory(1.0, 1.0, orderType, "test", "test", "test")
 

@@ -51,7 +51,7 @@ suite "email_routing_routing_rules endpoints":
   test "GET /accounts/{account_id}/email/routing/rules":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailRoutingRules("test", 1.0, 1.0, {})
+    discard waitFor client.getAccountsAccountIdEmailRoutingRules("test", 1.0, 1.0, enabledTrue)
 
   test "POST /accounts/{account_id}/email/routing/rules/plan":
     let client = initCloudflareClient("test-key")
@@ -61,7 +61,7 @@ suite "email_routing_routing_rules endpoints":
   test "GET /zones/{zone_id}/email/routing/rules":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdEmailRoutingRules("test", 1.0, 1.0, {})
+    discard waitFor client.getZonesZoneIdEmailRoutingRules("test", 1.0, 1.0, enabledTrue)
 
   test "POST /zones/{zone_id}/email/routing/rules":
     let client = initCloudflareClient("test-key")

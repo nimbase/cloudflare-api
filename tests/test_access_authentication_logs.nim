@@ -23,5 +23,5 @@ suite "access_authentication_logs endpoints":
   test "GET /accounts/{account_id}/access/logs/access_requests":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAccessLogsAccessRequests("test", 1, {}, "test", "test", 1, 1, "test", true, "test", {}, {}, {}, {}, {}, {}, {}, {}, {}, "test")
+    discard waitFor client.getAccountsAccountIdAccessLogsAccessRequests("test", 1, directionDesc, "test", "test", 1, 1, "test", true, "test", allowedOpEq, countryCodeOpEq, appTypeOpEq, appUidOpEq, rayIdOpEq, emailOpEq, idpOpEq, nonIdentityOpEq, userIdOpEq, "test")
 

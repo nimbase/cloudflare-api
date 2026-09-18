@@ -112,7 +112,7 @@ proc getRadarDnsSummaryCacheHit*(client: CloudflareClient,
                                  protocol: seq[string] = default(seq[string]),
                                  responseCode: seq[string] = default(seq[string]),
                                  nodata: seq[string] = @[],
-                                 format: RadarDnFormatOption): Future[GetRadarDnsSummaryCacheHitResponse] {.async.} =
+                                 format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsSummaryCacheHitResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by cache status.
 
   var q = initOrderedTable[string, string]()
@@ -149,7 +149,7 @@ proc getRadarDnsSummaryDnssec*(client: CloudflareClient, name: seq[string] = @[]
                                protocol: seq[string] = default(seq[string]),
                                responseCode: seq[string] = default(seq[string]),
                                nodata: seq[string] = @[],
-                               format: RadarDnFormatOption): Future[GetRadarDnsSummaryDnssecResponse] {.async.} =
+                               format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsSummaryDnssecResponse] {.async.} =
   ## Retrieves the distribution of DNS responses by DNSSEC (DNS Security Extensions)
   ## support.
 
@@ -188,7 +188,7 @@ proc getRadarDnsSummaryDnssecAware*(client: CloudflareClient,
                                     protocol: seq[string] = default(seq[string]),
                                     responseCode: seq[string] = default(seq[string]),
                                     nodata: seq[string] = @[],
-                                    format: RadarDnFormatOption): Future[GetRadarDnsSummaryDnssecAwareResponse] {.async.} =
+                                    format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsSummaryDnssecAwareResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by DNSSEC (DNS Security Extensions)
   ## client awareness.
 
@@ -227,7 +227,7 @@ proc getRadarDnsSummaryDnssecE2e*(client: CloudflareClient,
                                   protocol: seq[string] = default(seq[string]),
                                   responseCode: seq[string] = default(seq[string]),
                                   nodata: seq[string] = @[],
-                                  format: RadarDnFormatOption): Future[GetRadarDnsSummaryDnssecE2eResponse] {.async.} =
+                                  format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsSummaryDnssecE2eResponse] {.async.} =
   ## Retrieves the distribution of DNSSEC-validated answers by end-to-end security
   ## status.
 
@@ -266,7 +266,7 @@ proc getRadarDnsSummaryIpVersion*(client: CloudflareClient,
                                   protocol: seq[string] = default(seq[string]),
                                   responseCode: seq[string] = default(seq[string]),
                                   nodata: seq[string] = @[],
-                                  format: RadarDnFormatOption): Future[GetRadarDnsSummaryIpVersionResponse] {.async.} =
+                                  format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsSummaryIpVersionResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by IP version.
 
   var q = initOrderedTable[string, string]()
@@ -304,7 +304,7 @@ proc getRadarDnsSummaryMatchingAnswer*(client: CloudflareClient,
                                        protocol: seq[string] = default(seq[string]),
                                        responseCode: seq[string] = default(seq[string]),
                                        nodata: seq[string] = @[],
-                                       format: RadarDnFormatOption): Future[GetRadarDnsSummaryMatchingAnswerResponse] {.async.} =
+                                       format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsSummaryMatchingAnswerResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by matching answers.
 
   var q = initOrderedTable[string, string]()
@@ -341,7 +341,7 @@ proc getRadarDnsSummaryProtocol*(client: CloudflareClient,
                                  queryType: seq[string] = default(seq[string]),
                                  responseCode: seq[string] = default(seq[string]),
                                  nodata: seq[string] = @[],
-                                 format: RadarDnFormatOption): Future[GetRadarDnsSummaryProtocolResponse] {.async.} =
+                                 format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsSummaryProtocolResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by DNS transport protocol.
 
   var q = initOrderedTable[string, string]()
@@ -378,7 +378,7 @@ proc getRadarDnsSummaryQueryType*(client: CloudflareClient,
                                   responseCode: seq[string] = default(seq[string]),
                                   nodata: seq[string] = @[],
                                   limitPerGroup: int64 = default(int64),
-                                  format: RadarDnFormatOption): Future[GetRadarDnsSummaryQueryTypeResponse] {.async.} =
+                                  format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsSummaryQueryTypeResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by type.
 
   var q = initOrderedTable[string, string]()
@@ -416,7 +416,7 @@ proc getRadarDnsSummaryResponseCode*(client: CloudflareClient,
                                      protocol: seq[string] = default(seq[string]),
                                      nodata: seq[string] = @[],
                                      limitPerGroup: int64 = default(int64),
-                                     format: RadarDnFormatOption): Future[GetRadarDnsSummaryResponseCodeResponse] {.async.} =
+                                     format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsSummaryResponseCodeResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by response code.
 
   var q = initOrderedTable[string, string]()
@@ -454,7 +454,7 @@ proc getRadarDnsSummaryResponseTtl*(client: CloudflareClient,
                                     protocol: seq[string] = default(seq[string]),
                                     responseCode: seq[string] = default(seq[string]),
                                     nodata: seq[string] = @[],
-                                    format: RadarDnFormatOption): Future[GetRadarDnsSummaryResponseTtlResponse] {.async.} =
+                                    format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsSummaryResponseTtlResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by minimum response TTL.
 
   var q = initOrderedTable[string, string]()
@@ -500,7 +500,7 @@ proc getRadarDnsSummaryDimension*(client: CloudflareClient, dimension: Dimension
                                   limitPerGroup: int64 = default(int64),
                                   matchingAnswer: seq[string] = @[],
                                   tld: seq[string] = @[],
-                                  format: RadarDnFormatOption): Future[GetRadarDnsSummaryDimensionResponse] {.async.} =
+                                  format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsSummaryDimensionResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by the specified dimension.
 
   var q = initOrderedTable[string, string]()
@@ -534,7 +534,7 @@ proc getRadarDnsSummaryDimension*(client: CloudflareClient, dimension: Dimension
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseries*(client: CloudflareClient,
-                            aggInterval: RadarDnAggIntervalOption,
+                            aggInterval: RadarDnAggIntervalOption = aggInterval15m,
                             name: seq[string] = @[],
                             dateRange: seq[string] = @[],
                             dateStart: seq[string] = @[],
@@ -552,7 +552,8 @@ proc getRadarDnsTimeseries*(client: CloudflareClient,
                             dnssecE2e: seq[string] = @[],
                             ipVersion: seq[string] = default(seq[string]),
                             matchingAnswer: seq[string] = @[],
-                            tld: seq[string] = @[], format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesResponse] {.async.} =
+                            tld: seq[string] = @[],
+                            format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTimeseriesResponse] {.async.} =
   ## Retrieves normalized query volume to the 1.1.1.1 DNS resolver over time.
 
   var q = initOrderedTable[string, string]()
@@ -586,7 +587,7 @@ proc getRadarDnsTimeseries*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsCacheHit*(client: CloudflareClient,
-                                          aggInterval: RadarDnAggIntervalOption,
+                                          aggInterval: RadarDnAggIntervalOption = aggInterval15m,
                                           name: seq[string] = @[],
                                           dateRange: seq[string] = @[],
                                           dateStart: seq[string] = @[],
@@ -599,7 +600,7 @@ proc getRadarDnsTimeseriesGroupsCacheHit*(client: CloudflareClient,
                                           protocol: seq[string] = default(seq[string]),
                                           responseCode: seq[string] = default(seq[string]),
                                           nodata: seq[string] = @[],
-                                          format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsCacheHitResponse] {.async.} =
+                                          format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTimeseriesGroupsCacheHitResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by cache status over time.
 
   var q = initOrderedTable[string, string]()
@@ -626,7 +627,7 @@ proc getRadarDnsTimeseriesGroupsCacheHit*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsDnssec*(client: CloudflareClient,
-                                        aggInterval: RadarDnAggIntervalOption,
+                                        aggInterval: RadarDnAggIntervalOption = aggInterval15m,
                                         name: seq[string] = @[],
                                         dateRange: seq[string] = @[],
                                         dateStart: seq[string] = @[],
@@ -639,7 +640,7 @@ proc getRadarDnsTimeseriesGroupsDnssec*(client: CloudflareClient,
                                         protocol: seq[string] = default(seq[string]),
                                         responseCode: seq[string] = default(seq[string]),
                                         nodata: seq[string] = @[],
-                                        format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsDnssecResponse] {.async.} =
+                                        format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTimeseriesGroupsDnssecResponse] {.async.} =
   ## Retrieves the distribution of DNS responses by DNSSEC (DNS Security Extensions)
   ## support over time.
 
@@ -667,7 +668,7 @@ proc getRadarDnsTimeseriesGroupsDnssec*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsDnssecAware*(client: CloudflareClient,
-                                             aggInterval: RadarDnAggIntervalOption,
+                                             aggInterval: RadarDnAggIntervalOption = aggInterval15m,
                                              name: seq[string] = @[],
                                              dateRange: seq[string] = @[],
                                              dateStart: seq[string] = @[],
@@ -680,7 +681,7 @@ proc getRadarDnsTimeseriesGroupsDnssecAware*(client: CloudflareClient,
                                              protocol: seq[string] = default(seq[string]),
                                              responseCode: seq[string] = default(seq[string]),
                                              nodata: seq[string] = @[],
-                                             format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsDnssecAwareResponse] {.async.} =
+                                             format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTimeseriesGroupsDnssecAwareResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by DNSSEC (DNS Security Extensions)
   ## client awareness over time.
 
@@ -708,7 +709,7 @@ proc getRadarDnsTimeseriesGroupsDnssecAware*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsDnssecE2e*(client: CloudflareClient,
-                                           aggInterval: RadarDnAggIntervalOption,
+                                           aggInterval: RadarDnAggIntervalOption = aggInterval15m,
                                            name: seq[string] = @[],
                                            dateRange: seq[string] = @[],
                                            dateStart: seq[string] = @[],
@@ -721,7 +722,7 @@ proc getRadarDnsTimeseriesGroupsDnssecE2e*(client: CloudflareClient,
                                            protocol: seq[string] = default(seq[string]),
                                            responseCode: seq[string] = default(seq[string]),
                                            nodata: seq[string] = @[],
-                                           format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsDnssecE2eResponse] {.async.} =
+                                           format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTimeseriesGroupsDnssecE2eResponse] {.async.} =
   ## Retrieves the distribution of DNSSEC-validated answers by end-to-end security
   ## status over time.
 
@@ -749,7 +750,7 @@ proc getRadarDnsTimeseriesGroupsDnssecE2e*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsIpVersion*(client: CloudflareClient,
-                                           aggInterval: RadarDnAggIntervalOption,
+                                           aggInterval: RadarDnAggIntervalOption = aggInterval15m,
                                            name: seq[string] = @[],
                                            dateRange: seq[string] = @[],
                                            dateStart: seq[string] = @[],
@@ -762,7 +763,7 @@ proc getRadarDnsTimeseriesGroupsIpVersion*(client: CloudflareClient,
                                            protocol: seq[string] = default(seq[string]),
                                            responseCode: seq[string] = default(seq[string]),
                                            nodata: seq[string] = @[],
-                                           format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsIpVersionResponse] {.async.} =
+                                           format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTimeseriesGroupsIpVersionResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by IP version over time.
 
   var q = initOrderedTable[string, string]()
@@ -789,7 +790,7 @@ proc getRadarDnsTimeseriesGroupsIpVersion*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsMatchingAnswer*(client: CloudflareClient,
-                                                aggInterval: RadarDnAggIntervalOption,
+                                                aggInterval: RadarDnAggIntervalOption = aggInterval15m,
                                                 name: seq[string] = @[],
                                                 dateRange: seq[string] = @[],
                                                 dateStart: seq[string] = @[],
@@ -802,7 +803,7 @@ proc getRadarDnsTimeseriesGroupsMatchingAnswer*(client: CloudflareClient,
                                                 protocol: seq[string] = default(seq[string]),
                                                 responseCode: seq[string] = default(seq[string]),
                                                 nodata: seq[string] = @[],
-                                                format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsMatchingAnswerResponse] {.async.} =
+                                                format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTimeseriesGroupsMatchingAnswerResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by matching answers over time.
 
   var q = initOrderedTable[string, string]()
@@ -829,7 +830,7 @@ proc getRadarDnsTimeseriesGroupsMatchingAnswer*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsProtocol*(client: CloudflareClient,
-                                          aggInterval: RadarDnAggIntervalOption,
+                                          aggInterval: RadarDnAggIntervalOption = aggInterval15m,
                                           name: seq[string] = @[],
                                           dateRange: seq[string] = @[],
                                           dateStart: seq[string] = @[],
@@ -841,7 +842,7 @@ proc getRadarDnsTimeseriesGroupsProtocol*(client: CloudflareClient,
                                           queryType: seq[string] = default(seq[string]),
                                           responseCode: seq[string] = default(seq[string]),
                                           nodata: seq[string] = @[],
-                                          format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsProtocolResponse] {.async.} =
+                                          format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTimeseriesGroupsProtocolResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by DNS transport protocol over time.
 
   var q = initOrderedTable[string, string]()
@@ -867,7 +868,7 @@ proc getRadarDnsTimeseriesGroupsProtocol*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsQueryType*(client: CloudflareClient,
-                                           aggInterval: RadarDnAggIntervalOption,
+                                           aggInterval: RadarDnAggIntervalOption = aggInterval15m,
                                            name: seq[string] = @[],
                                            dateRange: seq[string] = @[],
                                            dateStart: seq[string] = @[],
@@ -880,7 +881,7 @@ proc getRadarDnsTimeseriesGroupsQueryType*(client: CloudflareClient,
                                            responseCode: seq[string] = default(seq[string]),
                                            nodata: seq[string] = @[],
                                            limitPerGroup: int64 = default(int64),
-                                           format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsQueryTypeResponse] {.async.} =
+                                           format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTimeseriesGroupsQueryTypeResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by type over time.
 
   var q = initOrderedTable[string, string]()
@@ -907,7 +908,7 @@ proc getRadarDnsTimeseriesGroupsQueryType*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsResponseCode*(client: CloudflareClient,
-                                              aggInterval: RadarDnAggIntervalOption,
+                                              aggInterval: RadarDnAggIntervalOption = aggInterval15m,
                                               name: seq[string] = @[],
                                               dateRange: seq[string] = @[],
                                               dateStart: seq[string] = @[],
@@ -920,7 +921,7 @@ proc getRadarDnsTimeseriesGroupsResponseCode*(client: CloudflareClient,
                                               protocol: seq[string] = default(seq[string]),
                                               nodata: seq[string] = @[],
                                               limitPerGroup: int64 = default(int64),
-                                              format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsResponseCodeResponse] {.async.} =
+                                              format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTimeseriesGroupsResponseCodeResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by response code over time.
 
   var q = initOrderedTable[string, string]()
@@ -947,7 +948,7 @@ proc getRadarDnsTimeseriesGroupsResponseCode*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarDnsTimeseriesGroupsResponseTtl*(client: CloudflareClient,
-                                             aggInterval: RadarDnAggIntervalOption,
+                                             aggInterval: RadarDnAggIntervalOption = aggInterval15m,
                                              name: seq[string] = @[],
                                              dateRange: seq[string] = @[],
                                              dateStart: seq[string] = @[],
@@ -960,7 +961,7 @@ proc getRadarDnsTimeseriesGroupsResponseTtl*(client: CloudflareClient,
                                              protocol: seq[string] = default(seq[string]),
                                              responseCode: seq[string] = default(seq[string]),
                                              nodata: seq[string] = @[],
-                                             format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsResponseTtlResponse] {.async.} =
+                                             format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTimeseriesGroupsResponseTtlResponse] {.async.} =
   ## Retrieves the distribution of DNS queries by minimum answer TTL over time.
 
   var q = initOrderedTable[string, string]()
@@ -988,7 +989,7 @@ proc getRadarDnsTimeseriesGroupsResponseTtl*(client: CloudflareClient,
 
 proc getRadarDnsTimeseriesGroupsDimension*(client: CloudflareClient,
                                            dimension: Dimension,
-                                           aggInterval: RadarDnAggIntervalOption,
+                                           aggInterval: RadarDnAggIntervalOption = aggInterval15m,
                                            name: seq[string] = @[],
                                            dateRange: seq[string] = @[],
                                            dateStart: seq[string] = @[],
@@ -1010,7 +1011,7 @@ proc getRadarDnsTimeseriesGroupsDimension*(client: CloudflareClient,
                                            matchingAnswer: seq[string] = @[],
                                            tld: seq[string] = @[],
                                            normalization: RadarDnNormalizationOption = normalizationPERCENTAGE,
-                                           format: RadarDnFormatOption): Future[GetRadarDnsTimeseriesGroupsDimensionResponse] {.async.} =
+                                           format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of DNS queries grouped by dimension over time.
 
   var q = initOrderedTable[string, string]()
@@ -1061,7 +1062,7 @@ proc getRadarDnsTopAses*(client: CloudflareClient, limit: int64 = 5,
                          dnssecE2e: seq[string] = @[],
                          ipVersion: seq[string] = default(seq[string]),
                          matchingAnswer: seq[string] = @[],
-                         format: RadarDnFormatOption): Future[GetRadarDnsTopAsesResponse] {.async.} =
+                         format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTopAsesResponse] {.async.} =
   ## Retrieves the top autonomous systems by DNS queries made to 1.1.1.1 DNS
   ## resolver.
 
@@ -1115,7 +1116,7 @@ proc getRadarDnsTopLocations*(client: CloudflareClient, limit: int64 = 5,
                               ipVersion: seq[string] = default(seq[string]),
                               matchingAnswer: seq[string] = @[],
                               tld: seq[string] = @[],
-                              format: RadarDnFormatOption): Future[GetRadarDnsTopLocationsResponse] {.async.} =
+                              format: RadarDnFormatOption = formatJSON): Future[GetRadarDnsTopLocationsResponse] {.async.} =
   ## Retrieves the top locations by DNS queries made to 1.1.1.1 DNS resolver.
 
   var q = initOrderedTable[string, string]()

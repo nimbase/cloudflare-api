@@ -47,7 +47,7 @@ proc getRadarLeakedCredentialChecksSummaryBotClass*(client: CloudflareClient,
                                                     dateStart: seq[string] = @[],
                                                     dateEnd: seq[string] = @[],
                                                     compromised: seq[string] = default(seq[string]),
-                                                    format: RadarLeakedCredentialCheckFormatOption): Future[GetRadarLeakedCredentialChecksSummaryBotClassResponse] {.async.} =
+                                                    format: RadarLeakedCredentialCheckFormatOption = formatJSON): Future[GetRadarLeakedCredentialChecksSummaryBotClassResponse] {.async.} =
   ## Retrieves the distribution of HTTP authentication requests by bot class.
 
   var q = initOrderedTable[string, string]()
@@ -71,7 +71,7 @@ proc getRadarLeakedCredentialChecksSummaryCompromised*(client: CloudflareClient,
                                                        dateStart: seq[string] = @[],
                                                        dateEnd: seq[string] = @[],
                                                        botClass: seq[string] = default(seq[string]),
-                                                       format: RadarLeakedCredentialCheckFormatOption): Future[GetRadarLeakedCredentialChecksSummaryCompromisedResponse] {.async.} =
+                                                       format: RadarLeakedCredentialCheckFormatOption = formatJSON): Future[GetRadarLeakedCredentialChecksSummaryCompromisedResponse] {.async.} =
   ## Retrieves the distribution of HTTP authentication requests by compromised
   ## credential status.
 
@@ -102,7 +102,7 @@ proc getRadarLeakedCredentialChecksSummaryDimension*(client: CloudflareClient,
                                                      botClass: seq[string] = default(seq[string]),
                                                      compromised: seq[string] = default(seq[string]),
                                                      limitPerGroup: int64 = default(int64),
-                                                     format: RadarLeakedCredentialCheckFormatOption): Future[GetRadarLeakedCredentialChecksSummaryDimensionResponse] {.async.} =
+                                                     format: RadarLeakedCredentialCheckFormatOption = formatJSON): Future[GetRadarLeakedCredentialChecksSummaryDimensionResponse] {.async.} =
   ## Retrieves an aggregated summary of HTTP authentication requests grouped by the
   ## specified dimension.
 
@@ -127,13 +127,13 @@ proc getRadarLeakedCredentialChecksSummaryDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarLeakedCredentialChecksTimeseriesGroupsBotClass*(client: CloudflareClient,
-                                                             aggInterval: RadarLeakedCredentialCheckAggIntervalOption,
+                                                             aggInterval: RadarLeakedCredentialCheckAggIntervalOption = aggInterval15m,
                                                              name: seq[string] = @[],
                                                              dateRange: seq[string] = @[],
                                                              dateStart: seq[string] = @[],
                                                              dateEnd: seq[string] = @[],
                                                              compromised: seq[string] = default(seq[string]),
-                                                             format: RadarLeakedCredentialCheckFormatOption): Future[GetRadarLeakedCredentialChecksTimeseriesGroupsBotClassResponse] {.async.} =
+                                                             format: RadarLeakedCredentialCheckFormatOption = formatJSON): Future[GetRadarLeakedCredentialChecksTimeseriesGroupsBotClassResponse] {.async.} =
   ## Retrieves the distribution of HTTP authentication requests by bot class over
   ## time.
 
@@ -154,13 +154,13 @@ proc getRadarLeakedCredentialChecksTimeseriesGroupsBotClass*(client: CloudflareC
     raise newException(CloudflareClientError, body)
 
 proc getRadarLeakedCredentialChecksTimeseriesGroupsCompromised*(client: CloudflareClient,
-                                                                aggInterval: RadarLeakedCredentialCheckAggIntervalOption,
+                                                                aggInterval: RadarLeakedCredentialCheckAggIntervalOption = aggInterval15m,
                                                                 name: seq[string] = @[],
                                                                 dateRange: seq[string] = @[],
                                                                 dateStart: seq[string] = @[],
                                                                 dateEnd: seq[string] = @[],
                                                                 botClass: seq[string] = default(seq[string]),
-                                                                format: RadarLeakedCredentialCheckFormatOption): Future[GetRadarLeakedCredentialChecksTimeseriesGroupsCompromisedResponse] {.async.} =
+                                                                format: RadarLeakedCredentialCheckFormatOption = formatJSON): Future[GetRadarLeakedCredentialChecksTimeseriesGroupsCompromisedResponse] {.async.} =
   ## Retrieves the distribution of HTTP authentication requests by compromised
   ## credential status over time.
 
@@ -182,7 +182,7 @@ proc getRadarLeakedCredentialChecksTimeseriesGroupsCompromised*(client: Cloudfla
 
 proc getRadarLeakedCredentialChecksTimeseriesGroupsDimension*(client: CloudflareClient,
                                                               dimension: Dimension,
-                                                              aggInterval: RadarLeakedCredentialCheckAggIntervalOption,
+                                                              aggInterval: RadarLeakedCredentialCheckAggIntervalOption = aggInterval15m,
                                                               name: seq[string] = @[],
                                                               dateRange: seq[string] = @[],
                                                               dateStart: seq[string] = @[],
@@ -194,8 +194,8 @@ proc getRadarLeakedCredentialChecksTimeseriesGroupsDimension*(client: Cloudflare
                                                               compromised: seq[string] = default(seq[string]),
                                                               checkResult: seq[string] = default(seq[string]),
                                                               limitPerGroup: int64 = default(int64),
-                                                              normalization: RadarLeakedCredentialCheckNormalizationOption,
-                                                              format: RadarLeakedCredentialCheckFormatOption): Future[GetRadarLeakedCredentialChecksTimeseriesGroupsDimensionResponse] {.async.} =
+                                                              normalization: RadarLeakedCredentialCheckNormalizationOption = normalizationPERCENTAGECHANGE,
+                                                              format: RadarLeakedCredentialCheckFormatOption = formatJSON): Future[GetRadarLeakedCredentialChecksTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of HTTP authentication requests, grouped by the
   ## specified dimension over time.
 

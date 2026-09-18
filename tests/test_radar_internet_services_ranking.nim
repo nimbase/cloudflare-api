@@ -27,15 +27,15 @@ suite "radar_internet_services_ranking endpoints":
   test "GET /radar/ranking/internet_services/categories":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarRankingInternetServicesCategories(1, @["test"], @["test"], {})
+    discard waitFor client.getRadarRankingInternetServicesCategories(1, @["test"], @["test"], formatJSON)
 
   test "GET /radar/ranking/internet_services/timeseries_groups":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarRankingInternetServicesTimeseriesGroups(@["test"], 1, @["test"], @["test"], @["test"], @["test"], {})
+    discard waitFor client.getRadarRankingInternetServicesTimeseriesGroups(@["test"], 1, @["test"], @["test"], @["test"], @["test"], formatJSON)
 
   test "GET /radar/ranking/internet_services/top":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarRankingInternetServicesTop(@["test"], 1, @["test"], @["test"], {})
+    discard waitFor client.getRadarRankingInternetServicesTop(@["test"], 1, @["test"], @["test"], formatJSON)
 

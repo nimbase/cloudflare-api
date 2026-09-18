@@ -43,7 +43,7 @@ suite "client_versions endpoints":
   test "GET /accounts/{account_id}/devices/client-versions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesClientVersions("test", "test", {}, 1, 1)
+    discard waitFor client.getAccountsAccountIdDevicesClientVersions("test", "test", releaseTrackGa, 1, 1)
 
   test "GET /accounts/{account_id}/devices/client-versions/target-environments":
     let client = initCloudflareClient("test-key")

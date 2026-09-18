@@ -59,7 +59,7 @@ suite "queue endpoints":
   test "GET /accounts/{account_id}/event_subscriptions/subscriptions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEventSubscriptionsSubscriptions("test", 1, 1, {}, {})
+    discard waitFor client.getAccountsAccountIdEventSubscriptionsSubscriptions("test", 1, 1, orderCreatedAt, directionAsc)
 
   test "GET /accounts/{account_id}/event_subscriptions/subscriptions/{subscription_id}":
     let client = initCloudflareClient("test-key")

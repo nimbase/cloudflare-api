@@ -75,12 +75,12 @@ suite "sessions endpoints":
   test "GET /accounts/{account_id}/realtime/kit/{app_id}/sessions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdSessions("test", "test", 1.0, 1.0, {}, {}, "test", "test", "test", {}, "test", "test")
+    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdSessions("test", "test", 1.0, 1.0, sortByMinutesConsumed, sortOrderASC, "test", "test", "test", statusLIVE, "test", "test")
 
   test "GET /accounts/{account_id}/realtime/kit/{app_id}/sessions/peer-report/{peer_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdSessionsPeerReportPeerId("test", "test", {}, true, "test")
+    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdSessionsPeerReportPeerId("test", "test", filtersDeviceInfo, true, "test")
 
   test "GET /accounts/{account_id}/realtime/kit/{app_id}/sessions/{session_id}":
     let client = initCloudflareClient("test-key")
@@ -95,7 +95,7 @@ suite "sessions endpoints":
   test "GET /accounts/{account_id}/realtime/kit/{app_id}/sessions/{session_id}/participants":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdSessionsSessionIdParticipants("test", "test", "test", 1.0, 1, {}, {}, true, {}, "test")
+    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdSessionsSessionIdParticipants("test", "test", "test", 1.0, 1, sortOrderASC, sortByMinutesConsumed, true, viewRaw, "test")
 
   test "GET /accounts/{account_id}/realtime/kit/{app_id}/sessions/{session_id}/participants/{participant_id}":
     let client = initCloudflareClient("test-key")
@@ -115,5 +115,5 @@ suite "sessions endpoints":
   test "GET /accounts/{account_id}/realtime/kit/{app_id}/sessions/{session_id}/transcript":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdSessionsSessionIdTranscript("test", "test", "test", {})
+    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdSessionsSessionIdTranscript("test", "test", "test", formatSRT)
 

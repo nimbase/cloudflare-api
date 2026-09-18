@@ -35,7 +35,7 @@ suite "ai_gateway_evaluations endpoints":
   test "GET /accounts/{account_id}/ai-gateway/evaluation-types":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiGatewayEvaluationTypes("test", 1, 1, "test", {})
+    discard waitFor client.getAccountsAccountIdAiGatewayEvaluationTypes("test", 1, 1, "test", orderByDirectionAsc)
 
   test "GET /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/evaluations":
     let client = initCloudflareClient("test-key")

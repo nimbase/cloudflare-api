@@ -55,7 +55,7 @@ suite "images endpoints":
   test "GET /accounts/{accountId}/v1/images":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdV1Images("test", 1, "test", "test", {})
+    discard waitFor client.getAccountsAccountIdV1Images("test", 1, "test", "test", sortOrderAsc)
 
   test "POST /accounts/{accountId}/v1/images":
     let client = initCloudflareClient("test-key")
@@ -85,7 +85,7 @@ suite "images endpoints":
   test "GET /accounts/{accountId}/v2/images":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdV2Images("test", 1, "test", "test", {})
+    discard waitFor client.getAccountsAccountIdV2Images("test", 1, "test", "test", sortOrderAsc)
 
   test "POST /accounts/{accountId}/v2/images/direct_upload":
     let client = initCloudflareClient("test-key")

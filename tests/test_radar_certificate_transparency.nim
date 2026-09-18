@@ -43,20 +43,20 @@ suite "radar_certificate_transparency endpoints":
   test "GET /radar/ct/authorities":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarCtAuthorities(1, 1, {})
+    discard waitFor client.getRadarCtAuthorities(1, 1, formatJSON)
 
   test "GET /radar/ct/authorities/{ca_slug}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarCtAuthoritiesCaSlug("test", {})
+    discard waitFor client.getRadarCtAuthoritiesCaSlug("test", formatJSON)
 
   test "GET /radar/ct/logs":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarCtLogs(1, 1, {})
+    discard waitFor client.getRadarCtLogs(1, 1, formatJSON)
 
   test "GET /radar/ct/logs/{log_slug}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarCtLogsLogSlug("test", {})
+    discard waitFor client.getRadarCtLogsLogSlug("test", formatJSON)
 

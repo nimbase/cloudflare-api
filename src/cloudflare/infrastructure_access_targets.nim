@@ -49,7 +49,7 @@ proc getAccountsAccountIdInfrastructureTargets*(client: CloudflareClient,
                                                 tag: seq[string] = @[],
                                                 page: int32 = 1,
                                                 perPage: int32 = 1000,
-                                                order: InfrastructureAccessTargetOrderOption,
+                                                order: InfrastructureAccessTargetOrderOption = orderHostname,
                                                 direction: JsonNode = default(JsonNode)): Future[JsonNode] {.async.} =
   ## Lists and sorts an account's targets. Filters are optional and are ANDed
   ## together.

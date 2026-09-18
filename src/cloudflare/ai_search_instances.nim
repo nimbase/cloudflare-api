@@ -226,6 +226,9 @@ proc getAccountsAccountIdAiSearchInstances*(client: CloudflareClient,
                                             orderBy: AiSearchInstanceOrderByOption = orderByCreatedAt,
                                             orderByDirection: AiSearchInstanceOrderByDirectionOption = orderByDirectionDesc): Future[GetAccountsAccountIdAiSearchInstancesResponse] {.async.} =
   ## List all AI Search instances in the account.
+  ##
+  ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
+  ## (and descendant paths) instead.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -246,6 +249,9 @@ proc postAccountsAccountIdAiSearchInstances*(client: CloudflareClient,
                                              accountId: string,
                                              body: PostAccountsAccountIdAiSearchInstancesRequest): Future[PostAccountsAccountIdAiSearchInstancesResponse] {.async.} =
   ## Create a new AI Search instance with the given configuration.
+  ##
+  ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
+  ## (and descendant paths) instead.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-search/instances", body)
   let body = await res.body
@@ -258,6 +264,9 @@ proc postAccountsAccountIdAiSearchInstances*(client: CloudflareClient,
 proc getAccountsAccountIdAiSearchInstancesId*(client: CloudflareClient,
                                               accountId: string, id: string): Future[GetAccountsAccountIdAiSearchInstancesIdResponse] {.async.} =
   ## Retrieve the configuration and status of an AI Search instance.
+  ##
+  ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
+  ## (and descendant paths) instead.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/instances/{id}")
   let body = await res.body
@@ -271,6 +280,9 @@ proc putAccountsAccountIdAiSearchInstancesId*(client: CloudflareClient,
                                               accountId: string, id: string,
                                               body: PutAccountsAccountIdAiSearchInstancesIdRequest): Future[PutAccountsAccountIdAiSearchInstancesIdResponse] {.async.} =
   ## Update the configuration of an AI Search instance.
+  ##
+  ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
+  ## (and descendant paths) instead.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/ai-search/instances/{id}", body)
   let body = await res.body
@@ -283,6 +295,9 @@ proc putAccountsAccountIdAiSearchInstancesId*(client: CloudflareClient,
 proc deleteAccountsAccountIdAiSearchInstancesId*(client: CloudflareClient,
                                                  accountId: string, id: string): Future[DeleteAccountsAccountIdAiSearchInstancesIdResponse] {.async.} =
   ## Permanently delete an AI Search instance and all its indexed data.
+  ##
+  ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
+  ## (and descendant paths) instead.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai-search/instances/{id}")
   let body = await res.body
@@ -298,6 +313,9 @@ proc postAccountsAccountIdAiSearchInstancesIdChatCompletions*(client: Cloudflare
                                                               body: PostAccountsAccountIdAiSearchInstancesIdChatCompletionsRequest): Future[PostAccountsAccountIdAiSearchInstancesIdChatCompletionsResponse] {.async.} =
   ## Performs a chat completion request against an AI Search instance, using indexed
   ## content as context for generating responses.
+  ##
+  ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
+  ## (and descendant paths) instead.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-search/instances/{id}/chat/completions", body)
   let body = await res.body
@@ -313,6 +331,9 @@ proc postAccountsAccountIdAiSearchInstancesIdSearch*(client: CloudflareClient,
                                                      body: PostAccountsAccountIdAiSearchInstancesIdSearchRequest): Future[PostAccountsAccountIdAiSearchInstancesIdSearchResponse] {.async.} =
   ## Executes a semantic search query against an AI Search instance to find relevant
   ## indexed content.
+  ##
+  ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
+  ## (and descendant paths) instead.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-search/instances/{id}/search", body)
   let body = await res.body
@@ -325,6 +346,9 @@ proc postAccountsAccountIdAiSearchInstancesIdSearch*(client: CloudflareClient,
 proc getAccountsAccountIdAiSearchInstancesIdStats*(client: CloudflareClient,
                                                    id: string, accountId: string): Future[GetAccountsAccountIdAiSearchInstancesIdStatsResponse] {.async.} =
   ## Retrieve usage and indexing statistics for an AI Search instance.
+  ##
+  ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
+  ## (and descendant paths) instead.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/instances/{id}/stats")
   let body = await res.body

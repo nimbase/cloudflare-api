@@ -31,7 +31,7 @@ suite "email_routing_destination_addresses endpoints":
   test "GET /accounts/{account_id}/email/routing/addresses":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailRoutingAddresses("test", 1.0, 1.0, {}, {})
+    discard waitFor client.getAccountsAccountIdEmailRoutingAddresses("test", 1.0, 1.0, directionAsc, verifiedTrue)
 
   test "POST /accounts/{account_id}/email/routing/addresses":
     let client = initCloudflareClient("test-key")

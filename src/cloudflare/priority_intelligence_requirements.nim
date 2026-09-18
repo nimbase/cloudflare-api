@@ -83,7 +83,7 @@ proc getAccountsAccountIdCloudforceOneV2PriorityIntelligenceInterests*(client: C
                                                                        accountId: string,
                                                                        page: int64 = 1,
                                                                        perPage: int64 = 20,
-                                                                       enabled: PriorityIntelligenceRequirementEnabledOption): Future[AsyncResponse] {.async.} =
+                                                                       enabled: PriorityIntelligenceRequirementEnabledOption = enabledTrue): Future[AsyncResponse] {.async.} =
   ## Lists structured account interests for Priority Intelligence Option 2. Filter by
   ## enabled state and paginate results.
 

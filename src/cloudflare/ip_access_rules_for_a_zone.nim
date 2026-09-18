@@ -41,14 +41,14 @@ type
 proc getZonesZoneIdFirewallAccessRulesRules*(client: CloudflareClient,
                                              zoneId: types.FirewallIdentifier,
                                              mode: types.FirewallSchemasMode = default(types.FirewallSchemasMode),
-                                             configurationTarget: IpAccessRulesForAZoneConfigurationTargetOption,
+                                             configurationTarget: IpAccessRulesForAZoneConfigurationTargetOption = configurationTargetIp,
                                              configurationValue: string = default(string),
                                              notes: string = default(string),
                                              match: IpAccessRulesForAZoneMatchOption = matchAll,
                                              page: float64 = default(float64),
                                              perPage: float64 = default(float64),
-                                             order: IpAccessRulesForAZoneOrderOption,
-                                             direction: IpAccessRulesForAZoneDirectionOption): Future[types.FirewallRuleCollectionResponse] {.async.} =
+                                             order: IpAccessRulesForAZoneOrderOption = orderConfigurationTarget,
+                                             direction: IpAccessRulesForAZoneDirectionOption = directionAsc): Future[types.FirewallRuleCollectionResponse] {.async.} =
   ## Fetches IP Access rules of a zone. You can filter the results using several
   ## optional parameters.
 

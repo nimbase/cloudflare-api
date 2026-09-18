@@ -28,8 +28,8 @@ proc getAccountsAccountIdGatewayProxyEndpoints*(client: CloudflareClient,
                                                 accountId: types.ZeroTrustGatewayIdentifier2,
                                                 filter: seq[string] = @[],
                                                 search: string = default(string),
-                                                orderBy: ZeroTrustGatewayProxyEndpointOrderByOption,
-                                                direction: ZeroTrustGatewayProxyEndpointDirectionOption): Future[types.ZeroTrustGatewayResponseCollection9] {.async.} =
+                                                orderBy: ZeroTrustGatewayProxyEndpointOrderByOption = orderByName,
+                                                direction: ZeroTrustGatewayProxyEndpointDirectionOption = directionAsc): Future[types.ZeroTrustGatewayResponseCollection9] {.async.} =
   ## List all Zero Trust Gateway proxy endpoints for an account.
 
   var q = initOrderedTable[string, string]()

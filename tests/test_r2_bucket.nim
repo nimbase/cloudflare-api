@@ -141,7 +141,7 @@ suite "r2_bucket endpoints":
   test "GET /accounts/{account_id}/r2/buckets":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdR2Buckets("test", "test", "test", 1.0, {}, {}, "test")
+    discard waitFor client.getAccountsAccountIdR2Buckets("test", "test", "test", 1.0, orderName, directionAsc, "test")
 
   test "GET /accounts/{account_id}/r2/buckets/{bucket_name}":
     let client = initCloudflareClient("test-key")

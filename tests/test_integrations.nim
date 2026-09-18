@@ -47,7 +47,7 @@ suite "integrations endpoints":
   test "GET /accounts/{account_id}/one/integrations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdOneIntegrations("test", "test", {}, true, {}, 1, 1, "test", {}, "test")
+    discard waitFor client.getAccountsAccountIdOneIntegrations("test", "test", directionAsc, true, orderApplication, 1, 1, "test", statusHealthy, "test")
 
   test "POST /accounts/{account_id}/one/integrations":
     let client = initCloudflareClient("test-key")

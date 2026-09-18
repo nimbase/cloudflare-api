@@ -47,7 +47,7 @@ proc getRadarAiInferenceSummaryModel*(client: CloudflareClient,
                                       dateStart: seq[string] = @[],
                                       dateEnd: seq[string] = @[],
                                       limitPerGroup: int64 = default(int64),
-                                      format: RadarAiInferenceFormatOption): Future[GetRadarAiInferenceSummaryModelResponse] {.async.} =
+                                      format: RadarAiInferenceFormatOption = formatJSON): Future[GetRadarAiInferenceSummaryModelResponse] {.async.} =
   ## Retrieves the distribution of the number of inferences by model.
 
   var q = initOrderedTable[string, string]()
@@ -71,7 +71,7 @@ proc getRadarAiInferenceSummaryTask*(client: CloudflareClient,
                                      dateStart: seq[string] = @[],
                                      dateEnd: seq[string] = @[],
                                      limitPerGroup: int64 = default(int64),
-                                     format: RadarAiInferenceFormatOption): Future[GetRadarAiInferenceSummaryTaskResponse] {.async.} =
+                                     format: RadarAiInferenceFormatOption = formatJSON): Future[GetRadarAiInferenceSummaryTaskResponse] {.async.} =
   ## Retrieves the distribution of the number of inferences by task.
 
   var q = initOrderedTable[string, string]()
@@ -99,7 +99,7 @@ proc getRadarAiInferenceSummaryDimension*(client: CloudflareClient,
                                           location: seq[string] = @[],
                                           continent: seq[string] = @[],
                                           limitPerGroup: int64 = default(int64),
-                                          format: RadarAiInferenceFormatOption): Future[GetRadarAiInferenceSummaryDimensionResponse] {.async.} =
+                                          format: RadarAiInferenceFormatOption = formatJSON): Future[GetRadarAiInferenceSummaryDimensionResponse] {.async.} =
   ## Retrieves an aggregated summary of the number of inferences run on Workers AI,
   ## grouped by the specified dimension.
 
@@ -122,13 +122,13 @@ proc getRadarAiInferenceSummaryDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAiInferenceTimeseriesGroupsModel*(client: CloudflareClient,
-                                               aggInterval: RadarAiInferenceAggIntervalOption,
+                                               aggInterval: RadarAiInferenceAggIntervalOption = aggInterval15m,
                                                name: seq[string] = @[],
                                                dateRange: seq[string] = @[],
                                                dateStart: seq[string] = @[],
                                                dateEnd: seq[string] = @[],
                                                limitPerGroup: int64 = default(int64),
-                                               format: RadarAiInferenceFormatOption): Future[GetRadarAiInferenceTimeseriesGroupsModelResponse] {.async.} =
+                                               format: RadarAiInferenceFormatOption = formatJSON): Future[GetRadarAiInferenceTimeseriesGroupsModelResponse] {.async.} =
   ## Retrieves the distribution of the number of inferences by model over time.
 
   var q = initOrderedTable[string, string]()
@@ -148,13 +148,13 @@ proc getRadarAiInferenceTimeseriesGroupsModel*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAiInferenceTimeseriesGroupsTask*(client: CloudflareClient,
-                                              aggInterval: RadarAiInferenceAggIntervalOption,
+                                              aggInterval: RadarAiInferenceAggIntervalOption = aggInterval15m,
                                               name: seq[string] = @[],
                                               dateRange: seq[string] = @[],
                                               dateStart: seq[string] = @[],
                                               dateEnd: seq[string] = @[],
                                               limitPerGroup: int64 = default(int64),
-                                              format: RadarAiInferenceFormatOption): Future[GetRadarAiInferenceTimeseriesGroupsTaskResponse] {.async.} =
+                                              format: RadarAiInferenceFormatOption = formatJSON): Future[GetRadarAiInferenceTimeseriesGroupsTaskResponse] {.async.} =
   ## Retrieves the distribution of the number of inferences by task over time.
 
   var q = initOrderedTable[string, string]()
@@ -175,7 +175,7 @@ proc getRadarAiInferenceTimeseriesGroupsTask*(client: CloudflareClient,
 
 proc getRadarAiInferenceTimeseriesGroupsDimension*(client: CloudflareClient,
                                                    dimension: Dimension,
-                                                   aggInterval: RadarAiInferenceAggIntervalOption,
+                                                   aggInterval: RadarAiInferenceAggIntervalOption = aggInterval15m,
                                                    name: seq[string] = @[],
                                                    dateRange: seq[string] = @[],
                                                    dateStart: seq[string] = @[],
@@ -185,7 +185,7 @@ proc getRadarAiInferenceTimeseriesGroupsDimension*(client: CloudflareClient,
                                                    continent: seq[string] = @[],
                                                    limitPerGroup: int64 = default(int64),
                                                    normalization: RadarAiInferenceNormalizationOption = normalizationPERCENTAGE,
-                                                   format: RadarAiInferenceFormatOption): Future[GetRadarAiInferenceTimeseriesGroupsDimensionResponse] {.async.} =
+                                                   format: RadarAiInferenceFormatOption = formatJSON): Future[GetRadarAiInferenceTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of the number of inferences run on Workers AI,
   ## grouped by the specified dimension over time.
 

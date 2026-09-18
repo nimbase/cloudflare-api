@@ -191,7 +191,7 @@ proc getZonesZoneIdApiGatewayUserSchemasSchemaIdOperations*(client: CloudflareCl
                                                             endpoint: string = default(string),
                                                             page: int64 = 1,
                                                             perPage: int64 = 20,
-                                                            operationStatus: ApiShieldSchemaValidation20OperationStatusOption): Future[JsonNode] {.async.} =
+                                                            operationStatus: ApiShieldSchemaValidation20OperationStatusOption = operationStatusNew): Future[JsonNode] {.async.} =
   ## Retrieves all operations from the schema. Operations that already exist in API
   ## Shield Endpoint Management will be returned as full operations. Deprecated; use
   ## `/zones/{zone_id}/schema_validation/schemas/{schema_id}/operations` instead.

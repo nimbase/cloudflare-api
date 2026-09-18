@@ -27,10 +27,10 @@ suite "radar_traffic_anomalies endpoints":
   test "GET /radar/traffic_anomalies/locations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarTrafficAnomaliesLocations(1, "test", "test", "test", {}, {})
+    discard waitFor client.getRadarTrafficAnomaliesLocations(1, "test", "test", "test", statusVERIFIED, formatJSON)
 
   test "GET /radar/traffic_anomalies/{uuid}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarTrafficAnomaliesUuid("test", {})
+    discard waitFor client.getRadarTrafficAnomaliesUuid("test", formatJSON)
 

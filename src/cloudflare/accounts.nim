@@ -42,7 +42,7 @@ type
 proc getAccounts*(client: CloudflareClient, name: string = default(string),
                   page: float64 = default(float64),
                   perPage: float64 = default(float64),
-                  direction: AccountDirectionOption): Future[types.IamResponseCollectionAccounts] {.async.} =
+                  direction: AccountDirectionOption = directionAsc): Future[types.IamResponseCollectionAccounts] {.async.} =
   ## List all accounts you have ownership or verified access to.
 
   var q = initOrderedTable[string, string]()

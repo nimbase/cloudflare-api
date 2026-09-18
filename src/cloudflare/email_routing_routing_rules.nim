@@ -18,7 +18,7 @@ proc getAccountsAccountIdEmailRoutingRules*(client: CloudflareClient,
                                             accountId: types.EmailIdentifier,
                                             page: float64 = default(float64),
                                             perPage: float64 = default(float64),
-                                            enabled: EmailRoutingRoutingRuleEnabledOption): Future[types.EmailAccountRulesResponseCollection] {.async.} =
+                                            enabled: EmailRoutingRoutingRuleEnabledOption = enabledTrue): Future[types.EmailAccountRulesResponseCollection] {.async.} =
   ## Lists existing routing rules across all zones in the account.
 
   var q = initOrderedTable[string, string]()
@@ -52,7 +52,7 @@ proc getZonesZoneIdEmailRoutingRules*(client: CloudflareClient,
                                       zoneId: types.EmailIdentifier,
                                       page: float64 = default(float64),
                                       perPage: float64 = default(float64),
-                                      enabled: EmailRoutingRoutingRuleEnabledOption): Future[types.EmailRulesResponseCollection] {.async.} =
+                                      enabled: EmailRoutingRoutingRuleEnabledOption = enabledTrue): Future[types.EmailRulesResponseCollection] {.async.} =
   ## Lists existing routing rules.
 
   var q = initOrderedTable[string, string]()

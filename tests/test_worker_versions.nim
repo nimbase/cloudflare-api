@@ -44,7 +44,7 @@ suite "worker_versions endpoints":
   test "POST /accounts/{account_id}/workers/scripts/{script_name}/versions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdWorkersScriptsScriptNameVersions("test", "test", {})
+    discard waitFor client.postAccountsAccountIdWorkersScriptsScriptNameVersions("test", "test", bindingsInheritStrict)
 
   test "GET /accounts/{account_id}/workers/scripts/{script_name}/versions/{version_id}":
     let client = initCloudflareClient("test-key")

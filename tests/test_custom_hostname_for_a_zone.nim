@@ -55,7 +55,7 @@ suite "custom_hostname_for_a_zone endpoints":
   test "GET /zones/{zone_id}/custom_hostnames":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdCustomHostnames("test", "test", "test", "test", "test", "test", 1.0, 1.0, {}, {}, {}, {}, {}, true, "test", {})
+    discard waitFor client.getZonesZoneIdCustomHostnames("test", "test", "test", "test", "test", "test", 1.0, 1.0, orderSsl, directionAsc, sslStatusInitializing, hostnameStatusActive, certificateAuthorityGoogle, true, "test", ssl0)
 
   test "GET /zones/{zone_id}/custom_hostnames/quota":
     let client = initCloudflareClient("test-key")

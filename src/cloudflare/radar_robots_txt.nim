@@ -31,7 +31,7 @@ proc getRadarRobotsTxtTopDomainCategories*(client: CloudflareClient,
                                            name: seq[string] = @[],
                                            userAgentCategory: RadarRobotsTxtUserAgentCategoryOption = userAgentCategoryAI,
                                            date: seq[string] = @[],
-                                           format: RadarRobotsTxtFormatOption): Future[GetRadarRobotsTxtTopDomainCategoriesResponse] {.async.} =
+                                           format: RadarRobotsTxtFormatOption = formatJSON): Future[GetRadarRobotsTxtTopDomainCategoriesResponse] {.async.} =
   ## Retrieves the top domain categories by the number of robots.txt files parsed.
 
   var q = initOrderedTable[string, string]()
@@ -54,8 +54,8 @@ proc getRadarRobotsTxtTopUserAgentsDirective*(client: CloudflareClient,
                                               userAgentCategory: RadarRobotsTxtUserAgentCategoryOption = userAgentCategoryAI,
                                               date: seq[string] = @[],
                                               domainCategory: seq[string] = @[],
-                                              directive: RadarRobotsTxtDirectiveOption,
-                                              format: RadarRobotsTxtFormatOption): Future[GetRadarRobotsTxtTopUserAgentsDirectiveResponse] {.async.} =
+                                              directive: RadarRobotsTxtDirectiveOption = directiveALLOW,
+                                              format: RadarRobotsTxtFormatOption = formatJSON): Future[GetRadarRobotsTxtTopUserAgentsDirectiveResponse] {.async.} =
   ## Retrieves the top user agents on robots.txt files.
 
   var q = initOrderedTable[string, string]()

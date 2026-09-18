@@ -108,7 +108,7 @@ suite "brapi endpoints":
   test "GET /accounts/{account_id}/browser-rendering/crawl/{job_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdBrowserRenderingCrawlJobId("test", "test", 1.0, {}, 1.0, 1.0)
+    discard waitFor client.getAccountsAccountIdBrowserRenderingCrawlJobId("test", "test", 1.0, statusQueued, 1.0, 1.0)
 
   test "DELETE /accounts/{account_id}/browser-rendering/crawl/{job_id}":
     let client = initCloudflareClient("test-key")

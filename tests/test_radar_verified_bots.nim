@@ -23,10 +23,10 @@ suite "radar_verified_bots endpoints":
   test "GET /radar/verified_bots/top/bots":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarVerifiedBotsTopBots(1, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], {})
+    discard waitFor client.getRadarVerifiedBotsTopBots(1, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], formatJSON)
 
   test "GET /radar/verified_bots/top/categories":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarVerifiedBotsTopCategories(1, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], {})
+    discard waitFor client.getRadarVerifiedBotsTopCategories(1, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], formatJSON)
 

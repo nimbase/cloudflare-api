@@ -39,7 +39,7 @@ suite "extension endpoints":
   test "GET /accounts/{account_id}/registrar-sandbox/extensions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdRegistrarSandboxExtensions("test", "test", "test", 1, {}, {})
+    discard waitFor client.getAccountsAccountIdRegistrarSandboxExtensions("test", "test", "test", 1, directionAsc, sortByName)
 
   test "GET /accounts/{account_id}/registrar-sandbox/extensions/{extension}":
     let client = initCloudflareClient("test-key")
@@ -49,7 +49,7 @@ suite "extension endpoints":
   test "GET /accounts/{account_id}/registrar/extensions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdRegistrarExtensions("test", "test", "test", 1, {}, {})
+    discard waitFor client.getAccountsAccountIdRegistrarExtensions("test", "test", "test", 1, directionAsc, sortByName)
 
   test "GET /accounts/{account_id}/registrar/extensions/{extension}":
     let client = initCloudflareClient("test-key")

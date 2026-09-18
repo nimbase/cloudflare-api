@@ -109,7 +109,7 @@ proc getAccountsAccountIdVectorizeV2IndexesIndexNameInfo*(client: CloudflareClie
 proc postAccountsAccountIdVectorizeV2IndexesIndexNameInsert*(client: CloudflareClient,
                                                              accountId: types.VectorizeIdentifier,
                                                              indexName: types.VectorizeIndexName,
-                                                             unparsableBehavior: VectorizeUnparsableBehaviorOption): Future[JsonNode] {.async.} =
+                                                             unparsableBehavior: VectorizeUnparsableBehaviorOption = unparsableBehaviorError): Future[JsonNode] {.async.} =
   ## Inserts vectors into the specified index and returns a mutation id corresponding
   ## to the vectors enqueued for insertion.
 
@@ -199,7 +199,7 @@ proc postAccountsAccountIdVectorizeV2IndexesIndexNameQuery*(client: CloudflareCl
 proc postAccountsAccountIdVectorizeV2IndexesIndexNameUpsert*(client: CloudflareClient,
                                                              accountId: types.VectorizeIdentifier,
                                                              indexName: types.VectorizeIndexName,
-                                                             unparsableBehavior: VectorizeUnparsableBehaviorOption): Future[JsonNode] {.async.} =
+                                                             unparsableBehavior: VectorizeUnparsableBehaviorOption = unparsableBehaviorError): Future[JsonNode] {.async.} =
   ## Upserts vectors into the specified index, creating them if they do not exist and
   ## returns a mutation id corresponding to the vectors enqueued for upsertion.
 

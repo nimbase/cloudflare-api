@@ -45,7 +45,7 @@ proc getZonesZoneIdCustomCertificates*(client: CloudflareClient,
                                        page: float64 = default(float64),
                                        perPage: float64 = default(float64),
                                        match: CustomSslForAZoneMatchOption = matchAll,
-                                       status: CustomSslForAZoneStatusOption): Future[types.TlsCertificatesAndHostnamesCertificateResponseCollection] {.async.} =
+                                       status: CustomSslForAZoneStatusOption = statusActive): Future[types.TlsCertificatesAndHostnamesCertificateResponseCollection] {.async.} =
   ## List, search, and filter all of your custom SSL certificates. The higher
   ## priority will break ties across overlapping 'legacy_custom' certificates, but
   ## 'legacy_custom' certificates will always supercede 'sni_custom' certificates.

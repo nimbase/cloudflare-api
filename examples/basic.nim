@@ -10,7 +10,7 @@ proc main() {.async.} =
   let client = initCloudflareClient("your-api-key")
   client.baseUri = "https://api.cloudflare.com/client/v4"
   try:
-    let res = await client.getAccounts("test", 1.0, 1.0, {})
+    let res = await client.getAccounts("test", 1.0, 1.0, directionAsc)
     echo res
   except CatchableError as e:
     echo "request failed: ", e.msg

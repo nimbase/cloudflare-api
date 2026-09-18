@@ -21,8 +21,8 @@ type
 
 proc getZonesZoneIdApiGatewayOperations*(client: CloudflareClient,
                                          page: int64 = 1, perPage: int64 = 20,
-                                         order: ApiShieldEndpointManagementOrderOption,
-                                         direction: ApiShieldEndpointManagementDirectionOption,
+                                         order: ApiShieldEndpointManagementOrderOption = orderMethod,
+                                         direction: ApiShieldEndpointManagementDirectionOption = directionAsc,
                                          host: seq[string] = @[],
                                          `method`: seq[string] = @[],
                                          endpoint: string = default(string),

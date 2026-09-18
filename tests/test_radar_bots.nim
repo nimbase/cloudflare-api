@@ -35,10 +35,10 @@ suite "radar_bots endpoints":
   test "GET /radar/bots":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBots(1, 1, {}, "test", {}, {}, {})
+    discard waitFor client.getRadarBots(1, 1, botCategorySEARCHENGINECRAWLER, "test", kindAGENT, botVerificationStatusVERIFIED, formatJSON)
 
   test "GET /radar/bots/{bot_slug}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarBotsBotSlug("test", {})
+    discard waitFor client.getRadarBotsBotSlug("test", formatJSON)
 

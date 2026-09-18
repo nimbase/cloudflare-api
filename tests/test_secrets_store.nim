@@ -68,7 +68,7 @@ suite "secrets_store endpoints":
   test "GET /accounts/{account_id}/secrets_store/stores":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdSecretsStoreStores("test", {}, 1, 1, {})
+    discard waitFor client.getAccountsAccountIdSecretsStoreStores("test", directionAsc, 1, 1, orderName)
 
   test "POST /accounts/{account_id}/secrets_store/stores":
     let client = initCloudflareClient("test-key")

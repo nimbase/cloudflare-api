@@ -111,7 +111,7 @@ suite "cloudflare_images endpoints":
   test "GET /accounts/{account_id}/images/v2":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdImagesV2("test", "test", 1.0, {}, "test", "test")
+    discard waitFor client.getAccountsAccountIdImagesV2("test", "test", 1.0, sortOrderAsc, "test", "test")
 
   test "POST /accounts/{account_id}/images/v2/direct_upload":
     let client = initCloudflareClient("test-key")

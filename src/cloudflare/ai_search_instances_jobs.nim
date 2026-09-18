@@ -56,6 +56,9 @@ proc getAccountsAccountIdAiSearchInstancesIdJobs*(client: CloudflareClient,
                                                   page: int64 = 1,
                                                   perPage: int64 = 20): Future[GetAccountsAccountIdAiSearchInstancesIdJobsResponse] {.async.} =
   ## Lists indexing jobs for an AI Search instance.
+  ##
+  ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
+  ## (and descendant paths) instead.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -72,6 +75,9 @@ proc postAccountsAccountIdAiSearchInstancesIdJobs*(client: CloudflareClient,
                                                    id: string, accountId: string,
                                                    body: PostAccountsAccountIdAiSearchInstancesIdJobsRequest): Future[PostAccountsAccountIdAiSearchInstancesIdJobsResponse] {.async.} =
   ## Creates a new indexing job for an AI Search instance.
+  ##
+  ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
+  ## (and descendant paths) instead.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-search/instances/{id}/jobs", body)
   let body = await res.body
@@ -85,6 +91,9 @@ proc getAccountsAccountIdAiSearchInstancesIdJobsJobId*(client: CloudflareClient,
                                                        id: string, jobId: string,
                                                        accountId: string): Future[GetAccountsAccountIdAiSearchInstancesIdJobsJobIdResponse] {.async.} =
   ## Retrieves details for a specific AI Search indexing job.
+  ##
+  ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
+  ## (and descendant paths) instead.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/instances/{id}/jobs/{jobId}")
   let body = await res.body
@@ -100,6 +109,9 @@ proc patchAccountsAccountIdAiSearchInstancesIdJobsJobId*(client: CloudflareClien
                                                          accountId: string,
                                                          body: PatchAccountsAccountIdAiSearchInstancesIdJobsJobIdRequest): Future[PatchAccountsAccountIdAiSearchInstancesIdJobsJobIdResponse] {.async.} =
   ## Cancel an in-progress indexing job for an AI Search instance.
+  ##
+  ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
+  ## (and descendant paths) instead.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/ai-search/instances/{id}/jobs/{jobId}", body)
   let body = await res.body
@@ -116,6 +128,9 @@ proc getAccountsAccountIdAiSearchInstancesIdJobsJobIdLogs*(client: CloudflareCli
                                                            page: int64 = 1,
                                                            perPage: int64 = 20): Future[GetAccountsAccountIdAiSearchInstancesIdJobsJobIdLogsResponse] {.async.} =
   ## Lists log entries for an AI Search indexing job.
+  ##
+  ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
+  ## (and descendant paths) instead.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page

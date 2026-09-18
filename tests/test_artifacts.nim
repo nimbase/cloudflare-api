@@ -90,7 +90,7 @@ suite "artifacts endpoints":
   test "GET /accounts/{account_id}/artifacts/namespaces/{namespace}/repos":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdArtifactsNamespacesNamespaceRepos("test", 1, "test", "test", {}, {})
+    discard waitFor client.getAccountsAccountIdArtifactsNamespacesNamespaceRepos("test", 1, "test", "test", sortCreatedAt, directionAsc)
 
   test "GET /accounts/{account_id}/artifacts/namespaces/{namespace}/repos/{name}":
     let client = initCloudflareClient("test-key")
@@ -130,7 +130,7 @@ suite "artifacts endpoints":
   test "GET /accounts/{account_id}/artifacts/namespaces/{namespace}/repos/{name}/tokens":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdArtifactsNamespacesNamespaceReposNameTokens("test", "test", {}, 1, 1)
+    discard waitFor client.getAccountsAccountIdArtifactsNamespacesNamespaceReposNameTokens("test", "test", stateActive, 1, 1)
 
   test "GET /accounts/{account_id}/artifacts/namespaces/{namespace}/repos/{name}/tree/{hash}":
     let client = initCloudflareClient("test-key")

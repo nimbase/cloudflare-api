@@ -63,7 +63,7 @@ suite "registrar_registration endpoints":
   test "GET /accounts/{account_id}/registrar-sandbox/registrations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdRegistrarSandboxRegistrations("test", "test", 1, {}, {})
+    discard waitFor client.getAccountsAccountIdRegistrarSandboxRegistrations("test", "test", 1, directionAsc, sortByRegistryCreatedAt)
 
   test "POST /accounts/{account_id}/registrar-sandbox/registrations":
     let client = initCloudflareClient("test-key")
@@ -93,7 +93,7 @@ suite "registrar_registration endpoints":
   test "GET /accounts/{account_id}/registrar/registrations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdRegistrarRegistrations("test", "test", 1, {}, {})
+    discard waitFor client.getAccountsAccountIdRegistrarRegistrations("test", "test", 1, directionAsc, sortByRegistryCreatedAt)
 
   test "POST /accounts/{account_id}/registrar/registrations":
     let client = initCloudflareClient("test-key")

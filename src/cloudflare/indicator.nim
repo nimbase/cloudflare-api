@@ -315,8 +315,8 @@ proc getAccountsAccountIdCloudforceOneEventsIndicators*(client: CloudflareClient
                                                         relatedEventsLimit: float64 = default(float64),
                                                         includeTags: bool = default(bool),
                                                         includeTotalCount: bool = default(bool),
-                                                        format: IndicatorFormatOption,
-                                                        cache: IndicatorCacheOption,
+                                                        format: IndicatorFormatOption = formatJson,
+                                                        cache: IndicatorCacheOption = cacheFromGraph,
                                                         cursor: string = default(string)): Future[GetAccountsAccountIdCloudforceOneEventsIndicatorsResponse] {.async.} =
   ## Retrieves indicators across specified datasets, ordered by createdAt descending
   ## then UUID, dataset ID, and shard ID ascending. Use the standalone datasetIds

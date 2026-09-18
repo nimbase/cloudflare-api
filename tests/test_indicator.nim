@@ -97,10 +97,10 @@ suite "indicator endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/events/indicators":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneEventsIndicators("test", @["test"], 1.0, 1.0, @["test"], "test", "test", @["test"], @["test"], @["test"], "test", "test", 1.0, true, true, {}, {}, "test")
+    discard waitFor client.getAccountsAccountIdCloudforceOneEventsIndicators("test", @["test"], 1.0, 1.0, @["test"], "test", "test", @["test"], @["test"], @["test"], "test", "test", 1.0, true, true, formatJson, cacheFromGraph, "test")
 
   test "GET /accounts/{account_id}/cloudforce-one/events/indicators/aggregate":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneEventsIndicatorsAggregate("test", "test", {}, "test", @["test"], openjson.newJObject(), openjson.newJObject(), "test", "test", 1.0)
+    discard waitFor client.getAccountsAccountIdCloudforceOneEventsIndicatorsAggregate("test", "test", measureIndicators, "test", @["test"], openjson.newJObject(), openjson.newJObject(), "test", "test", 1.0)
 

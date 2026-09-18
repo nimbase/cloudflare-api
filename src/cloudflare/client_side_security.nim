@@ -73,13 +73,13 @@ proc getZonesZoneIdPageShieldConnections*(client: CloudflareClient,
                                           hosts: string = default(string),
                                           page: string = default(string),
                                           perPage: float64 = default(float64),
-                                          orderBy: ClientSideSecurityOrderByOption,
-                                          direction: ClientSideSecurityDirectionOption,
+                                          orderBy: ClientSideSecurityOrderByOption = orderByFirstSeenAt,
+                                          direction: ClientSideSecurityDirectionOption = directionAsc,
                                           prioritizeMalicious: bool = default(bool),
                                           excludeCdnCgi: bool = default(bool),
                                           status: string = default(string),
                                           pageUrl: string = default(string),
-                                          `export`: ClientSideSecurityExportOption): Future[types.ClientSideSecurityListZoneConnectionsResponse] {.async.} =
+                                          `export`: ClientSideSecurityExportOption = exportCsv): Future[types.ClientSideSecurityListZoneConnectionsResponse] {.async.} =
   ## Lists outbound connections made by webpages in the zone.
 
   var q = initOrderedTable[string, string]()
@@ -121,15 +121,15 @@ proc getZonesZoneIdPageShieldCookies*(client: CloudflareClient,
                                       hosts: string = default(string),
                                       page: string = default(string),
                                       perPage: float64 = default(float64),
-                                      orderBy: ClientSideSecurityOrderByOption,
-                                      direction: ClientSideSecurityDirectionOption,
+                                      orderBy: ClientSideSecurityOrderByOption = orderByFirstSeenAt,
+                                      direction: ClientSideSecurityDirectionOption = directionAsc,
                                       pageUrl: string = default(string),
-                                      `export`: ClientSideSecurityExportOption,
+                                      `export`: ClientSideSecurityExportOption = exportCsv,
                                       name: string = default(string),
                                       secure: bool = default(bool),
                                       httpOnly: bool = default(bool),
-                                      sameSite: ClientSideSecuritySameSiteOption,
-                                      `type`: ClientSideSecurityTypeOption,
+                                      sameSite: ClientSideSecuritySameSiteOption = sameSiteLax,
+                                      `type`: ClientSideSecurityTypeOption = typeFirstParty,
                                       path: string = default(string),
                                       domain: string = default(string)): Future[types.ClientSideSecurityListZoneCookiesResponse] {.async.} =
   ## Lists cookies detected on the zone.
@@ -239,14 +239,14 @@ proc getZonesZoneIdPageShieldScripts*(client: CloudflareClient,
                                       hosts: string = default(string),
                                       page: string = default(string),
                                       perPage: float64 = default(float64),
-                                      orderBy: ClientSideSecurityOrderByOption,
-                                      direction: ClientSideSecurityDirectionOption,
+                                      orderBy: ClientSideSecurityOrderByOption = orderByFirstSeenAt,
+                                      direction: ClientSideSecurityDirectionOption = directionAsc,
                                       prioritizeMalicious: bool = default(bool),
                                       excludeCdnCgi: bool = true,
                                       excludeDuplicates: bool = true,
                                       status: string = default(string),
                                       pageUrl: string = default(string),
-                                      `export`: ClientSideSecurityExportOption): Future[types.ClientSideSecurityListZoneScriptsResponse] {.async.} =
+                                      `export`: ClientSideSecurityExportOption = exportCsv): Future[types.ClientSideSecurityListZoneScriptsResponse] {.async.} =
   ## Lists scripts detected on webpages in the zone, with filtering and pagination.
 
   var q = initOrderedTable[string, string]()

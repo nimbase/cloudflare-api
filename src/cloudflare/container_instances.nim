@@ -18,7 +18,7 @@ proc getAccountsAccountIdContainersApplicationsApplicationIdInstances*(client: C
                                                                        applicationId: types.CcApplicationID,
                                                                        perPage: int64 = default(int64),
                                                                        pageToken: string = default(string),
-                                                                       state: ContainerInstanceStateOption,
+                                                                       state: ContainerInstanceStateOption = stateActive,
                                                                        namePrefix: string = default(string)): Future[JsonNode] {.async.} =
   ## Lists container instances belonging to an application.
 

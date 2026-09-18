@@ -47,7 +47,7 @@ suite "email_routing_suppressions endpoints":
   test "GET /accounts/{account_id}/email/routing/suppression":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailRoutingSuppression("test", 1, 1, {}, {})
+    discard waitFor client.getAccountsAccountIdEmailRoutingSuppression("test", 1, 1, orderEmail, directionAsc)
 
   test "GET /accounts/{account_id}/email/routing/suppression/{suppression_id}":
     let client = initCloudflareClient("test-key")
@@ -62,7 +62,7 @@ suite "email_routing_suppressions endpoints":
   test "GET /zones/{zone_id}/email/routing/suppression":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdEmailRoutingSuppression("test", 1, 1, {}, {})
+    discard waitFor client.getZonesZoneIdEmailRoutingSuppression("test", 1, 1, orderEmail, directionAsc)
 
   test "GET /zones/{zone_id}/email/routing/suppression/{suppression_id}":
     let client = initCloudflareClient("test-key")

@@ -39,8 +39,8 @@ proc getAccountsAccountIdGatewayLocations*(client: CloudflareClient,
                                            accountId: types.ZeroTrustGatewayIdentifier2,
                                            filter: seq[string] = @[],
                                            search: string = default(string),
-                                           orderBy: ZeroTrustGatewayLocationOrderByOption,
-                                           direction: ZeroTrustGatewayLocationDirectionOption): Future[types.ZeroTrustGatewayResponseCollection5] {.async.} =
+                                           orderBy: ZeroTrustGatewayLocationOrderByOption = orderByName,
+                                           direction: ZeroTrustGatewayLocationDirectionOption = directionAsc): Future[types.ZeroTrustGatewayResponseCollection5] {.async.} =
   ## List Zero Trust Gateway locations for an account.
 
   var q = initOrderedTable[string, string]()

@@ -30,8 +30,8 @@ proc getAccountsAccountIdCloudforceOneRulesApprovals*(client: CloudflareClient,
                                                       latestOnly: ApprovalLatestOnlyOption = latestOnlyFalse,
                                                       limit: float64 = default(float64),
                                                       offset: float64 = default(float64),
-                                                      reviewerScope: ApprovalReviewerScopeOption,
-                                                      changeType: ApprovalChangeTypeOption,
+                                                      reviewerScope: ApprovalReviewerScopeOption = reviewerScopeDefault,
+                                                      changeType: ApprovalChangeTypeOption = changeTypeCreate,
                                                       ruleId: string = default(string)): Future[types.CloudforceOneRuleApprovalsListResponse] {.async.} =
   ## Returns rule approvals with optional status, revision, reviewer-scope, and
   ## mutation-type filtering.

@@ -67,7 +67,7 @@ suite "zaraz endpoints":
   test "GET /zones/{zone_id}/settings/zaraz/history":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdSettingsZarazHistory("test", 1, 1, {}, {})
+    discard waitFor client.getZonesZoneIdSettingsZarazHistory("test", 1, 1, sortFieldId, sortOrderDESC)
 
   test "PUT /zones/{zone_id}/settings/zaraz/history":
     let client = initCloudflareClient("test-key")

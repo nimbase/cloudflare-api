@@ -77,7 +77,7 @@ proc getAccountsAccountIdAiModelsSearch*(client: CloudflareClient,
                                          hideExperimental: bool = false,
                                          search: string = "",
                                          includeDeprecated: bool = false,
-                                         format: WorkersAiFormatOption): Future[JsonNode] {.async.} =
+                                         format: WorkersAiFormatOption = formatOpenrouter): Future[JsonNode] {.async.} =
   ## Searches Workers AI models by name or description.
 
   var q = initOrderedTable[string, string]()

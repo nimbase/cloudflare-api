@@ -364,8 +364,8 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatches*(client: Cl
                                                                       includeDomainId: string = "false",
                                                                       includeDismissed: string = default(string),
                                                                       domainSearch: string = default(string),
-                                                                      orderBy: BrandProtectionOrderByOption,
-                                                                      order: BrandProtectionOrderOption): Future[GetAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesResponse] {.async.} =
+                                                                      orderBy: BrandProtectionOrderByOption = orderByDomain,
+                                                                      order: BrandProtectionOrderOption = orderAsc): Future[GetAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesResponse] {.async.} =
   ## Get paginated list of domain matches for one or more brand protection queries.
   ## When multiple query_ids are provided (comma-separated), matches are deduplicated
   ## across queries and each match includes a match_details array with per-match
@@ -582,8 +582,8 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionLogoMatches*(client: Clou
                                                                     limit: string = "50",
                                                                     queryId: string,
                                                                     download: string = default(string),
-                                                                    orderBy: BrandProtectionOrderByOption,
-                                                                    order: BrandProtectionOrderOption): Future[GetAccountsAccountIdCloudforceOneV2BrandProtectionLogoMatchesResponse] {.async.} =
+                                                                    orderBy: BrandProtectionOrderByOption = orderByDomain,
+                                                                    order: BrandProtectionOrderOption = orderAsc): Future[GetAccountsAccountIdCloudforceOneV2BrandProtectionLogoMatchesResponse] {.async.} =
   ## Get paginated list of logo matches for a specific brand protection logo query
 
   var q = initOrderedTable[string, string]()

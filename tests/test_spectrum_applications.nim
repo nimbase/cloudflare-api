@@ -39,7 +39,7 @@ suite "spectrum_applications endpoints":
   test "GET /zones/{zone_id}/spectrum/apps":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdSpectrumApps("test", 1.0, 1.0, {}, {})
+    discard waitFor client.getZonesZoneIdSpectrumApps("test", 1.0, 1.0, directionAsc, orderProtocol)
 
   test "POST /zones/{zone_id}/spectrum/apps":
     let client = initCloudflareClient("test-key")

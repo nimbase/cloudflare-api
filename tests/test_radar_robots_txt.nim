@@ -23,10 +23,10 @@ suite "radar_robots_txt endpoints":
   test "GET /radar/robots_txt/top/domain_categories":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarRobotsTxtTopDomainCategories(1, @["test"], {}, @["test"], {})
+    discard waitFor client.getRadarRobotsTxtTopDomainCategories(1, @["test"], userAgentCategoryAI, @["test"], formatJSON)
 
   test "GET /radar/robots_txt/top/user_agents/directive":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarRobotsTxtTopUserAgentsDirective(1, @["test"], {}, @["test"], @["test"], {}, {})
+    discard waitFor client.getRadarRobotsTxtTopUserAgentsDirective(1, @["test"], userAgentCategoryAI, @["test"], @["test"], directiveALLOW, formatJSON)
 

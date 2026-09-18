@@ -51,7 +51,7 @@ proc postAccountsAccountIdWorkersWorkersWorkerIdVersions*(client: CloudflareClie
 proc getAccountsAccountIdWorkersWorkersWorkerIdVersionsLatest*(client: CloudflareClient,
                                                                accountId: types.WorkersIdentifier,
                                                                workerId: string,
-                                                               `include`: VersionIncludeOption): Future[JsonNode] {.async.} =
+                                                               `include`: VersionIncludeOption = includeModules): Future[JsonNode] {.async.} =
   ## Get details about the most recently created Worker version.
 
   var q = initOrderedTable[string, string]()
@@ -86,7 +86,7 @@ proc getAccountsAccountIdWorkersWorkersWorkerIdVersionsVersionId*(client: Cloudf
                                                                   accountId: types.WorkersIdentifier,
                                                                   workerId: string,
                                                                   versionId: string,
-                                                                  `include`: VersionIncludeOption): Future[JsonNode] {.async.} =
+                                                                  `include`: VersionIncludeOption = includeModules): Future[JsonNode] {.async.} =
   ## Get details about a specific Worker version.
 
   var q = initOrderedTable[string, string]()

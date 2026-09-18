@@ -55,8 +55,8 @@ proc getAccountsAccountIdGatewayRules*(client: CloudflareClient,
                                        accountId: types.ZeroTrustGatewayIdentifier2,
                                        filter: seq[string] = @[],
                                        search: string = default(string),
-                                       orderBy: ZeroTrustGatewayRuleOrderByOption,
-                                       direction: ZeroTrustGatewayRuleDirectionOption): Future[types.ZeroTrustGatewayResponseCollection6] {.async.} =
+                                       orderBy: ZeroTrustGatewayRuleOrderByOption = orderByName,
+                                       direction: ZeroTrustGatewayRuleDirectionOption = directionAsc): Future[types.ZeroTrustGatewayResponseCollection6] {.async.} =
   ## List Zero Trust Gateway rules for an account.
 
   var q = initOrderedTable[string, string]()

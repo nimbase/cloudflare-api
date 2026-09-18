@@ -32,8 +32,8 @@ proc getRadarEntitiesLocations*(client: CloudflareClient, limit: int64 = 5,
                                 location: string = default(string),
                                 region: string = default(string),
                                 subregion: string = default(string),
-                                continent: RadarLocationContinentOption,
-                                format: RadarLocationFormatOption): Future[GetRadarEntitiesLocationsResponse] {.async.} =
+                                continent: RadarLocationContinentOption = continentAF,
+                                format: RadarLocationFormatOption = formatJSON): Future[GetRadarEntitiesLocationsResponse] {.async.} =
   ## Retrieves a list of locations.
 
   var q = initOrderedTable[string, string]()
@@ -54,7 +54,7 @@ proc getRadarEntitiesLocations*(client: CloudflareClient, limit: int64 = 5,
 
 proc getRadarEntitiesLocationsLocation*(client: CloudflareClient,
                                         location: string,
-                                        format: RadarLocationFormatOption): Future[GetRadarEntitiesLocationsLocationResponse] {.async.} =
+                                        format: RadarLocationFormatOption = formatJSON): Future[GetRadarEntitiesLocationsLocationResponse] {.async.} =
   ## Retrieves the requested location information. (A confidence level below `5`
   ## indicates a low level of confidence in the traffic data - normally this happens
   ## because Cloudflare has a small amount of traffic from/to this location).

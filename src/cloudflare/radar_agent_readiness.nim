@@ -21,7 +21,7 @@ proc getRadarAgentReadinessSummaryDimension*(client: CloudflareClient,
                                              date: string = default(string),
                                              domainCategory: seq[string] = @[],
                                              name: seq[string] = @[],
-                                             format: RadarAgentReadinesFormatOption): Future[GetRadarAgentReadinessSummaryDimensionResponse] {.async.} =
+                                             format: RadarAgentReadinesFormatOption = formatJSON): Future[GetRadarAgentReadinessSummaryDimensionResponse] {.async.} =
   ## Returns a summary of AI agent readiness scores across scanned domains, grouped
   ## by the specified dimension. Data is sourced from weekly bulk scans. All values
   ## are raw domain counts.

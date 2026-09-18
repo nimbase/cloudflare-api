@@ -35,10 +35,10 @@ suite "radar_ai_bots endpoints":
   test "GET /radar/ai/bots/summary/user_agent":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarAiBotsSummaryUserAgent(@["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], 1, {})
+    discard waitFor client.getRadarAiBotsSummaryUserAgent(@["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], 1, formatJSON)
 
   test "GET /radar/ai/bots/timeseries_groups/user_agent":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarAiBotsTimeseriesGroupsUserAgent({}, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], 1, {})
+    discard waitFor client.getRadarAiBotsTimeseriesGroupsUserAgent(aggInterval15m, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], 1, formatJSON)
 

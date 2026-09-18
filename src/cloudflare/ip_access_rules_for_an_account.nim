@@ -36,14 +36,14 @@ type
 proc getAccountsAccountIdFirewallAccessRulesRules*(client: CloudflareClient,
                                                    accountId: types.FirewallAccountIdentifier,
                                                    mode: types.FirewallSchemasMode = default(types.FirewallSchemasMode),
-                                                   configurationTarget: IpAccessRulesForAnAccountConfigurationTargetOption,
+                                                   configurationTarget: IpAccessRulesForAnAccountConfigurationTargetOption = configurationTargetIp,
                                                    configurationValue: string = default(string),
                                                    notes: string = default(string),
                                                    match: IpAccessRulesForAnAccountMatchOption = matchAll,
                                                    page: float64 = default(float64),
                                                    perPage: float64 = default(float64),
-                                                   order: IpAccessRulesForAnAccountOrderOption,
-                                                   direction: IpAccessRulesForAnAccountDirectionOption): Future[types.FirewallResponseCollection] {.async.} =
+                                                   order: IpAccessRulesForAnAccountOrderOption = orderConfigurationTarget,
+                                                   direction: IpAccessRulesForAnAccountDirectionOption = directionAsc): Future[types.FirewallResponseCollection] {.async.} =
   ## Fetches IP Access rules of an account. These rules apply to all the zones in the
   ## account. You can filter the results using several optional parameters.
 

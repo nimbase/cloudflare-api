@@ -16,7 +16,7 @@ type
 
 proc getAccountsAccountIdMagicConnectors*(client: CloudflareClient,
                                           accountId: types.MconnAccountId,
-                                          deviceType: MagicConnectorDeviceTypeOption): Future[types.MconnCustomerConnectorsListResponse] {.async.} =
+                                          deviceType: MagicConnectorDeviceTypeOption = deviceTypeMANAGED): Future[types.MconnCustomerConnectorsListResponse] {.async.} =
   ## Lists Magic WAN Connectors.
 
   var q = initOrderedTable[string, string]()

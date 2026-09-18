@@ -31,7 +31,7 @@ suite "namespaces endpoints":
   test "GET /accounts/{account_id}/agent-memory/namespaces":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAgentMemoryNamespaces(1, {}, {}, "test")
+    discard waitFor client.getAccountsAccountIdAgentMemoryNamespaces(1, orderId, directionAsc, "test")
 
   test "GET /accounts/{account_id}/agent-memory/namespaces/{namespace_name}":
     let client = initCloudflareClient("test-key")

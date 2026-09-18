@@ -80,7 +80,7 @@ suite "ai_gateway endpoints":
   test "GET /accounts/{account_id}/ai-gateway/billing/invoice-history":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiGatewayBillingInvoiceHistory("test", {})
+    discard waitFor client.getAccountsAccountIdAiGatewayBillingInvoiceHistory("test", typeAuto)
 
   test "GET /accounts/{account_id}/ai-gateway/billing/invoice-preview":
     let client = initCloudflareClient("test-key")
@@ -115,5 +115,5 @@ suite "ai_gateway endpoints":
   test "GET /accounts/{account_id}/ai-gateway/billing/usage-history":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiGatewayBillingUsageHistory("test", {}, 1.0, 1.0)
+    discard waitFor client.getAccountsAccountIdAiGatewayBillingUsageHistory("test", valueGroupingWindowDay, 1.0, 1.0)
 

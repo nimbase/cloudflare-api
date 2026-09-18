@@ -71,7 +71,7 @@ suite "email_sending_suppressions endpoints":
   test "GET /accounts/{account_id}/email/sending/suppression":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailSendingSuppression("test", 1, 1, {}, {})
+    discard waitFor client.getAccountsAccountIdEmailSendingSuppression("test", 1, 1, orderEmail, directionAsc)
 
   test "GET /accounts/{account_id}/email/sending/suppression/{suppression_id}":
     let client = initCloudflareClient("test-key")
@@ -86,7 +86,7 @@ suite "email_sending_suppressions endpoints":
   test "GET /accounts/{account_id}/email/sending/suppressions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailSendingSuppressions("test", 1, "test", "test", "test", {})
+    discard waitFor client.getAccountsAccountIdEmailSendingSuppressions("test", 1, "test", "test", "test", reasonManual)
 
   test "GET /accounts/{account_id}/email/sending/suppressions/{suppression_id}":
     let client = initCloudflareClient("test-key")
@@ -101,7 +101,7 @@ suite "email_sending_suppressions endpoints":
   test "GET /zones/{zone_id}/email/sending/suppression":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdEmailSendingSuppression("test", 1, 1, {}, {})
+    discard waitFor client.getZonesZoneIdEmailSendingSuppression("test", 1, 1, orderEmail, directionAsc)
 
   test "GET /zones/{zone_id}/email/sending/suppression/{suppression_id}":
     let client = initCloudflareClient("test-key")

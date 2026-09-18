@@ -31,7 +31,7 @@ suite "ai_gateway_custom_domains endpoints":
   test "GET /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/custom-domains":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiGatewayGatewaysGatewayIdCustomDomains("test", "test", 1, 1, {}, "test")
+    discard waitFor client.getAccountsAccountIdAiGatewayGatewaysGatewayIdCustomDomains("test", "test", 1, 1, statusInitializing, "test")
 
   test "GET /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/custom-domains/{hostname}":
     let client = initCloudflareClient("test-key")

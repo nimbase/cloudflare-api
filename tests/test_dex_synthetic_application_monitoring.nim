@@ -103,12 +103,12 @@ suite "dex_synthetic_application_monitoring endpoints":
   test "GET /accounts/{account_id}/dex/colos":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDexColos("test", "test", "test", {})
+    discard waitFor client.getAccountsAccountIdDexColos("test", "test", "test", sortByFleetStatusUsage)
 
   test "GET /accounts/{account_id}/dex/devices/dex_tests":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDexDevicesDexTests("test", 1.0, 1.0, "test", {})
+    discard waitFor client.getAccountsAccountIdDexDevicesDexTests("test", 1.0, 1.0, "test", kindHttp)
 
   test "POST /accounts/{account_id}/dex/devices/dex_tests":
     let client = initCloudflareClient("test-key")
@@ -138,12 +138,12 @@ suite "dex_synthetic_application_monitoring endpoints":
   test "GET /accounts/{account_id}/dex/devices/{device_id}/fleet-status/over-time":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDexDevicesDeviceIdFleetStatusOverTime("test", "test", "test", "test", {}, "test")
+    discard waitFor client.getAccountsAccountIdDexDevicesDeviceIdFleetStatusOverTime("test", "test", "test", "test", intervalMinute, "test")
 
   test "GET /accounts/{account_id}/dex/devices/{device_id}/isps":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDexDevicesDeviceIdIsps("test", "test", 1, 1, "test", {}, {}, "test", "test")
+    discard waitFor client.getAccountsAccountIdDexDevicesDeviceIdIsps("test", "test", 1, 1, "test", sortByFleetStatusUsage, sortOrderASC, "test", "test")
 
   test "GET /accounts/{account_id}/dex/fleet-status/live":
     let client = initCloudflareClient("test-key")
@@ -158,7 +158,7 @@ suite "dex_synthetic_application_monitoring endpoints":
   test "GET /accounts/{account_id}/dex/http-tests/{test_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDexHttpTestsTestId("test", "test", @["test"], "test", "test", {}, "test")
+    discard waitFor client.getAccountsAccountIdDexHttpTestsTestId("test", "test", @["test"], "test", "test", intervalMinute, "test")
 
   test "GET /accounts/{account_id}/dex/http-tests/{test_id}/percentiles":
     let client = initCloudflareClient("test-key")
@@ -168,7 +168,7 @@ suite "dex_synthetic_application_monitoring endpoints":
   test "GET /accounts/{account_id}/dex/tests/overview":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDexTestsOverview("test", "test", "test", @["test"], "test", 1.0, 1.0, {})
+    discard waitFor client.getAccountsAccountIdDexTestsOverview("test", "test", "test", @["test"], "test", 1.0, 1.0, kindHttp)
 
   test "GET /accounts/{account_id}/dex/tests/unique-devices":
     let client = initCloudflareClient("test-key")
@@ -183,12 +183,12 @@ suite "dex_synthetic_application_monitoring endpoints":
   test "GET /accounts/{account_id}/dex/traceroute-tests/{test_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDexTracerouteTestsTestId("test", "test", @["test"], "test", "test", {}, "test")
+    discard waitFor client.getAccountsAccountIdDexTracerouteTestsTestId("test", "test", @["test"], "test", "test", intervalMinute, "test")
 
   test "GET /accounts/{account_id}/dex/traceroute-tests/{test_id}/network-path":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDexTracerouteTestsTestIdNetworkPath("test", "test", "test", "test", "test", {})
+    discard waitFor client.getAccountsAccountIdDexTracerouteTestsTestIdNetworkPath("test", "test", "test", "test", "test", intervalMinute)
 
   test "GET /accounts/{account_id}/dex/traceroute-tests/{test_id}/percentiles":
     let client = initCloudflareClient("test-key")

@@ -19,5 +19,5 @@ suite "radar_ip endpoints":
   test "GET /radar/entities/ip":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarEntitiesIp(openjson.newJObject(), {})
+    discard waitFor client.getRadarEntitiesIp(openjson.newJObject(), formatJSON)
 

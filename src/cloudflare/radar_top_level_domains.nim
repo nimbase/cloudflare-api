@@ -41,9 +41,9 @@ type
 proc getRadarTlds*(client: CloudflareClient, limit: int64 = 5,
                    offset: int64 = default(int64),
                    tldManager: string = default(string),
-                   tldType: RadarTopLevelDomainTldTypeOption,
+                   tldType: RadarTopLevelDomainTldTypeOption = tldTypeGENERIC,
                    tld: string = default(string),
-                   format: RadarTopLevelDomainFormatOption): Future[GetRadarTldsResponse] {.async.} =
+                   format: RadarTopLevelDomainFormatOption = formatJSON): Future[GetRadarTldsResponse] {.async.} =
   ## Retrieves a list of TLDs.
 
   var q = initOrderedTable[string, string]()
@@ -72,7 +72,7 @@ proc getRadarTldsPerformanceSummaryDimension*(client: CloudflareClient,
                                               tld: seq[string] = @[],
                                               nameserver: string = default(string),
                                               limitPerGroup: int64 = default(int64),
-                                              format: RadarTopLevelDomainFormatOption): Future[GetRadarTldsPerformanceSummaryDimensionResponse] {.async.} =
+                                              format: RadarTopLevelDomainFormatOption = formatJSON): Future[GetRadarTldsPerformanceSummaryDimensionResponse] {.async.} =
   ## Returns a summary of TLD authoritative nameserver performance grouped by the
   ## specified dimension.
 
@@ -97,7 +97,7 @@ proc getRadarTldsPerformanceSummaryDimension*(client: CloudflareClient,
 
 proc getRadarTldsPerformanceTimeseriesGroupsDimension*(client: CloudflareClient,
                                                        dimension: Dimension,
-                                                       aggInterval: RadarTopLevelDomainAggIntervalOption,
+                                                       aggInterval: RadarTopLevelDomainAggIntervalOption = aggInterval15m,
                                                        name: seq[string] = @[],
                                                        dateRange: seq[string] = @[],
                                                        dateStart: seq[string] = @[],
@@ -107,7 +107,7 @@ proc getRadarTldsPerformanceTimeseriesGroupsDimension*(client: CloudflareClient,
                                                        tld: seq[string] = @[],
                                                        nameserver: string = default(string),
                                                        limitPerGroup: int64 = default(int64),
-                                                       format: RadarTopLevelDomainFormatOption): Future[GetRadarTldsPerformanceTimeseriesGroupsDimensionResponse] {.async.} =
+                                                       format: RadarTopLevelDomainFormatOption = formatJSON): Future[GetRadarTldsPerformanceTimeseriesGroupsDimensionResponse] {.async.} =
   ## Returns a timeseries of TLD authoritative nameserver performance grouped by the
   ## specified dimension.
 
@@ -132,7 +132,7 @@ proc getRadarTldsPerformanceTimeseriesGroupsDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarTldsTld*(client: CloudflareClient, tld: string,
-                      format: RadarTopLevelDomainFormatOption): Future[GetRadarTldsTldResponse] {.async.} =
+                      format: RadarTopLevelDomainFormatOption = formatJSON): Future[GetRadarTldsTldResponse] {.async.} =
   ## Retrieves the requested TLD information.
 
   var q = initOrderedTable[string, string]()

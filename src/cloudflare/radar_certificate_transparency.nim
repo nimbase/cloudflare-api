@@ -46,7 +46,7 @@ type
 
 proc getRadarCtAuthorities*(client: CloudflareClient, limit: int64 = 5,
                             offset: int64 = default(int64),
-                            format: RadarCertificateTransparencyFormatOption): Future[GetRadarCtAuthoritiesResponse] {.async.} =
+                            format: RadarCertificateTransparencyFormatOption = formatJSON): Future[GetRadarCtAuthoritiesResponse] {.async.} =
   ## Retrieves a list of certificate authorities.
 
   var q = initOrderedTable[string, string]()
@@ -62,7 +62,7 @@ proc getRadarCtAuthorities*(client: CloudflareClient, limit: int64 = 5,
     raise newException(CloudflareClientError, body)
 
 proc getRadarCtAuthoritiesCaSlug*(client: CloudflareClient, caSlug: string,
-                                  format: RadarCertificateTransparencyFormatOption): Future[GetRadarCtAuthoritiesCaSlugResponse] {.async.} =
+                                  format: RadarCertificateTransparencyFormatOption = formatJSON): Future[GetRadarCtAuthoritiesCaSlugResponse] {.async.} =
   ## Retrieves the requested CA information.
 
   var q = initOrderedTable[string, string]()
@@ -77,7 +77,7 @@ proc getRadarCtAuthoritiesCaSlug*(client: CloudflareClient, caSlug: string,
 
 proc getRadarCtLogs*(client: CloudflareClient, limit: int64 = 5,
                      offset: int64 = default(int64),
-                     format: RadarCertificateTransparencyFormatOption): Future[GetRadarCtLogsResponse] {.async.} =
+                     format: RadarCertificateTransparencyFormatOption = formatJSON): Future[GetRadarCtLogsResponse] {.async.} =
   ## Retrieves a list of certificate logs.
 
   var q = initOrderedTable[string, string]()
@@ -93,7 +93,7 @@ proc getRadarCtLogs*(client: CloudflareClient, limit: int64 = 5,
     raise newException(CloudflareClientError, body)
 
 proc getRadarCtLogsLogSlug*(client: CloudflareClient, logSlug: string,
-                            format: RadarCertificateTransparencyFormatOption): Future[GetRadarCtLogsLogSlugResponse] {.async.} =
+                            format: RadarCertificateTransparencyFormatOption = formatJSON): Future[GetRadarCtLogsLogSlugResponse] {.async.} =
   ## Retrieves the requested certificate log information.
 
   var q = initOrderedTable[string, string]()
@@ -128,7 +128,7 @@ proc getRadarCtSummaryDimension*(client: CloudflareClient, dimension: Dimension,
                                  validationLevel: seq[string] = default(seq[string]),
                                  uniqueEntries: seq[string] = default(seq[string]),
                                  normalization: RadarCertificateTransparencyNormalizationOption = normalizationRAWVALUES,
-                                 format: RadarCertificateTransparencyFormatOption): Future[GetRadarCtSummaryDimensionResponse] {.async.} =
+                                 format: RadarCertificateTransparencyFormatOption = formatJSON): Future[GetRadarCtSummaryDimensionResponse] {.async.} =
   ## Retrieves an aggregated summary of certificates grouped by the specified
   ## dimension.
 
@@ -164,7 +164,7 @@ proc getRadarCtSummaryDimension*(client: CloudflareClient, dimension: Dimension,
     raise newException(CloudflareClientError, body)
 
 proc getRadarCtTimeseries*(client: CloudflareClient,
-                           aggInterval: RadarCertificateTransparencyAggIntervalOption,
+                           aggInterval: RadarCertificateTransparencyAggIntervalOption = aggInterval15m,
                            name: seq[string] = @[], dateRange: seq[string] = @[],
                            dateStart: seq[string] = @[],
                            dateEnd: seq[string] = @[], ca: seq[string] = @[],
@@ -182,7 +182,7 @@ proc getRadarCtTimeseries*(client: CloudflareClient,
                            tld: seq[string] = @[],
                            validationLevel: seq[string] = default(seq[string]),
                            uniqueEntries: seq[string] = default(seq[string]),
-                           format: RadarCertificateTransparencyFormatOption): Future[GetRadarCtTimeseriesResponse] {.async.} =
+                           format: RadarCertificateTransparencyFormatOption = formatJSON): Future[GetRadarCtTimeseriesResponse] {.async.} =
   ## Retrieves certificate volume over time.
 
   var q = initOrderedTable[string, string]()
@@ -217,7 +217,7 @@ proc getRadarCtTimeseries*(client: CloudflareClient,
 
 proc getRadarCtTimeseriesGroupsDimension*(client: CloudflareClient,
                                           dimension: Dimension,
-                                          aggInterval: RadarCertificateTransparencyAggIntervalOption,
+                                          aggInterval: RadarCertificateTransparencyAggIntervalOption = aggInterval15m,
                                           name: seq[string] = @[],
                                           dateRange: seq[string] = @[],
                                           dateStart: seq[string] = @[],
@@ -239,7 +239,7 @@ proc getRadarCtTimeseriesGroupsDimension*(client: CloudflareClient,
                                           tld: seq[string] = @[],
                                           normalization: RadarCertificateTransparencyNormalizationOption = normalizationRAWVALUES,
                                           uniqueEntries: seq[string] = default(seq[string]),
-                                          format: RadarCertificateTransparencyFormatOption): Future[GetRadarCtTimeseriesGroupsDimensionResponse] {.async.} =
+                                          format: RadarCertificateTransparencyFormatOption = formatJSON): Future[GetRadarCtTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of certificates grouped by the specified dimension
   ## over time.
 

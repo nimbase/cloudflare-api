@@ -45,7 +45,7 @@ suite "api_shield_client_certificates_for_a_zone endpoints":
   test "GET /zones/{zone_id}/client_certificates":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdClientCertificates("test", {}, 1.0, 1.0, 1, 1)
+    discard waitFor client.getZonesZoneIdClientCertificates("test", statusAll, 1.0, 1.0, 1, 1)
 
   test "GET /zones/{zone_id}/client_certificates/{client_certificate_id}":
     let client = initCloudflareClient("test-key")

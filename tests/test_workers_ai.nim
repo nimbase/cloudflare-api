@@ -53,7 +53,7 @@ suite "workers_ai endpoints":
   test "GET /accounts/{account_id}/ai/models/search":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiModelsSearch("test", 1, 1, "test", "test", 1.0, true, "test", true, {})
+    discard waitFor client.getAccountsAccountIdAiModelsSearch("test", 1, 1, "test", "test", 1.0, true, "test", true, formatOpenrouter)
 
   test "POST /accounts/{account_id}/ai/run/{model_name}":
     let client = initCloudflareClient("test-key")

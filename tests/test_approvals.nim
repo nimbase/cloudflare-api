@@ -39,7 +39,7 @@ suite "approvals endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/rules/approvals":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneRulesApprovals("test", openjson.newJObject(), {}, 1.0, 1.0, {}, {}, "test")
+    discard waitFor client.getAccountsAccountIdCloudforceOneRulesApprovals("test", openjson.newJObject(), latestOnlyTrue, 1.0, 1.0, reviewerScopeDefault, changeTypeCreate, "test")
 
   test "GET /accounts/{account_id}/cloudforce-one/rules/approvals/{id}":
     let client = initCloudflareClient("test-key")

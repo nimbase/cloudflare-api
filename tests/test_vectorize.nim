@@ -126,7 +126,7 @@ suite "vectorize endpoints":
   test "POST /accounts/{account_id}/vectorize/v2/indexes/{index_name}/insert":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdVectorizeV2IndexesIndexNameInsert("test", "test", {})
+    discard waitFor client.postAccountsAccountIdVectorizeV2IndexesIndexNameInsert("test", "test", unparsableBehaviorError)
 
   test "GET /accounts/{account_id}/vectorize/v2/indexes/{index_name}/list":
     let client = initCloudflareClient("test-key")
@@ -156,5 +156,5 @@ suite "vectorize endpoints":
   test "POST /accounts/{account_id}/vectorize/v2/indexes/{index_name}/upsert":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdVectorizeV2IndexesIndexNameUpsert("test", "test", {})
+    discard waitFor client.postAccountsAccountIdVectorizeV2IndexesIndexNameUpsert("test", "test", unparsableBehaviorError)
 

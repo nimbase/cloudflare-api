@@ -43,7 +43,7 @@ suite "dex_rules endpoints":
   test "GET /accounts/{account_id}/dex/rules":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDexRules("test", 1.0, 1.0, {}, {}, "test")
+    discard waitFor client.getAccountsAccountIdDexRules("test", 1.0, 1.0, sortOrderASC, sortByName, "test")
 
   test "POST /accounts/{account_id}/dex/rules":
     let client = initCloudflareClient("test-key")

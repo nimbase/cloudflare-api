@@ -30,7 +30,7 @@ proc getRadarAiMarkdownForAgentsSummary*(client: CloudflareClient,
                                          dateRange: seq[string] = @[],
                                          dateStart: seq[string] = @[],
                                          dateEnd: seq[string] = @[],
-                                         format: RadarMarkdownForAgentFormatOption): Future[GetRadarAiMarkdownForAgentsSummaryResponse] {.async.} =
+                                         format: RadarMarkdownForAgentFormatOption = formatJSON): Future[GetRadarAiMarkdownForAgentsSummaryResponse] {.async.} =
   ## Retrieves the overall median HTML-to-markdown reduction ratio for AI agent
   ## requests over the given date range.
 
@@ -49,12 +49,12 @@ proc getRadarAiMarkdownForAgentsSummary*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAiMarkdownForAgentsTimeseries*(client: CloudflareClient,
-                                            aggInterval: RadarMarkdownForAgentAggIntervalOption,
+                                            aggInterval: RadarMarkdownForAgentAggIntervalOption = aggInterval15m,
                                             name: seq[string] = @[],
                                             dateRange: seq[string] = @[],
                                             dateStart: seq[string] = @[],
                                             dateEnd: seq[string] = @[],
-                                            format: RadarMarkdownForAgentFormatOption): Future[GetRadarAiMarkdownForAgentsTimeseriesResponse] {.async.} =
+                                            format: RadarMarkdownForAgentFormatOption = formatJSON): Future[GetRadarAiMarkdownForAgentsTimeseriesResponse] {.async.} =
   ## Retrieves the median HTML-to-markdown reduction ratio over time for AI agent
   ## requests.
 

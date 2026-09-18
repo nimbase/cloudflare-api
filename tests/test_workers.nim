@@ -105,7 +105,7 @@ suite "workers endpoints":
   test "GET /accounts/{account_id}/workers/workers":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersWorkers("test", 1, 1, {}, {})
+    discard waitFor client.getAccountsAccountIdWorkersWorkers("test", 1, 1, orderByDeployedOn, orderAsc)
 
   test "POST /accounts/{account_id}/workers/workers":
     let client = initCloudflareClient("test-key")

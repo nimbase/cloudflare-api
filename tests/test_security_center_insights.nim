@@ -52,7 +52,7 @@ suite "security_center_insights endpoints":
   test "GET /accounts/{account_id}/security-center/insights/count":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdSecurityCenterInsightsCount("test", {})
+    discard waitFor client.getAccountsAccountIdSecurityCenterInsightsCount("test", sourceRiskrecon)
 
   test "PATCH /accounts/{account_id}/security-center/insights/{issue_id}/classification":
     let client = initCloudflareClient("test-key")

@@ -37,7 +37,7 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdCustomDomains*(client: Cloudf
                                                                   gatewayId: string,
                                                                   page: int64 = 1,
                                                                   perPage: int64 = 20,
-                                                                  status: AiGatewayCustomDomainStatusOption,
+                                                                  status: AiGatewayCustomDomainStatusOption = statusInitializing,
                                                                   search: string = default(string)): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdCustomDomainsResponse] {.async.} =
   ## Lists all AI Gateway evaluator types configured for the account.
 

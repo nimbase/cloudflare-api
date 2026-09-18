@@ -74,7 +74,7 @@ suite "apps endpoints":
   test "GET /accounts/{account_id}/realtime/kit/apps":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdRealtimeKitApps(1, 1, "test", {})
+    discard waitFor client.getAccountsAccountIdRealtimeKitApps(1, 1, "test", sortOrderASC)
 
   test "GET /accounts/{account_id}/realtime/kit/apps/{app_id}":
     let client = initCloudflareClient("test-key")

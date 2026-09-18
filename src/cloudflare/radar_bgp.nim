@@ -113,9 +113,9 @@ proc getRadarBgpHijacksEvents*(client: CloudflareClient, page: int64 = 1,
                                dateRange: string = default(string),
                                dateStart: string = default(string),
                                dateEnd: string = default(string),
-                               sortBy: RadarBgpSortByOption,
-                               sortOrder: RadarBgpSortOrderOption,
-                               format: RadarBgpFormatOption): Future[GetRadarBgpHijacksEventsResponse] {.async.} =
+                               sortBy: RadarBgpSortByOption = sortByID,
+                               sortOrder: RadarBgpSortOrderOption = sortOrderASC,
+                               format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpHijacksEventsResponse] {.async.} =
   ## Retrieves the BGP hijack events.
 
   var q = initOrderedTable[string, string]()
@@ -151,7 +151,7 @@ proc getRadarBgpIpsTimeseries*(client: CloudflareClient, name: seq[string] = @[]
                                location: seq[string] = @[],
                                ipVersion: seq[string] = default(seq[string]),
                                includeDelay: bool = default(bool),
-                               format: RadarBgpFormatOption): Future[GetRadarBgpIpsTimeseriesResponse] {.async.} =
+                               format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpIpsTimeseriesResponse] {.async.} =
   ## Retrieves time series data for the announced IP space count, represented as the
   ## number of IPv4 /24s and IPv6 /48s, for a given ASN.
 
@@ -175,9 +175,9 @@ proc getRadarBgpIpsTimeseries*(client: CloudflareClient, name: seq[string] = @[]
 
 proc getRadarBgpIpsTopAses*(client: CloudflareClient,
                             date: string = default(string), limit: int64 = 5,
-                            metric: RadarBgpMetricOption,
+                            metric: RadarBgpMetricOption = metricV424s,
                             country: string = default(string),
-                            format: RadarBgpFormatOption): Future[GetRadarBgpIpsTopAsesResponse] {.async.} =
+                            format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpIpsTopAsesResponse] {.async.} =
   ## Returns the top-N autonomous systems by announced IP space at the nearest 8-hour
   ## RIB boundary at or before the requested date. The snapped boundary is returned
   ## as `anchor_ts`.
@@ -205,9 +205,9 @@ proc getRadarBgpLeaksEvents*(client: CloudflareClient, page: int64 = 1,
                              dateRange: string = default(string),
                              dateStart: string = default(string),
                              dateEnd: string = default(string),
-                             sortBy: RadarBgpSortByOption,
-                             sortOrder: RadarBgpSortOrderOption,
-                             format: RadarBgpFormatOption): Future[GetRadarBgpLeaksEventsResponse] {.async.} =
+                             sortBy: RadarBgpSortByOption = sortByID,
+                             sortOrder: RadarBgpSortOrderOption = sortOrderASC,
+                             format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpLeaksEventsResponse] {.async.} =
   ## Retrieves the BGP route leak events.
 
   var q = initOrderedTable[string, string]()
@@ -233,9 +233,9 @@ proc getRadarBgpLeaksEvents*(client: CloudflareClient, page: int64 = 1,
 
 proc getRadarBgpRoutesAses*(client: CloudflareClient,
                             location: string = default(string), limit: int64 = 5,
-                            sortBy: RadarBgpSortByOption,
-                            sortOrder: RadarBgpSortOrderOption,
-                            format: RadarBgpFormatOption): Future[GetRadarBgpRoutesAsesResponse] {.async.} =
+                            sortBy: RadarBgpSortByOption = sortByID,
+                            sortOrder: RadarBgpSortOrderOption = sortOrderASC,
+                            format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpRoutesAsesResponse] {.async.} =
   ## Retrieves all ASes in the current global routing tables with routing statistics.
 
   var q = initOrderedTable[string, string]()
@@ -256,7 +256,7 @@ proc getRadarBgpRoutesMoas*(client: CloudflareClient,
                             origin: int64 = default(int64),
                             prefix: JsonNode = default(JsonNode),
                             invalidOnly: bool = default(bool),
-                            format: RadarBgpFormatOption): Future[GetRadarBgpRoutesMoasResponse] {.async.} =
+                            format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpRoutesMoasResponse] {.async.} =
   ## Retrieves all Multi-Origin AS (MOAS) prefixes in the global routing tables.
 
   var q = initOrderedTable[string, string]()
@@ -275,7 +275,7 @@ proc getRadarBgpRoutesMoas*(client: CloudflareClient,
 proc getRadarBgpRoutesPathsAsn*(client: CloudflareClient, asn: int64,
                                 ipVersion: RadarBgpIpVersionOption = ipVersionIPv4,
                                 collector: string = default(string),
-                                format: RadarBgpFormatOption): Future[GetRadarBgpRoutesPathsAsnResponse] {.async.} =
+                                format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpRoutesPathsAsnResponse] {.async.} =
   ## Retrieves the paths an AS uses to reach the tier-1 clique, derived from
   ## RouteViews RIB snapshots. Each entry is an ordered AS-path segment (from the
   ## queried AS toward a tier-1) with the number of observed paths and peers, and the
@@ -299,9 +299,9 @@ proc getRadarBgpRoutesPathsAsn*(client: CloudflareClient, asn: int64,
 proc getRadarBgpRoutesPfx2as*(client: CloudflareClient,
                               prefix: JsonNode = default(JsonNode),
                               origin: int64 = default(int64),
-                              rpkiStatus: RadarBgpRpkiStatusOption,
+                              rpkiStatus: RadarBgpRpkiStatusOption = rpkiStatusVALID,
                               longestPrefixMatch: bool = default(bool),
-                              format: RadarBgpFormatOption): Future[GetRadarBgpRoutesPfx2asResponse] {.async.} =
+                              format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpRoutesPfx2asResponse] {.async.} =
   ## Retrieves the prefix-to-ASN mapping from global routing tables.
 
   var q = initOrderedTable[string, string]()
@@ -320,7 +320,7 @@ proc getRadarBgpRoutesPfx2as*(client: CloudflareClient,
 
 proc getRadarBgpRoutesRealtime*(client: CloudflareClient,
                                 prefix: JsonNode = default(JsonNode),
-                                format: RadarBgpFormatOption): Future[GetRadarBgpRoutesRealtimeResponse] {.async.} =
+                                format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpRoutesRealtimeResponse] {.async.} =
   ## Retrieves real-time BGP routes for a prefix, using public real-time data
   ## collectors (RouteViews and RIPE RIS).
 
@@ -338,7 +338,7 @@ proc getRadarBgpRoutesRealtime*(client: CloudflareClient,
 proc getRadarBgpRoutesStats*(client: CloudflareClient,
                              asn: int64 = default(int64),
                              location: string = default(string),
-                             format: RadarBgpFormatOption): Future[GetRadarBgpRoutesStatsResponse] {.async.} =
+                             format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpRoutesStatsResponse] {.async.} =
   ## Retrieves the BGP routing table stats.
 
   var q = initOrderedTable[string, string]()
@@ -359,7 +359,7 @@ proc getRadarBgpRoutesUpstreamsAsnTimeseries*(client: CloudflareClient,
                                               dateStart: string = default(string),
                                               dateEnd: string = default(string),
                                               limit: int64 = default(int64),
-                                              format: RadarBgpFormatOption): Future[GetRadarBgpRoutesUpstreamsAsnTimeseriesResponse] {.async.} =
+                                              format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpRoutesUpstreamsAsnTimeseriesResponse] {.async.} =
   ## Retrieves the share of an AS’s observed paths carried by each direct upstream
   ## over time, derived from RouteViews RIB snapshots across all collectors (the
   ## combined product). Each upstream ASN is returned as its own series of shares
@@ -385,7 +385,7 @@ proc getRadarBgpRpkiAspaChanges*(client: CloudflareClient,
                                  dateEnd: string = default(string),
                                  asn: int64 = default(int64),
                                  includeAsnInfo: bool = default(bool),
-                                 format: RadarBgpFormatOption): Future[GetRadarBgpRpkiAspaChangesResponse] {.async.} =
+                                 format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpRpkiAspaChangesResponse] {.async.} =
   ## Retrieves ASPA (Autonomous System Provider Authorization) changes over time.
   ## Returns daily aggregated changes including additions, removals, and
   ## modifications of ASPA objects.
@@ -409,7 +409,7 @@ proc getRadarBgpRpkiAspaSnapshot*(client: CloudflareClient,
                                   providerAsn: int64 = default(int64),
                                   date: string = default(string),
                                   includeAsnInfo: bool = default(bool),
-                                  format: RadarBgpFormatOption): Future[GetRadarBgpRpkiAspaSnapshotResponse] {.async.} =
+                                  format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpRpkiAspaSnapshotResponse] {.async.} =
   ## Retrieves current or historical ASPA (Autonomous System Provider Authorization)
   ## objects. ASPA objects define which ASNs are authorized upstream providers for a
   ## customer ASN.
@@ -434,7 +434,7 @@ proc getRadarBgpRpkiAspaTimeseries*(client: CloudflareClient,
                                     name: seq[string] = @[],
                                     rir: seq[string] = default(seq[string]),
                                     location: seq[string] = @[],
-                                    format: RadarBgpFormatOption): Future[GetRadarBgpRpkiAspaTimeseriesResponse] {.async.} =
+                                    format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpRpkiAspaTimeseriesResponse] {.async.} =
   ## Retrieves ASPA (Autonomous System Provider Authorization) object count over
   ## time. Supports filtering by RIR or location (country code) to generate multiple
   ## named series. If no RIR or location filter is specified, returns total count.
@@ -457,11 +457,11 @@ proc getRadarBgpRpkiAspaTimeseries*(client: CloudflareClient,
 proc getRadarBgpRpkiRoasTimeseries*(client: CloudflareClient,
                                     dateStart: string = default(string),
                                     dateEnd: string = default(string),
-                                    metric: RadarBgpMetricOption = metricValidPfxsRatio,
+                                    metric: RadarBgpMetricOption = metricV424s,
                                     asn: seq[string] = @[],
                                     location: seq[string] = @[],
                                     name: seq[string] = @[],
-                                    format: RadarBgpFormatOption): Future[GetRadarBgpRpkiRoasTimeseriesResponse] {.async.} =
+                                    format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpRpkiRoasTimeseriesResponse] {.async.} =
   ## Retrieves RPKI ROA (Route Origin Authorization) validation ratios over time.
   ## Returns the selected metric as a time series. Supports filtering by ASN or
   ## location (country code) — multiple values of the same filter type produce one
@@ -485,14 +485,15 @@ proc getRadarBgpRpkiRoasTimeseries*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarBgpTimeseries*(client: CloudflareClient,
-                            aggInterval: RadarBgpAggIntervalOption,
+                            aggInterval: RadarBgpAggIntervalOption = aggInterval15m,
                             name: seq[string] = @[],
                             dateRange: seq[string] = @[],
                             dateStart: seq[string] = @[],
                             dateEnd: seq[string] = @[],
                             prefix: seq[string] = @[],
                             updateType: seq[string] = default(seq[string]),
-                            asn: seq[string] = @[], format: RadarBgpFormatOption): Future[GetRadarBgpTimeseriesResponse] {.async.} =
+                            asn: seq[string] = @[],
+                            format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpTimeseriesResponse] {.async.} =
   ## Retrieves BGP updates over time. When requesting updates for an autonomous
   ## system, only BGP updates of type announcement are returned.
 
@@ -520,7 +521,7 @@ proc getRadarBgpTopAses*(client: CloudflareClient, limit: int64 = 5,
                          dateEnd: seq[string] = @[], asn: seq[string] = @[],
                          prefix: seq[string] = @[],
                          updateType: seq[string] = default(seq[string]),
-                         format: RadarBgpFormatOption): Future[GetRadarBgpTopAsesResponse] {.async.} =
+                         format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpTopAsesResponse] {.async.} =
   ## Retrieves the top autonomous systems by BGP updates (announcements only).
 
   var q = initOrderedTable[string, string]()
@@ -544,7 +545,7 @@ proc getRadarBgpTopAses*(client: CloudflareClient, limit: int64 = 5,
 proc getRadarBgpTopAsesPrefixes*(client: CloudflareClient,
                                  country: string = default(string),
                                  limit: int64 = default(int64),
-                                 format: RadarBgpFormatOption): Future[GetRadarBgpTopAsesPrefixesResponse] {.async.} =
+                                 format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpTopAsesPrefixesResponse] {.async.} =
   ## Retrieves the full list of autonomous systems on the global routing table
   ## ordered by announced prefixes count. The data comes from public BGP MRT data
   ## archives and updates every 2 hours.
@@ -567,7 +568,7 @@ proc getRadarBgpTopPrefixes*(client: CloudflareClient, limit: int64 = 5,
                              dateStart: seq[string] = @[],
                              dateEnd: seq[string] = @[], asn: seq[string] = @[],
                              updateType: seq[string] = default(seq[string]),
-                             format: RadarBgpFormatOption): Future[GetRadarBgpTopPrefixesResponse] {.async.} =
+                             format: RadarBgpFormatOption = formatJSON): Future[GetRadarBgpTopPrefixesResponse] {.async.} =
   ## Retrieves the top network prefixes by BGP updates.
 
   var q = initOrderedTable[string, string]()

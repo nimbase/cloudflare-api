@@ -94,7 +94,7 @@ proc getAccountsAccountIdWorkersScriptsScriptName*(client: CloudflareClient,
 proc putAccountsAccountIdWorkersScriptsScriptName*(client: CloudflareClient,
                                                    accountId: types.WorkersIdentifier,
                                                    scriptName: types.WorkersScriptName,
-                                                   bindingsInherit: WorkerScriptBindingsInheritOption): Future[JsonNode] {.async.} =
+                                                   bindingsInherit: WorkerScriptBindingsInheritOption = bindingsInheritStrict): Future[JsonNode] {.async.} =
   ## Upload a worker module. You can find more about the multipart metadata on our
   ## docs:https://developers.cloudflare.com/workers/configuration/multipart-upload-m
   ## etadata/.

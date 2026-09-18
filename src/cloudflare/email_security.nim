@@ -67,9 +67,9 @@ proc getAccountsAccountIdEmailSecurityInvestigate*(client: CloudflareClient,
                                                    `end`: string = default(string),
                                                    query: string = default(string),
                                                    detectionsOnly: bool = true,
-                                                   finalDisposition: EmailSecurityFinalDispositionOption,
+                                                   finalDisposition: EmailSecurityFinalDispositionOption = finalDispositionMALICIOUS,
                                                    metric: string = default(string),
-                                                   messageAction: EmailSecurityMessageActionOption,
+                                                   messageAction: EmailSecurityMessageActionOption = messageActionPREVIEW,
                                                    recipient: string = default(string),
                                                    sender: string = default(string),
                                                    smtpHeloIp: string = default(string),
@@ -113,8 +113,8 @@ proc getAccountsAccountIdEmailSecurityInvestigate*(client: CloudflareClient,
 proc getAccountsAccountIdEmailSecurityInvestigateBulk*(client: CloudflareClient,
                                                        page: int64 = 1,
                                                        perPage: int64 = 20,
-                                                       actionType: EmailSecurityActionTypeOption,
-                                                       status: EmailSecurityStatusOption): Future[JsonNode] {.async.} =
+                                                       actionType: EmailSecurityActionTypeOption = actionTypeMOVE,
+                                                       status: EmailSecurityStatusOption = statusPENDING): Future[JsonNode] {.async.} =
   ## Returns a paginated list of bulk action jobs for the account.
 
   var q = initOrderedTable[string, string]()
@@ -183,7 +183,7 @@ proc postAccountsAccountIdEmailSecurityInvestigateBulkJobIdCancel*(client: Cloud
 proc getAccountsAccountIdEmailSecurityInvestigateBulkJobIdMessages*(client: CloudflareClient,
                                                                     page: int64 = 1,
                                                                     perPage: int64 = 20,
-                                                                    status: EmailSecurityStatusOption): Future[JsonNode] {.async.} =
+                                                                    status: EmailSecurityStatusOption = statusPENDING): Future[JsonNode] {.async.} =
   ## Returns the individual messages associated with a bulk action job, including
   ## their processing status.
 
@@ -366,7 +366,7 @@ proc getAccountsAccountIdEmailSecurityPhishguardReports*(client: CloudflareClien
 proc getAccountsAccountIdEmailSecuritySubmissions*(client: CloudflareClient,
                                                    start: string = default(string),
                                                    `end`: string = default(string),
-                                                   `type`: EmailSecurityTypeOption,
+                                                   `type`: EmailSecurityTypeOption = typeTEAM,
                                                    submissionId: string = default(string),
                                                    originalDisposition: types.EmailSecuritySubmissionDisposition = default(types.EmailSecuritySubmissionDisposition),
                                                    requestedDisposition: types.EmailSecuritySubmissionDisposition = default(types.EmailSecuritySubmissionDisposition),
@@ -375,7 +375,7 @@ proc getAccountsAccountIdEmailSecuritySubmissions*(client: CloudflareClient,
                                                    query: string = default(string),
                                                    escalatedFromUser: bool = default(bool),
                                                    order: EmailSecurityOrderOption = orderRequestedAt,
-                                                   direction: EmailSecurityDirectionOption,
+                                                   direction: EmailSecurityDirectionOption = directionAsc,
                                                    page: int64 = 1,
                                                    perPage: int64 = 20): Future[JsonNode] {.async.} =
   ## Returns information for submissions made to reclassify emails. Shows the status,

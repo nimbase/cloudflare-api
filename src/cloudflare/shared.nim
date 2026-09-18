@@ -56,7 +56,7 @@ proc postAccountsAccountIdWorkersObservabilitySharedQuery*(client: CloudflareCli
 
 proc getAccountsAccountIdWorkersObservabilitySharedQueryId*(client: CloudflareClient,
                                                             id: string,
-                                                            view: SharedViewOption): Future[GetAccountsAccountIdWorkersObservabilitySharedQueryIdResponse] {.async.} =
+                                                            view: SharedViewOption = viewEvents): Future[GetAccountsAccountIdWorkersObservabilitySharedQueryIdResponse] {.async.} =
   ## Shared queries store the results of a previously run query, allowing you to
   ## share the results with others.
 

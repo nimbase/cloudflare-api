@@ -65,7 +65,7 @@ suite "memory endpoints":
   test "GET /accounts/{account_id}/agent-memory/namespaces/{namespace_name}/profiles/{profile_name}/memories":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameMemories("test", "test", 1, "test", "test", {})
+    discard waitFor client.getAccountsAccountIdAgentMemoryNamespacesNamespaceNameProfilesProfileNameMemories("test", "test", 1, "test", "test", typeFact)
 
   test "GET /accounts/{account_id}/agent-memory/namespaces/{namespace_name}/profiles/{profile_name}/memories/{memory_id}":
     let client = initCloudflareClient("test-key")

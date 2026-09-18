@@ -23,10 +23,10 @@ suite "radar_markdown_for_agents endpoints":
   test "GET /radar/ai/markdown_for_agents/summary":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarAiMarkdownForAgentsSummary(@["test"], @["test"], @["test"], @["test"], {})
+    discard waitFor client.getRadarAiMarkdownForAgentsSummary(@["test"], @["test"], @["test"], @["test"], formatJSON)
 
   test "GET /radar/ai/markdown_for_agents/timeseries":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarAiMarkdownForAgentsTimeseries({}, @["test"], @["test"], @["test"], @["test"], {})
+    discard waitFor client.getRadarAiMarkdownForAgentsTimeseries(aggInterval15m, @["test"], @["test"], @["test"], @["test"], formatJSON)
 

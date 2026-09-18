@@ -41,7 +41,7 @@ suite "versions endpoints":
   test "GET /accounts/{account_id}/workers/workers/{worker_id}/versions/latest":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersWorkersWorkerIdVersionsLatest("test", "test", {})
+    discard waitFor client.getAccountsAccountIdWorkersWorkersWorkerIdVersionsLatest("test", "test", includeModules)
 
   test "PATCH /accounts/{account_id}/workers/workers/{worker_id}/versions/latest":
     let client = initCloudflareClient("test-key")
@@ -51,7 +51,7 @@ suite "versions endpoints":
   test "GET /accounts/{account_id}/workers/workers/{worker_id}/versions/{version_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersWorkersWorkerIdVersionsVersionId("test", "test", "test", {})
+    discard waitFor client.getAccountsAccountIdWorkersWorkersWorkerIdVersionsVersionId("test", "test", "test", includeModules)
 
   test "DELETE /accounts/{account_id}/workers/workers/{worker_id}/versions/{version_id}":
     let client = initCloudflareClient("test-key")

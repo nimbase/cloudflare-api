@@ -17,7 +17,7 @@ type
 proc getUserBillingHistory*(client: CloudflareClient,
                             page: float64 = default(float64),
                             perPage: float64 = default(float64),
-                            order: UserBillingHistoryOrderOption,
+                            order: UserBillingHistoryOrderOption = orderType,
                             occurredAt: types.BillSubsApiOccurredAt = default(types.BillSubsApiOccurredAt),
                             `type`: string = default(string),
                             action: string = default(string)): Future[types.BillSubsApiBillingHistoryCollection] {.async.} =

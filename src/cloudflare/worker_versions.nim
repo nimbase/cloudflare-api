@@ -36,7 +36,7 @@ proc getAccountsAccountIdWorkersScriptsScriptNameVersions*(client: CloudflareCli
 proc postAccountsAccountIdWorkersScriptsScriptNameVersions*(client: CloudflareClient,
                                                             accountId: types.WorkersIdentifier,
                                                             scriptName: types.WorkersScriptName2,
-                                                            bindingsInherit: WorkerVersionBindingsInheritOption): Future[types.WorkersVersionsUploadResponse] {.async.} =
+                                                            bindingsInherit: WorkerVersionBindingsInheritOption = bindingsInheritStrict): Future[types.WorkersVersionsUploadResponse] {.async.} =
   ## Upload a Worker Version without deploying to Cloudflare's network. You can find
   ## more about the multipart metadata on our docs:https://developers.cloudflare.com
   ## /workers/configuration/multipart-upload-metadata/.

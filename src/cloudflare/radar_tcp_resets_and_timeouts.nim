@@ -33,7 +33,7 @@ proc getRadarTcpResetsTimeoutsSummary*(client: CloudflareClient,
                                        asn: seq[string] = @[],
                                        location: seq[string] = @[],
                                        continent: seq[string] = @[],
-                                       format: RadarTcpResetsAndTimeoutFormatOption): Future[GetRadarTcpResetsTimeoutsSummaryResponse] {.async.} =
+                                       format: RadarTcpResetsAndTimeoutFormatOption = formatJSON): Future[GetRadarTcpResetsTimeoutsSummaryResponse] {.async.} =
   ## Retrieves the distribution of connection stage by TCP connections terminated
   ## within the first 10 packets by a reset or timeout.
 
@@ -55,7 +55,7 @@ proc getRadarTcpResetsTimeoutsSummary*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarTcpResetsTimeoutsTimeseriesGroups*(client: CloudflareClient,
-                                                aggInterval: RadarTcpResetsAndTimeoutAggIntervalOption,
+                                                aggInterval: RadarTcpResetsAndTimeoutAggIntervalOption = aggInterval15m,
                                                 name: seq[string] = @[],
                                                 dateRange: seq[string] = @[],
                                                 dateStart: seq[string] = @[],
@@ -63,7 +63,7 @@ proc getRadarTcpResetsTimeoutsTimeseriesGroups*(client: CloudflareClient,
                                                 asn: seq[string] = @[],
                                                 location: seq[string] = @[],
                                                 continent: seq[string] = @[],
-                                                format: RadarTcpResetsAndTimeoutFormatOption): Future[GetRadarTcpResetsTimeoutsTimeseriesGroupsResponse] {.async.} =
+                                                format: RadarTcpResetsAndTimeoutFormatOption = formatJSON): Future[GetRadarTcpResetsTimeoutsTimeseriesGroupsResponse] {.async.} =
   ## Retrieves the distribution of connection stage by TCP connections terminated
   ## within the first 10 packets by a reset or timeout over time.
 

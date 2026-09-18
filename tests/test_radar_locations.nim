@@ -23,10 +23,10 @@ suite "radar_locations endpoints":
   test "GET /radar/entities/locations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarEntitiesLocations(1, 1, "test", "test", "test", {}, {})
+    discard waitFor client.getRadarEntitiesLocations(1, 1, "test", "test", "test", continentAF, formatJSON)
 
   test "GET /radar/entities/locations/{location}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarEntitiesLocationsLocation("test", {})
+    discard waitFor client.getRadarEntitiesLocationsLocation("test", formatJSON)
 

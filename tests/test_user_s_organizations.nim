@@ -31,7 +31,7 @@ suite "user_s_organizations endpoints":
   test "GET /user/organizations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getUserOrganizations("test", 1.0, 1.0, {}, {}, {}, {})
+    discard waitFor client.getUserOrganizations("test", 1.0, 1.0, orderId, directionAsc, matchAny, statusMember)
 
   test "GET /user/organizations/{organization_id}":
     let client = initCloudflareClient("test-key")

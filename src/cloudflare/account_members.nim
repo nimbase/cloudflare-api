@@ -27,11 +27,11 @@ type
 
 proc getAccountsAccountIdMembers*(client: CloudflareClient,
                                   accountId: types.IamAccountIdentifier,
-                                  order: AccountMemberOrderOption,
-                                  status: AccountMemberStatusOption,
+                                  order: AccountMemberOrderOption = orderUserFirstName,
+                                  status: AccountMemberStatusOption = statusAccepted,
                                   page: float64 = default(float64),
                                   perPage: float64 = default(float64),
-                                  direction: AccountMemberDirectionOption): Future[types.IamCollectionMemberResponseWithPolicies] {.async.} =
+                                  direction: AccountMemberDirectionOption = directionAsc): Future[types.IamCollectionMemberResponseWithPolicies] {.async.} =
   ## List all members of an account.
 
   var q = initOrderedTable[string, string]()

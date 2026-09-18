@@ -91,7 +91,7 @@ suite "email_security endpoints":
   test "GET /accounts/{account_id}/email-security/investigate/bulk":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailSecurityInvestigateBulk(1, 1, {}, {})
+    discard waitFor client.getAccountsAccountIdEmailSecurityInvestigateBulk(1, 1, actionTypeMOVE, statusPENDING)
 
   test "POST /accounts/{account_id}/email-security/investigate/bulk":
     let client = initCloudflareClient("test-key")
@@ -116,7 +116,7 @@ suite "email_security endpoints":
   test "GET /accounts/{account_id}/email-security/investigate/bulk/{job_id}/messages":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailSecurityInvestigateBulkJobIdMessages(1, 1, {})
+    discard waitFor client.getAccountsAccountIdEmailSecurityInvestigateBulkJobIdMessages(1, 1, statusPENDING)
 
   test "POST /accounts/{account_id}/email-security/investigate/release":
     let client = initCloudflareClient("test-key")

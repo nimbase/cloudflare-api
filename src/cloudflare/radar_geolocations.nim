@@ -23,7 +23,7 @@ proc getRadarGeolocations*(client: CloudflareClient, limit: int64 = 5,
                            offset: int64 = default(int64),
                            geoId: string = default(string),
                            location: string = default(string),
-                           format: RadarGeolocationFormatOption): Future[GetRadarGeolocationsResponse] {.async.} =
+                           format: RadarGeolocationFormatOption = formatJSON): Future[GetRadarGeolocationsResponse] {.async.} =
   ## Retrieves a list of geolocations. Geolocation names can be localized by sending
   ## an `Accept-Language` HTTP header with a BCP 47 language tag (e.g.,
   ## `Accept-Language: pt-PT`). The full quality-value chain is supported (e.g.,
@@ -44,7 +44,7 @@ proc getRadarGeolocations*(client: CloudflareClient, limit: int64 = 5,
     raise newException(CloudflareClientError, body)
 
 proc getRadarGeolocationsGeoId*(client: CloudflareClient, geoId: string,
-                                format: RadarGeolocationFormatOption): Future[GetRadarGeolocationsGeoIdResponse] {.async.} =
+                                format: RadarGeolocationFormatOption = formatJSON): Future[GetRadarGeolocationsGeoIdResponse] {.async.} =
   ## Retrieves the requested Geolocation information. Geolocation names can be
   ## localized by sending an `Accept-Language` HTTP header with a BCP 47 language tag
   ## (e.g., `Accept-Language: pt-PT`). The full quality-value chain is supported

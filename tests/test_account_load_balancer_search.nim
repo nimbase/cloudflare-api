@@ -27,5 +27,5 @@ suite "account_load_balancer_search endpoints":
   test "GET /accounts/{account_id}/load_balancers/search":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdLoadBalancersSearch("test", "test", {}, 1.0, 1.0)
+    discard waitFor client.getAccountsAccountIdLoadBalancersSearch("test", "test", references, 1.0, 1.0)
 

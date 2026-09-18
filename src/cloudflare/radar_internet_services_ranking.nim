@@ -26,7 +26,7 @@ proc getRadarRankingInternetServicesCategories*(client: CloudflareClient,
                                                 limit: int64 = default(int64),
                                                 name: seq[string] = @[],
                                                 date: seq[string] = @[],
-                                                format: RadarInternetServicesRankingFormatOption): Future[GetRadarRankingInternetServicesCategoriesResponse] {.async.} =
+                                                format: RadarInternetServicesRankingFormatOption = formatJSON): Future[GetRadarRankingInternetServicesCategoriesResponse] {.async.} =
   ## Retrieves the list of Internet services categories.
 
   var q = initOrderedTable[string, string]()
@@ -49,7 +49,7 @@ proc getRadarRankingInternetServicesTimeseriesGroups*(client: CloudflareClient,
                                                       dateRange: seq[string] = @[],
                                                       dateStart: seq[string] = @[],
                                                       dateEnd: seq[string] = @[],
-                                                      format: RadarInternetServicesRankingFormatOption): Future[GetRadarRankingInternetServicesTimeseriesGroupsResponse] {.async.} =
+                                                      format: RadarInternetServicesRankingFormatOption = formatJSON): Future[GetRadarRankingInternetServicesTimeseriesGroupsResponse] {.async.} =
   ## Retrieves Internet Services rank update changes over time.
 
   var q = initOrderedTable[string, string]()
@@ -73,7 +73,7 @@ proc getRadarRankingInternetServicesTop*(client: CloudflareClient,
                                          limit: int64 = default(int64),
                                          name: seq[string] = @[],
                                          date: seq[string] = @[],
-                                         format: RadarInternetServicesRankingFormatOption): Future[GetRadarRankingInternetServicesTopResponse] {.async.} =
+                                         format: RadarInternetServicesRankingFormatOption = formatJSON): Future[GetRadarRankingInternetServicesTopResponse] {.async.} =
   ## Retrieves top Internet services based on their rank.
 
   var q = initOrderedTable[string, string]()

@@ -23,10 +23,10 @@ suite "radar_geolocations endpoints":
   test "GET /radar/geolocations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarGeolocations(1, 1, "test", "test", {})
+    discard waitFor client.getRadarGeolocations(1, 1, "test", "test", formatJSON)
 
   test "GET /radar/geolocations/{geo_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarGeolocationsGeoId("test", {})
+    discard waitFor client.getRadarGeolocationsGeoId("test", formatJSON)
 

@@ -58,13 +58,13 @@ proc getRadarTrafficAnomalies*(client: CloudflareClient, limit: int64 = 5,
                                dateRange: string = default(string),
                                dateStart: string = default(string),
                                dateEnd: string = default(string),
-                               status: RadarTrafficAnomalieStatusOption,
+                               status: RadarTrafficAnomalieStatusOption = statusVERIFIED,
                                `type`: seq[string] = default(seq[string]),
-                               dataSource: RadarTrafficAnomalieDataSourceOption,
+                               dataSource: RadarTrafficAnomalieDataSourceOption = dataSourceALL,
                                asn: int64 = default(int64),
                                location: string = default(string),
                                origin: string = default(string),
-                               format: RadarTrafficAnomalieFormatOption): Future[GetRadarTrafficAnomaliesResponse] {.async.} =
+                               format: RadarTrafficAnomalieFormatOption = formatJSON): Future[GetRadarTrafficAnomaliesResponse] {.async.} =
   ## Retrieves the latest Internet traffic anomalies, which are signals that might
   ## indicate an outage. These alerts are automatically detected by Radar and
   ## manually verified by our team.
@@ -95,8 +95,8 @@ proc getRadarTrafficAnomaliesLocations*(client: CloudflareClient,
                                         dateRange: string = default(string),
                                         dateStart: string = default(string),
                                         dateEnd: string = default(string),
-                                        status: RadarTrafficAnomalieStatusOption,
-                                        format: RadarTrafficAnomalieFormatOption): Future[GetRadarTrafficAnomaliesLocationsResponse] {.async.} =
+                                        status: RadarTrafficAnomalieStatusOption = statusVERIFIED,
+                                        format: RadarTrafficAnomalieFormatOption = formatJSON): Future[GetRadarTrafficAnomaliesLocationsResponse] {.async.} =
   ## Retrieves the sum of Internet traffic anomalies, grouped by location. These
   ## anomalies are signals that might indicate an outage, automatically detected by
   ## Radar and manually verified by our team.
@@ -117,7 +117,7 @@ proc getRadarTrafficAnomaliesLocations*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarTrafficAnomaliesUuid*(client: CloudflareClient, uuid: string,
-                                   format: RadarTrafficAnomalieFormatOption): Future[GetRadarTrafficAnomaliesUuidResponse] {.async.} =
+                                   format: RadarTrafficAnomalieFormatOption = formatJSON): Future[GetRadarTrafficAnomaliesUuidResponse] {.async.} =
   ## Retrieves a single Internet traffic anomaly by UUID.
 
   var q = initOrderedTable[string, string]()

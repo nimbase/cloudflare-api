@@ -54,8 +54,8 @@ type
 
 proc getAccountsAccountIdAgentMemoryNamespaces*(client: CloudflareClient,
                                                 perPage: int64 = default(int64),
-                                                order: NamespaceOrderOption,
-                                                direction: NamespaceDirectionOption,
+                                                order: NamespaceOrderOption = orderId,
+                                                direction: NamespaceDirectionOption = directionAsc,
                                                 cursor: string = default(string)): Future[GetAccountsAccountIdAgentMemoryNamespacesResponse] {.async.} =
   ## Lists all namespaces for the given account. Results are paginated.
 

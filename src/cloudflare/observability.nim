@@ -20,7 +20,17 @@ type
     messages: seq[JsonNode]
     result: JsonNode
     success: bool
+  DeleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRulesResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    success: bool
   GetAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    success: bool
+  DeleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
     result: JsonNode
@@ -65,6 +75,18 @@ proc putAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRule
   else:
     raise newException(CloudflareClientError, body)
 
+proc deleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRules*(client: CloudflareClient,
+                                                                                      zoneId: string): Future[DeleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRulesResponse] {.async.} =
+  ## Delete every sampling override from a zone's managed Cloudflare Traces ruleset.
+
+  let res = await client.httpDELETE(fmt"/accounts/{account_id}/workers/observability/zones/{zoneId}/observability/tracing/rules")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, DeleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRulesResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettings*(client: CloudflareClient,
                                                                                       zoneId: string): Future[GetAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse] {.async.} =
   ## Retrieve the zone-level Cloudflare Traces settings.
@@ -74,6 +96,19 @@ proc getAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSett
   case res.code
   of Http200:
     result = fromJson(body, GetAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettings*(client: CloudflareClient,
+                                                                                         zoneId: string): Future[DeleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse] {.async.} =
+  ## Reset the zone-level Cloudflare Traces settings to their defaults while
+  ## preserving the sampling rules.
+
+  let res = await client.httpDELETE(fmt"/accounts/{account_id}/workers/observability/zones/{zoneId}/observability/tracing/settings")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, DeleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse)
   else:
     raise newException(CloudflareClientError, body)
 

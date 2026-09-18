@@ -35,7 +35,7 @@ suite "ai_gateway_account_provider_costs endpoints":
   test "GET /accounts/{account_id}/ai-gateway/custom-providers/costs":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiGatewayCustomProvidersCosts("test", 1, 1, true, "test", {}, "test", "test")
+    discard waitFor client.getAccountsAccountIdAiGatewayCustomProvidersCosts("test", 1, 1, true, "test", modelRuleEquals, "test", "test")
 
   test "GET /accounts/{account_id}/ai-gateway/custom-providers/costs/{id}":
     let client = initCloudflareClient("test-key")

@@ -41,8 +41,9 @@ proc postAccountsAccountIdContainersApplications*(client: CloudflareClient,
   ## Use `scheduling_policy: "durable_object"` for a Durable Object-managed
   ## application. Each Durable Object creates and manages the lifecycle of its
   ## container instance. Supply `name`, `scheduling_policy`, and `durable_objects`,
-  ## with optional top-level `observability` settings. Deployment configuration,
-  ## scaling, constraints, versions, and rollouts do not apply.
+  ## with optional `configuration` and optional top-level `observability` settings.
+  ## Deployment configuration, scaling, constraints, versions, and rollouts do not
+  ## apply.
 
   let res = await client.httpPOST("/accounts/{account_id}/containers/applications", body)
   let body = await res.body
@@ -168,7 +169,7 @@ proc getAccountsAccountIdOneApplicationsApplicationIdSetupFlows*(client: Cloudfl
                                                                  accountId: string,
                                                                  applicationId: ApplicationId,
                                                                  authMethod: string = default(string),
-                                                                 environment: ApplicationEnvironmentOption,
+                                                                 environment: ApplicationEnvironmentOption = environmentFedramp,
                                                                  page: int64 = default(int64),
                                                                  pageSize: int64 = default(int64)): Future[types.OnePaginatedSetupFlowList] {.async.} =
   ## Returns all available setup flows for the application, one per auth method.

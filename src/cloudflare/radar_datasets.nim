@@ -28,7 +28,7 @@ proc getRadarDatasets*(client: CloudflareClient, limit: int64 = 5,
                        offset: int64 = default(int64),
                        datasetType: RadarDatasetDatasetTypeOption = datasetTypeRANKINGBUCKET,
                        date: string = default(string),
-                       format: RadarDatasetFormatOption): Future[GetRadarDatasetsResponse] {.async.} =
+                       format: RadarDatasetFormatOption = formatJSON): Future[GetRadarDatasetsResponse] {.async.} =
   ## Retrieves a list of datasets.
 
   var q = initOrderedTable[string, string]()
@@ -46,7 +46,7 @@ proc getRadarDatasets*(client: CloudflareClient, limit: int64 = 5,
     raise newException(CloudflareClientError, body)
 
 proc postRadarDatasetsDownload*(client: CloudflareClient,
-                                format: RadarDatasetFormatOption,
+                                format: RadarDatasetFormatOption = formatJSON,
                                 body: PostRadarDatasetsDownloadRequest): Future[PostRadarDatasetsDownloadResponse] {.async.} =
   ## Retrieves an URL to download a single dataset.
 

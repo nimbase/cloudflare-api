@@ -80,6 +80,29 @@ proc postAccountsAccountIdBillableUsage*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc getAccountsAccountIdBillableUsageBillableMetrics*(client: CloudflareClient,
+                                                       accountId: types.BillableUsageApiIdentifier,
+                                                       `from`: string = default(string),
+                                                       to: string = default(string)): Future[types.BillableUsageApiV2AccountBillableMetricsResponse] {.async.} =
+  ## Lists billable metrics available to the account through contracts and
+  ## subscriptions that overlap the requested period. Results are
+  ## deduplicated and ordered. If no qualifying contract exists, the
+  ## result is an empty array.
+  ##
+  ## When `from` and `to` are omitted, the period defaults to the start of
+  ## the current month through today. The maximum date range is 31 days.
+
+  var q = initOrderedTable[string, string]()
+  q["from"] = $`from`
+  q["to"] = $to
+  let res = await client.httpGET(fmt"/accounts/{accountId}/billable/usage/billable-metrics", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.BillableUsageApiV2AccountBillableMetricsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getOrganizationsOrganizationIdBillableUsage*(client: CloudflareClient,
                                                   organizationId: types.BillableUsageApiIdentifier,
                                                   `from`: string = default(string),

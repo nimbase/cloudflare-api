@@ -30,8 +30,8 @@ proc getAccountsAccountIdDexCommands*(client: CloudflareClient,
                                       to: string = default(string),
                                       deviceId: string = default(string),
                                       userEmail: string = default(string),
-                                      commandType: DexRemoteCommandCommandTypeOption,
-                                      status: DexRemoteCommandStatusOption): Future[JsonNode] {.async.} =
+                                      commandType: DexRemoteCommandCommandTypeOption = commandTypePcap,
+                                      status: DexRemoteCommandStatusOption = statusPENDINGEXEC): Future[JsonNode] {.async.} =
   ## Retrieves a paginated list of commands issued to devices under the specified
   ## account, optionally filtered by time range, device, or other parameters
 

@@ -39,20 +39,20 @@ suite "radar_ai_inference endpoints":
   test "GET /radar/ai/inference/summary/model":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarAiInferenceSummaryModel(@["test"], @["test"], @["test"], @["test"], 1, {})
+    discard waitFor client.getRadarAiInferenceSummaryModel(@["test"], @["test"], @["test"], @["test"], 1, formatJSON)
 
   test "GET /radar/ai/inference/summary/task":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarAiInferenceSummaryTask(@["test"], @["test"], @["test"], @["test"], 1, {})
+    discard waitFor client.getRadarAiInferenceSummaryTask(@["test"], @["test"], @["test"], @["test"], 1, formatJSON)
 
   test "GET /radar/ai/inference/timeseries_groups/model":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarAiInferenceTimeseriesGroupsModel({}, @["test"], @["test"], @["test"], @["test"], 1, {})
+    discard waitFor client.getRadarAiInferenceTimeseriesGroupsModel(aggInterval15m, @["test"], @["test"], @["test"], @["test"], 1, formatJSON)
 
   test "GET /radar/ai/inference/timeseries_groups/task":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarAiInferenceTimeseriesGroupsTask({}, @["test"], @["test"], @["test"], @["test"], 1, {})
+    discard waitFor client.getRadarAiInferenceTimeseriesGroupsTask(aggInterval15m, @["test"], @["test"], @["test"], @["test"], 1, formatJSON)
 

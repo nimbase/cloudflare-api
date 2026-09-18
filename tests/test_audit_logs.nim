@@ -51,7 +51,7 @@ suite "audit_logs endpoints":
   test "GET /accounts/{account_id}/audit_logs":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAuditLogs("test", "test", true, "test", "test", "test", openjson.newJObject(), openjson.newJObject(), "test", {}, 1.0, 1.0, true)
+    discard waitFor client.getAccountsAccountIdAuditLogs("test", "test", true, "test", "test", "test", openjson.newJObject(), openjson.newJObject(), "test", directionDesc, 1.0, 1.0, true)
 
   test "GET /accounts/{account_id}/logs/audit/product_categories":
     let client = initCloudflareClient("test-key")
@@ -61,15 +61,15 @@ suite "audit_logs endpoints":
   test "GET /accounts/{account_id}/logs/audit/{id}/history":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdLogsAuditIdHistory("test", "test", "test", "test", "test", {}, 1.0, "test")
+    discard waitFor client.getAccountsAccountIdLogsAuditIdHistory("test", "test", "test", "test", "test", directionDesc, 1.0, "test")
 
   test "GET /organizations/{organization_id}/logs/audit/{id}/history":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getOrganizationsOrganizationIdLogsAuditIdHistory("test", "test", "test", "test", "test", {}, 1.0, "test")
+    discard waitFor client.getOrganizationsOrganizationIdLogsAuditIdHistory("test", "test", "test", "test", "test", directionDesc, 1.0, "test")
 
   test "GET /user/audit_logs":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getUserAuditLogs("test", true, "test", "test", "test", openjson.newJObject(), openjson.newJObject(), "test", {}, 1.0, 1.0, true)
+    discard waitFor client.getUserAuditLogs("test", true, "test", "test", "test", openjson.newJObject(), openjson.newJObject(), "test", directionDesc, 1.0, 1.0, true)
 

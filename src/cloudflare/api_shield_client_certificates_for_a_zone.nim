@@ -52,7 +52,7 @@ proc putZonesZoneIdCertificateAuthoritiesHostnameAssociations*(client: Cloudflar
 
 proc getZonesZoneIdClientCertificates*(client: CloudflareClient,
                                        zoneId: types.TlsCertificatesAndHostnamesIdentifier,
-                                       status: ApiShieldClientCertificatesForAZoneStatusOption,
+                                       status: ApiShieldClientCertificatesForAZoneStatusOption = statusAll,
                                        page: float64 = default(float64),
                                        perPage: float64 = default(float64),
                                        limit: int64 = default(int64),

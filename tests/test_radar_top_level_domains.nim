@@ -31,10 +31,10 @@ suite "radar_top_level_domains endpoints":
   test "GET /radar/tlds":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarTlds(1, 1, "test", {}, "test", {})
+    discard waitFor client.getRadarTlds(1, 1, "test", tldTypeGENERIC, "test", formatJSON)
 
   test "GET /radar/tlds/{tld}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarTldsTld("test", {})
+    discard waitFor client.getRadarTldsTld("test", formatJSON)
 

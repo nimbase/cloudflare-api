@@ -113,7 +113,7 @@ suite "workers_for_platforms endpoints":
   test "PUT /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScriptName("test", "test", "test", {})
+    discard waitFor client.putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScriptName("test", "test", "test", bindingsInheritStrict)
 
   test "DELETE /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}":
     let client = initCloudflareClient("test-key")

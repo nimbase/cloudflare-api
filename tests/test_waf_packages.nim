@@ -31,7 +31,7 @@ suite "waf_packages endpoints":
   test "GET /zones/{zone_id}/firewall/waf/packages":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdFirewallWafPackages("test", 1.0, 1.0, {}, {}, {}, "test")
+    discard waitFor client.getZonesZoneIdFirewallWafPackages("test", 1.0, 1.0, orderName, directionAsc, matchAny, "test")
 
   test "GET /zones/{zone_id}/firewall/waf/packages/{package_id}":
     let client = initCloudflareClient("test-key")

@@ -51,7 +51,7 @@ suite "account_user_groups endpoints":
   test "GET /accounts/{account_id}/iam/user_groups":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdIamUserGroups(newIamAccountIdentifier(), newIamUserGroupIdentifier(), "test", "test", 1.0, 1.0, {})
+    discard waitFor client.getAccountsAccountIdIamUserGroups(newIamAccountIdentifier(), newIamUserGroupIdentifier(), "test", "test", 1.0, 1.0, directionAsc)
 
   test "POST /accounts/{account_id}/iam/user_groups":
     let client = initCloudflareClient("test-key")

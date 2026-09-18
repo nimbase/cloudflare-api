@@ -41,13 +41,15 @@ type
 
 
 proc getZones*(client: CloudflareClient, name: string = default(string),
-               status: ZoneStatusOption,
+               status: ZoneStatusOption = statusInitializing,
                `type`: seq[string] = default(seq[string]),
                accountId: string = default(string),
                accountName: string = default(string),
                page: float64 = default(float64),
-               perPage: float64 = default(float64), order: ZoneOrderOption,
-               direction: ZoneDirectionOption, match: ZoneMatchOption = matchAll): Future[JsonNode] {.async.} =
+               perPage: float64 = default(float64),
+               order: ZoneOrderOption = orderName,
+               direction: ZoneDirectionOption = directionAsc,
+               match: ZoneMatchOption = matchAll): Future[JsonNode] {.async.} =
   ## Lists, searches, sorts, and filters your zones. Listing zones across more than
   ## 500 accounts
   ## is currently not allowed.

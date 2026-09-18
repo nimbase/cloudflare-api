@@ -33,10 +33,10 @@ proc getUserOrganizations*(client: CloudflareClient,
                            name: types.IamSchemasName = default(types.IamSchemasName),
                            page: float64 = default(float64),
                            perPage: float64 = default(float64),
-                           order: UserSOrganizationOrderOption,
-                           direction: UserSOrganizationDirectionOption,
+                           order: UserSOrganizationOrderOption = orderId,
+                           direction: UserSOrganizationDirectionOption = directionAsc,
                            match: UserSOrganizationMatchOption = matchAll,
-                           status: UserSOrganizationStatusOption): Future[types.IamCollectionOrganizationResponse] {.async.} =
+                           status: UserSOrganizationStatusOption = statusMember): Future[types.IamCollectionOrganizationResponse] {.async.} =
   ## Lists organizations the user is associated with.
 
   var q = initOrderedTable[string, string]()

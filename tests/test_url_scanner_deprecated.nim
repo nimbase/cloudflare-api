@@ -51,5 +51,5 @@ suite "url_scanner_deprecated endpoints":
   test "GET /accounts/{account_id}/urlscanner/scan/{scan_id}/screenshot":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdUrlscannerScanScanIdScreenshot("test", "test", {})
+    discard waitFor client.getAccountsAccountIdUrlscannerScanScanIdScreenshot("test", "test", resolutionDesktop)
 

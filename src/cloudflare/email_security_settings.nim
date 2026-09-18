@@ -54,8 +54,8 @@ proc getAccountsAccountIdEmailSecuritySettingsAllowPolicies*(client: CloudflareC
                                                              page: int64 = 1,
                                                              perPage: int64 = 20,
                                                              search: string = default(string),
-                                                             order: EmailSecuritySettingOrderOption,
-                                                             direction: EmailSecuritySettingDirectionOption,
+                                                             order: EmailSecuritySettingOrderOption = orderPattern,
+                                                             direction: EmailSecuritySettingDirectionOption = directionAsc,
                                                              isExemptRecipient: bool = default(bool),
                                                              isTrustedSender: bool = default(bool),
                                                              isAcceptableSender: bool = default(bool),
@@ -169,8 +169,8 @@ proc getAccountsAccountIdEmailSecuritySettingsBlockSenders*(client: CloudflareCl
                                                             page: int64 = 1,
                                                             perPage: int64 = 20,
                                                             search: string = default(string),
-                                                            order: EmailSecuritySettingOrderOption,
-                                                            direction: EmailSecuritySettingDirectionOption,
+                                                            order: EmailSecuritySettingOrderOption = orderPattern,
+                                                            direction: EmailSecuritySettingDirectionOption = directionAsc,
                                                             patternType: JsonNode = default(JsonNode),
                                                             pattern: string = default(string)): Future[JsonNode] {.async.} =
   ## Returns a paginated list of blocked email sender patterns. These patterns
@@ -277,8 +277,8 @@ proc getAccountsAccountIdEmailSecuritySettingsContentPolicies*(client: Cloudflar
                                                                page: int64 = 1,
                                                                perPage: int64 = 20,
                                                                search: string = default(string),
-                                                               order: EmailSecuritySettingOrderOption,
-                                                               direction: EmailSecuritySettingDirectionOption,
+                                                               order: EmailSecuritySettingOrderOption = orderPattern,
+                                                               direction: EmailSecuritySettingDirectionOption = directionAsc,
                                                                enabled: bool = default(bool),
                                                                name: string = default(string)): Future[JsonNode] {.async.} =
   ## Returns a paginated list of content policies. These policies match against the
@@ -368,8 +368,8 @@ proc getAccountsAccountIdEmailSecuritySettingsDomains*(client: CloudflareClient,
                                                        page: int64 = 1,
                                                        perPage: int64 = 20,
                                                        search: string = default(string),
-                                                       order: EmailSecuritySettingOrderOption,
-                                                       direction: EmailSecuritySettingDirectionOption,
+                                                       order: EmailSecuritySettingOrderOption = orderPattern,
+                                                       direction: EmailSecuritySettingDirectionOption = directionAsc,
                                                        allowedDeliveryMode: types.EmailSecurityDeliveryMode = default(types.EmailSecurityDeliveryMode),
                                                        domain: seq[string] = @[],
                                                        activeDeliveryMode: types.EmailSecurityDeliveryMode = default(types.EmailSecurityDeliveryMode),
@@ -507,8 +507,8 @@ proc getAccountsAccountIdEmailSecuritySettingsImpersonationRegistry*(client: Clo
                                                                      page: int64 = 1,
                                                                      perPage: int64 = 20,
                                                                      search: string = default(string),
-                                                                     order: EmailSecuritySettingOrderOption,
-                                                                     direction: EmailSecuritySettingDirectionOption,
+                                                                     order: EmailSecuritySettingOrderOption = orderPattern,
+                                                                     direction: EmailSecuritySettingDirectionOption = directionAsc,
                                                                      provenance: types.EmailSecurityProvenance = default(types.EmailSecurityProvenance)): Future[JsonNode] {.async.} =
   ## Returns a paginated list of protected identities in the impersonation registry.
   ## These entries define identities and email addresses to protect from
@@ -586,8 +586,8 @@ proc getAccountsAccountIdEmailSecuritySettingsSendingDomainRestrictions*(client:
                                                                          page: int64 = 1,
                                                                          perPage: int64 = 20,
                                                                          search: string = default(string),
-                                                                         order: EmailSecuritySettingOrderOption,
-                                                                         direction: EmailSecuritySettingDirectionOption): Future[JsonNode] {.async.} =
+                                                                         order: EmailSecuritySettingOrderOption = orderPattern,
+                                                                         direction: EmailSecuritySettingDirectionOption = directionAsc): Future[JsonNode] {.async.} =
   ## Returns a paginated list of sending domain restrictions. These restrictions
   ## enforce TLS requirements for emails from specific domains. Mail without TLS from
   ## restricted domains will be dropped unless the subdomain is in the exclude list.
@@ -678,8 +678,8 @@ proc getAccountsAccountIdEmailSecuritySettingsTrustedDomains*(client: Cloudflare
                                                               page: int64 = 1,
                                                               perPage: int64 = 20,
                                                               search: string = default(string),
-                                                              order: EmailSecuritySettingOrderOption,
-                                                              direction: EmailSecuritySettingDirectionOption,
+                                                              order: EmailSecuritySettingOrderOption = orderPattern,
+                                                              direction: EmailSecuritySettingDirectionOption = directionAsc,
                                                               isRecent: bool = default(bool),
                                                               isSimilarity: bool = default(bool),
                                                               pattern: string = default(string)): Future[JsonNode] {.async.} =

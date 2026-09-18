@@ -50,5 +50,5 @@ suite "ppc_terms endpoints":
   test "POST /accounts/{account_id}/pay-per-crawl/terms/signature":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdPayPerCrawlTermsSignature("test", {}, "test")
+    discard waitFor client.postAccountsAccountIdPayPerCrawlTermsSignature("test", eventTypeAgreed, "test")
 

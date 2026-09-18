@@ -71,7 +71,7 @@ proc getRadarEmailRoutingSummaryArc*(client: CloudflareClient,
                                      spf: seq[string] = default(seq[string]),
                                      ipVersion: seq[string] = default(seq[string]),
                                      encrypted: seq[string] = default(seq[string]),
-                                     format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummaryArcResponse] {.async.} =
+                                     format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingSummaryArcResponse] {.async.} =
   ## Retrieves the distribution of emails by ARC (Authenticated Received Chain)
   ## validation.
 
@@ -104,7 +104,7 @@ proc getRadarEmailRoutingSummaryDkim*(client: CloudflareClient,
                                       spf: seq[string] = default(seq[string]),
                                       ipVersion: seq[string] = default(seq[string]),
                                       encrypted: seq[string] = default(seq[string]),
-                                      format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummaryDkimResponse] {.async.} =
+                                      format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingSummaryDkimResponse] {.async.} =
   ## Retrieves the distribution of emails by DKIM (DomainKeys Identified Mail)
   ## validation.
 
@@ -137,7 +137,7 @@ proc getRadarEmailRoutingSummaryDmarc*(client: CloudflareClient,
                                        spf: seq[string] = default(seq[string]),
                                        ipVersion: seq[string] = default(seq[string]),
                                        encrypted: seq[string] = default(seq[string]),
-                                       format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummaryDmarcResponse] {.async.} =
+                                       format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingSummaryDmarcResponse] {.async.} =
   ## Retrieves the distribution of emails by DMARC (Domain-based Message
   ## Authentication, Reporting and Conformance) validation.
 
@@ -170,7 +170,7 @@ proc getRadarEmailRoutingSummaryEncrypted*(client: CloudflareClient,
                                            dmarc: seq[string] = default(seq[string]),
                                            spf: seq[string] = default(seq[string]),
                                            ipVersion: seq[string] = default(seq[string]),
-                                           format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummaryEncryptedResponse] {.async.} =
+                                           format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingSummaryEncryptedResponse] {.async.} =
   ## Retrieves the distribution of emails by encryption status (encrypted vs.
   ## not-encrypted).
 
@@ -203,7 +203,7 @@ proc getRadarEmailRoutingSummaryIpVersion*(client: CloudflareClient,
                                            dmarc: seq[string] = default(seq[string]),
                                            spf: seq[string] = default(seq[string]),
                                            encrypted: seq[string] = default(seq[string]),
-                                           format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummaryIpVersionResponse] {.async.} =
+                                           format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingSummaryIpVersionResponse] {.async.} =
   ## Retrieves the distribution of emails by IP version.
 
   var q = initOrderedTable[string, string]()
@@ -235,7 +235,7 @@ proc getRadarEmailRoutingSummarySpf*(client: CloudflareClient,
                                      dmarc: seq[string] = default(seq[string]),
                                      ipVersion: seq[string] = default(seq[string]),
                                      encrypted: seq[string] = default(seq[string]),
-                                     format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummarySpfResponse] {.async.} =
+                                     format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingSummarySpfResponse] {.async.} =
   ## Retrieves the distribution of emails by SPF (Sender Policy Framework)
   ## validation.
 
@@ -271,7 +271,7 @@ proc getRadarEmailRoutingSummaryDimension*(client: CloudflareClient,
                                            ipVersion: seq[string] = default(seq[string]),
                                            encrypted: seq[string] = default(seq[string]),
                                            limitPerGroup: int64 = default(int64),
-                                           format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingSummaryDimensionResponse] {.async.} =
+                                           format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingSummaryDimensionResponse] {.async.} =
   ## Retrieves the distribution of email routing metrics by the specified dimension.
 
   var q = initOrderedTable[string, string]()
@@ -296,7 +296,7 @@ proc getRadarEmailRoutingSummaryDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingTimeseriesGroupsArc*(client: CloudflareClient,
-                                              aggInterval: RadarEmailRoutingAggIntervalOption,
+                                              aggInterval: RadarEmailRoutingAggIntervalOption = aggInterval15m,
                                               name: seq[string] = @[],
                                               dateRange: seq[string] = @[],
                                               dateStart: seq[string] = @[],
@@ -306,7 +306,7 @@ proc getRadarEmailRoutingTimeseriesGroupsArc*(client: CloudflareClient,
                                               spf: seq[string] = default(seq[string]),
                                               ipVersion: seq[string] = default(seq[string]),
                                               encrypted: seq[string] = default(seq[string]),
-                                              format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsArcResponse] {.async.} =
+                                              format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingTimeseriesGroupsArcResponse] {.async.} =
   ## Retrieves the distribution of emails by ARC (Authenticated Received Chain)
   ## validation over time.
 
@@ -331,7 +331,7 @@ proc getRadarEmailRoutingTimeseriesGroupsArc*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingTimeseriesGroupsDkim*(client: CloudflareClient,
-                                               aggInterval: RadarEmailRoutingAggIntervalOption,
+                                               aggInterval: RadarEmailRoutingAggIntervalOption = aggInterval15m,
                                                name: seq[string] = @[],
                                                dateRange: seq[string] = @[],
                                                dateStart: seq[string] = @[],
@@ -341,7 +341,7 @@ proc getRadarEmailRoutingTimeseriesGroupsDkim*(client: CloudflareClient,
                                                spf: seq[string] = default(seq[string]),
                                                ipVersion: seq[string] = default(seq[string]),
                                                encrypted: seq[string] = default(seq[string]),
-                                               format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsDkimResponse] {.async.} =
+                                               format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingTimeseriesGroupsDkimResponse] {.async.} =
   ## Retrieves the distribution of emails by DKIM (DomainKeys Identified Mail)
   ## validation over time.
 
@@ -366,7 +366,7 @@ proc getRadarEmailRoutingTimeseriesGroupsDkim*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingTimeseriesGroupsDmarc*(client: CloudflareClient,
-                                                aggInterval: RadarEmailRoutingAggIntervalOption,
+                                                aggInterval: RadarEmailRoutingAggIntervalOption = aggInterval15m,
                                                 name: seq[string] = @[],
                                                 dateRange: seq[string] = @[],
                                                 dateStart: seq[string] = @[],
@@ -376,7 +376,7 @@ proc getRadarEmailRoutingTimeseriesGroupsDmarc*(client: CloudflareClient,
                                                 spf: seq[string] = default(seq[string]),
                                                 ipVersion: seq[string] = default(seq[string]),
                                                 encrypted: seq[string] = default(seq[string]),
-                                                format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsDmarcResponse] {.async.} =
+                                                format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingTimeseriesGroupsDmarcResponse] {.async.} =
   ## Retrieves the distribution of emails by DMARC (Domain-based Message
   ## Authentication, Reporting and Conformance) validation over time.
 
@@ -401,7 +401,7 @@ proc getRadarEmailRoutingTimeseriesGroupsDmarc*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingTimeseriesGroupsEncrypted*(client: CloudflareClient,
-                                                    aggInterval: RadarEmailRoutingAggIntervalOption,
+                                                    aggInterval: RadarEmailRoutingAggIntervalOption = aggInterval15m,
                                                     name: seq[string] = @[],
                                                     dateRange: seq[string] = @[],
                                                     dateStart: seq[string] = @[],
@@ -411,7 +411,7 @@ proc getRadarEmailRoutingTimeseriesGroupsEncrypted*(client: CloudflareClient,
                                                     dmarc: seq[string] = default(seq[string]),
                                                     spf: seq[string] = default(seq[string]),
                                                     ipVersion: seq[string] = default(seq[string]),
-                                                    format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsEncryptedResponse] {.async.} =
+                                                    format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingTimeseriesGroupsEncryptedResponse] {.async.} =
   ## Retrieves the distribution of emails by encryption status (encrypted vs.
   ## not-encrypted) over time.
 
@@ -436,7 +436,7 @@ proc getRadarEmailRoutingTimeseriesGroupsEncrypted*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingTimeseriesGroupsIpVersion*(client: CloudflareClient,
-                                                    aggInterval: RadarEmailRoutingAggIntervalOption,
+                                                    aggInterval: RadarEmailRoutingAggIntervalOption = aggInterval15m,
                                                     name: seq[string] = @[],
                                                     dateRange: seq[string] = @[],
                                                     dateStart: seq[string] = @[],
@@ -446,7 +446,7 @@ proc getRadarEmailRoutingTimeseriesGroupsIpVersion*(client: CloudflareClient,
                                                     dmarc: seq[string] = default(seq[string]),
                                                     spf: seq[string] = default(seq[string]),
                                                     encrypted: seq[string] = default(seq[string]),
-                                                    format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsIpVersionResponse] {.async.} =
+                                                    format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingTimeseriesGroupsIpVersionResponse] {.async.} =
   ## Retrieves the distribution of emails by IP version over time.
 
   var q = initOrderedTable[string, string]()
@@ -470,7 +470,7 @@ proc getRadarEmailRoutingTimeseriesGroupsIpVersion*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEmailRoutingTimeseriesGroupsSpf*(client: CloudflareClient,
-                                              aggInterval: RadarEmailRoutingAggIntervalOption,
+                                              aggInterval: RadarEmailRoutingAggIntervalOption = aggInterval15m,
                                               name: seq[string] = @[],
                                               dateRange: seq[string] = @[],
                                               dateStart: seq[string] = @[],
@@ -480,7 +480,7 @@ proc getRadarEmailRoutingTimeseriesGroupsSpf*(client: CloudflareClient,
                                               dmarc: seq[string] = default(seq[string]),
                                               ipVersion: seq[string] = default(seq[string]),
                                               encrypted: seq[string] = default(seq[string]),
-                                              format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsSpfResponse] {.async.} =
+                                              format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingTimeseriesGroupsSpfResponse] {.async.} =
   ## Retrieves the distribution of emails by SPF (Sender Policy Framework) validation
   ## over time.
 
@@ -506,7 +506,7 @@ proc getRadarEmailRoutingTimeseriesGroupsSpf*(client: CloudflareClient,
 
 proc getRadarEmailRoutingTimeseriesGroupsDimension*(client: CloudflareClient,
                                                     dimension: Dimension,
-                                                    aggInterval: RadarEmailRoutingAggIntervalOption,
+                                                    aggInterval: RadarEmailRoutingAggIntervalOption = aggInterval15m,
                                                     name: seq[string] = @[],
                                                     dateRange: seq[string] = @[],
                                                     dateStart: seq[string] = @[],
@@ -518,7 +518,7 @@ proc getRadarEmailRoutingTimeseriesGroupsDimension*(client: CloudflareClient,
                                                     ipVersion: seq[string] = default(seq[string]),
                                                     encrypted: seq[string] = default(seq[string]),
                                                     limitPerGroup: int64 = default(int64),
-                                                    format: RadarEmailRoutingFormatOption): Future[GetRadarEmailRoutingTimeseriesGroupsDimensionResponse] {.async.} =
+                                                    format: RadarEmailRoutingFormatOption = formatJSON): Future[GetRadarEmailRoutingTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of email routing metrics grouped by dimension over
   ## time.
 

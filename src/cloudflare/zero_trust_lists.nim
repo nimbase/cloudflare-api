@@ -37,8 +37,8 @@ proc getAccountsAccountIdGatewayLists*(client: CloudflareClient,
                                        `type`: types.ZeroTrustGatewayType2 = default(types.ZeroTrustGatewayType2),
                                        filter: seq[string] = @[],
                                        search: string = default(string),
-                                       orderBy: ZeroTrustListOrderByOption,
-                                       direction: ZeroTrustListDirectionOption): Future[types.ZeroTrustGatewayResponseCollection3] {.async.} =
+                                       orderBy: ZeroTrustListOrderByOption = orderByName,
+                                       direction: ZeroTrustListDirectionOption = directionAsc): Future[types.ZeroTrustGatewayResponseCollection3] {.async.} =
   ## Fetch all Zero Trust lists for an account.
 
   var q = initOrderedTable[string, string]()

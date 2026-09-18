@@ -91,5 +91,5 @@ suite "radar_as112 endpoints":
   test "GET /radar/as112/top/locations":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarAs112TopLocations(1, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], {})
+    discard waitFor client.getRadarAs112TopLocations(1, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], formatJSON)
 

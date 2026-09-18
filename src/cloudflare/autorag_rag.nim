@@ -27,7 +27,7 @@ proc getAccountsAccountIdAutoragRagsIdFiles*(client: CloudflareClient,
                                              page: int64 = 1,
                                              perPage: int64 = 20,
                                              search: string = default(string),
-                                             status: AutoragRagStatusOption): Future[GetAccountsAccountIdAutoragRagsIdFilesResponse] {.async.} =
+                                             status: AutoragRagStatusOption = statusCompleted): Future[GetAccountsAccountIdAutoragRagsIdFilesResponse] {.async.} =
   ## Lists files indexed by an AutoRAG.
 
   var q = initOrderedTable[string, string]()

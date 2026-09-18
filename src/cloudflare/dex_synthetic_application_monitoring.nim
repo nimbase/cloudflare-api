@@ -29,7 +29,7 @@ type
 proc getAccountsAccountIdDexColos*(client: CloudflareClient,
                                    accountId: types.DigitalExperienceMonitoringAccountIdentifier,
                                    `from`: string, to: string,
-                                   sortBy: DexSyntheticApplicationMonitoringSortByOption): Future[JsonNode] {.async.} =
+                                   sortBy: DexSyntheticApplicationMonitoringSortByOption = sortByFleetStatusUsage): Future[JsonNode] {.async.} =
   ## List Cloudflare colos that account's devices were connected to during a time
   ## period, sorted by usage starting from the most used colo. Colos without traffic
   ## are also returned and sorted alphabetically.
@@ -51,7 +51,7 @@ proc getAccountsAccountIdDexDevicesDexTests*(client: CloudflareClient,
                                              page: float64 = default(float64),
                                              perPage: float64 = default(float64),
                                              testName: string = default(string),
-                                             kind: DexSyntheticApplicationMonitoringKindOption): Future[types.DigitalExperienceMonitoringDexResponseCollection] {.async.} =
+                                             kind: DexSyntheticApplicationMonitoringKindOption = kindHttp): Future[types.DigitalExperienceMonitoringDexResponseCollection] {.async.} =
   ## Fetch all DEX tests.
 
   var q = initOrderedTable[string, string]()
@@ -168,7 +168,7 @@ proc getAccountsAccountIdDexDevicesDeviceIdIsps*(client: CloudflareClient,
                                                  deviceId: types.DigitalExperienceMonitoringUuid,
                                                  page: int64 = 1, perPage: int64,
                                                  cursor: string = default(string),
-                                                 sortBy: DexSyntheticApplicationMonitoringSortByOption = sortByTimeStart,
+                                                 sortBy: DexSyntheticApplicationMonitoringSortByOption = sortByFleetStatusUsage,
                                                  sortOrder: DexSyntheticApplicationMonitoringSortOrderOption = sortOrderDESC,
                                                  `from`: string = default(string),
                                                  to: string = default(string)): Future[JsonNode] {.async.} =
@@ -318,7 +318,7 @@ proc getAccountsAccountIdDexTestsOverview*(client: CloudflareClient,
                                            registrationId: string = default(string),
                                            page: float64 = default(float64),
                                            perPage: float64 = default(float64),
-                                           kind: DexSyntheticApplicationMonitoringKindOption): Future[JsonNode] {.async.} =
+                                           kind: DexSyntheticApplicationMonitoringKindOption = kindHttp): Future[JsonNode] {.async.} =
   ## List DEX tests with overview metrics.
 
   var q = initOrderedTable[string, string]()

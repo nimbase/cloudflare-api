@@ -76,7 +76,7 @@ suite "client_side_security endpoints":
   test "GET /zones/{zone_id}/page_shield/connections":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdPageShieldConnections("test", "test", "test", "test", "test", 1.0, {}, {}, true, true, "test", "test", {})
+    discard waitFor client.getZonesZoneIdPageShieldConnections("test", "test", "test", "test", "test", 1.0, orderByFirstSeenAt, directionAsc, true, true, "test", "test", exportCsv)
 
   test "GET /zones/{zone_id}/page_shield/connections/{connection_id}":
     let client = initCloudflareClient("test-key")
@@ -86,7 +86,7 @@ suite "client_side_security endpoints":
   test "GET /zones/{zone_id}/page_shield/cookies":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdPageShieldCookies("test", "test", "test", 1.0, {}, {}, "test", {}, "test", true, true, {}, {}, "test", "test")
+    discard waitFor client.getZonesZoneIdPageShieldCookies("test", "test", "test", 1.0, orderByFirstSeenAt, directionAsc, "test", exportCsv, "test", true, true, sameSiteLax, typeFirstParty, "test", "test")
 
   test "GET /zones/{zone_id}/page_shield/cookies/{cookie_id}":
     let client = initCloudflareClient("test-key")
@@ -116,7 +116,7 @@ suite "client_side_security endpoints":
   test "GET /zones/{zone_id}/page_shield/scripts":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdPageShieldScripts("test", "test", "test", "test", "test", 1.0, {}, {}, true, true, true, "test", "test", {})
+    discard waitFor client.getZonesZoneIdPageShieldScripts("test", "test", "test", "test", "test", 1.0, orderByFirstSeenAt, directionAsc, true, true, true, "test", "test", exportCsv)
 
   test "GET /zones/{zone_id}/page_shield/scripts/{script_id}":
     let client = initCloudflareClient("test-key")

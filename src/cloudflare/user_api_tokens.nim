@@ -16,7 +16,7 @@ type
 
 proc getUserTokens*(client: CloudflareClient, page: float64 = default(float64),
                     perPage: float64 = default(float64),
-                    direction: UserApiTokenDirectionOption,
+                    direction: UserApiTokenDirectionOption = directionAsc,
                     includeExpired: bool = false): Future[types.IamCollectionTokensResponse] {.async.} =
   ## List all access tokens you created. Results include active, disabled, and
   ## recently-expired tokens when include_expired is set to true.

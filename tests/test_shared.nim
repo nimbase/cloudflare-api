@@ -31,5 +31,5 @@ suite "shared endpoints":
   test "GET /accounts/{account_id}/workers/observability/shared/query/{id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersObservabilitySharedQueryId("test", {})
+    discard waitFor client.getAccountsAccountIdWorkersObservabilitySharedQueryId("test", viewEvents)
 

@@ -48,7 +48,7 @@ proc getRadarEntitiesAsns*(client: CloudflareClient, limit: int64 = 5,
                            asn: string = default(string),
                            location: string = default(string),
                            orderBy: RadarAutonomousSystemOrderByOption = orderByASN,
-                           format: RadarAutonomousSystemFormatOption): Future[GetRadarEntitiesAsnsResponse] {.async.} =
+                           format: RadarAutonomousSystemFormatOption = formatJSON): Future[GetRadarEntitiesAsnsResponse] {.async.} =
   ## Retrieves a list of autonomous systems.
 
   var q = initOrderedTable[string, string]()
@@ -74,8 +74,8 @@ proc getRadarEntitiesAsnsBotnetThreatFeed*(client: CloudflareClient,
                                            compareDateRange: string = default(string),
                                            location: string = default(string),
                                            asn: seq[string] = @[],
-                                           sortOrder: RadarAutonomousSystemSortOrderOption,
-                                           format: RadarAutonomousSystemFormatOption): Future[GetRadarEntitiesAsnsBotnetThreatFeedResponse] {.async.} =
+                                           sortOrder: RadarAutonomousSystemSortOrderOption = sortOrderASC,
+                                           format: RadarAutonomousSystemFormatOption = formatJSON): Future[GetRadarEntitiesAsnsBotnetThreatFeedResponse] {.async.} =
   ## Retrieves a ranked list of Autonomous Systems based on their presence in the
   ## Cloudflare Botnet Threat Feed. Rankings can be sorted by offense count or number
   ## of bad IPs. Optionally compare to a previous date to see rank changes.
@@ -99,7 +99,7 @@ proc getRadarEntitiesAsnsBotnetThreatFeed*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEntitiesAsnsIp*(client: CloudflareClient, ip: JsonNode,
-                             format: RadarAutonomousSystemFormatOption): Future[GetRadarEntitiesAsnsIpResponse] {.async.} =
+                             format: RadarAutonomousSystemFormatOption = formatJSON): Future[GetRadarEntitiesAsnsIpResponse] {.async.} =
   ## Retrieves the requested autonomous system information based on IP address.
   ## Population estimates come from APNIC (refer to https://labs.apnic.net/?p=526).
 
@@ -115,7 +115,7 @@ proc getRadarEntitiesAsnsIp*(client: CloudflareClient, ip: JsonNode,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEntitiesAsnsAsn*(client: CloudflareClient, asn: int64,
-                              format: RadarAutonomousSystemFormatOption): Future[GetRadarEntitiesAsnsAsnResponse] {.async.} =
+                              format: RadarAutonomousSystemFormatOption = formatJSON): Future[GetRadarEntitiesAsnsAsnResponse] {.async.} =
   ## Retrieves the requested autonomous system information. (A confidence level below
   ## `5` indicates a low level of confidence in the traffic data - normally this
   ## happens because Cloudflare has a small amount of traffic from/to this AS).
@@ -132,7 +132,7 @@ proc getRadarEntitiesAsnsAsn*(client: CloudflareClient, asn: int64,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEntitiesAsnsAsnAsSet*(client: CloudflareClient, asn: int64,
-                                   format: RadarAutonomousSystemFormatOption): Future[GetRadarEntitiesAsnsAsnAsSetResponse] {.async.} =
+                                   format: RadarAutonomousSystemFormatOption = formatJSON): Future[GetRadarEntitiesAsnsAsnAsSetResponse] {.async.} =
   ## Retrieves Internet Routing Registry AS-SETs that an AS is a member of.
 
   var q = initOrderedTable[string, string]()
@@ -147,7 +147,7 @@ proc getRadarEntitiesAsnsAsnAsSet*(client: CloudflareClient, asn: int64,
 
 proc getRadarEntitiesAsnsAsnRel*(client: CloudflareClient, asn: int64,
                                  asn2: int64 = default(int64),
-                                 format: RadarAutonomousSystemFormatOption): Future[GetRadarEntitiesAsnsAsnRelResponse] {.async.} =
+                                 format: RadarAutonomousSystemFormatOption = formatJSON): Future[GetRadarEntitiesAsnsAsnRelResponse] {.async.} =
   ## Retrieves AS-level relationship for given networks.
 
   var q = initOrderedTable[string, string]()

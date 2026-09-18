@@ -56,7 +56,7 @@ suite "url_scanner endpoints":
   test "GET /accounts/{account_id}/urlscanner/v2/screenshots/{scan_id}.png":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdUrlscannerV2ScreenshotsScanIdPng("test", "test", {})
+    discard waitFor client.getAccountsAccountIdUrlscannerV2ScreenshotsScanIdPng("test", "test", resolutionDesktop)
 
   test "GET /accounts/{account_id}/urlscanner/v2/search":
     let client = initCloudflareClient("test-key")

@@ -353,8 +353,8 @@ proc getAccountsAccountIdWorkflowsWorkflowNameInstances*(client: CloudflareClien
                                                          page: float64 = default(float64),
                                                          perPage: float64 = default(float64),
                                                          cursor: string = default(string),
-                                                         direction: WorkflowDirectionOption,
-                                                         status: WorkflowStatusOption,
+                                                         direction: WorkflowDirectionOption = directionAsc,
+                                                         status: WorkflowStatusOption = statusQueued,
                                                          dateStart: string = default(string),
                                                          dateEnd: string = default(string),
                                                          accountId: string): Future[GetAccountsAccountIdWorkflowsWorkflowNameInstancesResponse] {.async.} =

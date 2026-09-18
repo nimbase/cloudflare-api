@@ -19,7 +19,7 @@ type
 proc getAccountsAccountIdPagesProjectsProjectNameDeployments*(client: CloudflareClient,
                                                               projectName: types.PagesProjectName,
                                                               accountId: types.PagesIdentifier,
-                                                              env: PagesDeploymentEnvOption,
+                                                              env: PagesDeploymentEnvOption = envProduction,
                                                               page: int64 = default(int64),
                                                               perPage: int64 = default(int64)): Future[JsonNode] {.async.} =
   ## Fetch a list of project deployments.

@@ -1,6 +1,6 @@
 import ./types
 
-proc renameHook*(v: AaaAuditLogs, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.AaaAuditLogs, fieldName: var string) {.inline.} =
   if fieldName == "newValue":
     fieldName = "new_value"
   elif fieldName == "new_value":
@@ -10,19 +10,19 @@ proc renameHook*(v: AaaAuditLogs, fieldName: var string) {.inline.} =
   elif fieldName == "old_value":
     fieldName = "oldValue"
 
-proc renameHook*(v: AccessAzureGroupRule, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.AccessAzureGroupRule, fieldName: var string) {.inline.} =
   if fieldName == "azureAD":
     fieldName = "azure_a_d"
   elif fieldName == "azure_a_d":
     fieldName = "azureAD"
 
-proc renameHook*(v: AccessGithubOrganizationRule, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.AccessGithubOrganizationRule, fieldName: var string) {.inline.} =
   if fieldName == "github-organization":
     fieldName = "github_organization"
   elif fieldName == "github_organization":
     fieldName = "github-organization"
 
-proc renameHook*(v: AccessGroups, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.AccessGroups, fieldName: var string) {.inline.} =
   if fieldName == "displayName":
     fieldName = "display_name"
   elif fieldName == "display_name":
@@ -32,19 +32,19 @@ proc renameHook*(v: AccessGroups, fieldName: var string) {.inline.} =
   elif fieldName == "external_id":
     fieldName = "externalId"
 
-proc renameHook*(v: AccessIdentity, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.AccessIdentity, fieldName: var string) {.inline.} =
   if fieldName == "devicePosture":
     fieldName = "device_posture"
   elif fieldName == "device_posture":
     fieldName = "devicePosture"
 
-proc renameHook*(v: AccessMeta, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.AccessMeta, fieldName: var string) {.inline.} =
   if fieldName == "lastModified":
     fieldName = "last_modified"
   elif fieldName == "last_modified":
     fieldName = "lastModified"
 
-proc renameHook*(v: AccessUsers, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.AccessUsers, fieldName: var string) {.inline.} =
   if fieldName == "displayName":
     fieldName = "display_name"
   elif fieldName == "display_name":
@@ -54,7 +54,7 @@ proc renameHook*(v: AccessUsers, fieldName: var string) {.inline.} =
   elif fieldName == "external_id":
     fieldName = "externalId"
 
-proc renameHook*(v: AiAuditContentSignal, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.AiAuditContentSignal, fieldName: var string) {.inline.} =
   if fieldName == "ai-input":
     fieldName = "ai_input"
   elif fieldName == "ai_input":
@@ -64,13 +64,13 @@ proc renameHook*(v: AiAuditContentSignal, fieldName: var string) {.inline.} =
   elif fieldName == "ai_train":
     fieldName = "ai-train"
 
-proc renameHook*(v: AiAuditRobotsRules, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.AiAuditRobotsRules, fieldName: var string) {.inline.} =
   if fieldName == "userAgents":
     fieldName = "user_agents"
   elif fieldName == "user_agents":
     fieldName = "userAgents"
 
-proc renameHook*(v: AiAuditUserAgentRules, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.AiAuditUserAgentRules, fieldName: var string) {.inline.} =
   if fieldName == "contentSignals":
     fieldName = "content_signals"
   elif fieldName == "content_signals":
@@ -80,7 +80,7 @@ proc renameHook*(v: AiAuditUserAgentRules, fieldName: var string) {.inline.} =
   elif fieldName == "crawl_delay":
     fieldName = "crawlDelay"
 
-proc renameHook*(v: AigBillingGetTopupConfigResult, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.AigBillingGetTopupConfigResult, fieldName: var string) {.inline.} =
   if fieldName == "disabledReason":
     fieldName = "disabled_reason"
   elif fieldName == "disabled_reason":
@@ -90,43 +90,43 @@ proc renameHook*(v: AigBillingGetTopupConfigResult, fieldName: var string) {.inl
   elif fieldName == "last_failed_at":
     fieldName = "lastFailedAt"
 
-proc renameHook*(v: AnalyticsSqlSqlQueryAccountScope, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.AnalyticsSqlSqlQueryAccountScope, fieldName: var string) {.inline.} =
   if fieldName == "accountTag":
     fieldName = "account_tag"
   elif fieldName == "account_tag":
     fieldName = "accountTag"
 
-proc renameHook*(v: AnalyticsSqlSqlQueryZoneScope, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.AnalyticsSqlSqlQueryZoneScope, fieldName: var string) {.inline.} =
   if fieldName == "zoneTag":
     fieldName = "zone_tag"
   elif fieldName == "zone_tag":
     fieldName = "zoneTag"
 
-proc renameHook*(v: ApiShieldOperationSchemaFragment, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ApiShieldOperationSchemaFragment, fieldName: var string) {.inline.} =
   if fieldName == "requestBody":
     fieldName = "request_body"
   elif fieldName == "request_body":
     fieldName = "requestBody"
 
-proc renameHook*(v: ArtCommonQuery, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ArtCommonQuery, fieldName: var string) {.inline.} =
   if fieldName == "groupBy":
     fieldName = "group_by"
   elif fieldName == "group_by":
     fieldName = "groupBy"
 
-proc renameHook*(v: ArtQuerySummary, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ArtQuerySummary, fieldName: var string) {.inline.} =
   if fieldName == "groupBy":
     fieldName = "group_by"
   elif fieldName == "group_by":
     fieldName = "groupBy"
 
-proc renameHook*(v: ArtQueryTimeseries, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ArtQueryTimeseries, fieldName: var string) {.inline.} =
   if fieldName == "groupBy":
     fieldName = "group_by"
   elif fieldName == "group_by":
     fieldName = "groupBy"
 
-proc renameHook*(v: ArtQueryTopN, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ArtQueryTopN, fieldName: var string) {.inline.} =
   if fieldName == "groupBy":
     fieldName = "group_by"
   elif fieldName == "group_by":
@@ -136,7 +136,7 @@ proc renameHook*(v: ArtQueryTopN, fieldName: var string) {.inline.} =
   elif fieldName == "order_by":
     fieldName = "orderBy"
 
-proc renameHook*(v: ArtSummaryResult, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ArtSummaryResult, fieldName: var string) {.inline.} =
   if fieldName == "currentTotal":
     fieldName = "current_total"
   elif fieldName == "current_total":
@@ -146,7 +146,7 @@ proc renameHook*(v: ArtSummaryResult, fieldName: var string) {.inline.} =
   elif fieldName == "previous_total":
     fieldName = "previousTotal"
 
-proc renameHook*(v: BillableUsageApiCostAndUsageData, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.BillableUsageApiCostAndUsageData, fieldName: var string) {.inline.} =
   if fieldName == "BilledCost":
     fieldName = "billed_cost"
   elif fieldName == "billed_cost":
@@ -292,7 +292,7 @@ proc renameHook*(v: BillableUsageApiCostAndUsageData, fieldName: var string) {.i
   elif fieldName == "x_zone_name":
     fieldName = "x_ZoneName"
 
-proc renameHook*(v: BillableUsageApiUsageRecord, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.BillableUsageApiUsageRecord, fieldName: var string) {.inline.} =
   if fieldName == "BilledCost":
     fieldName = "billed_cost"
   elif fieldName == "billed_cost":
@@ -402,7 +402,29 @@ proc renameHook*(v: BillableUsageApiUsageRecord, fieldName: var string) {.inline
   elif fieldName == "zone_name":
     fieldName = "ZoneName"
 
-proc renameHook*(v: BillableUsageApiV2FilterBy, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.BillableUsageApiV2AccountBillableMetric, fieldName: var string) {.inline.} =
+  if fieldName == "DimensionKeys":
+    fieldName = "dimension_keys"
+  elif fieldName == "dimension_keys":
+    fieldName = "DimensionKeys"
+  elif fieldName == "Id":
+    fieldName = "id"
+  elif fieldName == "id":
+    fieldName = "Id"
+  elif fieldName == "Name":
+    fieldName = "name"
+  elif fieldName == "name":
+    fieldName = "Name"
+  elif fieldName == "ProductCategory":
+    fieldName = "product_category"
+  elif fieldName == "product_category":
+    fieldName = "ProductCategory"
+  elif fieldName == "ProductFamily":
+    fieldName = "product_family"
+  elif fieldName == "product_family":
+    fieldName = "ProductFamily"
+
+proc renameHook*(v: types.BillableUsageApiV2FilterBy, fieldName: var string) {.inline.} =
   if fieldName == "MetricIds":
     fieldName = "metric_ids"
   elif fieldName == "metric_ids":
@@ -416,7 +438,7 @@ proc renameHook*(v: BillableUsageApiV2FilterBy, fieldName: var string) {.inline.
   elif fieldName == "tags":
     fieldName = "Tags"
 
-proc renameHook*(v: BillableUsageApiV2GroupBy, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.BillableUsageApiV2GroupBy, fieldName: var string) {.inline.} =
   if fieldName == "Key":
     fieldName = "key"
   elif fieldName == "key":
@@ -426,7 +448,27 @@ proc renameHook*(v: BillableUsageApiV2GroupBy, fieldName: var string) {.inline.}
   elif fieldName == "type":
     fieldName = "Type"
 
-proc renameHook*(v: BillableUsageApiV2TagFilter, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.BillableUsageApiV2ProductCategory, fieldName: var string) {.inline.} =
+  if fieldName == "Id":
+    fieldName = "id"
+  elif fieldName == "id":
+    fieldName = "Id"
+  elif fieldName == "Name":
+    fieldName = "name"
+  elif fieldName == "name":
+    fieldName = "Name"
+
+proc renameHook*(v: types.BillableUsageApiV2ProductFamily, fieldName: var string) {.inline.} =
+  if fieldName == "Id":
+    fieldName = "id"
+  elif fieldName == "id":
+    fieldName = "Id"
+  elif fieldName == "Name":
+    fieldName = "name"
+  elif fieldName == "name":
+    fieldName = "Name"
+
+proc renameHook*(v: types.BillableUsageApiV2TagFilter, fieldName: var string) {.inline.} =
   if fieldName == "Key":
     fieldName = "key"
   elif fieldName == "key":
@@ -436,7 +478,7 @@ proc renameHook*(v: BillableUsageApiV2TagFilter, fieldName: var string) {.inline
   elif fieldName == "values":
     fieldName = "Values"
 
-proc renameHook*(v: BillableUsageApiV2TimePeriod, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.BillableUsageApiV2TimePeriod, fieldName: var string) {.inline.} =
   if fieldName == "From":
     fieldName = "from"
   elif fieldName == "from":
@@ -446,7 +488,7 @@ proc renameHook*(v: BillableUsageApiV2TimePeriod, fieldName: var string) {.inlin
   elif fieldName == "to":
     fieldName = "To"
 
-proc renameHook*(v: BillableUsageApiV2UsageQuery, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.BillableUsageApiV2UsageQuery, fieldName: var string) {.inline.} =
   if fieldName == "FilterBy":
     fieldName = "filter_by"
   elif fieldName == "filter_by":
@@ -460,7 +502,7 @@ proc renameHook*(v: BillableUsageApiV2UsageQuery, fieldName: var string) {.inlin
   elif fieldName == "time_period":
     fieldName = "TimePeriod"
 
-proc renameHook*(v: BrexExtensionEventLogRow, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.BrexExtensionEventLogRow, fieldName: var string) {.inline.} =
   if fieldName == "durationMs":
     fieldName = "duration_ms"
   elif fieldName == "duration_ms":
@@ -498,13 +540,13 @@ proc renameHook*(v: BrexExtensionEventLogRow, fieldName: var string) {.inline.} 
   elif fieldName == "user_email":
     fieldName = "userEmail"
 
-proc renameHook*(v: BrexExtensionEventsSearchRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.BrexExtensionEventsSearchRequest, fieldName: var string) {.inline.} =
   if fieldName == "includeTotal":
     fieldName = "include_total"
   elif fieldName == "include_total":
     fieldName = "includeTotal"
 
-proc renameHook*(v: BrexInstalledExtension, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.BrexInstalledExtension, fieldName: var string) {.inline.} =
   if fieldName == "hostPermissions":
     fieldName = "host_permissions"
   elif fieldName == "host_permissions":
@@ -514,31 +556,31 @@ proc renameHook*(v: BrexInstalledExtension, fieldName: var string) {.inline.} =
   elif fieldName == "install_type":
     fieldName = "installType"
 
-proc renameHook*(v: BuildsBuildSeedRepoInputFile, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.BuildsBuildSeedRepoInputFile, fieldName: var string) {.inline.} =
   if fieldName == "isBase64":
     fieldName = "is_base64"
   elif fieldName == "is_base64":
     fieldName = "isBase64"
 
-proc renameHook*(v: CacheSettingsOriginCloudRegionBatchItemResult, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.CacheSettingsOriginCloudRegionBatchItemResult, fieldName: var string) {.inline.} =
   if fieldName == "origin-ip":
     fieldName = "origin_ip"
   elif fieldName == "origin_ip":
     fieldName = "origin-ip"
 
-proc renameHook*(v: CacheSettingsOriginCloudRegionEntry, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.CacheSettingsOriginCloudRegionEntry, fieldName: var string) {.inline.} =
   if fieldName == "origin-ip":
     fieldName = "origin_ip"
   elif fieldName == "origin_ip":
     fieldName = "origin-ip"
 
-proc renameHook*(v: CcPlacementEvent, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.CcPlacementEvent, fieldName: var string) {.inline.} =
   if fieldName == "statusChange":
     fieldName = "status_change"
   elif fieldName == "status_change":
     fieldName = "statusChange"
 
-proc renameHook*(v: CloudforceOneEventsFieldDefinition, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.CloudforceOneEventsFieldDefinition, fieldName: var string) {.inline.} =
   if fieldName == "allowedValues":
     fieldName = "allowed_values"
   elif fieldName == "allowed_values":
@@ -556,7 +598,7 @@ proc renameHook*(v: CloudforceOneEventsFieldDefinition, fieldName: var string) {
   elif fieldName == "number_constraint":
     fieldName = "numberConstraint"
 
-proc renameHook*(v: CloudforceOneEventsRelationshipEdge, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.CloudforceOneEventsRelationshipEdge, fieldName: var string) {.inline.} =
   if fieldName == "createdAt":
     fieldName = "created_at"
   elif fieldName == "created_at":
@@ -582,19 +624,19 @@ proc renameHook*(v: CloudforceOneEventsRelationshipEdge, fieldName: var string) 
   elif fieldName == "updated_at":
     fieldName = "updatedAt"
 
-proc renameHook*(v: CpsCommunicationPreferences, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.CpsCommunicationPreferences, fieldName: var string) {.inline.} =
   if fieldName == "language-locale":
     fieldName = "language_locale"
   elif fieldName == "language_locale":
     fieldName = "language-locale"
 
-proc renameHook*(v: CpsUpdateCommunicationPreferencesRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.CpsUpdateCommunicationPreferencesRequest, fieldName: var string) {.inline.} =
   if fieldName == "language-locale":
     fieldName = "language_locale"
   elif fieldName == "language_locale":
     fieldName = "language-locale"
 
-proc renameHook*(v: DigitalExperienceMonitoringAggregateStat, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringAggregateStat, fieldName: var string) {.inline.} =
   if fieldName == "avgMs":
     fieldName = "avg_ms"
   elif fieldName == "avg_ms":
@@ -608,13 +650,13 @@ proc renameHook*(v: DigitalExperienceMonitoringAggregateStat, fieldName: var str
   elif fieldName == "time_period":
     fieldName = "timePeriod"
 
-proc renameHook*(v: DigitalExperienceMonitoringAggregateTimeSlot, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringAggregateTimeSlot, fieldName: var string) {.inline.} =
   if fieldName == "avgMs":
     fieldName = "avg_ms"
   elif fieldName == "avg_ms":
     fieldName = "avgMs"
 
-proc renameHook*(v: DigitalExperienceMonitoringDevice, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringDevice, fieldName: var string) {.inline.} =
   if fieldName == "alwaysOn":
     fieldName = "always_on"
   elif fieldName == "always_on":
@@ -756,7 +798,7 @@ proc renameHook*(v: DigitalExperienceMonitoringDevice, fieldName: var string) {.
   elif fieldName == "wifi_strength_dbm":
     fieldName = "wifiStrengthDbm"
 
-proc renameHook*(v: DigitalExperienceMonitoringHttpDetailsPercentilesResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringHttpDetailsPercentilesResponse, fieldName: var string) {.inline.} =
   if fieldName == "dnsResponseTimeMs":
     fieldName = "dns_response_time_ms"
   elif fieldName == "dns_response_time_ms":
@@ -770,7 +812,7 @@ proc renameHook*(v: DigitalExperienceMonitoringHttpDetailsPercentilesResponse, f
   elif fieldName == "server_response_time_ms":
     fieldName = "serverResponseTimeMs"
 
-proc renameHook*(v: DigitalExperienceMonitoringHttpDetailsResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringHttpDetailsResponse, fieldName: var string) {.inline.} =
   if fieldName == "httpStats":
     fieldName = "http_stats"
   elif fieldName == "http_stats":
@@ -780,13 +822,13 @@ proc renameHook*(v: DigitalExperienceMonitoringHttpDetailsResponse, fieldName: v
   elif fieldName == "http_stats_by_colo":
     fieldName = "httpStatsByColo"
 
-proc renameHook*(v: DigitalExperienceMonitoringLiveStat, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringLiveStat, fieldName: var string) {.inline.} =
   if fieldName == "uniqueDevicesTotal":
     fieldName = "unique_devices_total"
   elif fieldName == "unique_devices_total":
     fieldName = "uniqueDevicesTotal"
 
-proc renameHook*(v: DigitalExperienceMonitoringRttStats, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringRttStats, fieldName: var string) {.inline.} =
   if fieldName == "minRttUs":
     fieldName = "min_rtt_us"
   elif fieldName == "min_rtt_us":
@@ -800,19 +842,19 @@ proc renameHook*(v: DigitalExperienceMonitoringRttStats, fieldName: var string) 
   elif fieldName == "rtt_var_us":
     fieldName = "rttVarUs"
 
-proc renameHook*(v: DigitalExperienceMonitoringSchemasAggregateStat, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringSchemasAggregateStat, fieldName: var string) {.inline.} =
   if fieldName == "uniqueDevicesTotal":
     fieldName = "unique_devices_total"
   elif fieldName == "unique_devices_total":
     fieldName = "uniqueDevicesTotal"
 
-proc renameHook*(v: DigitalExperienceMonitoringTestsResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringTestsResponse, fieldName: var string) {.inline.} =
   if fieldName == "overviewMetrics":
     fieldName = "overview_metrics"
   elif fieldName == "overview_metrics":
     fieldName = "overviewMetrics"
 
-proc renameHook*(v: DigitalExperienceMonitoringTimingAggregates, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringTimingAggregates, fieldName: var string) {.inline.} =
   if fieldName == "avgMs":
     fieldName = "avg_ms"
   elif fieldName == "avg_ms":
@@ -822,7 +864,7 @@ proc renameHook*(v: DigitalExperienceMonitoringTimingAggregates, fieldName: var 
   elif fieldName == "over_time":
     fieldName = "overTime"
 
-proc renameHook*(v: DigitalExperienceMonitoringTracerouteDetailsPercentilesResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringTracerouteDetailsPercentilesResponse, fieldName: var string) {.inline.} =
   if fieldName == "hopsCount":
     fieldName = "hops_count"
   elif fieldName == "hops_count":
@@ -836,7 +878,7 @@ proc renameHook*(v: DigitalExperienceMonitoringTracerouteDetailsPercentilesRespo
   elif fieldName == "round_trip_time_ms":
     fieldName = "roundTripTimeMs"
 
-proc renameHook*(v: DigitalExperienceMonitoringTracerouteDetailsResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringTracerouteDetailsResponse, fieldName: var string) {.inline.} =
   if fieldName == "tracerouteStats":
     fieldName = "traceroute_stats"
   elif fieldName == "traceroute_stats":
@@ -846,7 +888,7 @@ proc renameHook*(v: DigitalExperienceMonitoringTracerouteDetailsResponse, fieldN
   elif fieldName == "traceroute_stats_by_colo":
     fieldName = "tracerouteStatsByColo"
 
-proc renameHook*(v: DigitalExperienceMonitoringTracerouteTestNetworkPathResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringTracerouteTestNetworkPathResponse, fieldName: var string) {.inline.} =
   if fieldName == "deviceName":
     fieldName = "device_name"
   elif fieldName == "device_name":
@@ -856,7 +898,7 @@ proc renameHook*(v: DigitalExperienceMonitoringTracerouteTestNetworkPathResponse
   elif fieldName == "network_path":
     fieldName = "networkPath"
 
-proc renameHook*(v: DigitalExperienceMonitoringTracerouteTestResultNetworkPathResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringTracerouteTestResultNetworkPathResponse, fieldName: var string) {.inline.} =
   if fieldName == "deviceName":
     fieldName = "device_name"
   elif fieldName == "device_name":
@@ -874,7 +916,7 @@ proc renameHook*(v: DigitalExperienceMonitoringTracerouteTestResultNetworkPathRe
   elif fieldName == "test_name":
     fieldName = "testName"
 
-proc renameHook*(v: DigitalExperienceMonitoringTunnelStats, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringTunnelStats, fieldName: var string) {.inline.} =
   if fieldName == "bytesLost":
     fieldName = "bytes_lost"
   elif fieldName == "bytes_lost":
@@ -912,13 +954,13 @@ proc renameHook*(v: DigitalExperienceMonitoringTunnelStats, fieldName: var strin
   elif fieldName == "stats_window_ms":
     fieldName = "statsWindowMs"
 
-proc renameHook*(v: DigitalExperienceMonitoringUniqueDevicesResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DigitalExperienceMonitoringUniqueDevicesResponse, fieldName: var string) {.inline.} =
   if fieldName == "uniqueDevicesTotal":
     fieldName = "unique_devices_total"
   elif fieldName == "unique_devices_total":
     fieldName = "uniqueDevicesTotal"
 
-proc renameHook*(v: DnssecDnskeyRecord, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DnssecDnskeyRecord, fieldName: var string) {.inline.} =
   if fieldName == "Algorithm":
     fieldName = "algorithm"
   elif fieldName == "algorithm":
@@ -940,7 +982,7 @@ proc renameHook*(v: DnssecDnskeyRecord, fieldName: var string) {.inline.} =
   elif fieldName == "public_key":
     fieldName = "PublicKey"
 
-proc renameHook*(v: DnssecDnskeyRecordHeader, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DnssecDnskeyRecordHeader, fieldName: var string) {.inline.} =
   if fieldName == "Class":
     fieldName = "class"
   elif fieldName == "class":
@@ -962,7 +1004,7 @@ proc renameHook*(v: DnssecDnskeyRecordHeader, fieldName: var string) {.inline.} 
   elif fieldName == "ttl":
     fieldName = "Ttl"
 
-proc renameHook*(v: DnssecDnssecZsk, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.DnssecDnssecZsk, fieldName: var string) {.inline.} =
   if fieldName == "DNSKEY":
     fieldName = "d_n_s_k_e_y"
   elif fieldName == "d_n_s_k_e_y":
@@ -984,13 +1026,13 @@ proc renameHook*(v: DnssecDnssecZsk, fieldName: var string) {.inline.} =
   elif fieldName == "tag":
     fieldName = "Tag"
 
-proc renameHook*(v: FlagshipEvaluationResult, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.FlagshipEvaluationResult, fieldName: var string) {.inline.} =
   if fieldName == "flagKey":
     fieldName = "flag_key"
   elif fieldName == "flag_key":
     fieldName = "flagKey"
 
-proc renameHook*(v: GoogleTagGatewayGoogleTagGatewayConfig, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.GoogleTagGatewayGoogleTagGatewayConfig, fieldName: var string) {.inline.} =
   if fieldName == "hideOriginalIp":
     fieldName = "hide_original_ip"
   elif fieldName == "hide_original_ip":
@@ -1004,7 +1046,7 @@ proc renameHook*(v: GoogleTagGatewayGoogleTagGatewayConfig, fieldName: var strin
   elif fieldName == "set_up_tag":
     fieldName = "setUpTag"
 
-proc renameHook*(v: IamScimAuthenticationScheme, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimAuthenticationScheme, fieldName: var string) {.inline.} =
   if fieldName == "documentationUri":
     fieldName = "documentation_uri"
   elif fieldName == "documentation_uri":
@@ -1014,7 +1056,7 @@ proc renameHook*(v: IamScimAuthenticationScheme, fieldName: var string) {.inline
   elif fieldName == "spec_uri":
     fieldName = "specUri"
 
-proc renameHook*(v: IamScimBulkFeature, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimBulkFeature, fieldName: var string) {.inline.} =
   if fieldName == "maxOperations":
     fieldName = "max_operations"
   elif fieldName == "max_operations":
@@ -1024,19 +1066,19 @@ proc renameHook*(v: IamScimBulkFeature, fieldName: var string) {.inline.} =
   elif fieldName == "max_payload_size":
     fieldName = "maxPayloadSize"
 
-proc renameHook*(v: IamScimErrorResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimErrorResponse, fieldName: var string) {.inline.} =
   if fieldName == "scimType":
     fieldName = "scim_type"
   elif fieldName == "scim_type":
     fieldName = "scimType"
 
-proc renameHook*(v: IamScimFilterFeature, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimFilterFeature, fieldName: var string) {.inline.} =
   if fieldName == "maxResults":
     fieldName = "max_results"
   elif fieldName == "max_results":
     fieldName = "maxResults"
 
-proc renameHook*(v: IamScimGroup, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimGroup, fieldName: var string) {.inline.} =
   if fieldName == "displayName":
     fieldName = "display_name"
   elif fieldName == "display_name":
@@ -1046,7 +1088,7 @@ proc renameHook*(v: IamScimGroup, fieldName: var string) {.inline.} =
   elif fieldName == "external_id":
     fieldName = "externalId"
 
-proc renameHook*(v: IamScimGroupCreateRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimGroupCreateRequest, fieldName: var string) {.inline.} =
   if fieldName == "displayName":
     fieldName = "display_name"
   elif fieldName == "display_name":
@@ -1056,7 +1098,7 @@ proc renameHook*(v: IamScimGroupCreateRequest, fieldName: var string) {.inline.}
   elif fieldName == "external_id":
     fieldName = "externalId"
 
-proc renameHook*(v: IamScimGroupListResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimGroupListResponse, fieldName: var string) {.inline.} =
   if fieldName == "Resources":
     fieldName = "resources"
   elif fieldName == "resources":
@@ -1074,19 +1116,19 @@ proc renameHook*(v: IamScimGroupListResponse, fieldName: var string) {.inline.} 
   elif fieldName == "total_results":
     fieldName = "totalResults"
 
-proc renameHook*(v: IamScimGroupMeta, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimGroupMeta, fieldName: var string) {.inline.} =
   if fieldName == "resourceType":
     fieldName = "resource_type"
   elif fieldName == "resource_type":
     fieldName = "resourceType"
 
-proc renameHook*(v: IamScimGroupPatchOpRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimGroupPatchOpRequest, fieldName: var string) {.inline.} =
   if fieldName == "Operations":
     fieldName = "operations"
   elif fieldName == "operations":
     fieldName = "Operations"
 
-proc renameHook*(v: IamScimGroupReplaceRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimGroupReplaceRequest, fieldName: var string) {.inline.} =
   if fieldName == "displayName":
     fieldName = "display_name"
   elif fieldName == "display_name":
@@ -1096,7 +1138,7 @@ proc renameHook*(v: IamScimGroupReplaceRequest, fieldName: var string) {.inline.
   elif fieldName == "external_id":
     fieldName = "externalId"
 
-proc renameHook*(v: IamScimGroupSummary, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimGroupSummary, fieldName: var string) {.inline.} =
   if fieldName == "displayName":
     fieldName = "display_name"
   elif fieldName == "display_name":
@@ -1106,19 +1148,19 @@ proc renameHook*(v: IamScimGroupSummary, fieldName: var string) {.inline.} =
   elif fieldName == "external_id":
     fieldName = "externalId"
 
-proc renameHook*(v: IamScimPatchOpRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimPatchOpRequest, fieldName: var string) {.inline.} =
   if fieldName == "Operations":
     fieldName = "operations"
   elif fieldName == "operations":
     fieldName = "Operations"
 
-proc renameHook*(v: IamScimResourceType, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimResourceType, fieldName: var string) {.inline.} =
   if fieldName == "schemaExtensions":
     fieldName = "schema_extensions"
   elif fieldName == "schema_extensions":
     fieldName = "schemaExtensions"
 
-proc renameHook*(v: IamScimResourceTypeListResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimResourceTypeListResponse, fieldName: var string) {.inline.} =
   if fieldName == "Resources":
     fieldName = "resources"
   elif fieldName == "resources":
@@ -1136,13 +1178,13 @@ proc renameHook*(v: IamScimResourceTypeListResponse, fieldName: var string) {.in
   elif fieldName == "total_results":
     fieldName = "totalResults"
 
-proc renameHook*(v: IamScimResourceTypeMeta, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimResourceTypeMeta, fieldName: var string) {.inline.} =
   if fieldName == "resourceType":
     fieldName = "resource_type"
   elif fieldName == "resource_type":
     fieldName = "resourceType"
 
-proc renameHook*(v: IamScimSchemaAttr, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimSchemaAttr, fieldName: var string) {.inline.} =
   if fieldName == "canonicalValues":
     fieldName = "canonical_values"
   elif fieldName == "canonical_values":
@@ -1164,7 +1206,7 @@ proc renameHook*(v: IamScimSchemaAttr, fieldName: var string) {.inline.} =
   elif fieldName == "sub_attributes":
     fieldName = "subAttributes"
 
-proc renameHook*(v: IamScimSchemaListResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimSchemaListResponse, fieldName: var string) {.inline.} =
   if fieldName == "Resources":
     fieldName = "resources"
   elif fieldName == "resources":
@@ -1182,13 +1224,13 @@ proc renameHook*(v: IamScimSchemaListResponse, fieldName: var string) {.inline.}
   elif fieldName == "total_results":
     fieldName = "totalResults"
 
-proc renameHook*(v: IamScimSchemaMeta, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimSchemaMeta, fieldName: var string) {.inline.} =
   if fieldName == "resourceType":
     fieldName = "resource_type"
   elif fieldName == "resource_type":
     fieldName = "resourceType"
 
-proc renameHook*(v: IamScimServiceProviderConfig, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimServiceProviderConfig, fieldName: var string) {.inline.} =
   if fieldName == "authenticationSchemes":
     fieldName = "authentication_schemes"
   elif fieldName == "authentication_schemes":
@@ -1202,7 +1244,7 @@ proc renameHook*(v: IamScimServiceProviderConfig, fieldName: var string) {.inlin
   elif fieldName == "documentation_uri":
     fieldName = "documentationUri"
 
-proc renameHook*(v: IamScimUser, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimUser, fieldName: var string) {.inline.} =
   if fieldName == "displayName":
     fieldName = "display_name"
   elif fieldName == "display_name":
@@ -1216,7 +1258,7 @@ proc renameHook*(v: IamScimUser, fieldName: var string) {.inline.} =
   elif fieldName == "user_name":
     fieldName = "userName"
 
-proc renameHook*(v: IamScimUserCreateRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimUserCreateRequest, fieldName: var string) {.inline.} =
   if fieldName == "displayName":
     fieldName = "display_name"
   elif fieldName == "display_name":
@@ -1230,7 +1272,7 @@ proc renameHook*(v: IamScimUserCreateRequest, fieldName: var string) {.inline.} 
   elif fieldName == "user_name":
     fieldName = "userName"
 
-proc renameHook*(v: IamScimUserListResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimUserListResponse, fieldName: var string) {.inline.} =
   if fieldName == "Resources":
     fieldName = "resources"
   elif fieldName == "resources":
@@ -1248,7 +1290,7 @@ proc renameHook*(v: IamScimUserListResponse, fieldName: var string) {.inline.} =
   elif fieldName == "total_results":
     fieldName = "totalResults"
 
-proc renameHook*(v: IamScimUserNameObject, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimUserNameObject, fieldName: var string) {.inline.} =
   if fieldName == "familyName":
     fieldName = "family_name"
   elif fieldName == "family_name":
@@ -1258,7 +1300,7 @@ proc renameHook*(v: IamScimUserNameObject, fieldName: var string) {.inline.} =
   elif fieldName == "given_name":
     fieldName = "givenName"
 
-proc renameHook*(v: IamScimUserReplaceRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.IamScimUserReplaceRequest, fieldName: var string) {.inline.} =
   if fieldName == "displayName":
     fieldName = "display_name"
   elif fieldName == "display_name":
@@ -1272,43 +1314,43 @@ proc renameHook*(v: IamScimUserReplaceRequest, fieldName: var string) {.inline.}
   elif fieldName == "user_name":
     fieldName = "userName"
 
-proc renameHook*(v: ImagesImage, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ImagesImage, fieldName: var string) {.inline.} =
   if fieldName == "requireSignedURLs":
     fieldName = "require_signed_u_r_ls"
   elif fieldName == "require_signed_u_r_ls":
     fieldName = "requireSignedURLs"
 
-proc renameHook*(v: ImagesImageBasicUpload, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ImagesImageBasicUpload, fieldName: var string) {.inline.} =
   if fieldName == "requireSignedURLs":
     fieldName = "require_signed_u_r_ls"
   elif fieldName == "require_signed_u_r_ls":
     fieldName = "requireSignedURLs"
 
-proc renameHook*(v: ImagesImageDirectUploadRequestV2, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ImagesImageDirectUploadRequestV2, fieldName: var string) {.inline.} =
   if fieldName == "requireSignedURLs":
     fieldName = "require_signed_u_r_ls"
   elif fieldName == "require_signed_u_r_ls":
     fieldName = "requireSignedURLs"
 
-proc renameHook*(v: ImagesImagePatchRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ImagesImagePatchRequest, fieldName: var string) {.inline.} =
   if fieldName == "requireSignedURLs":
     fieldName = "require_signed_u_r_ls"
   elif fieldName == "require_signed_u_r_ls":
     fieldName = "requireSignedURLs"
 
-proc renameHook*(v: ImagesImageVariantDefinition, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ImagesImageVariantDefinition, fieldName: var string) {.inline.} =
   if fieldName == "neverRequireSignedURLs":
     fieldName = "never_require_signed_u_r_ls"
   elif fieldName == "never_require_signed_u_r_ls":
     fieldName = "neverRequireSignedURLs"
 
-proc renameHook*(v: ImagesImageVariantPatchRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ImagesImageVariantPatchRequest, fieldName: var string) {.inline.} =
   if fieldName == "neverRequireSignedURLs":
     fieldName = "never_require_signed_u_r_ls"
   elif fieldName == "never_require_signed_u_r_ls":
     fieldName = "neverRequireSignedURLs"
 
-proc renameHook*(v: ImagesSourcingkitMigration, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ImagesSourcingkitMigration, fieldName: var string) {.inline.} =
   if fieldName == "conflictBehaviour":
     fieldName = "conflict_behaviour"
   elif fieldName == "conflict_behaviour":
@@ -1350,7 +1392,7 @@ proc renameHook*(v: ImagesSourcingkitMigration, fieldName: var string) {.inline.
   elif fieldName == "started_at":
     fieldName = "startedAt"
 
-proc renameHook*(v: ImagesSourcingkitMigrationCreateRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ImagesSourcingkitMigrationCreateRequest, fieldName: var string) {.inline.} =
   if fieldName == "conflictBehaviour":
     fieldName = "conflict_behaviour"
   elif fieldName == "conflict_behaviour":
@@ -1372,7 +1414,7 @@ proc renameHook*(v: ImagesSourcingkitMigrationCreateRequest, fieldName: var stri
   elif fieldName == "source_id":
     fieldName = "sourceId"
 
-proc renameHook*(v: ImagesSourcingkitMigrationLog, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ImagesSourcingkitMigrationLog, fieldName: var string) {.inline.} =
   if fieldName == "createdAt":
     fieldName = "created_at"
   elif fieldName == "created_at":
@@ -1382,7 +1424,7 @@ proc renameHook*(v: ImagesSourcingkitMigrationLog, fieldName: var string) {.inli
   elif fieldName == "log_type":
     fieldName = "logType"
 
-proc renameHook*(v: ImagesSourcingkitSource, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ImagesSourcingkitSource, fieldName: var string) {.inline.} =
   if fieldName == "createdAt":
     fieldName = "created_at"
   elif fieldName == "created_at":
@@ -1392,43 +1434,43 @@ proc renameHook*(v: ImagesSourcingkitSource, fieldName: var string) {.inline.} =
   elif fieldName == "updated_at":
     fieldName = "updatedAt"
 
-proc renameHook*(v: LoadBalancingSchemasHeader, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.LoadBalancingSchemasHeader, fieldName: var string) {.inline.} =
   if fieldName == "Host":
     fieldName = "host"
   elif fieldName == "host":
     fieldName = "Host"
 
-proc renameHook*(v: LogpushOutputOptions, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.LogpushOutputOptions, fieldName: var string) {.inline.} =
   if fieldName == "CVE-2021-44228":
     fieldName = "c_v_e_2021_44228"
   elif fieldName == "c_v_e_2021_44228":
     fieldName = "CVE-2021-44228"
 
-proc renameHook*(v: MagicBgpRedistributeSources, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.MagicBgpRedistributeSources, fieldName: var string) {.inline.} =
   if fieldName == "static:wan":
     fieldName = "static_wan"
   elif fieldName == "static_wan":
     fieldName = "static:wan"
 
-proc renameHook*(v: MagicUpdateBgpSettingsRedistributeSources, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.MagicUpdateBgpSettingsRedistributeSources, fieldName: var string) {.inline.} =
   if fieldName == "static:wan":
     fieldName = "static_wan"
   elif fieldName == "static_wan":
     fieldName = "static:wan"
 
-proc renameHook*(v: McnResourceDetailsSectionItem, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.McnResourceDetailsSectionItem, fieldName: var string) {.inline.} =
   if fieldName == "helpText":
     fieldName = "help_text"
   elif fieldName == "help_text":
     fieldName = "helpText"
 
-proc renameHook*(v: ObservatoryAvailabilities, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ObservatoryAvailabilities, fieldName: var string) {.inline.} =
   if fieldName == "regionsPerPlan":
     fieldName = "regions_per_plan"
   elif fieldName == "regions_per_plan":
     fieldName = "regionsPerPlan"
 
-proc renameHook*(v: ObservatoryLighthouseReport, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ObservatoryLighthouseReport, fieldName: var string) {.inline.} =
   if fieldName == "deviceType":
     fieldName = "device_type"
   elif fieldName == "device_type":
@@ -1442,7 +1484,7 @@ proc renameHook*(v: ObservatoryLighthouseReport, fieldName: var string) {.inline
   elif fieldName == "performance_score":
     fieldName = "performanceScore"
 
-proc renameHook*(v: ObservatoryPageTest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ObservatoryPageTest, fieldName: var string) {.inline.} =
   if fieldName == "desktopReport":
     fieldName = "desktop_report"
   elif fieldName == "desktop_report":
@@ -1456,19 +1498,19 @@ proc renameHook*(v: ObservatoryPageTest, fieldName: var string) {.inline.} =
   elif fieldName == "schedule_frequency":
     fieldName = "scheduleFrequency"
 
-proc renameHook*(v: ObservatoryTrend, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ObservatoryTrend, fieldName: var string) {.inline.} =
   if fieldName == "performanceScore":
     fieldName = "performance_score"
   elif fieldName == "performance_score":
     fieldName = "performanceScore"
 
-proc renameHook*(v: R2SlurperConnectivityResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2SlurperConnectivityResponse, fieldName: var string) {.inline.} =
   if fieldName == "connectivityStatus":
     fieldName = "connectivity_status"
   elif fieldName == "connectivity_status":
     fieldName = "connectivityStatus"
 
-proc renameHook*(v: R2SlurperGCSLikeCredsSchema, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2SlurperGCSLikeCredsSchema, fieldName: var string) {.inline.} =
   if fieldName == "clientEmail":
     fieldName = "client_email"
   elif fieldName == "client_email":
@@ -1478,13 +1520,13 @@ proc renameHook*(v: R2SlurperGCSLikeCredsSchema, fieldName: var string) {.inline
   elif fieldName == "private_key":
     fieldName = "privateKey"
 
-proc renameHook*(v: R2SlurperGCSSourceSchema, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2SlurperGCSSourceSchema, fieldName: var string) {.inline.} =
   if fieldName == "pathPrefix":
     fieldName = "path_prefix"
   elif fieldName == "path_prefix":
     fieldName = "pathPrefix"
 
-proc renameHook*(v: R2SlurperJobLogResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2SlurperJobLogResponse, fieldName: var string) {.inline.} =
   if fieldName == "createdAt":
     fieldName = "created_at"
   elif fieldName == "created_at":
@@ -1498,7 +1540,7 @@ proc renameHook*(v: R2SlurperJobLogResponse, fieldName: var string) {.inline.} =
   elif fieldName == "object_key":
     fieldName = "objectKey"
 
-proc renameHook*(v: R2SlurperJobProgressResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2SlurperJobProgressResponse, fieldName: var string) {.inline.} =
   if fieldName == "createdAt":
     fieldName = "created_at"
   elif fieldName == "created_at":
@@ -1516,7 +1558,7 @@ proc renameHook*(v: R2SlurperJobProgressResponse, fieldName: var string) {.inlin
   elif fieldName == "transferred_objects":
     fieldName = "transferredObjects"
 
-proc renameHook*(v: R2SlurperJobResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2SlurperJobResponse, fieldName: var string) {.inline.} =
   if fieldName == "createdAt":
     fieldName = "created_at"
   elif fieldName == "created_at":
@@ -1526,13 +1568,13 @@ proc renameHook*(v: R2SlurperJobResponse, fieldName: var string) {.inline.} =
   elif fieldName == "finished_at":
     fieldName = "finishedAt"
 
-proc renameHook*(v: R2SlurperR2SourceSchema, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2SlurperR2SourceSchema, fieldName: var string) {.inline.} =
   if fieldName == "pathPrefix":
     fieldName = "path_prefix"
   elif fieldName == "path_prefix":
     fieldName = "pathPrefix"
 
-proc renameHook*(v: R2SlurperS3LikeCredsSchema, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2SlurperS3LikeCredsSchema, fieldName: var string) {.inline.} =
   if fieldName == "accessKeyId":
     fieldName = "access_key_id"
   elif fieldName == "access_key_id":
@@ -1542,19 +1584,19 @@ proc renameHook*(v: R2SlurperS3LikeCredsSchema, fieldName: var string) {.inline.
   elif fieldName == "secret_access_key":
     fieldName = "secretAccessKey"
 
-proc renameHook*(v: R2SlurperS3SourceSchema, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2SlurperS3SourceSchema, fieldName: var string) {.inline.} =
   if fieldName == "pathPrefix":
     fieldName = "path_prefix"
   elif fieldName == "path_prefix":
     fieldName = "pathPrefix"
 
-proc renameHook*(v: R2AccountLevelMetrics, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2AccountLevelMetrics, fieldName: var string) {.inline.} =
   if fieldName == "infrequentAccess":
     fieldName = "infrequent_access"
   elif fieldName == "infrequent_access":
     fieldName = "infrequentAccess"
 
-proc renameHook*(v: R2AddCustomDomainRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2AddCustomDomainRequest, fieldName: var string) {.inline.} =
   if fieldName == "minTLS":
     fieldName = "min_t_l_s"
   elif fieldName == "min_t_l_s":
@@ -1564,7 +1606,7 @@ proc renameHook*(v: R2AddCustomDomainRequest, fieldName: var string) {.inline.} 
   elif fieldName == "zone_id":
     fieldName = "zoneId"
 
-proc renameHook*(v: R2AddCustomDomainResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2AddCustomDomainResponse, fieldName: var string) {.inline.} =
   if fieldName == "minTLS":
     fieldName = "min_t_l_s"
   elif fieldName == "min_t_l_s":
@@ -1574,13 +1616,13 @@ proc renameHook*(v: R2AddCustomDomainResponse, fieldName: var string) {.inline.}
   elif fieldName == "zone_id":
     fieldName = "zoneId"
 
-proc renameHook*(v: R2BucketConfig, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2BucketConfig, fieldName: var string) {.inline.} =
   if fieldName == "bucketName":
     fieldName = "bucket_name"
   elif fieldName == "bucket_name":
     fieldName = "bucketName"
 
-proc renameHook*(v: R2CorsRule, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2CorsRule, fieldName: var string) {.inline.} =
   if fieldName == "exposeHeaders":
     fieldName = "expose_headers"
   elif fieldName == "expose_headers":
@@ -1590,19 +1632,19 @@ proc renameHook*(v: R2CorsRule, fieldName: var string) {.inline.} =
   elif fieldName == "max_age_seconds":
     fieldName = "maxAgeSeconds"
 
-proc renameHook*(v: R2EditCustomDomainRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2EditCustomDomainRequest, fieldName: var string) {.inline.} =
   if fieldName == "minTLS":
     fieldName = "min_t_l_s"
   elif fieldName == "min_t_l_s":
     fieldName = "minTLS"
 
-proc renameHook*(v: R2EditCustomDomainResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2EditCustomDomainResponse, fieldName: var string) {.inline.} =
   if fieldName == "minTLS":
     fieldName = "min_t_l_s"
   elif fieldName == "min_t_l_s":
     fieldName = "minTLS"
 
-proc renameHook*(v: R2GetCustomDomainResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2GetCustomDomainResponse, fieldName: var string) {.inline.} =
   if fieldName == "minTLS":
     fieldName = "min_t_l_s"
   elif fieldName == "min_t_l_s":
@@ -1616,13 +1658,13 @@ proc renameHook*(v: R2GetCustomDomainResponse, fieldName: var string) {.inline.}
   elif fieldName == "zone_name":
     fieldName = "zoneName"
 
-proc renameHook*(v: R2LifecycleAgeCondition, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2LifecycleAgeCondition, fieldName: var string) {.inline.} =
   if fieldName == "maxAge":
     fieldName = "max_age"
   elif fieldName == "max_age":
     fieldName = "maxAge"
 
-proc renameHook*(v: R2LifecycleRule, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2LifecycleRule, fieldName: var string) {.inline.} =
   if fieldName == "abortMultipartUploadsTransition":
     fieldName = "abort_multipart_uploads_transition"
   elif fieldName == "abort_multipart_uploads_transition":
@@ -1636,25 +1678,25 @@ proc renameHook*(v: R2LifecycleRule, fieldName: var string) {.inline.} =
   elif fieldName == "storage_class_transitions":
     fieldName = "storageClassTransitions"
 
-proc renameHook*(v: R2LifecycleStorageTransition, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2LifecycleStorageTransition, fieldName: var string) {.inline.} =
   if fieldName == "storageClass":
     fieldName = "storage_class"
   elif fieldName == "storage_class":
     fieldName = "storageClass"
 
-proc renameHook*(v: R2LockRuleAgeCondition, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2LockRuleAgeCondition, fieldName: var string) {.inline.} =
   if fieldName == "maxAgeSeconds":
     fieldName = "max_age_seconds"
   elif fieldName == "max_age_seconds":
     fieldName = "maxAgeSeconds"
 
-proc renameHook*(v: R2ManagedDomainResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2ManagedDomainResponse, fieldName: var string) {.inline.} =
   if fieldName == "bucketId":
     fieldName = "bucket_id"
   elif fieldName == "bucket_id":
     fieldName = "bucketId"
 
-proc renameHook*(v: R2ObjectSizeMetrics, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2ObjectSizeMetrics, fieldName: var string) {.inline.} =
   if fieldName == "metadataSize":
     fieldName = "metadata_size"
   elif fieldName == "metadata_size":
@@ -1664,7 +1706,7 @@ proc renameHook*(v: R2ObjectSizeMetrics, fieldName: var string) {.inline.} =
   elif fieldName == "payload_size":
     fieldName = "payloadSize"
 
-proc renameHook*(v: R2QueuesConfig, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2QueuesConfig, fieldName: var string) {.inline.} =
   if fieldName == "queueId":
     fieldName = "queue_id"
   elif fieldName == "queue_id":
@@ -1674,7 +1716,7 @@ proc renameHook*(v: R2QueuesConfig, fieldName: var string) {.inline.} =
   elif fieldName == "queue_name":
     fieldName = "queueName"
 
-proc renameHook*(v: R2R2BucketJob, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2R2BucketJob, fieldName: var string) {.inline.} =
   if fieldName == "endTime":
     fieldName = "end_time"
   elif fieldName == "end_time":
@@ -1692,13 +1734,13 @@ proc renameHook*(v: R2R2BucketJob, fieldName: var string) {.inline.} =
   elif fieldName == "start_time":
     fieldName = "startTime"
 
-proc renameHook*(v: R2R2BucketJobsResult, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2R2BucketJobsResult, fieldName: var string) {.inline.} =
   if fieldName == "nextContinuationToken":
     fieldName = "next_continuation_token"
   elif fieldName == "next_continuation_token":
     fieldName = "nextContinuationToken"
 
-proc renameHook*(v: R2R2ObjectHttpMetadata, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2R2ObjectHttpMetadata, fieldName: var string) {.inline.} =
   if fieldName == "cacheControl":
     fieldName = "cache_control"
   elif fieldName == "cache_control":
@@ -1724,7 +1766,7 @@ proc renameHook*(v: R2R2ObjectHttpMetadata, fieldName: var string) {.inline.} =
   elif fieldName == "content_type":
     fieldName = "contentType"
 
-proc renameHook*(v: R2R2StorageClassMigrationJob, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2R2StorageClassMigrationJob, fieldName: var string) {.inline.} =
   if fieldName == "endTime":
     fieldName = "end_time"
   elif fieldName == "end_time":
@@ -1742,13 +1784,13 @@ proc renameHook*(v: R2R2StorageClassMigrationJob, fieldName: var string) {.inlin
   elif fieldName == "storage_class_migration":
     fieldName = "storageClassMigration"
 
-proc renameHook*(v: R2R2StorageClassMigrationJobsResult, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2R2StorageClassMigrationJobsResult, fieldName: var string) {.inline.} =
   if fieldName == "nextContinuationToken":
     fieldName = "next_continuation_token"
   elif fieldName == "next_continuation_token":
     fieldName = "nextContinuationToken"
 
-proc renameHook*(v: R2TempAccessCredsRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2TempAccessCredsRequest, fieldName: var string) {.inline.} =
   if fieldName == "parentAccessKeyId":
     fieldName = "parent_access_key_id"
   elif fieldName == "parent_access_key_id":
@@ -1758,7 +1800,7 @@ proc renameHook*(v: R2TempAccessCredsRequest, fieldName: var string) {.inline.} 
   elif fieldName == "ttl_seconds":
     fieldName = "ttlSeconds"
 
-proc renameHook*(v: R2TempAccessCredsResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2TempAccessCredsResponse, fieldName: var string) {.inline.} =
   if fieldName == "accessKeyId":
     fieldName = "access_key_id"
   elif fieldName == "access_key_id":
@@ -1772,7 +1814,7 @@ proc renameHook*(v: R2TempAccessCredsResponse, fieldName: var string) {.inline.}
   elif fieldName == "session_token":
     fieldName = "sessionToken"
 
-proc renameHook*(v: RealtimekitLatencyCumulative, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.RealtimekitLatencyCumulative, fieldName: var string) {.inline.} =
   if fieldName == "100ms_or_greater_event_fraction":
     fieldName = "f100ms_or_greater_event_fraction"
   elif fieldName == "f100ms_or_greater_event_fraction":
@@ -1786,7 +1828,7 @@ proc renameHook*(v: RealtimekitLatencyCumulative, fieldName: var string) {.inlin
   elif fieldName == "f500ms_or_greater_event_fraction":
     fieldName = "500ms_or_greater_event_fraction"
 
-proc renameHook*(v: RealtimekitPacketLossCumulative, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.RealtimekitPacketLossCumulative, fieldName: var string) {.inline.} =
   if fieldName == "10_or_greater_event_fraction":
     fieldName = "f10_or_greater_event_fraction"
   elif fieldName == "f10_or_greater_event_fraction":
@@ -1804,13 +1846,13 @@ proc renameHook*(v: RealtimekitPacketLossCumulative, fieldName: var string) {.in
   elif fieldName == "f5_or_greater_event_fraction":
     fieldName = "5_or_greater_event_fraction"
 
-proc renameHook*(v: RealtimekitTranscript, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.RealtimekitTranscript, fieldName: var string) {.inline.} =
   if fieldName == "sessionId":
     fieldName = "session_id"
   elif fieldName == "session_id":
     fieldName = "sessionId"
 
-proc renameHook*(v: RealtimekitTranscriptSummary, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.RealtimekitTranscriptSummary, fieldName: var string) {.inline.} =
   if fieldName == "sessionId":
     fieldName = "session_id"
   elif fieldName == "session_id":
@@ -1824,7 +1866,7 @@ proc renameHook*(v: RealtimekitTranscriptSummary, fieldName: var string) {.inlin
   elif fieldName == "summary_download_url_expiry":
     fieldName = "summaryDownloadUrlExpiry"
 
-proc renameHook*(v: StreamCreateInputRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamCreateInputRequest, fieldName: var string) {.inline.} =
   if fieldName == "defaultCreator":
     fieldName = "default_creator"
   elif fieldName == "default_creator":
@@ -1838,13 +1880,13 @@ proc renameHook*(v: StreamCreateInputRequest, fieldName: var string) {.inline.} 
   elif fieldName == "prefer_low_latency":
     fieldName = "preferLowLatency"
 
-proc renameHook*(v: StreamCreateOutputRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamCreateOutputRequest, fieldName: var string) {.inline.} =
   if fieldName == "streamKey":
     fieldName = "stream_key"
   elif fieldName == "stream_key":
     fieldName = "streamKey"
 
-proc renameHook*(v: StreamDirectUploadRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamDirectUploadRequest, fieldName: var string) {.inline.} =
   if fieldName == "allowedOrigins":
     fieldName = "allowed_origins"
   elif fieldName == "allowed_origins":
@@ -1866,25 +1908,25 @@ proc renameHook*(v: StreamDirectUploadRequest, fieldName: var string) {.inline.}
   elif fieldName == "thumbnail_timestamp_pct":
     fieldName = "thumbnailTimestampPct"
 
-proc renameHook*(v: StreamDownloads, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamDownloads, fieldName: var string) {.inline.} =
   if fieldName == "percentComplete":
     fieldName = "percent_complete"
   elif fieldName == "percent_complete":
     fieldName = "percentComplete"
 
-proc renameHook*(v: StreamInputRtmps, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamInputRtmps, fieldName: var string) {.inline.} =
   if fieldName == "streamKey":
     fieldName = "stream_key"
   elif fieldName == "stream_key":
     fieldName = "streamKey"
 
-proc renameHook*(v: StreamInputSrt, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamInputSrt, fieldName: var string) {.inline.} =
   if fieldName == "streamId":
     fieldName = "stream_id"
   elif fieldName == "stream_id":
     fieldName = "streamId"
 
-proc renameHook*(v: StreamLiveInput2, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamLiveInput2, fieldName: var string) {.inline.} =
   if fieldName == "deleteRecordingAfterDays":
     fieldName = "delete_recording_after_days"
   elif fieldName == "delete_recording_after_days":
@@ -1914,13 +1956,13 @@ proc renameHook*(v: StreamLiveInput2, fieldName: var string) {.inline.} =
   elif fieldName == "web_r_t_c_playback":
     fieldName = "webRTCPlayback"
 
-proc renameHook*(v: StreamLiveInputObjectWithoutUrl, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamLiveInputObjectWithoutUrl, fieldName: var string) {.inline.} =
   if fieldName == "deleteRecordingAfterDays":
     fieldName = "delete_recording_after_days"
   elif fieldName == "delete_recording_after_days":
     fieldName = "deleteRecordingAfterDays"
 
-proc renameHook*(v: StreamLiveInputRecordingSettings, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamLiveInputRecordingSettings, fieldName: var string) {.inline.} =
   if fieldName == "allowedOrigins":
     fieldName = "allowed_origins"
   elif fieldName == "allowed_origins":
@@ -1938,7 +1980,7 @@ proc renameHook*(v: StreamLiveInputRecordingSettings, fieldName: var string) {.i
   elif fieldName == "timeout_seconds":
     fieldName = "timeoutSeconds"
 
-proc renameHook*(v: StreamMediaStatus, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamMediaStatus, fieldName: var string) {.inline.} =
   if fieldName == "errorReasonCode":
     fieldName = "error_reason_code"
   elif fieldName == "error_reason_code":
@@ -1952,31 +1994,31 @@ proc renameHook*(v: StreamMediaStatus, fieldName: var string) {.inline.} =
   elif fieldName == "pct_complete":
     fieldName = "pctComplete"
 
-proc renameHook*(v: StreamOutput, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamOutput, fieldName: var string) {.inline.} =
   if fieldName == "streamKey":
     fieldName = "stream_key"
   elif fieldName == "stream_key":
     fieldName = "streamKey"
 
-proc renameHook*(v: StreamPlaybackRtmps, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamPlaybackRtmps, fieldName: var string) {.inline.} =
   if fieldName == "streamKey":
     fieldName = "stream_key"
   elif fieldName == "stream_key":
     fieldName = "streamKey"
 
-proc renameHook*(v: StreamPlaybackSrt, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamPlaybackSrt, fieldName: var string) {.inline.} =
   if fieldName == "streamId":
     fieldName = "stream_id"
   elif fieldName == "stream_id":
     fieldName = "streamId"
 
-proc renameHook*(v: StreamSignedTokenRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamSignedTokenRequest, fieldName: var string) {.inline.} =
   if fieldName == "accessRules":
     fieldName = "access_rules"
   elif fieldName == "access_rules":
     fieldName = "accessRules"
 
-proc renameHook*(v: StreamUpdateInputRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamUpdateInputRequest, fieldName: var string) {.inline.} =
   if fieldName == "defaultCreator":
     fieldName = "default_creator"
   elif fieldName == "default_creator":
@@ -1990,7 +2032,7 @@ proc renameHook*(v: StreamUpdateInputRequest, fieldName: var string) {.inline.} 
   elif fieldName == "prefer_low_latency":
     fieldName = "preferLowLatency"
 
-proc renameHook*(v: StreamVideoClipStandard, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamVideoClipStandard, fieldName: var string) {.inline.} =
   if fieldName == "allowedOrigins":
     fieldName = "allowed_origins"
   elif fieldName == "allowed_origins":
@@ -2020,7 +2062,7 @@ proc renameHook*(v: StreamVideoClipStandard, fieldName: var string) {.inline.} =
   elif fieldName == "thumbnail_timestamp_pct":
     fieldName = "thumbnailTimestampPct"
 
-proc renameHook*(v: StreamVideoCopyRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamVideoCopyRequest, fieldName: var string) {.inline.} =
   if fieldName == "allowedOrigins":
     fieldName = "allowed_origins"
   elif fieldName == "allowed_origins":
@@ -2038,7 +2080,7 @@ proc renameHook*(v: StreamVideoCopyRequest, fieldName: var string) {.inline.} =
   elif fieldName == "thumbnail_timestamp_pct":
     fieldName = "thumbnailTimestampPct"
 
-proc renameHook*(v: StreamVideoUpdate, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamVideoUpdate, fieldName: var string) {.inline.} =
   if fieldName == "allowedOrigins":
     fieldName = "allowed_origins"
   elif fieldName == "allowed_origins":
@@ -2068,7 +2110,7 @@ proc renameHook*(v: StreamVideoUpdate, fieldName: var string) {.inline.} =
   elif fieldName == "upload_expiry":
     fieldName = "uploadExpiry"
 
-proc renameHook*(v: StreamVideos, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamVideos, fieldName: var string) {.inline.} =
   if fieldName == "allowedOrigins":
     fieldName = "allowed_origins"
   elif fieldName == "allowed_origins":
@@ -2118,25 +2160,25 @@ proc renameHook*(v: StreamVideos, fieldName: var string) {.inline.} =
   elif fieldName == "upload_expiry":
     fieldName = "uploadExpiry"
 
-proc renameHook*(v: StreamWatermarks, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamWatermarks, fieldName: var string) {.inline.} =
   if fieldName == "downloadedFrom":
     fieldName = "downloaded_from"
   elif fieldName == "downloaded_from":
     fieldName = "downloadedFrom"
 
-proc renameHook*(v: StreamWebhookRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.StreamWebhookRequest, fieldName: var string) {.inline.} =
   if fieldName == "notificationUrl":
     fieldName = "notification_url"
   elif fieldName == "notification_url":
     fieldName = "notificationUrl"
 
-proc renameHook*(v: TeamsDevicesCrowdstrikeInputRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.TeamsDevicesCrowdstrikeInputRequest, fieldName: var string) {.inline.} =
   if fieldName == "versionOperator":
     fieldName = "version_operator"
   elif fieldName == "version_operator":
     fieldName = "versionOperator"
 
-proc renameHook*(v: TeamsDevicesDisableForTime, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.TeamsDevicesDisableForTime, fieldName: var string) {.inline.} =
   if fieldName == "1":
     fieldName = "f1"
   elif fieldName == "f1":
@@ -2158,7 +2200,7 @@ proc renameHook*(v: TeamsDevicesDisableForTime, fieldName: var string) {.inline.
   elif fieldName == "f24":
     fieldName = "24"
 
-proc renameHook*(v: TeamsDevicesDiskEncryptionInputRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.TeamsDevicesDiskEncryptionInputRequest, fieldName: var string) {.inline.} =
   if fieldName == "checkDisks":
     fieldName = "check_disks"
   elif fieldName == "check_disks":
@@ -2168,19 +2210,19 @@ proc renameHook*(v: TeamsDevicesDiskEncryptionInputRequest, fieldName: var strin
   elif fieldName == "require_all":
     fieldName = "requireAll"
 
-proc renameHook*(v: TeamsDevicesKolideInputRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.TeamsDevicesKolideInputRequest, fieldName: var string) {.inline.} =
   if fieldName == "countOperator":
     fieldName = "count_operator"
   elif fieldName == "count_operator":
     fieldName = "countOperator"
 
-proc renameHook*(v: TeamsDevicesTaniumInputRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.TeamsDevicesTaniumInputRequest, fieldName: var string) {.inline.} =
   if fieldName == "scoreOperator":
     fieldName = "score_operator"
   elif fieldName == "score_operator":
     fieldName = "scoreOperator"
 
-proc renameHook*(v: TunnelConfig, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.TunnelConfig, fieldName: var string) {.inline.} =
   if fieldName == "originRequest":
     fieldName = "origin_request"
   elif fieldName == "origin_request":
@@ -2190,13 +2232,13 @@ proc renameHook*(v: TunnelConfig, fieldName: var string) {.inline.} =
   elif fieldName == "warp_routing":
     fieldName = "warp-routing"
 
-proc renameHook*(v: TunnelIngressRule, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.TunnelIngressRule, fieldName: var string) {.inline.} =
   if fieldName == "originRequest":
     fieldName = "origin_request"
   elif fieldName == "origin_request":
     fieldName = "originRequest"
 
-proc renameHook*(v: TunnelOriginRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.TunnelOriginRequest, fieldName: var string) {.inline.} =
   if fieldName == "caPool":
     fieldName = "ca_pool"
   elif fieldName == "ca_pool":
@@ -2254,7 +2296,7 @@ proc renameHook*(v: TunnelOriginRequest, fieldName: var string) {.inline.} =
   elif fieldName == "tls_timeout":
     fieldName = "tlsTimeout"
 
-proc renameHook*(v: UsageAnalyticsBillingUsageDataPoint, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.UsageAnalyticsBillingUsageDataPoint, fieldName: var string) {.inline.} =
   if fieldName == "argoAcceleratedBytes":
     fieldName = "argo_accelerated_bytes"
   elif fieldName == "argo_accelerated_bytes":
@@ -2292,13 +2334,13 @@ proc renameHook*(v: UsageAnalyticsBillingUsageDataPoint, fieldName: var string) 
   elif fieldName == "workers_requests":
     fieldName = "workersRequests"
 
-proc renameHook*(v: UsageAnalyticsStreamUsageDataPoint, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.UsageAnalyticsStreamUsageDataPoint, fieldName: var string) {.inline.} =
   if fieldName == "streamMinutesViewed":
     fieldName = "stream_minutes_viewed"
   elif fieldName == "stream_minutes_viewed":
     fieldName = "streamMinutesViewed"
 
-proc renameHook*(v: VectorizeCreateMetadataIndexRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.VectorizeCreateMetadataIndexRequest, fieldName: var string) {.inline.} =
   if fieldName == "indexType":
     fieldName = "index_type"
   elif fieldName == "index_type":
@@ -2308,31 +2350,31 @@ proc renameHook*(v: VectorizeCreateMetadataIndexRequest, fieldName: var string) 
   elif fieldName == "property_name":
     fieldName = "propertyName"
 
-proc renameHook*(v: VectorizeCreateMetadataIndexResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.VectorizeCreateMetadataIndexResponse, fieldName: var string) {.inline.} =
   if fieldName == "mutationId":
     fieldName = "mutation_id"
   elif fieldName == "mutation_id":
     fieldName = "mutationId"
 
-proc renameHook*(v: VectorizeDeleteMetadataIndexRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.VectorizeDeleteMetadataIndexRequest, fieldName: var string) {.inline.} =
   if fieldName == "propertyName":
     fieldName = "property_name"
   elif fieldName == "property_name":
     fieldName = "propertyName"
 
-proc renameHook*(v: VectorizeDeleteMetadataIndexResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.VectorizeDeleteMetadataIndexResponse, fieldName: var string) {.inline.} =
   if fieldName == "mutationId":
     fieldName = "mutation_id"
   elif fieldName == "mutation_id":
     fieldName = "mutationId"
 
-proc renameHook*(v: VectorizeIndexDeleteVectorsByIdV2Response, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.VectorizeIndexDeleteVectorsByIdV2Response, fieldName: var string) {.inline.} =
   if fieldName == "mutationId":
     fieldName = "mutation_id"
   elif fieldName == "mutation_id":
     fieldName = "mutationId"
 
-proc renameHook*(v: VectorizeIndexInfoResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.VectorizeIndexInfoResponse, fieldName: var string) {.inline.} =
   if fieldName == "processedUpToDatetime":
     fieldName = "processed_up_to_datetime"
   elif fieldName == "processed_up_to_datetime":
@@ -2346,13 +2388,13 @@ proc renameHook*(v: VectorizeIndexInfoResponse, fieldName: var string) {.inline.
   elif fieldName == "vector_count":
     fieldName = "vectorCount"
 
-proc renameHook*(v: VectorizeIndexInsertV2Response, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.VectorizeIndexInsertV2Response, fieldName: var string) {.inline.} =
   if fieldName == "mutationId":
     fieldName = "mutation_id"
   elif fieldName == "mutation_id":
     fieldName = "mutationId"
 
-proc renameHook*(v: VectorizeIndexListVectorsResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.VectorizeIndexListVectorsResponse, fieldName: var string) {.inline.} =
   if fieldName == "cursorExpirationTimestamp":
     fieldName = "cursor_expiration_timestamp"
   elif fieldName == "cursor_expiration_timestamp":
@@ -2370,7 +2412,7 @@ proc renameHook*(v: VectorizeIndexListVectorsResponse, fieldName: var string) {.
   elif fieldName == "total_count":
     fieldName = "totalCount"
 
-proc renameHook*(v: VectorizeIndexQueryRequest, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.VectorizeIndexQueryRequest, fieldName: var string) {.inline.} =
   if fieldName == "returnMetadata":
     fieldName = "return_metadata"
   elif fieldName == "return_metadata":
@@ -2384,7 +2426,7 @@ proc renameHook*(v: VectorizeIndexQueryRequest, fieldName: var string) {.inline.
   elif fieldName == "top_k":
     fieldName = "topK"
 
-proc renameHook*(v: VectorizeIndexQueryV2Request, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.VectorizeIndexQueryV2Request, fieldName: var string) {.inline.} =
   if fieldName == "returnMetadata":
     fieldName = "return_metadata"
   elif fieldName == "return_metadata":
@@ -2398,19 +2440,19 @@ proc renameHook*(v: VectorizeIndexQueryV2Request, fieldName: var string) {.inlin
   elif fieldName == "top_k":
     fieldName = "topK"
 
-proc renameHook*(v: VectorizeIndexUpsertV2Response, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.VectorizeIndexUpsertV2Response, fieldName: var string) {.inline.} =
   if fieldName == "mutationId":
     fieldName = "mutation_id"
   elif fieldName == "mutation_id":
     fieldName = "mutationId"
 
-proc renameHook*(v: VectorizeListMetadataIndexResponse, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.VectorizeListMetadataIndexResponse, fieldName: var string) {.inline.} =
   if fieldName == "metadataIndexes":
     fieldName = "metadata_indexes"
   elif fieldName == "metadata_indexes":
     fieldName = "metadataIndexes"
 
-proc renameHook*(v: WorkersObservabilityDistributionResult, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.WorkersObservabilityDistributionResult, fieldName: var string) {.inline.} =
   if fieldName == "bucketBoundaries":
     fieldName = "bucket_boundaries"
   elif fieldName == "bucket_boundaries":
@@ -2420,7 +2462,7 @@ proc renameHook*(v: WorkersObservabilityDistributionResult, fieldName: var strin
   elif fieldName == "bucket_mode":
     fieldName = "bucketMode"
 
-proc renameHook*(v: WorkersObservabilityQuery, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.WorkersObservabilityQuery, fieldName: var string) {.inline.} =
   if fieldName == "createdBy":
     fieldName = "created_by"
   elif fieldName == "created_by":
@@ -2430,7 +2472,7 @@ proc renameHook*(v: WorkersObservabilityQuery, fieldName: var string) {.inline.}
   elif fieldName == "updated_by":
     fieldName = "updatedBy"
 
-proc renameHook*(v: WorkersObservabilityQueryRun, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.WorkersObservabilityQueryRun, fieldName: var string) {.inline.} =
   if fieldName == "accountId":
     fieldName = "account_id"
   elif fieldName == "account_id":
@@ -2440,7 +2482,7 @@ proc renameHook*(v: WorkersObservabilityQueryRun, fieldName: var string) {.inlin
   elif fieldName == "user_id":
     fieldName = "userId"
 
-proc renameHook*(v: WorkersObservabilityTelemetryEvent, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.WorkersObservabilityTelemetryEvent, fieldName: var string) {.inline.} =
   if fieldName == "$containers":
     fieldName = "containers"
   elif fieldName == "containers":
@@ -2454,13 +2496,13 @@ proc renameHook*(v: WorkersObservabilityTelemetryEvent, fieldName: var string) {
   elif fieldName == "workers":
     fieldName = "$workers"
 
-proc renameHook*(v: WorkersObject, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.WorkersObject, fieldName: var string) {.inline.} =
   if fieldName == "hasStoredData":
     fieldName = "has_stored_data"
   elif fieldName == "has_stored_data":
     fieldName = "hasStoredData"
 
-proc renameHook*(v: ZarazBaseMc, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ZarazBaseMc, fieldName: var string) {.inline.} =
   if fieldName == "blockingTriggers":
     fieldName = "blocking_triggers"
   elif fieldName == "blocking_triggers":
@@ -2486,7 +2528,7 @@ proc renameHook*(v: ZarazBaseMc, fieldName: var string) {.inline.} =
   elif fieldName == "neo_events":
     fieldName = "neoEvents"
 
-proc renameHook*(v: ZarazBaseTool, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ZarazBaseTool, fieldName: var string) {.inline.} =
   if fieldName == "blockingTriggers":
     fieldName = "blocking_triggers"
   elif fieldName == "blocking_triggers":
@@ -2508,33 +2550,7 @@ proc renameHook*(v: ZarazBaseTool, fieldName: var string) {.inline.} =
   elif fieldName == "vendor_policy_url":
     fieldName = "vendorPolicyUrl"
 
-proc renameHook*(v: ZarazCustomManagedComponent, fieldName: var string) {.inline.} =
-  if fieldName == "blockingTriggers":
-    fieldName = "blocking_triggers"
-  elif fieldName == "blocking_triggers":
-    fieldName = "blockingTriggers"
-  elif fieldName == "defaultFields":
-    fieldName = "default_fields"
-  elif fieldName == "default_fields":
-    fieldName = "defaultFields"
-  elif fieldName == "defaultPurpose":
-    fieldName = "default_purpose"
-  elif fieldName == "default_purpose":
-    fieldName = "defaultPurpose"
-  elif fieldName == "vendorName":
-    fieldName = "vendor_name"
-  elif fieldName == "vendor_name":
-    fieldName = "vendorName"
-  elif fieldName == "vendorPolicyUrl":
-    fieldName = "vendor_policy_url"
-  elif fieldName == "vendor_policy_url":
-    fieldName = "vendorPolicyUrl"
-  elif fieldName == "neoEvents":
-    fieldName = "neo_events"
-  elif fieldName == "neo_events":
-    fieldName = "neoEvents"
-
-proc renameHook*(v: ZarazManagedComponent, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ZarazCustomManagedComponent, fieldName: var string) {.inline.} =
   if fieldName == "blockingTriggers":
     fieldName = "blocking_triggers"
   elif fieldName == "blocking_triggers":
@@ -2560,7 +2576,33 @@ proc renameHook*(v: ZarazManagedComponent, fieldName: var string) {.inline.} =
   elif fieldName == "neo_events":
     fieldName = "neoEvents"
 
-proc renameHook*(v: ZarazZarazConfigBase, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ZarazManagedComponent, fieldName: var string) {.inline.} =
+  if fieldName == "blockingTriggers":
+    fieldName = "blocking_triggers"
+  elif fieldName == "blocking_triggers":
+    fieldName = "blockingTriggers"
+  elif fieldName == "defaultFields":
+    fieldName = "default_fields"
+  elif fieldName == "default_fields":
+    fieldName = "defaultFields"
+  elif fieldName == "defaultPurpose":
+    fieldName = "default_purpose"
+  elif fieldName == "default_purpose":
+    fieldName = "defaultPurpose"
+  elif fieldName == "vendorName":
+    fieldName = "vendor_name"
+  elif fieldName == "vendor_name":
+    fieldName = "vendorName"
+  elif fieldName == "vendorPolicyUrl":
+    fieldName = "vendor_policy_url"
+  elif fieldName == "vendor_policy_url":
+    fieldName = "vendorPolicyUrl"
+  elif fieldName == "neoEvents":
+    fieldName = "neo_events"
+  elif fieldName == "neo_events":
+    fieldName = "neoEvents"
+
+proc renameHook*(v: types.ZarazZarazConfigBase, fieldName: var string) {.inline.} =
   if fieldName == "dataLayer":
     fieldName = "data_layer"
   elif fieldName == "data_layer":
@@ -2578,7 +2620,7 @@ proc renameHook*(v: ZarazZarazConfigBase, fieldName: var string) {.inline.} =
   elif fieldName == "zaraz_version":
     fieldName = "zarazVersion"
 
-proc renameHook*(v: ZarazZarazConfigBody, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ZarazZarazConfigBody, fieldName: var string) {.inline.} =
   if fieldName == "dataLayer":
     fieldName = "data_layer"
   elif fieldName == "data_layer":
@@ -2596,7 +2638,7 @@ proc renameHook*(v: ZarazZarazConfigBody, fieldName: var string) {.inline.} =
   elif fieldName == "zaraz_version":
     fieldName = "zarazVersion"
 
-proc renameHook*(v: ZarazZarazConfigReturn, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ZarazZarazConfigReturn, fieldName: var string) {.inline.} =
   if fieldName == "dataLayer":
     fieldName = "data_layer"
   elif fieldName == "data_layer":
@@ -2614,7 +2656,7 @@ proc renameHook*(v: ZarazZarazConfigReturn, fieldName: var string) {.inline.} =
   elif fieldName == "zaraz_version":
     fieldName = "zarazVersion"
 
-proc renameHook*(v: ZarazZarazConfigRowBase, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.ZarazZarazConfigRowBase, fieldName: var string) {.inline.} =
   if fieldName == "createdAt":
     fieldName = "created_at"
   elif fieldName == "created_at":

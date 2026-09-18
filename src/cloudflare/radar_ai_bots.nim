@@ -48,7 +48,7 @@ proc getRadarAiBotsSummaryUserAgent*(client: CloudflareClient,
                                      location: seq[string] = @[],
                                      continent: seq[string] = @[],
                                      limitPerGroup: int64 = default(int64),
-                                     format: RadarAiBotFormatOption): Future[GetRadarAiBotsSummaryUserAgentResponse] {.async.} =
+                                     format: RadarAiBotFormatOption = formatJSON): Future[GetRadarAiBotsSummaryUserAgentResponse] {.async.} =
   ## Retrieves the distribution of traffic by AI user agent.
 
   var q = initOrderedTable[string, string]()
@@ -86,7 +86,7 @@ proc getRadarAiBotsSummaryDimension*(client: CloudflareClient,
                                      responseStatus: seq[string] = @[],
                                      responseStatusCategory: seq[string] = default(seq[string]),
                                      limitPerGroup: int64 = default(int64),
-                                     format: RadarAiBotFormatOption): Future[GetRadarAiBotsSummaryDimensionResponse] {.async.} =
+                                     format: RadarAiBotFormatOption = formatJSON): Future[GetRadarAiBotsSummaryDimensionResponse] {.async.} =
   ## Retrieves an aggregated summary of AI bots HTTP requests grouped by the
   ## specified dimension.
 
@@ -116,7 +116,7 @@ proc getRadarAiBotsSummaryDimension*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAiBotsTimeseries*(client: CloudflareClient,
-                               aggInterval: RadarAiBotAggIntervalOption,
+                               aggInterval: RadarAiBotAggIntervalOption = aggInterval15m,
                                name: seq[string] = @[],
                                dateRange: seq[string] = @[],
                                dateStart: seq[string] = @[],
@@ -132,7 +132,7 @@ proc getRadarAiBotsTimeseries*(client: CloudflareClient,
                                responseStatus: seq[string] = @[],
                                responseStatusCategory: seq[string] = default(seq[string]),
                                limitPerGroup: int64 = default(int64),
-                               format: RadarAiBotFormatOption): Future[GetRadarAiBotsTimeseriesResponse] {.async.} =
+                               format: RadarAiBotFormatOption = formatJSON): Future[GetRadarAiBotsTimeseriesResponse] {.async.} =
   ## Retrieves AI bots HTTP request volume over time.
 
   var q = initOrderedTable[string, string]()
@@ -162,7 +162,7 @@ proc getRadarAiBotsTimeseries*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getRadarAiBotsTimeseriesGroupsUserAgent*(client: CloudflareClient,
-                                              aggInterval: RadarAiBotAggIntervalOption,
+                                              aggInterval: RadarAiBotAggIntervalOption = aggInterval15m,
                                               name: seq[string] = @[],
                                               dateRange: seq[string] = @[],
                                               dateStart: seq[string] = @[],
@@ -171,7 +171,7 @@ proc getRadarAiBotsTimeseriesGroupsUserAgent*(client: CloudflareClient,
                                               location: seq[string] = @[],
                                               continent: seq[string] = @[],
                                               limitPerGroup: int64 = default(int64),
-                                              format: RadarAiBotFormatOption): Future[GetRadarAiBotsTimeseriesGroupsUserAgentResponse] {.async.} =
+                                              format: RadarAiBotFormatOption = formatJSON): Future[GetRadarAiBotsTimeseriesGroupsUserAgentResponse] {.async.} =
   ## Retrieves the distribution of traffic by AI user agent over time.
 
   var q = initOrderedTable[string, string]()
@@ -195,7 +195,7 @@ proc getRadarAiBotsTimeseriesGroupsUserAgent*(client: CloudflareClient,
 
 proc getRadarAiBotsTimeseriesGroupsDimension*(client: CloudflareClient,
                                               dimension: Dimension,
-                                              aggInterval: RadarAiBotAggIntervalOption,
+                                              aggInterval: RadarAiBotAggIntervalOption = aggInterval15m,
                                               name: seq[string] = @[],
                                               dateRange: seq[string] = @[],
                                               dateStart: seq[string] = @[],
@@ -212,7 +212,7 @@ proc getRadarAiBotsTimeseriesGroupsDimension*(client: CloudflareClient,
                                               responseStatusCategory: seq[string] = default(seq[string]),
                                               limitPerGroup: int64 = default(int64),
                                               normalization: RadarAiBotNormalizationOption = normalizationPERCENTAGE,
-                                              format: RadarAiBotFormatOption): Future[GetRadarAiBotsTimeseriesGroupsDimensionResponse] {.async.} =
+                                              format: RadarAiBotFormatOption = formatJSON): Future[GetRadarAiBotsTimeseriesGroupsDimensionResponse] {.async.} =
   ## Retrieves the distribution of HTTP requests from AI bots, grouped by the
   ## specified dimension over time.
 

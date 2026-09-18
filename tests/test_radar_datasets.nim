@@ -23,7 +23,7 @@ suite "radar_datasets endpoints":
   test "GET /radar/datasets":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarDatasets(1, 1, {}, "test", {})
+    discard waitFor client.getRadarDatasets(1, 1, datasetTypeRANKINGBUCKET, "test", formatJSON)
 
   test "GET /radar/datasets/{alias}":
     let client = initCloudflareClient("test-key")

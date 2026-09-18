@@ -43,7 +43,7 @@ suite "meetings endpoints":
   test "GET /accounts/{account_id}/realtime/kit/{app_id}/meetings":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdMeetings("test", "test", 1.0, 1.0, "test", "test", "test", {})
+    discard waitFor client.getAccountsAccountIdRealtimeKitAppIdMeetings("test", "test", 1.0, 1.0, "test", "test", "test", statusACTIVE)
 
   test "GET /accounts/{account_id}/realtime/kit/{app_id}/meetings/{meeting_id}":
     let client = initCloudflareClient("test-key")

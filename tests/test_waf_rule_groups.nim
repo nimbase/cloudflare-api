@@ -27,7 +27,7 @@ suite "waf_rule_groups endpoints":
   test "GET /zones/{zone_id}/firewall/waf/packages/{package_id}/groups":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdFirewallWafPackagesPackageIdGroups("test", "test", openjson.newJObject(), 1.0, 1.0, {}, {}, {}, "test", 1.0)
+    discard waitFor client.getZonesZoneIdFirewallWafPackagesPackageIdGroups("test", "test", openjson.newJObject(), 1.0, 1.0, orderMode, directionAsc, matchAny, "test", 1.0)
 
   test "GET /zones/{zone_id}/firewall/waf/packages/{package_id}/groups/{group_id}":
     let client = initCloudflareClient("test-key")

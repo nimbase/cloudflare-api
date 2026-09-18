@@ -51,7 +51,7 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdLogs*(client: CloudflareClien
                                                          orderByDirection: AiGatewayLogOrderByDirectionOption = orderByDirectionDesc,
                                                          filters: seq[string] = @[],
                                                          metaInfo: bool = default(bool),
-                                                         direction: AiGatewayLogDirectionOption,
+                                                         direction: AiGatewayLogDirectionOption = directionAsc,
                                                          startDate: string = default(string),
                                                          endDate: string = default(string),
                                                          minCost: float64 = default(float64),

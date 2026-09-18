@@ -39,30 +39,30 @@ suite "radar_autonomous_systems endpoints":
   test "GET /radar/entities/asns":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarEntitiesAsns(1, 1, "test", "test", {}, {})
+    discard waitFor client.getRadarEntitiesAsns(1, 1, "test", "test", orderByASN, formatJSON)
 
   test "GET /radar/entities/asns/botnet_threat_feed":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarEntitiesAsnsBotnetThreatFeed(1, 1, {}, "test", "test", "test", @["test"], {}, {})
+    discard waitFor client.getRadarEntitiesAsnsBotnetThreatFeed(1, 1, metricOFFENSECOUNT, "test", "test", "test", @["test"], sortOrderASC, formatJSON)
 
   test "GET /radar/entities/asns/ip":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarEntitiesAsnsIp(openjson.newJObject(), {})
+    discard waitFor client.getRadarEntitiesAsnsIp(openjson.newJObject(), formatJSON)
 
   test "GET /radar/entities/asns/{asn}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarEntitiesAsnsAsn(1, {})
+    discard waitFor client.getRadarEntitiesAsnsAsn(1, formatJSON)
 
   test "GET /radar/entities/asns/{asn}/as_set":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarEntitiesAsnsAsnAsSet(1, {})
+    discard waitFor client.getRadarEntitiesAsnsAsnAsSet(1, formatJSON)
 
   test "GET /radar/entities/asns/{asn}/rel":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarEntitiesAsnsAsnRel(1, 1, {})
+    discard waitFor client.getRadarEntitiesAsnsAsnRel(1, 1, formatJSON)
 

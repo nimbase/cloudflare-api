@@ -160,7 +160,7 @@ proc getAccountsAccountIdEmailSendingSuppressions*(client: CloudflareClient,
                                                    cursor: string = default(string),
                                                    email: string = default(string),
                                                    search: string = default(string),
-                                                   reason: EmailSendingSuppressionReasonOption): Future[GetAccountsAccountIdEmailSendingSuppressionsResponse] {.async.} =
+                                                   reason: EmailSendingSuppressionReasonOption = reasonManual): Future[GetAccountsAccountIdEmailSendingSuppressionsResponse] {.async.} =
   ## Lists every active Email Sending suppression owned by the account, including
   ## legacy rows with internal zone memberships.
 

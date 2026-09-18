@@ -47,7 +47,7 @@ suite "ai_search_instances_items endpoints":
   test "GET /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/items":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiSearchNamespacesNameInstancesIdItems("test", "test", 1, 1, "test", {}, {}, "test", "test", "test", "test", "test")
+    discard waitFor client.getAccountsAccountIdAiSearchNamespacesNameInstancesIdItems("test", "test", 1, 1, "test", sortByStatus, statusQueued, "test", "test", "test", "test", "test")
 
   test "POST /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/items":
     let client = initCloudflareClient("test-key")

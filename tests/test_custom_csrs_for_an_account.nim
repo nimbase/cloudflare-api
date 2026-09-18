@@ -35,7 +35,7 @@ suite "custom_csrs_for_an_account endpoints":
   test "GET /accounts/{account_id}/custom_csrs":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCustomCsrs("test", 1.0, 1.0, {}, {})
+    discard waitFor client.getAccountsAccountIdCustomCsrs("test", 1.0, 1.0, orderName, directionAsc)
 
   test "POST /accounts/{account_id}/custom_csrs":
     let client = initCloudflareClient("test-key")

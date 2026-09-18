@@ -100,10 +100,10 @@ proc getAccountsAccountIdRealtimeKitAppIdLivestreams*(client: CloudflareClient,
                                                       excludeMeetings: bool = false,
                                                       perPage: int64 = default(int64),
                                                       pageNo: int64 = default(int64),
-                                                      status: LiveStreamStatusOption,
+                                                      status: LiveStreamStatusOption = statusLIVE,
                                                       startTime: string = default(string),
                                                       endTime: string = default(string),
-                                                      sortOrder: LiveStreamSortOrderOption): Future[GetAccountsAccountIdRealtimeKitAppIdLivestreamsResponse] {.async.} =
+                                                      sortOrder: LiveStreamSortOrderOption = sortOrderASC): Future[GetAccountsAccountIdRealtimeKitAppIdLivestreamsResponse] {.async.} =
   ## Returns details of livestreams associated with the given App ID. It includes
   ## livestreams created by your App and RealtimeKit meetings that are livestreamed
   ## by your App. If you only want details of livestreams created by your App and not
