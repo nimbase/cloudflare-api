@@ -60,7 +60,8 @@ proc getAccountsAccountIdEventSubscriptionsSubscriptions*(client: CloudflareClie
                                                           perPage: int64 = 20,
                                                           order: QueueOrderOption = orderName,
                                                           direction: QueueDirectionOption = directionAsc): Future[JsonNode] {.async.} =
-  ## Get a paginated list of event subscriptions with optional sorting and filtering
+  ## Returns a paginated list of Queue event subscriptions with optional sorting and
+  ## filtering.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -78,7 +79,7 @@ proc getAccountsAccountIdEventSubscriptionsSubscriptions*(client: CloudflareClie
 proc postAccountsAccountIdEventSubscriptionsSubscriptions*(client: CloudflareClient,
                                                            accountId: types.MqIdentifier,
                                                            body: PostAccountsAccountIdEventSubscriptionsSubscriptionsRequest): Future[JsonNode] {.async.} =
-  ## Create a new event subscription for a queue
+  ## Creates an event subscription for a Queue.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/event_subscriptions/subscriptions", body)
   let body = await res.body
@@ -91,7 +92,7 @@ proc postAccountsAccountIdEventSubscriptionsSubscriptions*(client: CloudflareCli
 proc getAccountsAccountIdEventSubscriptionsSubscriptionsSubscriptionId*(client: CloudflareClient,
                                                                         accountId: types.MqIdentifier,
                                                                         subscriptionId: types.MqIdentifier): Future[JsonNode] {.async.} =
-  ## Get details about an existing event subscription
+  ## Returns an existing Queue event subscription.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/event_subscriptions/subscriptions/{subscriptionId}")
   let body = await res.body
@@ -104,7 +105,7 @@ proc getAccountsAccountIdEventSubscriptionsSubscriptionsSubscriptionId*(client: 
 proc deleteAccountsAccountIdEventSubscriptionsSubscriptionsSubscriptionId*(client: CloudflareClient,
                                                                            accountId: types.MqIdentifier,
                                                                            subscriptionId: types.MqIdentifier): Future[JsonNode] {.async.} =
-  ## Delete an existing event subscription
+  ## Deletes an existing Queue event subscription.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/event_subscriptions/subscriptions/{subscriptionId}")
   let body = await res.body
@@ -118,7 +119,7 @@ proc patchAccountsAccountIdEventSubscriptionsSubscriptionsSubscriptionId*(client
                                                                           accountId: types.MqIdentifier,
                                                                           subscriptionId: types.MqIdentifier,
                                                                           body: PatchAccountsAccountIdEventSubscriptionsSubscriptionsSubscriptionIdRequest): Future[JsonNode] {.async.} =
-  ## Update an existing event subscription
+  ## Updates an existing Queue event subscription.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/event_subscriptions/subscriptions/{subscriptionId}", body)
   let body = await res.body
@@ -143,7 +144,7 @@ proc getAccountsAccountIdQueues*(client: CloudflareClient,
 proc postAccountsAccountIdQueues*(client: CloudflareClient,
                                   accountId: types.MqIdentifier,
                                   body: PostAccountsAccountIdQueuesRequest): Future[JsonNode] {.async.} =
-  ## Create a new queue
+  ## Creates a Queue in the account.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/queues", body)
   let body = await res.body
@@ -156,7 +157,7 @@ proc postAccountsAccountIdQueues*(client: CloudflareClient,
 proc getAccountsAccountIdQueuesQueueId*(client: CloudflareClient,
                                         queueId: types.MqIdentifier,
                                         accountId: types.MqIdentifier): Future[JsonNode] {.async.} =
-  ## Get details about a specific queue.
+  ## Returns details about a specific Queue.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/queues/{queueId}")
   let body = await res.body
@@ -170,9 +171,8 @@ proc putAccountsAccountIdQueuesQueueId*(client: CloudflareClient,
                                         queueId: types.MqIdentifier,
                                         accountId: types.MqIdentifier,
                                         body: types.MqQueue): Future[JsonNode] {.async.} =
-  ## Updates a Queue. Note that this endpoint does not support partial updates. If
-  ## successful, the Queue's configuration is overwritten with the supplied
-  ## configuration.
+  ## Replaces a Queue's configuration with the supplied configuration. This endpoint
+  ## does not support partial updates.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/queues/{queueId}", body)
   let body = await res.body
@@ -185,7 +185,7 @@ proc putAccountsAccountIdQueuesQueueId*(client: CloudflareClient,
 proc deleteAccountsAccountIdQueuesQueueId*(client: CloudflareClient,
                                            queueId: types.MqIdentifier,
                                            accountId: types.MqIdentifier): Future[types.MqApiV4Success] {.async.} =
-  ## Deletes a queue
+  ## Deletes a Queue.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/queues/{queueId}")
   let body = await res.body
@@ -199,7 +199,7 @@ proc patchAccountsAccountIdQueuesQueueId*(client: CloudflareClient,
                                           queueId: types.MqIdentifier,
                                           accountId: types.MqIdentifier,
                                           body: types.MqQueue): Future[JsonNode] {.async.} =
-  ## Updates a Queue.
+  ## Updates part of a Queue's configuration.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/queues/{queueId}", body)
   let body = await res.body
@@ -212,7 +212,7 @@ proc patchAccountsAccountIdQueuesQueueId*(client: CloudflareClient,
 proc getAccountsAccountIdQueuesQueueIdConsumers*(client: CloudflareClient,
                                                  queueId: types.MqIdentifier,
                                                  accountId: types.MqIdentifier): Future[JsonNode] {.async.} =
-  ## Returns the consumers for a Queue
+  ## Returns the consumers configured for a Queue.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/queues/{queueId}/consumers")
   let body = await res.body
@@ -226,7 +226,7 @@ proc postAccountsAccountIdQueuesQueueIdConsumers*(client: CloudflareClient,
                                                   queueId: types.MqIdentifier,
                                                   accountId: types.MqIdentifier,
                                                   body: types.MqConsumerRequest): Future[JsonNode] {.async.} =
-  ## Creates a new consumer for a Queue
+  ## Creates a consumer for a Queue.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/queues/{queueId}/consumers", body)
   let body = await res.body
@@ -240,7 +240,7 @@ proc getAccountsAccountIdQueuesQueueIdConsumersConsumerId*(client: CloudflareCli
                                                            consumerId: types.MqIdentifier,
                                                            queueId: types.MqIdentifier,
                                                            accountId: types.MqIdentifier): Future[JsonNode] {.async.} =
-  ## Fetches the consumer for a queue by consumer id
+  ## Returns a Queue consumer by identifier.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/queues/{queueId}/consumers/{consumerId}")
   let body = await res.body
@@ -255,7 +255,7 @@ proc putAccountsAccountIdQueuesQueueIdConsumersConsumerId*(client: CloudflareCli
                                                            queueId: types.MqIdentifier,
                                                            accountId: types.MqIdentifier,
                                                            body: types.MqConsumerRequest): Future[JsonNode] {.async.} =
-  ## Updates the consumer for a queue, or creates one if it does not exist.
+  ## Replaces a Queue consumer, or creates it if it does not exist.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/queues/{queueId}/consumers/{consumerId}", body)
   let body = await res.body
@@ -269,7 +269,7 @@ proc deleteAccountsAccountIdQueuesQueueIdConsumersConsumerId*(client: Cloudflare
                                                               consumerId: types.MqIdentifier,
                                                               queueId: types.MqIdentifier,
                                                               accountId: types.MqIdentifier): Future[types.MqApiV4Success] {.async.} =
-  ## Deletes the consumer for a queue.
+  ## Deletes a consumer from a Queue.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/queues/{queueId}/consumers/{consumerId}")
   let body = await res.body
@@ -283,7 +283,7 @@ proc postAccountsAccountIdQueuesQueueIdMessages*(client: CloudflareClient,
                                                  queueId: types.MqIdentifier,
                                                  accountId: types.MqIdentifier,
                                                  body: types.MqQueueMessage): Future[JsonNode] {.async.} =
-  ## Push a message to a Queue
+  ## Pushes a message to a Queue.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/queues/{queueId}/messages", body)
   let body = await res.body
@@ -297,7 +297,8 @@ proc postAccountsAccountIdQueuesQueueIdMessagesAck*(client: CloudflareClient,
                                                     queueId: types.MqIdentifier,
                                                     accountId: types.MqIdentifier,
                                                     body: PostAccountsAccountIdQueuesQueueIdMessagesAckRequest): Future[JsonNode] {.async.} =
-  ## Acknowledge + Retry messages from a Queue
+  ## Acknowledges successfully processed Queue messages and retries messages that
+  ## were not processed successfully.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/queues/{queueId}/messages/ack", body)
   let body = await res.body
@@ -311,7 +312,7 @@ proc postAccountsAccountIdQueuesQueueIdMessagesBatch*(client: CloudflareClient,
                                                       queueId: types.MqIdentifier,
                                                       accountId: types.MqIdentifier,
                                                       body: types.MqQueueBatch): Future[JsonNode] {.async.} =
-  ## Push a batch of message to a Queue
+  ## Pushes a batch of messages to a Queue.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/queues/{queueId}/messages/batch", body)
   let body = await res.body
@@ -325,8 +326,8 @@ proc postAccountsAccountIdQueuesQueueIdMessagesExtend*(client: CloudflareClient,
                                                        queueId: types.MqIdentifier,
                                                        accountId: types.MqIdentifier,
                                                        body: PostAccountsAccountIdQueuesQueueIdMessagesExtendRequest): Future[JsonNode] {.async.} =
-  ## Extend the lease on a message. This creates a new lease ID on your message
-  ## without incrementing the message's `attempts` counter.
+  ## Extends message leases without incrementing the messages' `attempts` counters.
+  ## Each message receives a new lease identifier.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/queues/{queueId}/messages/extend", body)
   let body = await res.body
@@ -340,8 +341,9 @@ proc postAccountsAccountIdQueuesQueueIdMessagesPeek*(client: CloudflareClient,
                                                      queueId: types.MqIdentifier,
                                                      accountId: types.MqIdentifier,
                                                      body: PostAccountsAccountIdQueuesQueueIdMessagesPeekRequest): Future[JsonNode] {.async.} =
-  ## Peek messages from a Queue without leasing them. Messages remain available for
-  ## subsequent peek or pull operations.
+  ## Peek messages from a Queue without leasing them. Each message includes a ref
+  ## that can be passed to the purge endpoint, and remains available for subsequent
+  ## peek or pull operations until it is purged.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/queues/{queueId}/messages/peek", body)
   let body = await res.body
@@ -355,8 +357,8 @@ proc postAccountsAccountIdQueuesQueueIdMessagesPreview*(client: CloudflareClient
                                                         queueId: types.MqIdentifier,
                                                         accountId: types.MqIdentifier,
                                                         body: PostAccountsAccountIdQueuesQueueIdMessagesPreviewRequest): Future[JsonNode] {.async.} =
-  ## Preview messages from a Queue without leasing them. Messages remain available
-  ## for subsequent preview or pull operations.
+  ## Preview messages from a Queue without leasing them. This deprecated route is
+  ## retained for compatibility; use the peek endpoint for new integrations.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/queues/{queueId}/messages/preview", body)
   let body = await res.body
@@ -370,9 +372,10 @@ proc postAccountsAccountIdQueuesQueueIdMessagesPreviewAck*(client: CloudflareCli
                                                            queueId: types.MqIdentifier,
                                                            accountId: types.MqIdentifier,
                                                            body: PostAccountsAccountIdQueuesQueueIdMessagesPreviewAckRequest): Future[JsonNode] {.async.} =
-  ## Delete previewed messages from a Queue. Note that messages acknowledged this way
-  ## aren't considered delivered, they are instantly deleted from this queue and do
-  ## not affect metrics.
+  ## Delete messages returned by the legacy preview endpoint. This deprecated route
+  ## is retained for compatibility; use the peek and purge endpoints for new
+  ## integrations. Deleting messages this way does not count as delivery and does not
+  ## affect metrics.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/queues/{queueId}/messages/preview/ack", body)
   let body = await res.body
@@ -386,7 +389,7 @@ proc postAccountsAccountIdQueuesQueueIdMessagesPull*(client: CloudflareClient,
                                                      queueId: types.MqIdentifier,
                                                      accountId: types.MqIdentifier,
                                                      body: PostAccountsAccountIdQueuesQueueIdMessagesPullRequest): Future[JsonNode] {.async.} =
-  ## Pull a batch of messages from a Queue
+  ## Pulls a batch of messages from a Queue for an HTTP pull consumer.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/queues/{queueId}/messages/pull", body)
   let body = await res.body
@@ -400,9 +403,8 @@ proc postAccountsAccountIdQueuesQueueIdMessagesPurge*(client: CloudflareClient,
                                                       queueId: types.MqIdentifier,
                                                       accountId: types.MqIdentifier,
                                                       body: PostAccountsAccountIdQueuesQueueIdMessagesPurgeRequest): Future[JsonNode] {.async.} =
-  ## Delete peeked messages from a Queue by their ref. Purged messages aren't
-  ## considered delivered, they are instantly deleted from this queue and do not
-  ## affect metrics.
+  ## Delete messages from a Queue by using refs returned by the peek endpoint.
+  ## Purging messages does not count as delivery and does not affect metrics.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/queues/{queueId}/messages/purge", body)
   let body = await res.body
@@ -415,8 +417,8 @@ proc postAccountsAccountIdQueuesQueueIdMessagesPurge*(client: CloudflareClient,
 proc getAccountsAccountIdQueuesQueueIdMetrics*(client: CloudflareClient,
                                                queueId: types.MqIdentifier,
                                                accountId: types.MqIdentifier): Future[JsonNode] {.async.} =
-  ## Return best-effort metrics for a queue. Values may be approximate due to the
-  ## distributed nature of queues.
+  ## Returns best-effort metrics for a Queue. Values may be approximate due to the
+  ## distributed nature of Queues.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/queues/{queueId}/metrics")
   let body = await res.body
@@ -429,7 +431,7 @@ proc getAccountsAccountIdQueuesQueueIdMetrics*(client: CloudflareClient,
 proc getAccountsAccountIdQueuesQueueIdPurge*(client: CloudflareClient,
                                              queueId: types.MqIdentifier,
                                              accountId: types.MqIdentifier): Future[JsonNode] {.async.} =
-  ## Get details about a Queue's purge status.
+  ## Returns the status of a Queue purge operation.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/queues/{queueId}/purge")
   let body = await res.body
@@ -443,7 +445,7 @@ proc postAccountsAccountIdQueuesQueueIdPurge*(client: CloudflareClient,
                                               queueId: types.MqIdentifier,
                                               accountId: types.MqIdentifier,
                                               body: PostAccountsAccountIdQueuesQueueIdPurgeRequest): Future[JsonNode] {.async.} =
-  ## Deletes all messages from the Queue.
+  ## Starts a purge that deletes all messages from a Queue.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/queues/{queueId}/purge", body)
   let body = await res.body

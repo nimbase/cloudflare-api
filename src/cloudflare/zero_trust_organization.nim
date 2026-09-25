@@ -21,6 +21,7 @@ type
     mfa_piv_key_requirements: Option[types.AccessMfaPivKeyRequirements]
     mfa_required_for_all_apps: Option[types.AccessMfaRequiredForAllApps]
     name: types.AccessName
+    service_token_inactivity: Option[types.AccessServiceTokenInactivity]
     session_duration: Option[types.AccessSessionDuration]
     ui_read_only_toggle_reason: Option[types.AccessUiReadOnlyToggleReason]
     user_seat_expiration_inactive_time: Option[types.AccessUserSeatExpirationInactiveTime]
@@ -39,6 +40,7 @@ type
     mfa_piv_key_requirements: Option[types.AccessMfaPivKeyRequirements]
     mfa_required_for_all_apps: Option[types.AccessMfaRequiredForAllApps]
     name: Option[types.AccessName]
+    service_token_inactivity: Option[types.AccessServiceTokenInactivity]
     session_duration: Option[types.AccessSessionDuration]
     ui_read_only_toggle_reason: Option[types.AccessUiReadOnlyToggleReason]
     user_seat_expiration_inactive_time: Option[types.AccessUserSeatExpirationInactiveTime]

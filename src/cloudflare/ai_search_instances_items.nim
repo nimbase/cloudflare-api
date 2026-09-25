@@ -137,7 +137,7 @@ proc deleteAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemId*(client
                                                                           itemId: string,
                                                                           accountId: string,
                                                                           name: string): Future[DeleteAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdResponse] {.async.} =
-  ## Deletes a file from a managed AI Search instance and triggers a reindex.
+  ## Deletes a file from a managed AI Search instance and removes its indexed data.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances/{id}/items/{itemId}")
   let body = await res.body

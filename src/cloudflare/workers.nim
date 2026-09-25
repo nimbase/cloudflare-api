@@ -9,6 +9,10 @@ import ./private/metaclient
 import ./private/types
 
 type
+  WorkerPatchExistingPreviewsOption* = enum
+    patchExistingPreviewsTrue = "true"
+    patchExistingPreviewsFalse = "false"
+
   WorkerOrderByOption* = enum
     orderByDeployedOn = "deployed_on"
     orderByUpdatedOn = "updated_on"
@@ -95,11 +99,112 @@ proc deleteAccountsAccountIdBuildsWorkersScriptTag*(client: CloudflareClient,
 proc patchAccountsAccountIdBuildsWorkersScriptTag*(client: CloudflareClient,
                                                    accountId: types.BuildsAccountId,
                                                    scriptTag: types.BuildsExternalScriptId,
+                                                   patchExistingPreviews: WorkerPatchExistingPreviewsOption = patchExistingPreviewsFalse,
                                                    body: types.BuildsUpdateWorkerRequest): Future[JsonNode] {.async.} =
-  ## Update the repository branch or production build settings associated with a
-  ## Worker tag.
+  ## Update the build configuration for a Worker script. Supports partial updates to
+  ## git repository settings, production build settings, and Preview settings.
 
-  let res = await client.httpPATCH(fmt"/accounts/{accountId}/builds/workers/{scriptTag}", body)
+  var q = initOrderedTable[string, string]()
+  q["patch_existing_previews"] = $patchExistingPreviews
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/builds/workers/{scriptTag}", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdBuildsWorkersScriptTagMigrateToPreviews*(client: CloudflareClient,
+                                                                   accountId: types.BuildsAccountId,
+                                                                   scriptTag: types.BuildsExternalScriptId,
+                                                                   body: types.BuildsMigrateToPreviewsRequest): Future[JsonNode] {.async.} =
+  ## Migrate a Worker's legacy non-production trigger to Previews. The legacy build
+  ## settings become the Previews base config and the legacy trigger is removed.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/builds/workers/{scriptTag}/migrate_to_previews", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdBuildsWorkersScriptTagPreviews*(client: CloudflareClient,
+                                                         accountId: types.BuildsAccountId,
+                                                         scriptTag: types.BuildsExternalScriptId,
+                                                         page: int64 = 1,
+                                                         perPage: int64 = 50): Future[JsonNode] {.async.} =
+  ## List the Previews of a Worker with pagination.
+
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/accounts/{accountId}/builds/workers/{scriptTag}/previews", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewId*(client: CloudflareClient,
+                                                                  accountId: types.BuildsAccountId,
+                                                                  scriptTag: types.BuildsExternalScriptId,
+                                                                  previewId: types.BuildsExternalScriptId): Future[JsonNode] {.async.} =
+  ## Retrieve a single Preview of a Worker, including the build settings it currently
+  ## uses.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/builds/workers/{scriptTag}/previews/{previewId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewId*(client: CloudflareClient,
+                                                                    accountId: types.BuildsAccountId,
+                                                                    scriptTag: types.BuildsExternalScriptId,
+                                                                    previewId: types.BuildsExternalScriptId,
+                                                                    body: types.BuildsUpdatePreviewRequest): Future[JsonNode] {.async.} =
+  ## Update a single Preview of a Worker. Supports partial updates to the tracked
+  ## branch, the automation flags, and the build settings.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/builds/workers/{scriptTag}/previews/{previewId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewIdBuilds*(client: CloudflareClient,
+                                                                        accountId: types.BuildsAccountId,
+                                                                        scriptTag: types.BuildsExternalScriptId,
+                                                                        previewId: types.BuildsExternalScriptId,
+                                                                        page: int64 = 1,
+                                                                        perPage: int64 = 50): Future[JsonNode] {.async.} =
+  ## List the builds of a single Preview with pagination.
+
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/accounts/{accountId}/builds/workers/{scriptTag}/previews/{previewId}/builds", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewIdBuilds*(client: CloudflareClient,
+                                                                         accountId: types.BuildsAccountId,
+                                                                         scriptTag: types.BuildsExternalScriptId,
+                                                                         previewId: types.BuildsExternalScriptId,
+                                                                         body: types.BuildsCreateBuildRequest): Future[JsonNode] {.async.} =
+  ## Trigger a build for a single Preview.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/builds/workers/{scriptTag}/previews/{previewId}/builds", body)
   let body = await res.body
   case res.code
   of Http200:
@@ -170,10 +275,13 @@ proc putAccountsAccountIdWorkersWorkersWorkerId*(client: CloudflareClient,
 
 proc deleteAccountsAccountIdWorkersWorkersWorkerId*(client: CloudflareClient,
                                                     accountId: types.WorkersIdentifier,
-                                                    workerId: string): Future[types.WorkersApiResponseCommon] {.async.} =
+                                                    workerId: string,
+                                                    force: bool = default(bool)): Future[types.WorkersApiResponseCommon] {.async.} =
   ## Delete a Worker and all its associated resources (versions, deployments, etc.).
 
-  let res = await client.httpDELETE(fmt"/accounts/{accountId}/workers/workers/{workerId}")
+  var q = initOrderedTable[string, string]()
+  q["force"] = $force
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/workers/workers/{workerId}", q)
   let body = await res.body
   case res.code
   of Http200:

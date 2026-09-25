@@ -23,10 +23,6 @@ suite "analytics_sql serialization":
     let obj = newAnalyticsSqlSqlQueryRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AnalyticsSqlSqlQueryRequest)) == openjson.toJson(obj)
 
-  test "round-trips AnalyticsSqlApiErrorResponse":
-    let obj = newAnalyticsSqlApiErrorResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AnalyticsSqlApiErrorResponse)) == openjson.toJson(obj)
-
 suite "analytics_sql endpoints":
   test "GET /analytics/sql":
     let client = initCloudflareClient("test-key")
@@ -41,5 +37,5 @@ suite "analytics_sql endpoints":
   test "GET /analytics/sql/introspection":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAnalyticsSqlIntrospection("test", true, "test")
+    discard waitFor client.getAnalyticsSqlIntrospection("test", true, true, true, true, "test")
 

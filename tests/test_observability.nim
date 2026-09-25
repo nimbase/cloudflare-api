@@ -11,48 +11,48 @@ import cloudflare
 import ./common
 
 suite "observability serialization":
-  test "round-trips GetAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRulesResponse":
-    let obj = cloudflare.GetAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRulesResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRulesResponse)) == openjson.toJson(obj)
+  test "round-trips GetZonesZoneIdObservabilityTracingRulesResponse":
+    let obj = cloudflare.GetZonesZoneIdObservabilityTracingRulesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetZonesZoneIdObservabilityTracingRulesResponse)) == openjson.toJson(obj)
 
-  test "round-trips PutAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRulesResponse":
-    let obj = cloudflare.PutAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRulesResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PutAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRulesResponse)) == openjson.toJson(obj)
+  test "round-trips PutZonesZoneIdObservabilityTracingRulesResponse":
+    let obj = cloudflare.PutZonesZoneIdObservabilityTracingRulesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PutZonesZoneIdObservabilityTracingRulesResponse)) == openjson.toJson(obj)
 
-  test "round-trips DeleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRulesResponse":
-    let obj = cloudflare.DeleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRulesResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRulesResponse)) == openjson.toJson(obj)
+  test "round-trips DeleteZonesZoneIdObservabilityTracingRulesResponse":
+    let obj = cloudflare.DeleteZonesZoneIdObservabilityTracingRulesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteZonesZoneIdObservabilityTracingRulesResponse)) == openjson.toJson(obj)
 
-  test "round-trips GetAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse":
-    let obj = cloudflare.GetAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse)) == openjson.toJson(obj)
+  test "round-trips GetZonesZoneIdObservabilityTracingSettingsResponse":
+    let obj = cloudflare.GetZonesZoneIdObservabilityTracingSettingsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetZonesZoneIdObservabilityTracingSettingsResponse)) == openjson.toJson(obj)
 
-  test "round-trips DeleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse":
-    let obj = cloudflare.DeleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse)) == openjson.toJson(obj)
+  test "round-trips DeleteZonesZoneIdObservabilityTracingSettingsResponse":
+    let obj = cloudflare.DeleteZonesZoneIdObservabilityTracingSettingsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteZonesZoneIdObservabilityTracingSettingsResponse)) == openjson.toJson(obj)
 
-  test "round-trips PatchAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse":
-    let obj = cloudflare.PatchAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettingsResponse)) == openjson.toJson(obj)
+  test "round-trips PatchZonesZoneIdObservabilityTracingSettingsResponse":
+    let obj = cloudflare.PatchZonesZoneIdObservabilityTracingSettingsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchZonesZoneIdObservabilityTracingSettingsResponse)) == openjson.toJson(obj)
 
 suite "observability endpoints":
-  test "GET /accounts/{account_id}/workers/observability/zones/{zone_id}/observability/tracing/rules":
+  test "GET /zones/{zone_id}/observability/tracing/rules":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRules("test")
+    discard waitFor client.getZonesZoneIdObservabilityTracingRules("test")
 
-  test "DELETE /accounts/{account_id}/workers/observability/zones/{zone_id}/observability/tracing/rules":
+  test "DELETE /zones/{zone_id}/observability/tracing/rules":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingRules("test")
+    discard waitFor client.deleteZonesZoneIdObservabilityTracingRules("test")
 
-  test "GET /accounts/{account_id}/workers/observability/zones/{zone_id}/observability/tracing/settings":
+  test "GET /zones/{zone_id}/observability/tracing/settings":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettings("test")
+    discard waitFor client.getZonesZoneIdObservabilityTracingSettings("test")
 
-  test "DELETE /accounts/{account_id}/workers/observability/zones/{zone_id}/observability/tracing/settings":
+  test "DELETE /zones/{zone_id}/observability/tracing/settings":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdWorkersObservabilityZonesZoneIdObservabilityTracingSettings("test")
+    discard waitFor client.deleteZonesZoneIdObservabilityTracingSettings("test")
 

@@ -15,11 +15,15 @@ type
 
 
 proc getAccountsAccountIdContainersApplications*(client: CloudflareClient,
+                                                 perPage: int64 = default(int64),
+                                                 pageToken: string = default(string),
                                                  name: types.CcApplicationName = default(types.CcApplicationName),
                                                  image: types.CcImage = default(types.CcImage)): Future[JsonNode] {.async.} =
   ## Lists all the applications that are associated with your account.
 
   var q = initOrderedTable[string, string]()
+  q["per_page"] = $perPage
+  q["page_token"] = $pageToken
   q["name"] = $name
   q["image"] = $image
   let res = await client.httpGET("/accounts/{account_id}/containers/applications", q)

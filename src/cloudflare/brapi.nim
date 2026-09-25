@@ -291,6 +291,11 @@ type
     viewport: Option[JsonNode]
     wait_for_selector: Option[JsonNode]
     wait_for_timeout: Option[float64]
+  GetAccountsAccountIdBrowserRenderingRecordingSessionIdResponse* = object
+    errors: seq[JsonNode]
+    result: JsonNode
+    success: bool
+      ## Response status.
   PostAccountsAccountIdBrowserRenderingScrapeRequest = object
     action_timeout: Option[float64]
     add_script_tag: Option[seq[JsonNode]]
@@ -780,6 +785,39 @@ proc postAccountsAccountIdBrowserRenderingPdf*(client: CloudflareClient,
   q["cacheTTL"] = $cacheTTL
   let res = await client.httpPOST(fmt"/accounts/{accountId}/browser-rendering/pdf", q)
   return res
+
+proc getAccountsAccountIdBrowserRenderingRecordingSessionId*(client: CloudflareClient,
+                                                             accountId: string,
+                                                             sessionId: string): Future[GetAccountsAccountIdBrowserRenderingRecordingSessionIdResponse] {.async.} =
+  ## Returns the recording data for a given session as a dictionary of events per
+  ## targetId.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/browser-rendering/recording/{sessionId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdBrowserRenderingRecordingSessionIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdBrowserRenderingRecordingSessionIdNetwork*(client: CloudflareClient,
+                                                                    accountId: string,
+                                                                    sessionId: string,
+                                                                    format: string = default(string),
+                                                                    target: string): Future[JsonNode] {.async.} =
+  ## Returns network recording events for the requested target ID. Use ?format=har
+  ## for a HAR JSON document.
+
+  var q = initOrderedTable[string, string]()
+  q["format"] = $format
+  q["target"] = $target
+  let res = await client.httpGET(fmt"/accounts/{accountId}/browser-rendering/recording/{sessionId}/network", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdBrowserRenderingScrape*(client: CloudflareClient,
                                                   accountId: string,

@@ -28,6 +28,12 @@ type
     result: types.TeamsDevicesEmptyBody
     success: bool
       ## Whether the API call was successful.
+  PatchAccountsAccountIdDevicesPhysicalDevicesDeviceIdResponse* = object
+    errors: seq[types.TeamsDevicesV4ResponseMessage]
+    messages: seq[types.TeamsDevicesV4ResponseMessage]
+    result: types.TeamsDevicesPhysicalDevice
+    success: bool
+      ## Whether the API call was successful.
   PostAccountsAccountIdDevicesPhysicalDevicesDeviceIdRevokeResponse* = object
     errors: seq[types.TeamsDevicesV4ResponseMessage]
     messages: seq[types.TeamsDevicesV4ResponseMessage]
@@ -73,6 +79,7 @@ proc getAccountsAccountIdDevicesPhysicalDevices*(client: CloudflareClient,
                                                  activeRegistrations: PhysicalDeviceActiveRegistrationsOption = activeRegistrationsInclude,
                                                  hasRegistrationType: types.TeamsDevicesRegistrationType = default(types.TeamsDevicesRegistrationType),
                                                  id: seq[string] = @[],
+                                                 tag: seq[string] = @[],
                                                  lastSeenRegistrationPolicyId: string = default(string),
                                                  `include`: string = default(string)): Future[GetAccountsAccountIdDevicesPhysicalDevicesResponse] {.async.} =
   ## Lists WARP devices.
@@ -89,6 +96,7 @@ proc getAccountsAccountIdDevicesPhysicalDevices*(client: CloudflareClient,
   q["active_registrations"] = $activeRegistrations
   q["has_registration_type"] = $hasRegistrationType
   for v in id: q["id"] = $v
+  for v in tag: q["tag"] = $v
   q["last_seen_registration.policy.id"] = $lastSeenRegistrationPolicyId
   q["include"] = $`include`
   let res = await client.httpGET(fmt"/accounts/{accountId}/devices/physical-devices", q)
@@ -128,10 +136,25 @@ proc deleteAccountsAccountIdDevicesPhysicalDevicesDeviceId*(client: CloudflareCl
   else:
     raise newException(CloudflareClientError, body)
 
+proc patchAccountsAccountIdDevicesPhysicalDevicesDeviceId*(client: CloudflareClient,
+                                                           deviceId: string,
+                                                           accountId: string,
+                                                           body: types.TeamsDevicesPhysicalDeviceUpdateRequest): Future[PatchAccountsAccountIdDevicesPhysicalDevicesDeviceIdResponse] {.async.} =
+  ## Updates properties of a WARP device.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/devices/physical-devices/{deviceId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PatchAccountsAccountIdDevicesPhysicalDevicesDeviceIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc postAccountsAccountIdDevicesPhysicalDevicesDeviceIdRevoke*(client: CloudflareClient,
                                                                 accountId: string,
                                                                 deviceId: string): Future[PostAccountsAccountIdDevicesPhysicalDevicesDeviceIdRevokeResponse] {.async.} =
-  ## Revokes all WARP registrations associated with the specified device.
+  ## Revokes all WARP registrations associated with the specified device. Prefer
+  ## "delete" operation instead, "revoke" does not release virtual IPs.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/devices/physical-devices/{deviceId}/revoke")
   let body = await res.body

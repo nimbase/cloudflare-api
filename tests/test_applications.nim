@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "applications serialization":
+  test "round-trips CcV4PaginatedResultInfo":
+    let obj = newCcV4PaginatedResultInfo()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcV4PaginatedResultInfo)) == openjson.toJson(obj)
+
   test "round-trips AlexandriaCreateApplicationRequest":
     let obj = newAlexandriaCreateApplicationRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AlexandriaCreateApplicationRequest)) == openjson.toJson(obj)
@@ -87,7 +91,7 @@ suite "applications endpoints":
   test "GET /accounts/{account_id}/containers/applications":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdContainersApplications("test", "test")
+    discard waitFor client.getAccountsAccountIdContainersApplications(1, "test", "test", "test")
 
   test "POST /accounts/{account_id}/containers/applications":
     let client = initCloudflareClient("test-key")

@@ -39,6 +39,22 @@ suite "issues serialization":
     let obj = cloudflare.DeleteAccountsAccountIdWorkersObservabilityIssuesAutomationsAutomationIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdWorkersObservabilityIssuesAutomationsAutomationIdResponse)) == openjson.toJson(obj)
 
+  test "round-trips PostAccountsAccountIdWorkersObservabilityIssuesGroupsResponse":
+    let obj = cloudflare.PostAccountsAccountIdWorkersObservabilityIssuesGroupsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdWorkersObservabilityIssuesGroupsResponse)) == openjson.toJson(obj)
+
+  test "round-trips DeleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdResponse":
+    let obj = cloudflare.DeleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips PostAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersResponse":
+    let obj = cloudflare.PostAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersResponse)) == openjson.toJson(obj)
+
+  test "round-trips DeleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersIssueIdResponse":
+    let obj = cloudflare.DeleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersIssueIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersIssueIdResponse)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdWorkersObservabilityIssuesSummaryResponse":
     let obj = cloudflare.GetAccountsAccountIdWorkersObservabilityIssuesSummaryResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkersObservabilityIssuesSummaryResponse)) == openjson.toJson(obj)
@@ -63,7 +79,7 @@ suite "issues endpoints":
   test "GET /accounts/{account_id}/workers/observability/issues":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersObservabilityIssues(1, 1, orderAsc, orderById, "test", "test", statusActive)
+    discard waitFor client.getAccountsAccountIdWorkersObservabilityIssues(1, 1, orderAsc, orderById, "test", "test", "test", statusActive)
 
   test "GET /accounts/{account_id}/workers/observability/issues/automations":
     let client = initCloudflareClient("test-key")
@@ -79,6 +95,16 @@ suite "issues endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdWorkersObservabilityIssuesAutomationsAutomationId("test")
+
+  test "DELETE /accounts/{account_id}/workers/observability/issues/groups/{groupId}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupId("test")
+
+  test "DELETE /accounts/{account_id}/workers/observability/issues/groups/{groupId}/members/{issueId}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersIssueId("test", "test")
 
   test "GET /accounts/{account_id}/workers/observability/issues/summary":
     let client = initCloudflareClient("test-key")

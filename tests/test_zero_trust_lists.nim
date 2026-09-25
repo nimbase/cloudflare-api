@@ -58,5 +58,5 @@ suite "zero_trust_lists endpoints":
   test "GET /accounts/{account_id}/gateway/lists/{list_id}/items":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdGatewayListsListIdItems("test", "test")
+    discard waitFor client.getAccountsAccountIdGatewayListsListIdItems("test", "test", 1, 1)
 

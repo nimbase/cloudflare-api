@@ -11,25 +11,17 @@ import cloudflare
 import ./common
 
 suite "rate_limits_for_a_zone serialization":
-  test "round-trips FirewallApiResponseCommonFailure":
-    let obj = newFirewallApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FirewallApiResponseCommonFailure)) == openjson.toJson(obj)
-
   test "round-trips FirewallAction":
     let obj = newFirewallAction()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FirewallAction)) == openjson.toJson(obj)
-
-  test "round-trips FirewallRatelimitResponseCollection":
-    let obj = newFirewallRatelimitResponseCollection()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FirewallRatelimitResponseCollection)) == openjson.toJson(obj)
 
   test "round-trips FirewallMatch":
     let obj = newFirewallMatch()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FirewallMatch)) == openjson.toJson(obj)
 
-  test "round-trips FirewallRatelimitResponseSingle":
-    let obj = newFirewallRatelimitResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FirewallRatelimitResponseSingle)) == openjson.toJson(obj)
+  test "round-trips FirewallApiResponseDeprecated":
+    let obj = newFirewallApiResponseDeprecated()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FirewallApiResponseDeprecated)) == openjson.toJson(obj)
 
 suite "rate_limits_for_a_zone endpoints":
   test "GET /zones/{zone_id}/rate_limits":

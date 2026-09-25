@@ -11,8 +11,9 @@ import ./private/types
 
 proc patchAccountsAccountIdPayPerCrawlZonesCanBeEnabled*(client: CloudflareClient,
                                                          accountId: string,
-                                                         body: types.PayPerCrawlZonesCanBeEnabledPayload): Future[types.PayPerCrawlApiNoResultResponse] {.async.} =
-  ## Allows an account admin to set the can_be_enabled setting on a list of zones.
+                                                         body: types.PayPerCrawlZonesCanBeEnabledUpdatePayload): Future[types.PayPerCrawlApiNoResultResponse] {.async.} =
+  ## Allows an account admin to set the can_be_enabled setting on a list of zones. An
+  ## omitted can_be_enabled value leaves that zone unchanged.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/pay-per-crawl/zones_can_be_enabled", body)
   let body = await res.body
@@ -62,7 +63,7 @@ proc getZonesZoneIdPayPerCrawlConfiguration*(client: CloudflareClient,
 
 proc postZonesZoneIdPayPerCrawlConfiguration*(client: CloudflareClient,
                                               zoneId: string,
-                                              body: types.PayPerCrawlDaricConfig): Future[types.PayPerCrawlGetConfigResponse] {.async.} =
+                                              body: types.PayPerCrawlDaricConfigCreate): Future[types.PayPerCrawlGetConfigResponse] {.async.} =
   ## Creates the pay-per-crawl config for a zone.
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/pay-per-crawl/configuration", body)

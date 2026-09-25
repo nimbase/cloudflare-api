@@ -11,7 +11,7 @@ import ./private/types
 
 proc getAccountsAccountIdDevicesResilienceDisconnect*(client: CloudflareClient,
                                                       accountId: types.TeamsDevicesIdentifier): Future[types.TeamsDevicesGlobalWarpOverrideResponse] {.async.} =
-  ## Fetch the Global WARP override state.
+  ## Fetch the Global WARP disconnect state.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/devices/resilience/disconnect")
   let body = await res.body
@@ -24,7 +24,7 @@ proc getAccountsAccountIdDevicesResilienceDisconnect*(client: CloudflareClient,
 proc postAccountsAccountIdDevicesResilienceDisconnect*(client: CloudflareClient,
                                                        accountId: types.TeamsDevicesIdentifier,
                                                        body: types.TeamsDevicesGlobalWarpOverrideRequest): Future[types.TeamsDevicesGlobalWarpOverrideResponse] {.async.} =
-  ## Sets the Global WARP override state.
+  ## Sets the Global WARP disconnect state.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/devices/resilience/disconnect", body)
   let body = await res.body

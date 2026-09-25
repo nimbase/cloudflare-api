@@ -27,6 +27,10 @@ suite "accounts serialization":
     let obj = newIamAccountIdentifier()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamAccountIdentifier)) == openjson.toJson(obj)
 
+  test "round-trips OrganizationsApiMoveAccountResult":
+    let obj = newOrganizationsApiMoveAccountResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiMoveAccountResult)) == openjson.toJson(obj)
+
   test "round-trips IamCreateAccount":
     let obj = newIamCreateAccount()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamCreateAccount)) == openjson.toJson(obj)
@@ -54,10 +58,6 @@ suite "accounts serialization":
   test "round-trips IamResponseSingleAccount":
     let obj = newIamResponseSingleAccount()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamResponseSingleAccount)) == openjson.toJson(obj)
-
-  test "round-trips OrganizationsApiMoveAccountResponse":
-    let obj = newOrganizationsApiMoveAccountResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiMoveAccountResponse)) == openjson.toJson(obj)
 
   test "round-trips OrganizationsApiBatchAccountMoveResponse":
     let obj = newOrganizationsApiBatchAccountMoveResponse()

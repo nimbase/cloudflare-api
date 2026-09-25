@@ -24,7 +24,8 @@ proc getZonesZoneIdEmailRouting*(client: CloudflareClient,
 proc putZonesZoneIdEmailRouting*(client: CloudflareClient,
                                  zoneId: types.EmailIdentifier,
                                  body: types.EmailUpdateEmailRoutingSettingsProperties): Future[types.EmailEmailSettingsResponseSingle] {.async.} =
-  ## Update the settings for your Email Routing zone.
+  ## Apply the provided settings to your Email Routing zone. Omitted settings retain
+  ## their current values, as with PATCH.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/email/routing", body)
   let body = await res.body
@@ -78,7 +79,7 @@ proc getZonesZoneIdEmailRoutingDns*(client: CloudflareClient,
 proc postZonesZoneIdEmailRoutingDns*(client: CloudflareClient,
                                      zoneId: types.EmailIdentifier,
                                      body: types.EmailEmailSettingDnsRequestBody): Future[types.EmailEmailSettingsResponseSingle] {.async.} =
-  ## Enable you Email Routing zone. Add and lock the necessary MX and SPF records.
+  ## Enable your Email Routing zone. Add and lock the necessary MX and SPF records.
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/email/routing/dns", body)
   let body = await res.body

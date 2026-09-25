@@ -24,7 +24,7 @@ proc getAccountsAccountIdD1Database*(client: CloudflareClient,
                                      name: string = default(string),
                                      page: float64 = default(float64),
                                      perPage: float64 = default(float64)): Future[JsonNode] {.async.} =
-  ## Returns a list of D1 databases.
+  ## List D1 databases in your account.
 
   var q = initOrderedTable[string, string]()
   q["name"] = $name
@@ -41,7 +41,7 @@ proc getAccountsAccountIdD1Database*(client: CloudflareClient,
 proc postAccountsAccountIdD1Database*(client: CloudflareClient,
                                       accountId: types.D1AccountIdentifier,
                                       body: PostAccountsAccountIdD1DatabaseRequest): Future[JsonNode] {.async.} =
-  ## Returns the created D1 database.
+  ## Create a new D1 database in your account.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/d1/database", body)
   let body = await res.body
@@ -55,7 +55,7 @@ proc getAccountsAccountIdD1DatabaseDatabaseId*(client: CloudflareClient,
                                                accountId: types.D1AccountIdentifier,
                                                databaseId: JsonNode,
                                                fields: seq[string] = default(seq[string])): Future[JsonNode] {.async.} =
-  ## Returns the specified D1 database.
+  ## Get details for a specific D1 database.
 
   var q = initOrderedTable[string, string]()
   q["fields"] = $fields
@@ -71,7 +71,7 @@ proc putAccountsAccountIdD1DatabaseDatabaseId*(client: CloudflareClient,
                                                accountId: types.D1AccountIdentifier,
                                                databaseId: types.D1DatabaseIdentifier,
                                                body: types.D1DatabaseUpdateRequestBody): Future[JsonNode] {.async.} =
-  ## Updates the specified D1 database.
+  ## Update a D1 database's configuration.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/d1/database/{databaseId}", body)
   let body = await res.body
@@ -84,7 +84,7 @@ proc putAccountsAccountIdD1DatabaseDatabaseId*(client: CloudflareClient,
 proc deleteAccountsAccountIdD1DatabaseDatabaseId*(client: CloudflareClient,
                                                   accountId: types.D1AccountIdentifier,
                                                   databaseId: types.D1DatabaseIdentifier): Future[JsonNode] {.async.} =
-  ## Deletes the specified D1 database.
+  ## Delete a D1 database.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/d1/database/{databaseId}")
   let body = await res.body
@@ -98,7 +98,7 @@ proc patchAccountsAccountIdD1DatabaseDatabaseId*(client: CloudflareClient,
                                                  accountId: types.D1AccountIdentifier,
                                                  databaseId: types.D1DatabaseIdentifier,
                                                  body: types.D1DatabaseUpdatePartialRequestBody): Future[JsonNode] {.async.} =
-  ## Updates partially the specified D1 database.
+  ## Partially update a D1 database's configuration.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/d1/database/{databaseId}", body)
   let body = await res.body
@@ -112,8 +112,8 @@ proc postAccountsAccountIdD1DatabaseDatabaseIdExport*(client: CloudflareClient,
                                                       accountId: types.D1AccountIdentifier,
                                                       databaseId: types.D1DatabaseIdentifier,
                                                       body: PostAccountsAccountIdD1DatabaseDatabaseIdExportRequest): Future[JsonNode] {.async.} =
-  ## Returns a URL where the SQL contents of your D1 can be downloaded. Note: this
-  ## process may take
+  ## Export the SQL contents of a D1 database and return a URL where they can be
+  ## downloaded. Note: this process may take
   ## some time for larger DBs, during which your D1 will be unavailable to serve
   ## queries. To avoid
   ## blocking your DB unnecessarily, an in-progress export must be continually polled
@@ -130,9 +130,9 @@ proc postAccountsAccountIdD1DatabaseDatabaseIdExport*(client: CloudflareClient,
 proc postAccountsAccountIdD1DatabaseDatabaseIdImport*(client: CloudflareClient,
                                                       accountId: types.D1AccountIdentifier,
                                                       databaseId: types.D1DatabaseIdentifier): Future[JsonNode] {.async.} =
-  ## Generates a temporary URL for uploading an SQL file to, then instructing the D1
-  ## to import it
-  ## and polling it for status updates. Imports block the D1 for their duration.
+  ## Generate a temporary URL for uploading an SQL file to, then instruct the D1 to
+  ## import it
+  ## and poll it for status updates. Imports block the D1 for their duration.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/d1/database/{databaseId}/import", body)
   let body = await res.body
@@ -146,7 +146,7 @@ proc postAccountsAccountIdD1DatabaseDatabaseIdQuery*(client: CloudflareClient,
                                                      accountId: types.D1AccountIdentifier,
                                                      databaseId: types.D1DatabaseIdentifier,
                                                      body: types.D1BatchQuery): Future[JsonNode] {.async.} =
-  ## Returns the query result as an object.
+  ## Execute a SQL query against a D1 database and return results as objects.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/d1/database/{databaseId}/query", body)
   let body = await res.body
@@ -160,8 +160,9 @@ proc postAccountsAccountIdD1DatabaseDatabaseIdRaw*(client: CloudflareClient,
                                                    accountId: types.D1AccountIdentifier,
                                                    databaseId: types.D1DatabaseIdentifier,
                                                    body: types.D1BatchQuery): Future[JsonNode] {.async.} =
-  ## Returns the query result rows as arrays rather than objects. This is a
-  ## performance-optimized version of the /query endpoint.
+  ## Execute a SQL query against a D1 database and return result rows as arrays
+  ## rather than objects. This is a performance-optimized version of the /query
+  ## endpoint.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/d1/database/{databaseId}/raw", body)
   let body = await res.body
@@ -175,7 +176,7 @@ proc getAccountsAccountIdD1DatabaseDatabaseIdTimeTravelBookmark*(client: Cloudfl
                                                                  accountId: types.D1AccountIdentifier,
                                                                  databaseId: types.D1DatabaseIdentifier,
                                                                  timestamp: types.D1TimeTravelTimestamp = default(types.D1TimeTravelTimestamp)): Future[JsonNode] {.async.} =
-  ## Retrieves the current bookmark, or the nearest bookmark at or before a provided
+  ## Retrieve the current bookmark, or the nearest bookmark at or before a provided
   ## timestamp.
   ## Bookmarks can be used with the restore endpoint to revert the database to a
   ## previous point in time.
@@ -195,7 +196,7 @@ proc postAccountsAccountIdD1DatabaseDatabaseIdTimeTravelRestore*(client: Cloudfl
                                                                  databaseId: types.D1DatabaseIdentifier,
                                                                  bookmark: types.D1TimeTravelBookmark = default(types.D1TimeTravelBookmark),
                                                                  timestamp: types.D1TimeTravelTimestamp = default(types.D1TimeTravelTimestamp)): Future[JsonNode] {.async.} =
-  ## Restores a D1 database to a previous point in time either via a bookmark or a
+  ## Restore a D1 database to a previous point in time either via a bookmark or a
   ## timestamp.
 
   var q = initOrderedTable[string, string]()

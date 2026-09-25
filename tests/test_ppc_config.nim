@@ -19,10 +19,6 @@ suite "ppc_config serialization":
     let obj = newPayPerCrawlDaricConfig()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PayPerCrawlDaricConfig)) == openjson.toJson(obj)
 
-  test "round-trips PayPerCrawlZonesCanBeEnabledPayload":
-    let obj = newPayPerCrawlZonesCanBeEnabledPayload()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PayPerCrawlZonesCanBeEnabledPayload)) == openjson.toJson(obj)
-
   test "round-trips PayPerCrawlGetZoneCanBeEnabledResponse":
     let obj = newPayPerCrawlGetZoneCanBeEnabledResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PayPerCrawlGetZoneCanBeEnabledResponse)) == openjson.toJson(obj)
@@ -30,6 +26,10 @@ suite "ppc_config serialization":
   test "round-trips PayPerCrawlApiErrorResponse":
     let obj = newPayPerCrawlApiErrorResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PayPerCrawlApiErrorResponse)) == openjson.toJson(obj)
+
+  test "round-trips PayPerCrawlZonesCanBeEnabledUpdatePayload":
+    let obj = newPayPerCrawlZonesCanBeEnabledUpdatePayload()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PayPerCrawlZonesCanBeEnabledUpdatePayload)) == openjson.toJson(obj)
 
   test "round-trips PayPerCrawlQueryZonesCanBeEnabledResponse":
     let obj = newPayPerCrawlQueryZonesCanBeEnabledResponse()
@@ -39,6 +39,10 @@ suite "ppc_config serialization":
     let obj = newPayPerCrawlApiNoResultResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PayPerCrawlApiNoResultResponse)) == openjson.toJson(obj)
 
+  test "round-trips PayPerCrawlDaricConfigCreate":
+    let obj = newPayPerCrawlDaricConfigCreate()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PayPerCrawlDaricConfigCreate)) == openjson.toJson(obj)
+
   test "round-trips PayPerCrawlGetConfigResponse":
     let obj = newPayPerCrawlGetConfigResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PayPerCrawlGetConfigResponse)) == openjson.toJson(obj)
@@ -47,7 +51,7 @@ suite "ppc_config endpoints":
   test "PATCH /accounts/{account_id}/pay-per-crawl/zones_can_be_enabled":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchAccountsAccountIdPayPerCrawlZonesCanBeEnabled("test", newPayPerCrawlZonesCanBeEnabledPayload())
+    discard waitFor client.patchAccountsAccountIdPayPerCrawlZonesCanBeEnabled("test", newPayPerCrawlZonesCanBeEnabledUpdatePayload())
 
   test "POST /accounts/{account_id}/pay-per-crawl/zones_can_be_enabled/query":
     let client = initCloudflareClient("test-key")
@@ -67,7 +71,7 @@ suite "ppc_config endpoints":
   test "POST /zones/{zone_id}/pay-per-crawl/configuration":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postZonesZoneIdPayPerCrawlConfiguration("test", newPayPerCrawlDaricConfig())
+    discard waitFor client.postZonesZoneIdPayPerCrawlConfiguration("test", newPayPerCrawlDaricConfigCreate())
 
   test "PATCH /zones/{zone_id}/pay-per-crawl/configuration":
     let client = initCloudflareClient("test-key")

@@ -15,6 +15,10 @@ suite "organizations serialization":
     let obj = newOrganizationsApiOrganization()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiOrganization)) == openjson.toJson(obj)
 
+  test "round-trips OrganizationsApiHandleOrganizationInviteRequest":
+    let obj = newOrganizationsApiHandleOrganizationInviteRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiHandleOrganizationInviteRequest)) == openjson.toJson(obj)
+
   test "round-trips OrganizationsApiProfileResponse":
     let obj = newOrganizationsApiProfileResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiProfileResponse)) == openjson.toJson(obj)
@@ -23,13 +27,17 @@ suite "organizations serialization":
     let obj = newOrganizationsApiAccount()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiAccount)) == openjson.toJson(obj)
 
-  test "round-trips OrganizationsApiDeleteOrganizationResponse":
-    let obj = newOrganizationsApiDeleteOrganizationResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiDeleteOrganizationResponse)) == openjson.toJson(obj)
+  test "round-trips OrganizationsApiMember":
+    let obj = newOrganizationsApiMember()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiMember)) == openjson.toJson(obj)
 
-  test "round-trips OrganizationsApiProfile":
-    let obj = newOrganizationsApiProfile()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiProfile)) == openjson.toJson(obj)
+  test "round-trips OrganizationsApiModifyOrganizationProfileRequest":
+    let obj = newOrganizationsApiModifyOrganizationProfileRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiModifyOrganizationProfileRequest)) == openjson.toJson(obj)
+
+  test "round-trips OrganizationsApiDeleteOrganizationResult":
+    let obj = newOrganizationsApiDeleteOrganizationResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiDeleteOrganizationResult)) == openjson.toJson(obj)
 
   test "round-trips OrganizationsApiV4ErrorResponse":
     let obj = newOrganizationsApiV4ErrorResponse()
@@ -67,6 +75,10 @@ suite "organizations serialization":
     let obj = cloudflare.GetOrganizationsOrganizationIdAccountsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetOrganizationsOrganizationIdAccountsResponse)) == openjson.toJson(obj)
 
+  test "round-trips PutOrganizationsOrganizationIdInvitesMemberCodeResponse":
+    let obj = cloudflare.PutOrganizationsOrganizationIdInvitesMemberCodeResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PutOrganizationsOrganizationIdInvitesMemberCodeResponse)) == openjson.toJson(obj)
+
 suite "organizations endpoints":
   test "GET /organizations":
     let client = initCloudflareClient("test-key")
@@ -98,6 +110,11 @@ suite "organizations endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getOrganizationsOrganizationIdAccounts("test", "test", "test", "test", "test", "test", "test", "test", "test", orderByAccountName, directionAsc, true, true, "test", 1)
 
+  test "PUT /organizations/{organization_id}/invites/{member_code}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.putOrganizationsOrganizationIdInvitesMemberCode("test", "test", newOrganizationsApiHandleOrganizationInviteRequest())
+
   test "GET /organizations/{organization_id}/profile":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -106,5 +123,5 @@ suite "organizations endpoints":
   test "PUT /organizations/{organization_id}/profile":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putOrganizationsOrganizationIdProfile("test", newOrganizationsApiProfile())
+    discard waitFor client.putOrganizationsOrganizationIdProfile("test", newOrganizationsApiModifyOrganizationProfileRequest())
 

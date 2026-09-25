@@ -49,10 +49,10 @@ suite "security_center_insights endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdIntelAttackSurfaceReportIssueTypes("test")
 
-  test "GET /accounts/{account_id}/security-center/insights/count":
+  test "GET /accounts/{account_id}/security-center/insights/partner-count":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdSecurityCenterInsightsCount("test", sourceRiskrecon)
+    discard waitFor client.getAccountsAccountIdSecurityCenterInsightsPartnerCount("test", sourceRiskrecon)
 
   test "PATCH /accounts/{account_id}/security-center/insights/{issue_id}/classification":
     let client = initCloudflareClient("test-key")
@@ -73,6 +73,11 @@ suite "security_center_insights endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.putAccountsAccountIdSecurityCenterState("test", newSecurityCenterUpdateAccountStateRequest())
+
+  test "GET /zones/{zone_id}/security-center/insights/partner-count":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getZonesZoneIdSecurityCenterInsightsPartnerCount("test", sourceRiskrecon)
 
   test "PATCH /zones/{zone_id}/security-center/insights/{issue_id}/classification":
     let client = initCloudflareClient("test-key")

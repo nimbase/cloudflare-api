@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "durable_objects_namespace serialization":
+  test "round-trips WorkersApiResponseCommon":
+    let obj = newWorkersApiResponseCommon()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersApiResponseCommon)) == openjson.toJson(obj)
+
   test "round-trips WorkersNamespace":
     let obj = newWorkersNamespace()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersNamespace)) == openjson.toJson(obj)
@@ -37,4 +41,9 @@ suite "durable_objects_namespace endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdWorkersDurableObjectsNamespacesIdObjects("test", "test", 1.0, "test")
+
+  test "POST /accounts/{account_id}/workers/durable_objects/namespaces/{id}/query/v2":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdWorkersDurableObjectsNamespacesIdQueryV2("test", "test")
 

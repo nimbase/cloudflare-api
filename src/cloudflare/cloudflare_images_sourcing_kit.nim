@@ -13,7 +13,7 @@ proc getAccountsAccountIdImagesV2SourcingkitMigrations*(client: CloudflareClient
                                                         accountId: types.ImagesAccountIdentifier,
                                                         offset: int64 = 0,
                                                         limit: int64 = 25): Future[types.ImagesSourcingkitMigrationListResponse] {.async.} =
-  ## List all migrations for the account.
+  ## List CF Images imports.
 
   var q = initOrderedTable[string, string]()
   q["offset"] = $offset
@@ -29,8 +29,7 @@ proc getAccountsAccountIdImagesV2SourcingkitMigrations*(client: CloudflareClient
 proc postAccountsAccountIdImagesV2SourcingkitMigrations*(client: CloudflareClient,
                                                          accountId: types.ImagesAccountIdentifier,
                                                          body: types.ImagesSourcingkitMigrationCreateRequest): Future[types.ImagesSourcingkitMigrationCreateResponse] {.async.} =
-  ## Create a new migration from an existing source. The migration will import
-  ## objects from the source bucket into Cloudflare Images.
+  ## Create a pending CF Images import from a configured source.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/images/v2/sourcingkit/migrations", body)
   let body = await res.body
@@ -43,7 +42,7 @@ proc postAccountsAccountIdImagesV2SourcingkitMigrations*(client: CloudflareClien
 proc getAccountsAccountIdImagesV2SourcingkitMigrationsMigrationId*(client: CloudflareClient,
                                                                    accountId: types.ImagesAccountIdentifier,
                                                                    migrationId: types.ImagesSourcingkitIdentifier): Future[types.ImagesSourcingkitMigrationSingleResponse] {.async.} =
-  ## Fetch details for a single migration.
+  ## Get the configuration and status of a CF Images import.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/images/v2/sourcingkit/migrations/{migrationId}")
   let body = await res.body
@@ -56,8 +55,7 @@ proc getAccountsAccountIdImagesV2SourcingkitMigrationsMigrationId*(client: Cloud
 proc deleteAccountsAccountIdImagesV2SourcingkitMigrationsMigrationId*(client: CloudflareClient,
                                                                       accountId: types.ImagesAccountIdentifier,
                                                                       migrationId: types.ImagesSourcingkitIdentifier): Future[types.ImagesDeletedResponse] {.async.} =
-  ## Delete an existing migration. Only completed, errored, or aborted migrations can
-  ## be deleted.
+  ## Delete a completed, failed, or aborted CF Images import.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/images/v2/sourcingkit/migrations/{migrationId}")
   let body = await res.body
@@ -70,8 +68,7 @@ proc deleteAccountsAccountIdImagesV2SourcingkitMigrationsMigrationId*(client: Cl
 proc getAccountsAccountIdImagesV2SourcingkitMigrationsMigrationIdLifecycle*(client: CloudflareClient,
                                                                             accountId: types.ImagesAccountIdentifier,
                                                                             migrationId: types.ImagesSourcingkitIdentifier): Future[types.ImagesSourcingkitMigrationProgressResponse] {.async.} =
-  ## Get the current progress of a migration including counts of scanned, imported,
-  ## skipped, and errored objects.
+  ## Get progress and object counts for a CF Images import.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/images/v2/sourcingkit/migrations/{migrationId}/lifecycle")
   let body = await res.body
@@ -84,7 +81,7 @@ proc getAccountsAccountIdImagesV2SourcingkitMigrationsMigrationIdLifecycle*(clie
 proc patchAccountsAccountIdImagesV2SourcingkitMigrationsMigrationIdLifecycleAbort*(client: CloudflareClient,
                                                                                    accountId: types.ImagesAccountIdentifier,
                                                                                    migrationId: types.ImagesSourcingkitIdentifier): Future[types.ImagesSourcingkitMigrationSingleResponse] {.async.} =
-  ## Abort a running migration. Objects already imported will not be removed.
+  ## Abort a running CF Images import. Already imported images will remain.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/images/v2/sourcingkit/migrations/{migrationId}/lifecycle/abort")
   let body = await res.body
@@ -97,8 +94,7 @@ proc patchAccountsAccountIdImagesV2SourcingkitMigrationsMigrationIdLifecycleAbor
 proc patchAccountsAccountIdImagesV2SourcingkitMigrationsMigrationIdLifecycleStart*(client: CloudflareClient,
                                                                                    accountId: types.ImagesAccountIdentifier,
                                                                                    migrationId: types.ImagesSourcingkitIdentifier): Future[types.ImagesSourcingkitMigrationSingleResponse] {.async.} =
-  ## Start a pending migration. The migration will begin importing objects from the
-  ## configured source.
+  ## Start a pending CF Images import.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/images/v2/sourcingkit/migrations/{migrationId}/lifecycle/start")
   let body = await res.body
@@ -113,7 +109,7 @@ proc getAccountsAccountIdImagesV2SourcingkitMigrationsMigrationIdLogs*(client: C
                                                                        migrationId: types.ImagesSourcingkitIdentifier,
                                                                        offset: int64 = 0,
                                                                        limit: int64 = 25): Future[types.ImagesSourcingkitMigrationLogListResponse] {.async.} =
-  ## List log entries for a specific migration.
+  ## List log entries for a CF Images import.
 
   var q = initOrderedTable[string, string]()
   q["offset"] = $offset
@@ -131,7 +127,7 @@ proc getAccountsAccountIdImagesV2SourcingkitSources*(client: CloudflareClient,
                                                      offset: int64 = 0,
                                                      limit: int64 = 25,
                                                      name: string = default(string)): Future[types.ImagesSourcingkitSourceListResponse] {.async.} =
-  ## List all configured migration sources for the account.
+  ## List sources configured for CF Images imports.
 
   var q = initOrderedTable[string, string]()
   q["offset"] = $offset
@@ -148,8 +144,7 @@ proc getAccountsAccountIdImagesV2SourcingkitSources*(client: CloudflareClient,
 proc postAccountsAccountIdImagesV2SourcingkitSources*(client: CloudflareClient,
                                                       accountId: types.ImagesAccountIdentifier,
                                                       body: types.ImagesSourcingkitSourceCreateRequest): Future[types.ImagesSourcingkitSourceCreateResponse] {.async.} =
-  ## Create a new migration source by providing storage credentials. The service
-  ## will verify connectivity to the bucket before accepting the source.
+  ## Configure an S3 source for CF Images imports.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/images/v2/sourcingkit/sources", body)
   let body = await res.body
@@ -162,8 +157,7 @@ proc postAccountsAccountIdImagesV2SourcingkitSources*(client: CloudflareClient,
 proc postAccountsAccountIdImagesV2SourcingkitSourcesConnectivityPrecheck*(client: CloudflareClient,
                                                                           accountId: types.ImagesAccountIdentifier,
                                                                           body: types.ImagesSourcingkitConnectivityPrecheckRequest): Future[types.ImagesSourcingkitConnectivityCheckResponse] {.async.} =
-  ## Verify connectivity to a storage bucket before creating a source. Returns
-  ## connectivity status without persisting any state.
+  ## Check S3 credentials without saving a source.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/images/v2/sourcingkit/sources/connectivity-precheck", body)
   let body = await res.body
@@ -176,7 +170,7 @@ proc postAccountsAccountIdImagesV2SourcingkitSourcesConnectivityPrecheck*(client
 proc getAccountsAccountIdImagesV2SourcingkitSourcesSourceId*(client: CloudflareClient,
                                                              accountId: types.ImagesAccountIdentifier,
                                                              sourceId: types.ImagesSourcingkitIdentifier): Future[types.ImagesSourcingkitSourceSingleResponse] {.async.} =
-  ## Fetch details for a single migration source.
+  ## Get details of a source configured for CF Images imports.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/images/v2/sourcingkit/sources/{sourceId}")
   let body = await res.body
@@ -189,8 +183,8 @@ proc getAccountsAccountIdImagesV2SourcingkitSourcesSourceId*(client: CloudflareC
 proc deleteAccountsAccountIdImagesV2SourcingkitSourcesSourceId*(client: CloudflareClient,
                                                                 accountId: types.ImagesAccountIdentifier,
                                                                 sourceId: types.ImagesSourcingkitIdentifier): Future[types.ImagesDeletedResponse] {.async.} =
-  ## Delete an existing migration source. Sources with active migrations cannot be
-  ## deleted.
+  ## Delete a source configured for CF Images imports. Sources used by active imports
+  ## cannot be deleted.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/images/v2/sourcingkit/sources/{sourceId}")
   let body = await res.body
@@ -204,7 +198,7 @@ proc patchAccountsAccountIdImagesV2SourcingkitSourcesSourceId*(client: Cloudflar
                                                                accountId: types.ImagesAccountIdentifier,
                                                                sourceId: types.ImagesSourcingkitIdentifier,
                                                                body: types.ImagesSourcingkitSourceUpdateRequest): Future[types.ImagesSourcingkitSourceUpdateResponse] {.async.} =
-  ## Update the name of an existing migration source.
+  ## Rename a source configured for CF Images imports.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/images/v2/sourcingkit/sources/{sourceId}", body)
   let body = await res.body
@@ -217,7 +211,7 @@ proc patchAccountsAccountIdImagesV2SourcingkitSourcesSourceId*(client: Cloudflar
 proc getAccountsAccountIdImagesV2SourcingkitSourcesSourceIdConnectivity*(client: CloudflareClient,
                                                                          accountId: types.ImagesAccountIdentifier,
                                                                          sourceId: types.ImagesSourcingkitIdentifier): Future[types.ImagesSourcingkitConnectivityCheckResponse] {.async.} =
-  ## Check the current connectivity status of an existing migration source.
+  ## Check whether a source can still access its S3 bucket.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/images/v2/sourcingkit/sources/{sourceId}/connectivity")
   let body = await res.body

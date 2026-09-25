@@ -15,9 +15,21 @@ suite "workers serialization":
     let obj = newWorkersApiResponseCommon()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersApiResponseCommon)) == openjson.toJson(obj)
 
+  test "round-trips BuildsMigrateToPreviewsRequest":
+    let obj = newBuildsMigrateToPreviewsRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsMigrateToPreviewsRequest)) == openjson.toJson(obj)
+
   test "round-trips BuildsWorkerResponse":
     let obj = newBuildsWorkerResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsWorkerResponse)) == openjson.toJson(obj)
+
+  test "round-trips BuildsPreviewResponse":
+    let obj = newBuildsPreviewResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsPreviewResponse)) == openjson.toJson(obj)
+
+  test "round-trips BuildsPreviewSummary":
+    let obj = newBuildsPreviewSummary()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsPreviewSummary)) == openjson.toJson(obj)
 
   test "round-trips WorkersApiResponseCommonFailure":
     let obj = newWorkersApiResponseCommonFailure()
@@ -39,9 +51,17 @@ suite "workers serialization":
     let obj = newBuildsUpdateWorkerRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsUpdateWorkerRequest)) == openjson.toJson(obj)
 
+  test "round-trips BuildsCreateBuildRequest":
+    let obj = newBuildsCreateBuildRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsCreateBuildRequest)) == openjson.toJson(obj)
+
   test "round-trips BuildsBuildResponse":
     let obj = newBuildsBuildResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsBuildResponse)) == openjson.toJson(obj)
+
+  test "round-trips BuildsUpdatePreviewRequest":
+    let obj = newBuildsUpdatePreviewRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsUpdatePreviewRequest)) == openjson.toJson(obj)
 
   test "round-trips BuildsCreateWorkerRequest":
     let obj = newBuildsCreateWorkerRequest()
@@ -100,7 +120,37 @@ suite "workers endpoints":
   test "PATCH /accounts/{account_id}/builds/workers/{script_tag}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchAccountsAccountIdBuildsWorkersScriptTag("test", "test", newBuildsUpdateWorkerRequest())
+    discard waitFor client.patchAccountsAccountIdBuildsWorkersScriptTag("test", "test", patchExistingPreviewsTrue, newBuildsUpdateWorkerRequest())
+
+  test "POST /accounts/{account_id}/builds/workers/{script_tag}/migrate_to_previews":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdBuildsWorkersScriptTagMigrateToPreviews("test", "test", newBuildsMigrateToPreviewsRequest())
+
+  test "GET /accounts/{account_id}/builds/workers/{script_tag}/previews":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdBuildsWorkersScriptTagPreviews("test", "test", 1, 1)
+
+  test "GET /accounts/{account_id}/builds/workers/{script_tag}/previews/{preview_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewId("test", "test", "test")
+
+  test "PATCH /accounts/{account_id}/builds/workers/{script_tag}/previews/{preview_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.patchAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewId("test", "test", "test", newBuildsUpdatePreviewRequest())
+
+  test "GET /accounts/{account_id}/builds/workers/{script_tag}/previews/{preview_id}/builds":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewIdBuilds("test", "test", "test", 1, 1)
+
+  test "POST /accounts/{account_id}/builds/workers/{script_tag}/previews/{preview_id}/builds":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewIdBuilds("test", "test", "test", newBuildsCreateBuildRequest())
 
   test "GET /accounts/{account_id}/workers/workers":
     let client = initCloudflareClient("test-key")
@@ -125,7 +175,7 @@ suite "workers endpoints":
   test "DELETE /accounts/{account_id}/workers/workers/{worker_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdWorkersWorkersWorkerId("test", "test")
+    discard waitFor client.deleteAccountsAccountIdWorkersWorkersWorkerId("test", "test", true)
 
   test "PATCH /accounts/{account_id}/workers/workers/{worker_id}":
     let client = initCloudflareClient("test-key")

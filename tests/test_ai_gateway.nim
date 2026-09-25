@@ -71,6 +71,10 @@ suite "ai_gateway serialization":
     let obj = newAigBillingGetUsageHistoryResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AigBillingGetUsageHistoryResponse)) == openjson.toJson(obj)
 
+  test "round-trips PostAccountsAccountIdAiWebsearchResponse":
+    let obj = cloudflare.PostAccountsAccountIdAiWebsearchResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdAiWebsearchResponse)) == openjson.toJson(obj)
+
 suite "ai_gateway endpoints":
   test "GET /accounts/{account_id}/ai-gateway/billing/credit-balance":
     let client = initCloudflareClient("test-key")

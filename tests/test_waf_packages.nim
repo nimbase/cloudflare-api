@@ -15,6 +15,10 @@ suite "waf_packages serialization":
     let obj = newFirewallApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FirewallApiResponseCommonFailure)) == openjson.toJson(obj)
 
+  test "round-trips FirewallApiResponseSingle":
+    let obj = newFirewallApiResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FirewallApiResponseSingle)) == openjson.toJson(obj)
+
   test "round-trips FirewallAnomalyPackage":
     let obj = newFirewallAnomalyPackage()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FirewallAnomalyPackage)) == openjson.toJson(obj)

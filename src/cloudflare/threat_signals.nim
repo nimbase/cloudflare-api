@@ -29,8 +29,12 @@ type
     success: bool
   PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTagsRequest = object
     tag_id: string
+  GetAccountsAccountIdCloudforceOneV2ThreatSignalsCategoriesResponse* = object
+    errors: seq[JsonNode]
+    result: JsonNode
+    success: bool
   PostAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeedsRequest = object
-    category: string
+    category_id: string
     display_order: Option[int64]
     is_active: Option[bool]
     name: string
@@ -41,14 +45,14 @@ type
   PatchAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeedsOptOutRequest = object
     opted_out: bool
   PatchAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeedsCuratedFeedIdRequest = object
-    category: Option[string]
+    category_id: Option[string]
     display_order: Option[int64]
     is_active: Option[bool]
     name: Option[string]
     url: Option[string]
     why_valuable: Option[string]
   PostAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsRequest = object
-    category: Option[string]
+    category_id: Option[string]
     curated_feed_id: Option[string]
     display_name: Option[string]
     enabled: Option[bool]
@@ -60,7 +64,7 @@ type
     result: JsonNode
     success: bool
   PatchAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdRequest = object
-    category: Option[string]
+    category_id: Option[string]
     display_name: Option[string]
     enabled: Option[bool]
     poll_interval_s: Option[int64]
@@ -99,6 +103,7 @@ type
   ThreatSignalTagAppliedByOption* = enum
     tagAppliedByAi = "ai"
     tagAppliedByAnalyst = "analyst"
+    tagAppliedBySystem = "system"
 
   ThreatSignalFormatOption* = enum
     formatText = "text"
@@ -110,9 +115,10 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles*(client: Cloudflar
                                                                cursor: string = default(string),
                                                                perPage: int64 = 20,
                                                                feedId: string = default(string),
-                                                               articleId: string = default(string),
+                                                               articleId: seq[string] = @[],
                                                                read: bool = default(bool),
-                                                               tagId: string = default(string),
+                                                               tagId: seq[string] = @[],
+                                                               tagCategoryId: seq[string] = @[],
                                                                tag: string = default(string),
                                                                tagCategory: string = default(string),
                                                                includeTotal: bool = false,
@@ -131,9 +137,10 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles*(client: Cloudflar
   q["cursor"] = $cursor
   q["per_page"] = $perPage
   q["feed_id"] = $feedId
-  q["article_id"] = $articleId
+  for v in articleId: q["article_id"] = $v
   q["read"] = $read
-  q["tag_id"] = $tagId
+  for v in tagId: q["tag_id"] = $v
+  for v in tagCategoryId: q["tag_category_id"] = $v
   q["tag"] = $tag
   q["tag_category"] = $tagCategory
   q["include_total"] = $includeTotal
@@ -243,6 +250,18 @@ proc deleteAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdTagsTag
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/{articleId}/tags/{tagId}")
   return res
+
+proc getAccountsAccountIdCloudforceOneV2ThreatSignalsCategories*(client: CloudflareClient,
+                                                                 accountId: string): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsCategoriesResponse] {.async.} =
+  ## List Threat Signals feed categories.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/categories")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneV2ThreatSignalsCategoriesResponse)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeeds*(client: CloudflareClient,
                                                                    accountId: string,

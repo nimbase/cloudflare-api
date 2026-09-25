@@ -423,6 +423,9 @@ type
       ## Used for configuring advanced_ddos_attack_l4_alert
     target_zone_name*: Option[seq[string]]
       ## Used for configuring advanced_ddos_attack_l7_alert
+    token_id*: Option[seq[string]]
+      ## Access service token IDs to include for expiring_service_token_alert. Omit this
+      ## property to include all current and future service tokens.
     traffic_exclusions*: Option[seq[string]]
       ## Used for configuring traffic_anomalies_alert
     tunnel_id*: Option[seq[string]]
@@ -2235,6 +2238,8 @@ type
 
   AccessDenyUnmatchedRequestsExemptedZoneNames* = seq[string]
 
+  AccessDestinationOverrides* = seq[JsonNode]
+
   AccessDestinations* = seq[JsonNode]
 
   AccessDevicePostureCheck* = ref object of RootObj
@@ -3395,6 +3400,7 @@ type
     mfa_piv_key_requirements*: Option[AccessMfaPivKeyRequirements]
     mfa_required_for_all_apps*: Option[AccessMfaRequiredForAllApps]
     name*: Option[AccessName]
+    service_token_inactivity*: Option[AccessServiceTokenInactivity]
     session_duration*: Option[AccessSessionDuration]
     ui_read_only_toggle_reason*: Option[AccessUiReadOnlyToggleReason]
     updated_at*: Option[AccessUpdatedAt]
@@ -4356,6 +4362,19 @@ type
     updated_at*: Option[AccessTimestamp]
 
   AccessServiceAuth401Redirect* = bool
+
+  AccessServiceTokenInactivity* = ref object of RootObj
+    ## Configures automatic enforcement for inactive service tokens. A service token is
+    ## inactive if no policy references it, and it has not successfully authenticated
+    ## with an Access application during the selected inactivity period. This setting
+    ## applies to every service token in your Zero Trust account.
+    action*: string
+      ## The action applied to an inactive service token.
+    enabled*: bool
+      ## Whether automatic enforcement for inactive service tokens is enabled.
+    inactivity_threshold_days*: int64
+      ## The number of days a service token must be inactive before the configured action
+      ## is applied.
 
   AccessServiceTokenRule* = ref object of RootObj
     ## Matches a specific Access Service Token
@@ -5679,6 +5698,9 @@ type
   AlexandriaCategoryName* = string
 
   AlexandriaCreateApplicationRequest* = ref object of RootObj
+    ## Defines a custom application. At least one hostname or IP subnet is required.
+    ## Support domains and port/protocol pairs do not satisfy this requirement.
+    ##
     category_id*: AlexandriaCategoryId
     hostnames*: Option[AlexandriaApplicationHostnames]
     human_id*: AlexandriaApplicationHumanId
@@ -5732,8 +5754,13 @@ type
   AlexandriaMessages* = seq[JsonNode]
 
   AlexandriaUpdateApplicationRequest* = ref object of RootObj
-    ## Updates the network matchers for the application. Omitted matcher lists are left
-    ## unchanged; send an empty array to clear a list.
+    ## Update the network matchers for the application. The service preserves omitted
+    ## matcher lists; send an empty array to clear a list. The resulting application
+    ## must
+    ## contain at least one hostname or IP subnet. Support domains and port/protocol
+    ## pairs
+    ## do not satisfy this requirement.
+    ##
     hostnames*: Option[AlexandriaApplicationHostnames]
     ip_subnets*: Option[AlexandriaApplicationIpSubnets]
     port_protocols*: Option[AlexandriaApplicationPortProtocols]
@@ -5761,6 +5788,24 @@ type
     message*: string
       ## Human-readable error message.
 
+  AnalyticsSqlCustomAttribute* = ref object of RootObj
+    data_type*: string
+      ## ClickHouse type of the attribute value.
+    name*: string
+      ## Attribute name.
+
+  AnalyticsSqlDatasetAvailability* = ref object of RootObj
+    scope*: string
+      ## Whether the dataset is enabled for the whole account or for a single zone.
+    zone*: Option[string]
+      ## Zone tag. Present only when `scope` is `zone`.
+
+  AnalyticsSqlGatewayApiErrorResponse* = ref object of RootObj
+    errors*: seq[AnalyticsSqlApiErrorResponse]
+    messages*: seq[AnalyticsSqlApiErrorResponse]
+    result*: Option[JsonNode]
+    success*: bool
+
   AnalyticsSqlIntrospectionColumn* = ref object of RootObj
     data_type*: string
       ## SQL data type of the column.
@@ -5772,20 +5817,52 @@ type
   AnalyticsSqlIntrospectionDataset* = ref object of RootObj
     columns*: Option[seq[AnalyticsSqlIntrospectionColumn]]
       ## Present when `include_columns` is true.
+    custom_attributes*: Option[seq[AnalyticsSqlCustomAttribute]]
+      ## Present when `include_custom_attributes` is true and the dataset supports custom
+      ## attributes.
     description*: string
       ## Human-readable description of the dataset.
+    kind*: AnalyticsSqlIntrospectionDatasetKind
     name*: string
       ## Dataset name used in SQL queries.
     title*: string
       ## Human-readable title of the dataset.
 
+  AnalyticsSqlIntrospectionDatasetKind* = ref object of RootObj
+    ## What kind of dataset this is. Determines aggregation rules and sampling
+    ## behavior. Exactly one of `events`, `states`, or `logs` is present.
+    ##
+    availability*: Option[seq[AnalyticsSqlDatasetAvailability]]
+      ## Scopes the dataset is enabled for, as reported by the service that owns it.
+      ## Absent when availability is not applicable to the dataset.
+    events*: Option[JsonNode]
+      ## Row-per-event analytics dataset. Aggregations describe the cumulative effect of
+      ## those events.
+      ##
+    logs*: Option[JsonNode]
+      ## Row-per-log dataset intended for record retrieval.
+    states*: Option[JsonNode]
+      ## Snapshot/state dataset. Only `valid_aggregations` are valid aggregations for
+      ## this dataset.
+      ##
+
   AnalyticsSqlIntrospectionResponse* = ref object of RootObj
     datasets*: seq[AnalyticsSqlIntrospectionDataset]
       ## Datasets visible through the Analytics SQL API.
 
+  AnalyticsSqlIntrospectionSampling* = enum
+    ## Whether the dataset is sampled. `unsampled` means every row is recorded.
+    ## `adaptive` means Adaptive Bit Rate (ABR) sampling is applied, and aggregates
+    ## must be weighted accordingly.
+    ##
+    unsampled = "unsampled"
+    adaptive = "adaptive"
+
   AnalyticsSqlSqlQueryAccountScope* = ref object of RootObj
     account_tag*: string
-      ## Account tag used to authorize and scope the query.
+      ## Account tag used to authorize and scope the query. Must be a 32-character
+      ## lowercase hex string.
+      ##
 
   AnalyticsSqlSqlQueryRequest* = ref object of RootObj
     params*: Option[JsonNode]
@@ -5830,7 +5907,7 @@ type
   AnalyticsSqlSqlQueryZoneScope* = ref object of RootObj
     zone_tag*: string
       ## Zone tag used to authorize and scope the query. Must be a 32-character lowercase
-      ## hex string or a UUID with hyphens (8-4-4-4-12 format).
+      ## hex string.
       ##
 
   ApiShieldRule* = ref object of RootObj
@@ -7247,11 +7324,6 @@ type
   BillSubsApiClientSecrets* = seq[BillSubsApiClientSecret]
 
   BillSubsApiComponentValue* = ref object of RootObj
-    default*: Option[BillSubsApiDefault]
-    name*: Option[BillSubsApiComponentsSchemasName]
-    unit_price*: Option[BillSubsApiUnitPrice]
-
-  BillSubsApiComponentValue2* = ref object of RootObj
     ## A component value for a subscription.
     default*: Option[float64]
       ## The default amount assigned.
@@ -7268,7 +7340,7 @@ type
     value*: Option[float64]
       ## The amount of the component value assigned.
 
-  BillSubsApiComponentValues* = seq[BillSubsApiComponentValue2]
+  BillSubsApiComponentValues* = seq[BillSubsApiComponentValue]
 
   BillSubsApiComponentsSchemasIdentifier* = string
 
@@ -7391,6 +7463,19 @@ type
     success*: bool
       ## Whether the API call was successful
 
+  BillSubsApiPlanComponentValue* = ref object of RootObj
+    default*: Option[BillSubsApiDefault]
+    name*: Option[BillSubsApiComponentsSchemasName]
+    unit_price*: Option[BillSubsApiUnitPrice]
+
+  BillSubsApiPlanRatePlan* = ref object of RootObj
+    components*: Option[BillSubsApiSchemasComponentValues]
+    currency*: Option[BillSubsApiCurrency]
+    duration*: Option[BillSubsApiDuration]
+    frequency*: Option[BillSubsApiSchemasFrequency]
+    id*: Option[BillSubsApiRatePlanComponentsSchemasIdentifier]
+    name*: Option[BillSubsApiSchemasName]
+
   BillSubsApiPlanResponseCollection* = ref object of RootObj
     errors*: BillSubsApiMessages
     messages*: BillSubsApiMessages
@@ -7401,17 +7486,9 @@ type
 
   BillSubsApiPrice* = float64
 
-  BillSubsApiRatePlan* = ref object of RootObj
-    components*: Option[BillSubsApiSchemasComponentValues]
-    currency*: Option[BillSubsApiCurrency]
-    duration*: Option[BillSubsApiDuration]
-    frequency*: Option[BillSubsApiSchemasFrequency]
-    id*: Option[BillSubsApiRatePlanComponentsSchemasIdentifier]
-    name*: Option[BillSubsApiSchemasName]
-
   BillSubsApiRatePlanComponentsSchemasIdentifier* = string
 
-  BillSubsApiRatePlan2* = ref object of RootObj
+  BillSubsApiRatePlan* = ref object of RootObj
     ## The rate plan applied to the subscription.
     currency*: Option[string]
       ## The currency applied to the rate plan subscription.
@@ -7445,7 +7522,7 @@ type
     total_count*: Option[float64]
       ## Total results available without any search parameters
 
-  BillSubsApiSchemasComponentValues* = seq[BillSubsApiComponentValue]
+  BillSubsApiSchemasComponentValues* = seq[BillSubsApiPlanComponentValue]
 
   BillSubsApiSchemasFrequency* = enum
     ## The frequency at which you will be billed for this plan.
@@ -7492,7 +7569,7 @@ type
     frequency*: Option[BillSubsApiFrequency]
     id*: Option[BillSubsApiSchemasIdentifier]
     price*: Option[BillSubsApiPrice]
-    rate_plan*: Option[BillSubsApiRatePlan2]
+    rate_plan*: Option[BillSubsApiRatePlan]
     state*: Option[BillSubsApiState]
     zone*: Option[BillSubsApiZone]
 
@@ -7507,7 +7584,7 @@ type
     frequency*: Option[BillSubsApiFrequency]
     id*: Option[BillSubsApiSchemasIdentifier]
     price*: Option[BillSubsApiPrice]
-    rate_plan*: Option[BillSubsApiRatePlan2]
+    rate_plan*: Option[BillSubsApiRatePlan]
     state*: Option[BillSubsApiState]
     zone*: Option[BillSubsApiZone]
 
@@ -7522,7 +7599,7 @@ type
     frequency*: Option[BillSubsApiFrequencyResponse]
     id*: Option[BillSubsApiSchemasIdentifier]
     price*: Option[BillSubsApiPrice]
-    rate_plan*: Option[BillSubsApiRatePlan2]
+    rate_plan*: Option[BillSubsApiRatePlan]
     state*: Option[BillSubsApiState]
     zone*: Option[BillSubsApiZone]
 
@@ -7598,10 +7675,12 @@ type
       ## A charge serving as the basis for invoicing, inclusive of all reduced rates and
       ## discounts while excluding the amortization of upfront charges (one-time or
       ## recurring).
-    billing_account_id*: string
-      ## Public identifier of the Cloudflare account (account tag).
-    billing_account_name*: string
-      ## Display name of the Cloudflare account.
+    billing_account_id*: Option[string]
+      ## Public identifier of the Cloudflare account (account tag). Omitted when account
+      ## is not part of the requested grouping.
+    billing_account_name*: Option[string]
+      ## Display name of the Cloudflare account. Omitted when account is not part of the
+      ## requested grouping.
     billing_currency*: Option[string]
       ## Currency that a charge was billed in (ISO 4217).
     billing_period_end*: Option[string]
@@ -7675,7 +7754,7 @@ type
     x_billable_metric_id*: string
       ## The unique identifier for the billable metric in the Cloudflare catalog.
       ## Cloudflare extension; replaces FOCUS SkuId.
-    x_billable_metric_name*: string
+    x_billable_metric_name*: Option[string]
       ## The display name of the billable metric. Cloudflare extension; replaces FOCUS
       ## SkuMeter.
     x_product_category_name*: Option[string]
@@ -7840,16 +7919,20 @@ type
       ## Restrict results to billable metrics belonging to these product families. Values
       ## must be unique UUIDs.
     tags*: Option[seq[BillableUsageApiV2TagFilter]]
-      ## Restrict results by customer resource tags. Filters for different keys are
-      ## combined with AND, while values within one filter are combined with OR. Keys
-      ## must be unique and are case-sensitive.
+      ## Restrict results by resource tags. Filters for different keys are combined with
+      ## AND, while values within one filter are combined with OR. Keys must be unique
+      ## and are case-sensitive.
 
   BillableUsageApiV2GroupBy* = ref object of RootObj
-    ## A customer resource-tag key used to split result rows.
+    ## A definition used to split result rows. TAG groups by a case-sensitive
+    ## resource-tag key. DIMENSION groups by a usage dimension key — account_id,
+    ## zone_id and region are the documented keys, and any other dimension key carried
+    ## by the usage data is accepted and returned under that same key.
     key*: string
-      ## Case-sensitive customer resource-tag key.
+      ## Case-sensitive resource-tag key (for TAG) or dimension key (for DIMENSION), e.g.
+      ## team, region, account_id or zone_id.
     `type`*: string
-      ## Dimension category. Currently only customer resource tags are supported.
+      ## Group category.
 
   BillableUsageApiV2ProductCategory* = ref object of RootObj
     id*: string
@@ -7860,9 +7943,9 @@ type
     name*: string
 
   BillableUsageApiV2TagFilter* = ref object of RootObj
-    ## Values accepted for one customer resource-tag key.
+    ## Values accepted for one resource-tag key.
     key*: string
-      ## Case-sensitive customer resource-tag key.
+      ## Case-sensitive resource-tag key.
     values*: seq[string]
       ## Tag values to match. Values are combined with OR and must be unique. An empty
       ## string matches a key-only tag.
@@ -7883,8 +7966,8 @@ type
     ## equivalent to omitting the body entirely. Unknown fields are rejected.
     filter_by*: Option[BillableUsageApiV2FilterBy]
     group_by*: Option[seq[BillableUsageApiV2GroupBy]]
-      ## Customer resource tags used to split result rows. At most two unique tag keys
-      ## may be supplied.
+      ## Grouping definitions used to split result rows. At most two unique keys may be
+      ## supplied.
     time_period*: Option[BillableUsageApiV2TimePeriod]
 
   BillableUsageApiV2UsageResponse* = ref object of RootObj
@@ -7958,6 +8041,7 @@ type
     crawler_protection*: Option[BotManagementCrawlerProtection]
     enable_js*: Option[BotManagementEnableJs]
     is_robots_txt_managed*: Option[BotManagementIsRobotsTxtManaged]
+    jsd_api_results_enabled*: Option[BotManagementJsdApiResultsEnabled]
     using_latest_model*: Option[BotManagementUsingLatestModel]
 
   BotManagementBmCookieEnabled* = bool
@@ -7974,6 +8058,7 @@ type
     crawler_protection*: Option[BotManagementCrawlerProtection]
     enable_js*: Option[BotManagementEnableJs]
     is_robots_txt_managed*: Option[BotManagementIsRobotsTxtManaged]
+    jsd_api_results_enabled*: Option[BotManagementJsdApiResultsEnabled]
     using_latest_model*: Option[BotManagementUsingLatestModel]
     auto_update_model*: Option[BotManagementAutoUpdateModel]
     bm_cookie_enabled*: Option[BotManagementBmCookieEnabled]
@@ -7994,6 +8079,7 @@ type
     crawler_protection*: Option[BotManagementCrawlerProtection]
     enable_js*: Option[BotManagementEnableJs]
     is_robots_txt_managed*: Option[BotManagementIsRobotsTxtManaged]
+    jsd_api_results_enabled*: Option[BotManagementJsdApiResultsEnabled]
     using_latest_model*: Option[BotManagementUsingLatestModel]
     fight_mode*: Option[BotManagementFightMode]
     stale_zone_configuration*: Option[JsonNode]
@@ -8057,6 +8143,8 @@ type
 
   BotManagementIsRobotsTxtManaged* = bool
 
+  BotManagementJsdApiResultsEnabled* = bool
+
   BotManagementMessages* = seq[JsonNode]
 
   BotManagementMetricRequests* = ref object of RootObj
@@ -8097,6 +8185,7 @@ type
     crawler_protection*: Option[BotManagementCrawlerProtection]
     enable_js*: Option[BotManagementEnableJs]
     is_robots_txt_managed*: Option[BotManagementIsRobotsTxtManaged]
+    jsd_api_results_enabled*: Option[BotManagementJsdApiResultsEnabled]
     using_latest_model*: Option[BotManagementUsingLatestModel]
     optimize_wordpress*: Option[BotManagementOptimizeWordpress]
     sbfm_definitely_automated*: Option[BotManagementSbfmDefinitelyAutomated]
@@ -8126,6 +8215,7 @@ type
     crawler_protection*: Option[BotManagementCrawlerProtection]
     enable_js*: Option[BotManagementEnableJs]
     is_robots_txt_managed*: Option[BotManagementIsRobotsTxtManaged]
+    jsd_api_results_enabled*: Option[BotManagementJsdApiResultsEnabled]
     using_latest_model*: Option[BotManagementUsingLatestModel]
     optimize_wordpress*: Option[BotManagementOptimizeWordpress]
     sbfm_definitely_automated*: Option[BotManagementSbfmDefinitelyAutomated]
@@ -8403,11 +8493,15 @@ type
     config*: BrexBrowserExtensionConfigInput
 
   BuildsAPIResponse* = ref object of RootObj
-    errors*: seq[JsonNode]
+    errors*: seq[BuildsApiError]
     messages*: seq[string]
     result*: Option[JsonNode]
     result_info*: Option[BuildsPaginationInfo]
     success*: bool
+
+  BuildsApiError* = ref object of RootObj
+    code*: Option[int64]
+    message*: string
 
   BuildsBuildLogsResponse* = ref object of RootObj
     cursor*: Option[BuildsCursor]
@@ -8426,8 +8520,12 @@ type
     build_trigger_metadata*: Option[BuildsBuildTriggerMetadataResponse]
     build_uuid*: Option[BuildsBuildUuid]
     created_on*: Option[BuildsCreatedOn]
+    deploy_hook*: Option[JsonNode]
     initializing_on*: Option[string]
     modified_on*: Option[BuildsModifiedOn]
+    preview_url*: Option[string]
+      ## URL serving the Worker version this build deployed. Only returned by Get build
+      ## by UUID, and only once the build has produced a preview artifact.
     pull_request*: Option[JsonNode]
     running_on*: Option[string]
     status*: Option[BuildsBuildStatus]
@@ -8577,6 +8675,9 @@ type
   BuildsCreateWorkerRequest* = ref object of RootObj
     ## Request body for creating a Worker build configuration.
     git_repository*: BuildsCreateWorkerGitRepositoryInput
+    previews_base_config*: BuildsCreateWorkerBuildSettingsInput
+    previews_enabled*: bool
+      ## Whether Previews are enabled for this Worker
     production_settings*: BuildsCreateWorkerBuildSettingsInput
     script_tag*: BuildsExternalScriptId
 
@@ -8604,7 +8705,7 @@ type
   BuildsEnvironmentVariablesResponse* = ref object of RootObj
 
   BuildsErrorResponse* = ref object of RootObj
-    errors*: seq[JsonNode]
+    errors*: seq[BuildsApiError]
     messages*: seq[string]
     result*: Option[JsonNode]
     success*: bool
@@ -8615,10 +8716,6 @@ type
     has_reached_build_minutes_limit*: Option[bool]
       ## Whether build minutes limit has been reached (only for non-paid plans)
 
-  BuildsInsertBuildResponse* = ref object of RootObj
-    build_uuid*: Option[BuildsBuildUuid]
-    created_on*: Option[BuildsCreatedOn]
-
   BuildsLatestBuildsResponse* = ref object of RootObj
     builds*: Option[JsonNode]
 
@@ -8627,6 +8724,14 @@ type
     build_token_uuid*: Option[BuildsBuildTokenUuid]
     cloudflare_token_id*: Option[BuildsCloudflareTokenId]
     owner_type*: Option[BuildsOwnerType]
+
+  BuildsMigrateToPreviewsRequest* = ref object of RootObj
+    ## Request body for migrating a Worker's legacy non-production trigger to Previews.
+    deploy_command*: Option[string]
+      ## Deploy command for the migrated Preview settings. Omit it to have the existing
+      ## 'wrangler versions upload' command rewritten to 'wrangler preview'
+      ## automatically, which fails with 400 when the existing command cannot be
+      ## rewritten.
 
   BuildsPackageManager* = enum
     npm = "npm"
@@ -8641,6 +8746,21 @@ type
     per_page*: Option[int64]
     total_count*: Option[int64]
     total_pages*: Option[int64]
+
+  BuildsPreviewResponse* = ref object of RootObj
+    ## A single Preview of a Worker, with the build settings it currently uses.
+    auto_build*: Option[BuildsPreviewAutoBuild]
+    auto_delete*: Option[BuildsPreviewAutoDelete]
+    branch*: Option[BuildsBranch]
+    preview_id*: Option[BuildsExternalScriptId]
+    settings*: Option[BuildsWorkerBuildSettings]
+
+  BuildsPreviewSummary* = ref object of RootObj
+    ## A single Preview of a Worker, without its build settings.
+    auto_build*: Option[BuildsPreviewAutoBuild]
+    auto_delete*: Option[BuildsPreviewAutoDelete]
+    branch*: Option[BuildsBranch]
+    preview_id*: Option[BuildsExternalScriptId]
 
   BuildsSCMProviderType* = enum
     ## Source control provider.
@@ -8675,6 +8795,15 @@ type
     trigger_name*: Option[BuildsTriggerName]
     trigger_uuid*: Option[BuildsTriggerUuid]
 
+  BuildsUpdatePreviewRequest* = ref object of RootObj
+    ## Request body for updating a Preview. At least one field must be provided, and
+    ## omitted fields are left unchanged.
+    auto_build*: Option[BuildsPreviewAutoBuild]
+    auto_delete*: Option[BuildsPreviewAutoDelete]
+    branch*: Option[string]
+      ## Git branch this Preview tracks
+    settings*: Option[BuildsUpdateWorkerBuildSettingsInput]
+
   BuildsUpdateTriggerRequest* = ref object of RootObj
     branch_excludes*: Option[BuildsBranchExcludes]
     branch_includes*: Option[BuildsBranchIncludes]
@@ -8704,6 +8833,10 @@ type
     ## be provided.
     git_repository*: Option[JsonNode]
       ## Git repository settings to update
+    previews_base_config*: Option[BuildsUpdateWorkerBuildSettingsInput]
+    previews_enabled*: Option[bool]
+      ## Enable or disable Previews for this Worker. Enabling requires
+      ## previews_base_config to already exist or to be sent in the same request.
     production_settings*: Option[BuildsUpdateWorkerBuildSettingsInput]
 
   BuildsUpsertRepoConnectionRequest* = ref object of RootObj
@@ -8733,6 +8866,12 @@ type
     environment_variables*: Option[BuildsEnvironmentVariablesResponse]
     path_excludes*: Option[BuildsPathExcludes]
     path_includes*: Option[BuildsPathIncludes]
+    proposed_deploy_command*: Option[string]
+      ## Deploy command proposed for migrating this Worker to Previews. Only returned on
+      ## previews_base_config, and only while the Worker still has a legacy
+      ## non-production trigger to migrate. Null when the existing deploy command cannot
+      ## be rewritten automatically, in which case migrate_to_previews needs an explicit
+      ## deploy_command.
     root_directory*: Option[BuildsRootDirectory]
 
   BuildsWorkerGitRepository* = ref object of RootObj
@@ -8748,9 +8887,12 @@ type
     repo_name*: Option[BuildsRepoName]
 
   BuildsWorkerResponse* = ref object of RootObj
-    ## Worker build configuration including git repository linkage and production
-    ## settings
+    ## Worker build configuration including git repository linkage, production
+    ## settings, and Preview settings
     git_repository*: Option[BuildsWorkerGitRepository]
+    previews_base_config*: Option[BuildsWorkerBuildSettings]
+    previews_enabled*: Option[bool]
+      ## Whether Previews are enabled for this Worker
     production_settings*: Option[BuildsWorkerBuildSettings]
     script_tag*: Option[BuildsExternalScriptId]
 
@@ -8803,6 +8945,10 @@ type
   BuildsPathExcludes* = seq[string]
 
   BuildsPathIncludes* = seq[string]
+
+  BuildsPreviewAutoBuild* = bool
+
+  BuildsPreviewAutoDelete* = bool
 
   BuildsProviderAccountId* = string
 
@@ -9921,6 +10067,8 @@ type
     ## Container instances belonging to an application.
     instances*: seq[CcContainerInstance]
 
+  CcContainersListContainerInstancesV2* = seq[CcContainerInstance]
+
   CcContainersModifyApplicationConfiguration* = ref object of RootObj
     ## Application configuration fields you can change without creating a rollout.
     authorized_keys*: Option[seq[CcUserSSHPublicKey]]
@@ -10266,18 +10414,20 @@ type
     success*: bool
       ## Whether the API call was successful.
 
-  CcV4BasePaginatedResponse* = ref object of RootObj
-    errors*: CcMessages
-    messages*: CcMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: JsonNode
-
   CcV4BaseResponse* = ref object of RootObj
     errors*: CcMessages
     messages*: CcMessages
     success*: bool
       ## Whether the API call was successful.
+
+  CcV4PaginatedResultInfo* = ref object of RootObj
+    ## Cursor pagination details for a v4 API list response.
+    next_page_token*: Option[string]
+      ## The token to use to retrieve the next page of results.
+    page_token*: Option[string]
+      ## The page token sent in the request.
+    per_page*: Option[int64]
+      ## The number of items per page requested.
 
   CcWranglerSSHConfig* = ref object of RootObj
     ## Configuration properties for connecting with SSH to a container using Wrangler.
@@ -12022,7 +12172,7 @@ type
     result*: Option[seq[CustomPagesCustomPage]]
 
   CustomPagesErrorPageType* = enum
-    ## Error Page Types
+    ## Custom page type.
     f1000Errors = "1000_errors"
     f500Errors = "500_errors"
     basicChallenge = "basic_challenge"
@@ -13330,6 +13480,7 @@ type
       ## The description of the profile.
     entries*: seq[DlpEntry]
     id*: string
+    integration_id*: string
     name*: string
     shared_entries*: seq[DlpEntry]
     updated_at*: string
@@ -14927,6 +15078,7 @@ type
     desc = "desc"
 
   DnsSettingsDnsSettingsAccountPatch* = ref object of RootObj
+    ## Default settings for new zones created in this account.
     flatten_all_cnames*: Option[DnsSettingsFlattenAllCnames]
     foundation_dns*: Option[DnsSettingsFoundationDns]
     internal_dns*: Option[DnsSettingsInternalDnsBase]
@@ -14939,6 +15091,7 @@ type
       ## Settings determining the nameservers through which the zone should be available.
 
   DnsSettingsDnsSettingsAccountResponse* = ref object of RootObj
+    ## Default settings for new zones created in this account.
     flatten_all_cnames*: DnsSettingsFlattenAllCnames
     foundation_dns*: DnsSettingsFoundationDns
     internal_dns*: DnsSettingsInternalDnsResponse
@@ -16036,8 +16189,10 @@ type
   EmailSecurityBulkActionRequest* = ref object of RootObj
     action*: string
     comment*: Option[string]
-    destination*: Option[EmailSecurityMailboxDestination]
-    expected_disposition*: Option[EmailSecurityDispositionLabel]
+    destination*: Option[JsonNode]
+      ## Required when action is 'MOVE'.
+    expected_disposition*: Option[string]
+      ## Nonfunctional field. End of life: December 1, 2026.
     search_params*: EmailSecurityBulkSearchParams
 
   EmailSecurityBulkJobActionParams* = ref object of RootObj
@@ -16049,8 +16204,16 @@ type
     completed_at*: Option[string]
     created_at*: string
     job_id*: string
+    messages_cancelled*: int64
+      ## Messages that were cancelled: rows cancelled via the API before being claimed,
+      ## and rows whose in-flight attempt ended when the job reached a terminal state.
+      ## Together the counters satisfy total_messages_discovered = messages_pending +
+      ## messages_successful + messages_failed + messages_skipped + messages_cancelled.
     messages_failed*: int64
     messages_pending*: int64
+    messages_skipped*: int64
+      ## Messages that discovery skipped (for example, phish submissions, which the job
+      ## cannot action).
     messages_successful*: int64
     search_params*: EmailSecurityBulkSearchParams
     started_at*: Option[string]
@@ -16065,13 +16228,13 @@ type
       ## Deprecated, use `GET /investigate/{investigate_id}/action_log` instead. End of
       ## life: November 1, 2026.
     alert_id*: Option[string]
-    delivery_status*: Option[EmailSecurityMessageDeliveryStatus]
+    delivery_status*: Option[string]
     detections_only*: Option[bool]
     domain*: Option[string]
     `end`*: Option[string]
       ## End of search date range.
     exact_subject*: Option[string]
-    final_disposition*: Option[EmailSecurityDispositionLabel]
+    final_disposition*: Option[string]
     message_action*: Option[string]
     message_id*: Option[string]
     metric*: Option[string]
@@ -16198,7 +16361,7 @@ type
       ## Deprecated, use `modified_at` instead. End of life: November 1, 2026.
     modified_at*: Option[JsonNode]
     name*: string
-    provenance*: Option[EmailSecurityProvenance]
+    provenance*: Option[string]
 
   EmailSecurityCreateSendingDomainRestriction* = ref object of RootObj
     ## Create a sending domain restriction.
@@ -16307,12 +16470,12 @@ type
 
   EmailSecurityDomain* = ref object of RootObj
     allowed_delivery_modes*: Option[seq[EmailSecurityDeliveryMode]]
-    authorization*: Option[EmailSecurityDomainAuthorization]
+    authorization*: Option[JsonNode]
     created_at*: Option[JsonNode]
     dmarc_status*: Option[EmailSecurityDmarcStatus]
     domain*: Option[string]
     drop_dispositions*: Option[seq[EmailSecurityDispositionLabel]]
-    emails_processed*: Option[EmailSecurityEmailsProcessed]
+    emails_processed*: Option[JsonNode]
     folder*: Option[JsonNode]
     id*: Option[EmailSecurityDomainId]
     inbox_provider*: Option[string]
@@ -16387,7 +16550,7 @@ type
       ## Deprecated, use `modified_at` instead. End of life: November 1, 2026.
     modified_at*: Option[JsonNode]
     name*: Option[string]
-    provenance*: Option[EmailSecurityProvenance]
+    provenance*: Option[string]
 
   EmailSecurityImpersonationRegistryId* = string
 
@@ -16436,13 +16599,13 @@ type
       ## life: November 1, 2026.
     alert_id*: Option[string]
     client_recipients*: seq[string]
-    delivery_mode*: Option[EmailSecurityMessageDeliveryMode]
+    delivery_mode*: Option[string]
     delivery_status*: Option[seq[EmailSecurityMessageDeliveryStatus]]
     detection_reasons*: seq[string]
     edf_hash*: Option[string]
     envelope_from*: Option[string]
     envelope_to*: Option[seq[string]]
-    final_disposition*: Option[EmailSecurityDispositionLabel]
+    final_disposition*: Option[string]
     findings*: Option[seq[JsonNode]]
       ## Deprecated, use the `findings` field from `GET
       ## /investigate/{investigate_id}/detections` instead. End of life: November 1,
@@ -16474,13 +16637,13 @@ type
     to_name*: Option[seq[string]]
     ts*: string
       ## Deprecated, use `scanned_at` instead. End of life: November 1, 2026.
-    validation*: Option[EmailSecurityValidation]
+    validation*: Option[JsonNode]
     x_originating_ip*: Option[string]
 
   EmailSecurityMessageDetectionDetails* = ref object of RootObj
     action*: string
     attachments*: seq[EmailSecurityAttachment]
-    final_disposition*: Option[EmailSecurityDispositionLabel]
+    final_disposition*: Option[string]
     findings*: Option[seq[EmailSecurityFinding]]
     headers*: seq[EmailSecurityMessageHeader]
     links*: seq[EmailSecurityLink]
@@ -16794,7 +16957,7 @@ type
       ## Deprecated, use `modified_at` instead. End of life: November 1, 2026.
     modified_at*: Option[JsonNode]
     name*: Option[string]
-    provenance*: Option[EmailSecurityProvenance]
+    provenance*: Option[string]
 
   EmailSecurityUpdateSendingDomainRestriction* = ref object of RootObj
     ## Update a sending domain restriction.
@@ -16850,9 +17013,9 @@ type
 
   EmailSecurityValidation* = ref object of RootObj
     comment*: Option[string]
-    dkim*: Option[EmailSecurityValidationStatus]
-    dmarc*: Option[EmailSecurityValidationStatus]
-    spf*: Option[EmailSecurityValidationStatus]
+    dkim*: Option[string]
+    dmarc*: Option[string]
+    spf*: Option[string]
 
   EmailSecurityValidationStatus* = enum
     pass = "pass"
@@ -16982,16 +17145,25 @@ type
       ## List of recipient email addresses.
 
   EmailReputationPolicy* = ref object of RootObj
-    complaint*: EmailReputationThreshold
-    customer_bounce*: EmailReputationThreshold
-    spam_rejection*: EmailReputationThreshold
+    complaint*: JsonNode
+      ## Complaint-rate thresholds used to evaluate reputation status.
+    customer_bounce*: JsonNode
+      ## Bounce-rate thresholds used to evaluate reputation status.
+    spam_rejection*: JsonNode
+      ## Spam-rejection-rate thresholds used to evaluate reputation status.
     suspension_after_hours*: int64
       ## The grace period before suspension. The value must be a whole number of days.
 
   EmailReputationThreshold* = ref object of RootObj
     at_risk_at*: float64
+      ## The rate at or above which the metric enters the at-risk band. A fraction
+      ## between 0 and 1.
     minimum_denominator*: int64
+      ## The smallest eligible event count for this metric. Below this, the metric is
+      ## skipped and cannot affect the account's status.
     warning_at*: float64
+      ## The rate at or above which the metric enters the warning band. A fraction
+      ## between 0 and 1.
 
   EmailAccountId* = EmailIdentifier
 
@@ -17009,6 +17181,8 @@ type
 
   EmailAccountRulesPlan* = ref object of RootObj
     zones*: Option[seq[EmailAccountRulesPlanZone]]
+      ## Per-zone diff between the desired rules and the account's current Email Routing
+      ## rules.
 
   EmailAccountRulesPlanCatchAllEntry* = ref object of RootObj
     rule*: EmailAccountRulesPlanCatchAllRule
@@ -17058,6 +17232,7 @@ type
 
   EmailAccountRulesPlanZone* = ref object of RootObj
     changes*: Option[seq[EmailAccountRulesPlanChange]]
+      ## Rule changes planned for this zone.
     zone_id*: Option[EmailIdentifier]
     zone_name*: Option[string]
       ## Zone name.
@@ -17241,6 +17416,7 @@ type
     `type`*: string
       ## Type of supported action.
     value*: Option[seq[string]]
+      ## List of values for the action. Currently limited to a single value.
 
   EmailRuleActions* = seq[EmailRuleAction]
 
@@ -17249,6 +17425,7 @@ type
     `type`*: string
       ## Type of action for catch-all rule.
     value*: Option[seq[string]]
+      ## List of values for the action. Currently limited to a single value.
 
   EmailRuleCatchallActions* = seq[EmailRuleCatchallAction]
 
@@ -17341,10 +17518,21 @@ type
     result*: Option[EmailSendingLimitsProperties]
 
   EmailSendingReputationProperties* = ref object of RootObj
-    active_policy*: EmailReputationPolicy
+    active_policy*: JsonNode
+      ## The reputation policy thresholds currently applied to the account.
     evaluated_at*: Option[string]
+      ## When the account's reputation was last evaluated. Null when the account has
+      ## never been evaluated.
+    grace_started_at*: Option[string]
+      ## When the current At Risk suspension grace period started. This can be later than
+      ## status_since if the grace period was restarted. Null outside At Risk. Automatic
+      ## suspension remains subject to enforcement and suspension exemptions.
     status*: string
+      ## The account's current reputation status.
     status_since*: Option[string]
+      ## When the account most recently transitioned into its current status. Null if the
+      ## account has been Healthy since it was first tracked and has never changed
+      ## status.
 
   EmailSendingReputationResponseSingle* = ref object of RootObj
     errors*: EmailMessages
@@ -17398,9 +17586,13 @@ type
       ##
     conflicting_subdomain*: Option[string]
       ## The enabled sending-subdomain row that conflicts with the requested name.
-    existing*: Option[EmailDnsRecord]
-    missing*: Option[EmailDnsRecord]
+    existing*: Option[JsonNode]
+      ## The conflicting DNS record found in the zone.
+    missing*: Option[JsonNode]
+      ## The DNS record that must be added to resolve this error.
     multiple*: Option[seq[EmailDnsRecord]]
+      ## Multiple conflicting DNS records found, for example more than one SPF or DMARC
+      ## TXT record.
 
   EmailSendingSubdomainDnsStatusResponse* = ref object of RootObj
     errors*: EmailMessages
@@ -17442,6 +17634,8 @@ type
 
   EmailSendingSubdomainReputationComplaints* = ref object of RootObj
     complaints*: int64
+      ## The number of matched complaints for the sending subdomain in the requested time
+      ## window.
 
   EmailSendingSubdomainReputationComplaintsResponse* = ref object of RootObj
     errors*: EmailMessages
@@ -17703,6 +17897,9 @@ type
     success*: bool
       ## Defines whether the API call was successful.
 
+  FirewallApiResponseDeprecated* = ref object of RootObj
+    message*: string
+
   FirewallApiResponseSingle* = ref object of RootObj
     errors*: FirewallMessages
     messages*: FirewallMessages
@@ -17726,8 +17923,6 @@ type
 
   FirewallBody* = string
 
-  FirewallBypass* = seq[JsonNode]
-
   FirewallCidrConfiguration* = ref object of RootObj
     target*: Option[string]
       ## The configuration target. You must set the target to `ip_range` when specifying
@@ -17735,8 +17930,6 @@ type
     value*: Option[string]
       ## The IP address range to match. You can only use prefix lengths `/16` and `/24`
       ## for IPv4 ranges, and prefix lengths `/32`, `/48`, and `/64` for IPv6 ranges.
-
-  FirewallComponentsSchemasDescription* = string
 
   FirewallComponentsSchemasIdentifier* = string
 
@@ -17804,8 +17997,6 @@ type
     ## 'challenge' action).
     anomaly = "anomaly"
     traditional = "traditional"
-
-  FirewallDisabled* = bool
 
   FirewallEmail* = string
 
@@ -17938,13 +18129,6 @@ type
     success*: bool
       ## Defines whether the API call was successful.
 
-  FirewallGroups* = ref object of RootObj
-    ## An object that allows you to enable or disable WAF rule groups for the current
-    ## WAF override. Each key of this object must be the ID of a WAF rule group, and
-    ## each value must be a valid WAF action (usually `default` or `disable`). When
-    ## creating a new URI-based WAF override, you must provide a `groups` object or a
-    ## `rules` object.
-
   FirewallHeaderName* = string
 
   FirewallHeaderOp* = enum
@@ -17953,8 +18137,6 @@ type
     ne = "ne"
 
   FirewallHeaderValue* = string
-
-  FirewallId* = string
 
   FirewallIdentifier* = string
 
@@ -18004,31 +18186,6 @@ type
 
   FirewallOriginTraffic* = bool
 
-  FirewallOverride* = ref object of RootObj
-    description*: Option[FirewallComponentsSchemasDescription]
-    groups*: Option[FirewallGroups]
-    id*: Option[FirewallOverridesId]
-    paused*: Option[FirewallPaused]
-    priority*: Option[FirewallPriority]
-    rewrite_action*: Option[FirewallRewriteAction]
-    rules*: Option[FirewallRules]
-    urls*: Option[FirewallUrls]
-
-  FirewallOverrideResponseCollection* = ref object of RootObj
-    errors*: FirewallMessages
-    messages*: FirewallMessages
-    result*: seq[FirewallOverride]
-    success*: bool
-      ## Defines whether the API call was successful.
-    result_info*: Option[FirewallResultInfo]
-
-  FirewallOverrideResponseSingle* = ref object of RootObj
-    errors*: FirewallMessages
-    messages*: FirewallMessages
-    result*: FirewallOverride
-    success*: bool
-      ## Defines whether the API call was successful.
-
   FirewallOverridesId* = string
 
   FirewallPackage* = ref object of RootObj
@@ -18046,51 +18203,17 @@ type
   FirewallPackageResponseCollection* = ref object of RootObj
 
   FirewallPackageResponseSingle* = ref object of RootObj
-
-  FirewallPaused* = bool
+    errors*: FirewallMessages
+    messages*: FirewallMessages
+    result*: JsonNode
+    success*: bool
+      ## Defines whether the API call was successful.
 
   FirewallPeriod* = float64
 
-  FirewallPriority* = float64
-
   FirewallProducts* = seq[string]
 
-  FirewallRateLimits* = ref object of RootObj
-    action*: Option[FirewallAction]
-    bypass*: Option[FirewallBypass]
-    description*: Option[FirewallDescription]
-    disabled*: Option[FirewallDisabled]
-    id*: Option[FirewallId]
-    match*: Option[FirewallMatch]
-    period*: Option[FirewallPeriod]
-    threshold*: Option[FirewallThreshold]
-
   FirewallRateLimitId* = string
-
-  FirewallRatelimit* = ref object of RootObj
-    action*: Option[FirewallAction]
-    bypass*: Option[FirewallBypass]
-    description*: Option[FirewallDescription]
-    disabled*: Option[FirewallDisabled]
-    id*: Option[FirewallId]
-    match*: Option[FirewallMatch]
-    period*: Option[FirewallPeriod]
-    threshold*: Option[FirewallThreshold]
-
-  FirewallRatelimitResponseCollection* = ref object of RootObj
-    errors*: FirewallMessages
-    messages*: FirewallMessages
-    result*: seq[FirewallRateLimits]
-    success*: bool
-      ## Defines whether the API call was successful.
-    result_info*: Option[FirewallResultInfo]
-
-  FirewallRatelimitResponseSingle* = ref object of RootObj
-    errors*: FirewallMessages
-    messages*: FirewallMessages
-    result*: FirewallRateLimits
-    success*: bool
-      ## Defines whether the API call was successful.
 
   FirewallRef* = string
 
@@ -25026,6 +25149,300 @@ type
 
   MagicWeight* = int64
 
+  ManagedDefenseVulnerabilityDiscoveryConsolidatedCuratedReportResponse* = ref object of RootObj
+    errors*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    messages*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    success*: bool
+    result*: ManagedDefenseVulnerabilityDiscoveryConsolidatedCuratedReportResult
+
+  ManagedDefenseVulnerabilityDiscoveryConsolidatedCuratedReportResult* = ref object of RootObj
+    publication*: Option[JsonNode]
+    report*: Option[JsonNode]
+    repositories*: seq[ManagedDefenseVulnerabilityDiscoveryConsolidatedReportRepository]
+    scan_id*: string
+
+  ManagedDefenseVulnerabilityDiscoveryConsolidatedReportRepository* = ref object of RootObj
+    id*: string
+    name*: string
+    report_status*: string
+    scan_status*: string
+
+  ManagedDefenseVulnerabilityDiscoveryCreateRepositoryRequest* = ref object of RootObj
+    name*: string
+    worker_script_name*: Option[string]
+
+  ManagedDefenseVulnerabilityDiscoveryCreateRepositoryResponse* = ref object of RootObj
+    errors*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    messages*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    success*: bool
+    result*: ManagedDefenseVulnerabilityDiscoveryCreateRepositoryResult
+
+  ManagedDefenseVulnerabilityDiscoveryCreateRepositoryResult* = ref object of RootObj
+
+  ManagedDefenseVulnerabilityDiscoveryCreateScan* = ref object of RootObj
+    repo_hosts*: Option[JsonNode]
+      ## Explicit hostname scopes. Every hostname must be authorized for its repository
+      ## before review admission; rejected scopes return 422 and do not persist a scan
+      ## request.
+    repos*: seq[string]
+    telemetry_window*: Option[ManagedDefenseVulnerabilityDiscoveryTelemetryWindow]
+
+  ManagedDefenseVulnerabilityDiscoveryCreatedRepository* = ref object of RootObj
+    id*: string
+    import_error*: Option[JsonNode]
+    name*: string
+    readiness*: string
+    source*: string
+
+  ManagedDefenseVulnerabilityDiscoveryCuratedReportPublication* = ref object of RootObj
+    published_at*: string
+    revision_id*: string
+    version*: int64
+
+  ManagedDefenseVulnerabilityDiscoveryCuratedReportResponse* = ref object of RootObj
+    errors*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    messages*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    success*: bool
+    result*: ManagedDefenseVulnerabilityDiscoveryCuratedReportResult
+
+  ManagedDefenseVulnerabilityDiscoveryCuratedReportResult* = ref object of RootObj
+    publication*: ManagedDefenseVulnerabilityDiscoveryCuratedReportPublication
+    report*: ManagedDefenseVulnerabilityDiscoveryRepositoryReport
+    repository_id*: string
+    scan_id*: string
+
+  ManagedDefenseVulnerabilityDiscoveryFailureResponse* = ref object of RootObj
+    errors*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    messages*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    result*: Option[JsonNode]
+    success*: bool
+
+  ManagedDefenseVulnerabilityDiscoveryMessage* = ref object of RootObj
+    code*: int64
+    message*: string
+
+  ManagedDefenseVulnerabilityDiscoveryPaginatedResponse* = ref object of RootObj
+    errors*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    messages*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    success*: bool
+    result_info*: ManagedDefenseVulnerabilityDiscoveryResultInfo
+
+  ManagedDefenseVulnerabilityDiscoveryReportDocumentV2* = ref object of RootObj
+    executive_summary*: string
+    generated_at*: string
+      ## Revision requests must echo the existing generation timestamp unchanged.
+    overall_severity*: string
+    repositories*: seq[ManagedDefenseVulnerabilityDiscoveryRepositoryReport]
+    schema_version*: int64
+    title*: string
+
+  ManagedDefenseVulnerabilityDiscoveryReportErrorPath* = ref object of RootObj
+    hits*: float64
+    host*: string
+    id*: string
+    path*: string
+    status*: int64
+
+  ManagedDefenseVulnerabilityDiscoveryReportExternalLink* = ref object of RootObj
+    title*: string
+    url*: string
+
+  ManagedDefenseVulnerabilityDiscoveryReportFinding* = ref object of RootObj
+    attacker_position*: Option[string]
+      ## Least-privileged position required to trigger the finding. Optional on legacy
+      ## report revisions.
+    conditions*: seq[string]
+    cwe*: string
+    external_links*: Option[seq[ManagedDefenseVulnerabilityDiscoveryReportExternalLink]]
+    id*: string
+    impact*: string
+    location*: JsonNode
+    open_question*: Option[string]
+      ## One bounded unresolved proof question. Optional on legacy report revisions.
+    proof_method*: Option[string]
+      ## Method used or needed to close the proof. Optional on legacy report revisions.
+    proof_state*: Option[string]
+      ## Current proof lifecycle state. Optional on legacy report revisions.
+    reachability*: seq[ManagedDefenseVulnerabilityDiscoveryReportReachability]
+    remediation*: JsonNode
+    root_cause*: string
+    severity*: string
+    severity_basis*: string
+    summary*: string
+    telemetry*: JsonNode
+    title*: string
+    trace*: seq[ManagedDefenseVulnerabilityDiscoveryReportTraceStep]
+    waf_rules*: Option[ManagedDefenseVulnerabilityDiscoveryReportWafRules]
+
+  ManagedDefenseVulnerabilityDiscoveryReportHotPath* = ref object of RootObj
+    hits*: float64
+    host*: string
+    id*: string
+    path*: string
+    top_status*: int64
+
+  ManagedDefenseVulnerabilityDiscoveryReportObservedPath* = ref object of RootObj
+    hit_volume*: float64
+    host*: string
+    id*: string
+    path*: string
+
+  ManagedDefenseVulnerabilityDiscoveryReportObservedWafRule* = ref object of RootObj
+    hit_volume*: float64
+    id*: string
+    paths*: seq[ManagedDefenseVulnerabilityDiscoveryReportObservedPath]
+    rule_id*: string
+    rule_version*: Option[int64]
+
+  ManagedDefenseVulnerabilityDiscoveryReportReachability* = ref object of RootObj
+    consumer*: string
+    reachable*: bool
+    via*: string
+
+  ManagedDefenseVulnerabilityDiscoveryReportTelemetryTarget* = ref object of RootObj
+    hosts*: seq[string]
+    kind*: string
+    telemetry_window*: Option[ManagedDefenseVulnerabilityDiscoveryTelemetryWindow]
+
+  ManagedDefenseVulnerabilityDiscoveryReportTraceStep* = ref object of RootObj
+    line*: int64
+    path*: string
+    scope*: string
+    why*: string
+
+  ManagedDefenseVulnerabilityDiscoveryReportTrafficContext* = ref object of RootObj
+    http*: Option[JsonNode]
+    target*: Option[JsonNode]
+    waf*: Option[JsonNode]
+    web_assets*: Option[JsonNode]
+
+  ManagedDefenseVulnerabilityDiscoveryReportWafRule* = ref object of RootObj
+    action*: string
+    confidence*: string
+    description*: string
+    expression*: string
+    false_positive_risk*: string
+    name*: string
+    rationale*: string
+
+  ManagedDefenseVulnerabilityDiscoveryReportWafRules* = ref object of RootObj
+    broad*: Option[JsonNode]
+    targeted*: Option[JsonNode]
+
+  ManagedDefenseVulnerabilityDiscoveryReportWebAssetsOperation* = ref object of RootObj
+    endpoint*: string
+    host*: string
+    id*: string
+    `method`*: string
+    performance*: Option[ManagedDefenseVulnerabilityDiscoveryReportWebAssetsPerformance]
+    risk_labels*: seq[ManagedDefenseVulnerabilityDiscoveryReportWebAssetsRisk]
+
+  ManagedDefenseVulnerabilityDiscoveryReportWebAssetsPath* = ref object of RootObj
+    avg_origin_latency_ms*: Option[float64]
+    error_rate*: float64
+    estimated_requests*: float64
+    host*: string
+    id*: string
+    path*: string
+
+  ManagedDefenseVulnerabilityDiscoveryReportWebAssetsPerformance* = ref object of RootObj
+    avg_origin_latency_ms*: Option[float64]
+    error_rate*: float64
+    estimated_requests*: float64
+
+  ManagedDefenseVulnerabilityDiscoveryReportWebAssetsRisk* = ref object of RootObj
+    description*: Option[string]
+    name*: string
+
+  ManagedDefenseVulnerabilityDiscoveryRepository* = ref object of RootObj
+    created_at*: string
+    id*: string
+    import_error*: Option[JsonNode]
+    name*: string
+    readiness*: string
+    source*: string
+
+  ManagedDefenseVulnerabilityDiscoveryRepositoryDetail* = ref object of RootObj
+    repository*: ManagedDefenseVulnerabilityDiscoveryRepository
+    scans*: seq[ManagedDefenseVulnerabilityDiscoveryScan]
+
+  ManagedDefenseVulnerabilityDiscoveryRepositoryListResponse* = ref object of RootObj
+    errors*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    messages*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    success*: bool
+    result_info*: ManagedDefenseVulnerabilityDiscoveryResultInfo
+    result*: seq[ManagedDefenseVulnerabilityDiscoveryRepository]
+
+  ManagedDefenseVulnerabilityDiscoveryRepositoryReport* = ref object of RootObj
+    external_links*: Option[seq[ManagedDefenseVulnerabilityDiscoveryReportExternalLink]]
+    findings*: seq[ManagedDefenseVulnerabilityDiscoveryReportFinding]
+    limitations*: Option[seq[string]]
+    overall_severity*: string
+    repository_id*: string
+    repository_name*: string
+    summary*: string
+    traffic_context*: ManagedDefenseVulnerabilityDiscoveryReportTrafficContext
+
+  ManagedDefenseVulnerabilityDiscoveryRepositoryResponse* = ref object of RootObj
+    errors*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    messages*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    success*: bool
+    result*: ManagedDefenseVulnerabilityDiscoveryRepositoryDetail
+    result_info*: ManagedDefenseVulnerabilityDiscoveryResultInfo
+
+  ManagedDefenseVulnerabilityDiscoveryResultInfo* = ref object of RootObj
+    count*: int64
+    cursor*: string
+      ## Opaque continuation cursor. Empty when no further page exists.
+    per_page*: int64
+
+  ManagedDefenseVulnerabilityDiscoveryScan* = ref object of RootObj
+    completed_at*: Option[string]
+    id*: string
+    message*: Option[string]
+    phase*: Option[string]
+    repositories*: seq[ManagedDefenseVulnerabilityDiscoveryScanRepository]
+    started_at*: Option[string]
+    status*: string
+    submitted_at*: string
+    telemetry_window*: Option[ManagedDefenseVulnerabilityDiscoveryTelemetryWindow]
+
+  ManagedDefenseVulnerabilityDiscoveryScanListResponse* = ref object of RootObj
+    errors*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    messages*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    success*: bool
+    result_info*: ManagedDefenseVulnerabilityDiscoveryResultInfo
+    result*: seq[ManagedDefenseVulnerabilityDiscoveryScan]
+
+  ManagedDefenseVulnerabilityDiscoveryScanRepository* = ref object of RootObj
+    id*: string
+    name*: string
+    phase*: Option[string]
+    report_status*: string
+    status*: string
+
+  ManagedDefenseVulnerabilityDiscoveryScanResponse* = ref object of RootObj
+    errors*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    messages*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    success*: bool
+    result*: ManagedDefenseVulnerabilityDiscoveryScan
+
+  ManagedDefenseVulnerabilityDiscoverySuccessResponse* = ref object of RootObj
+    errors*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    messages*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    success*: bool
+
+  ManagedDefenseVulnerabilityDiscoveryTelemetryWindow* = ref object of RootObj
+    ## UTC ISO-8601 interval. Start is inclusive, end is exclusive, and the interval
+    ## must be positive and at most seven days.
+    `end`*: string
+    start*: string
+
+  ManagedDefenseVulnerabilityDiscoveryUploadCredentials* = ref object of RootObj
+    expires_in*: int64
+    remote*: string
+    token*: string
+
   McnAccountId* = string
 
   McnApplyProgress* = ref object of RootObj
@@ -26255,6 +26672,10 @@ type
 
   MconnTelemetrySnapshotInterface* = ref object of RootObj
     ## Snapshot Interface
+    health_reason*: Option[string]
+      ## Comma-separated list of reasons for health score
+    health_score*: Option[float64]
+      ## Aggregate health score (0-100)
     ip_addresses*: Option[seq[MconnTelemetrySnapshotInterfaceAddress]]
     name*: string
       ## Name of the network interface
@@ -26436,8 +26857,6 @@ type
     last_updated*: string
     license_key*: Option[string]
     notes*: string
-    primary*: bool
-    site_id*: Option[string]
     timezone*: string
 
   MconnCustomerConnectorFields* = ref object of RootObj
@@ -26449,8 +26868,6 @@ type
       ## List of dates (YYYY-MM-DD) when upgrades are blocked.
     interrupt_window_hour_of_day*: Option[float64]
     notes*: Option[string]
-    primary*: Option[bool]
-    site_id*: Option[string]
     timezone*: Option[string]
 
   MconnCustomerConnectorsCreateRequest* = ref object of RootObj
@@ -26463,8 +26880,6 @@ type
       ## List of dates (YYYY-MM-DD) when upgrades are blocked.
     interrupt_window_hour_of_day*: Option[float64]
     notes*: Option[string]
-    primary*: Option[bool]
-    site_id*: Option[string]
     timezone*: Option[string]
 
   MconnCustomerConnectorsCreateResponse* = ref object of RootObj
@@ -26488,8 +26903,6 @@ type
       ## List of dates (YYYY-MM-DD) when upgrades are blocked.
     interrupt_window_hour_of_day*: Option[float64]
     notes*: Option[string]
-    primary*: Option[bool]
-    site_id*: Option[string]
     timezone*: Option[string]
     provision_license*: Option[bool]
       ## When true, regenerate license key for the connector.
@@ -26521,8 +26934,6 @@ type
       ## List of dates (YYYY-MM-DD) when upgrades are blocked.
     interrupt_window_hour_of_day*: Option[float64]
     notes*: Option[string]
-    primary*: Option[bool]
-    site_id*: Option[string]
     timezone*: Option[string]
     provision_license*: Option[bool]
       ## When true, regenerate license key for the connector.
@@ -27230,8 +27641,6 @@ type
 
   ObservatoryMessages* = seq[JsonNode]
 
-  ObservatoryMessages2* = seq[JsonNode]
-
   ObservatoryPageTestResponseCollection* = ref object of RootObj
     errors*: ObservatoryMessages
     messages*: ObservatoryMessages
@@ -27827,7 +28236,7 @@ type
     status*: Option[string]
     user*: JsonNode
 
-  OrganizationsApiDeleteOrganizationResponse* = ref object of RootObj
+  OrganizationsApiDeleteOrganizationResult* = ref object of RootObj
     id*: string
 
   OrganizationsApiEntitlement* = ref object of RootObj
@@ -27836,6 +28245,9 @@ type
 
   OrganizationsApiFeature* = ref object of RootObj
     key*: string
+
+  OrganizationsApiHandleOrganizationInviteRequest* = ref object of RootObj
+    status*: string
 
   OrganizationsApiInnateEntitlements* = ref object of RootObj
     allow_add_subdomain*: OrganizationsApiBoolAllocation
@@ -27865,7 +28277,14 @@ type
     name*: string
     two_factor_authentication_enabled*: bool
 
-  OrganizationsApiMoveAccountResponse* = ref object of RootObj
+  OrganizationsApiModifyOrganizationProfileRequest* = ref object of RootObj
+    business_address*: string
+    business_email*: string
+    business_name*: string
+    business_phone*: string
+    external_metadata*: string
+
+  OrganizationsApiMoveAccountResult* = ref object of RootObj
     account_id*: string
     destination_organization_id*: string
     source_organization_id*: string
@@ -28263,10 +28682,48 @@ type
       ## Price in microcents 1 USD = 100,000,000 microcents. Must be 0 or a multiple of
       ## 100,000 $0.001. Range: $0.001–$9,999.999.
 
+  PayPerCrawlDaricConfigCreate* = ref object of RootObj
+    bot_overrides*: JsonNode
+    enabled*: bool
+    price_usd_microcents*: int64
+      ## Price in microcents 1 USD = 100,000,000 microcents. Must be 0 or a multiple of
+      ## 100,000 $0.001. Range: $0.001–$9,999.999.
+
   PayPerCrawlDaricZoneCanBeEnabled* = ref object of RootObj
     can_be_enabled*: Option[bool]
     enabled*: Option[bool]
     id*: Option[string]
+
+  PayPerCrawlDaricZoneCanBeEnabledUpdate* = ref object of RootObj
+    can_be_enabled*: Option[bool]
+    id*: string
+
+  PayPerCrawlEnabledDomain* = ref object of RootObj
+    domain*: string
+    license_expires_at*: Option[string]
+      ## Earlier non-null exclusive expiration from the accepted price agreement and
+      ## publisher zone lifecycles, or null when neither expires
+    license_status*: string
+      ## Whether the selected accepted price agreement is currently active or retained
+      ## after expiration
+    non_billable_since*: Option[string]
+      ## When the publisher zone was classified for local-only, non-billable settlement.
+      ## Null for billable zones.
+    price_usd_microcents*: int64
+      ## Price of the selected accepted agreement in microcents. For an active license
+      ## this is the price currently in effect; for an expired license it is the last
+      ## accepted price.
+
+  PayPerCrawlEnabledDomainsResponse* = ref object of RootObj
+    result*: PayPerCrawlEnabledDomainsResult
+    result_info*: Option[PayPerCrawlResultInfo]
+    success*: bool
+
+  PayPerCrawlEnabledDomainsResult* = ref object of RootObj
+    cursor*: Option[string]
+      ## Opaque, account-bound cursor for the next page. It expires after one hour and is
+      ## null on the final page.
+    domains*: seq[PayPerCrawlEnabledDomain]
 
   PayPerCrawlErrorSource* = ref object of RootObj
     pointer*: Option[string]
@@ -28284,6 +28741,258 @@ type
       ## Meta object containing non-standard meta-information about the error.
       ## This field must be an object or null!
     source*: Option[PayPerCrawlSource]
+
+  PayPerCrawlPPUOperatorConfiguration* = ref object of RootObj
+    default_price_usd_microcents*: int64
+      ## Default price in microcents. 1 USD = 100,000,000 microcents. Must be a multiple
+      ## of 100,000 ($0.001) between $0.001 and $9,999.999.
+    enabled*: bool
+    name*: string
+
+  PayPerCrawlPPUOperatorConfigurationResponse* = ref object of RootObj
+    errors*: Option[seq[PayPerCrawlMsg]]
+    messages*: Option[seq[PayPerCrawlMsg]]
+    result*: Option[PayPerCrawlPPUOperatorConfiguration]
+    result_info*: Option[PayPerCrawlResultInfo]
+    success*: Option[bool]
+
+  PayPerCrawlPPUOperatorConfigurationResult* = ref object of RootObj
+    default_price_usd_microcents*: int64
+      ## Default price in microcents. 1 USD = 100,000,000 microcents. Must be a multiple
+      ## of 100,000 ($0.001) between $0.001 and $9,999.999.
+    enabled*: bool
+    name*: string
+    non_billable_since*: Option[string]
+      ## When this operator was classified for local-only, non-billable settlement. Null
+      ## for billable operators. Immutable.
+
+  PayPerCrawlPPUOperatorConfigurationResultResponse* = ref object of RootObj
+    errors*: Option[seq[PayPerCrawlMsg]]
+    messages*: Option[seq[PayPerCrawlMsg]]
+    result*: Option[PayPerCrawlPPUOperatorConfigurationResult]
+    result_info*: Option[PayPerCrawlResultInfo]
+    success*: Option[bool]
+
+  PayPerCrawlPPUOperatorConfigurationUpdate* = ref object of RootObj
+    default_price_usd_microcents*: Option[int64]
+      ## Default price in microcents. 1 USD = 100,000,000 microcents. Must be a multiple
+      ## of 100,000 ($0.001) between $0.001 and $9,999.999.
+    enabled*: Option[bool]
+    name*: Option[string]
+
+  PayPerCrawlPPUOperatorPrice* = ref object of RootObj
+    current_price*: Option[JsonNode]
+      ## Accepted price active at the current time.
+    default_price_usd_microcents*: int64
+    name*: string
+    non_billable_since*: Option[string]
+      ## When this operator was classified for local-only, non-billable settlement. Null
+      ## for billable operators. Always matches the requesting zone's classification.
+    operator_id*: string
+      ## Stable pay-per-use operator identifier.
+    proposed_price*: Option[JsonNode]
+      ## Price proposal awaiting operator acceptance.
+    scheduled_price*: Option[JsonNode]
+      ## Accepted replacement with a future effective_at.
+
+  PayPerCrawlPPUOperatorPrices* = ref object of RootObj
+    operators*: seq[PayPerCrawlPPUOperatorPrice]
+
+  PayPerCrawlPPUOperatorPricesResponse* = ref object of RootObj
+    errors*: Option[seq[PayPerCrawlMsg]]
+    messages*: Option[seq[PayPerCrawlMsg]]
+    result*: Option[PayPerCrawlPPUOperatorPrices]
+    result_info*: Option[PayPerCrawlResultInfo]
+    success*: Option[bool]
+
+  PayPerCrawlPPUOperatorProposalActionRequest* = ref object of RootObj
+    action*: string
+    price_id*: int64
+      ## Pending pay-per-use price id returned in the operator proposal queue.
+
+  PayPerCrawlPPUPrice* = ref object of RootObj
+    created_at*: string
+    effective_at*: Option[string]
+      ## The first accepted price is effective from the start of the current UTC day. A
+      ## replacement becomes effective at the start of the next UTC day.
+    expires_at*: Option[string]
+      ## The exclusive per-agreement expiration timestamp. Publisher opt-out schedules it
+      ## for the start of the next UTC month. When an active price is replaced, the
+      ## previous price expires at the start of the next UTC day as the replacement
+      ## becomes effective. Zone-wide grace is represented by the zone configuration
+      ## expires_at instead.
+    price_usd_microcents*: int64
+      ## Price in microcents. 1 USD = 100,000,000 microcents.
+    status*: string
+
+  PayPerCrawlPPUPriceResponse* = ref object of RootObj
+    errors*: Option[seq[PayPerCrawlMsg]]
+    messages*: Option[seq[PayPerCrawlMsg]]
+    result*: Option[PayPerCrawlPPUPrice]
+    result_info*: Option[PayPerCrawlResultInfo]
+    success*: Option[bool]
+
+  PayPerCrawlPPUProposal* = ref object of RootObj
+    created_at*: string
+    non_billable_since*: Option[string]
+      ## When the proposing publisher zone was classified for local-only, non-billable
+      ## settlement. Null for billable zones.
+    price_id*: int64
+      ## Use this value to accept or reject this specific pending proposal.
+    price_usd_microcents*: int64
+    zone_name*: Option[string]
+
+  PayPerCrawlPPUProposals* = ref object of RootObj
+    proposals*: seq[PayPerCrawlPPUProposal]
+
+  PayPerCrawlPPUProposalsResponse* = ref object of RootObj
+    errors*: Option[seq[PayPerCrawlMsg]]
+    messages*: Option[seq[PayPerCrawlMsg]]
+    result*: Option[PayPerCrawlPPUProposals]
+    result_info*: Option[PayPerCrawlResultInfo]
+    success*: Option[bool]
+
+  PayPerCrawlPPUPublisherPriceAcceptDefaultRequest* = ref object of RootObj
+    action*: string
+
+  PayPerCrawlPPUPublisherPriceActionRequest* = ref object of RootObj
+
+  PayPerCrawlPPUPublisherPriceProposeRequest* = ref object of RootObj
+    action*: string
+    price_usd_microcents*: int64
+      ## Price in microcents. Must be a multiple of 100,000 ($0.001) between $0.001 and
+      ## $9,999.999.
+
+  PayPerCrawlPPUPublisherPriceResumeRequest* = ref object of RootObj
+    action*: string
+
+  PayPerCrawlPPUPublisherPriceWithdrawRequest* = ref object of RootObj
+    action*: string
+
+  PayPerCrawlPPUUsageStats* = ref object of RootObj
+    buyers*: seq[PayPerCrawlPPUUsageStatsBuyer]
+      ## Range-wide usage and gross value totals for the current buyer page, ordered by
+      ## buyer name and operator ID.
+    data*: seq[PayPerCrawlPPUUsageStatsDataPoint]
+      ## Sparse time-series data for buyers on the current page.
+    interval*: string
+      ## UTC aggregation interval selected from the requested range duration.
+    last_updated_at*: Option[string]
+      ## Time the latest included usage-report rollup run finished, or null before the
+      ## first run completes.
+    since*: string
+      ## Inclusive beginning of the resolved range after UTC interval alignment.
+    totals*: PayPerCrawlPPUUsageStatsTotals
+    until*: string
+      ## Exclusive end of the resolved range after UTC interval alignment.
+
+  PayPerCrawlPPUUsageStatsBuyer* = ref object of RootObj
+    operator_id*: string
+      ## Stable identifier for the buyer.
+    operator_name*: string
+    total_price_usd_microcents*: int64
+      ## Full gross value attributed to this buyer over the resolved range before the
+      ## publisher revenue share.
+    usage_count*: int64
+      ## Number of reported usage events attributed to this buyer over the resolved
+      ## range.
+
+  PayPerCrawlPPUUsageStatsDataPoint* = ref object of RootObj
+    operator_id*: string
+      ## Stable identifier for the buyer represented by this data point.
+    operator_name*: string
+    period_start*: string
+      ## Inclusive start of the UTC hour or day represented by this data point.
+    total_price_usd_microcents*: int64
+      ## Full gross value of this data point in USD microcents before the publisher
+      ## revenue share.
+    usage_count*: int64
+
+  PayPerCrawlPPUUsageStatsResponse* = ref object of RootObj
+    result*: PayPerCrawlPPUUsageStats
+    result_info*: Option[PayPerCrawlResultInfo]
+    success*: bool
+
+  PayPerCrawlPPUUsageStatsTotals* = ref object of RootObj
+    total_price_usd_microcents*: int64
+      ## Full gross value of reported usage in USD microcents before the publisher
+      ## revenue share. 1 USD = 100,000,000 microcents.
+    usage_count*: int64
+      ## Number of reported usage events in the selected window.
+
+  PayPerCrawlPPUZoneCanBeEnabled* = ref object of RootObj
+    can_be_enabled*: bool
+    disabled_at*: Option[string]
+      ## The start of the current disabled period after an enabled zone is disabled
+      ## directly or by eligibility revocation. Null before the first disabled period and
+      ## while enabled. Restoring eligibility alone does not clear it.
+    enabled*: bool
+    expires_at*: Option[string]
+      ## The exclusive end of the zone-level grace period. Existing agreements remain
+      ## usable until this time while the zone is disabled. Null while enabled or when a
+      ## disabled zone has no grace period.
+    id*: string
+    non_billable_since*: Option[string]
+      ## When this zone was classified for local-only, non-billable settlement. Null for
+      ## billable or unconfigured zones. Immutable.
+
+  PayPerCrawlPPUZoneCanBeEnabledResponse* = ref object of RootObj
+    errors*: Option[seq[PayPerCrawlMsg]]
+    messages*: Option[seq[PayPerCrawlMsg]]
+    result*: Option[PayPerCrawlPPUZoneCanBeEnabled]
+    result_info*: Option[PayPerCrawlResultInfo]
+    success*: Option[bool]
+
+  PayPerCrawlPPUZoneCanBeEnabledUpdate* = ref object of RootObj
+    can_be_enabled*: Option[bool]
+    id*: string
+
+  PayPerCrawlPPUZoneConfiguration* = ref object of RootObj
+    can_be_enabled*: bool
+    disabled_at*: Option[string]
+      ## The start of the current disabled period after an enabled zone is disabled
+      ## directly or by eligibility revocation. Null before the first disabled period and
+      ## while enabled. Restoring eligibility alone does not clear it.
+    enabled*: bool
+    expires_at*: Option[string]
+      ## The exclusive end of the zone-level grace period. Existing agreements remain
+      ## usable until this time while the zone is disabled. Null while enabled or when a
+      ## disabled zone has no grace period.
+
+  PayPerCrawlPPUZoneConfigurationResponse* = ref object of RootObj
+    errors*: Option[seq[PayPerCrawlMsg]]
+    messages*: Option[seq[PayPerCrawlMsg]]
+    result*: Option[PayPerCrawlPPUZoneConfiguration]
+    result_info*: Option[PayPerCrawlResultInfo]
+    success*: Option[bool]
+
+  PayPerCrawlPPUZoneConfigurationResult* = ref object of RootObj
+    can_be_enabled*: bool
+    disabled_at*: Option[string]
+      ## The start of the current disabled period after an enabled zone is disabled
+      ## directly or by eligibility revocation. Null before the first disabled period and
+      ## while enabled. Restoring eligibility alone does not clear it.
+    enabled*: bool
+    expires_at*: Option[string]
+      ## The exclusive end of the zone-level grace period. Existing agreements remain
+      ## usable until this time while the zone is disabled. Null while enabled or when a
+      ## disabled zone has no grace period.
+    non_billable_since*: Option[string]
+      ## When this zone was classified for local-only, non-billable settlement. Null for
+      ## billable or unconfigured zones. Immutable.
+
+  PayPerCrawlPPUZoneConfigurationResultResponse* = ref object of RootObj
+    errors*: Option[seq[PayPerCrawlMsg]]
+    messages*: Option[seq[PayPerCrawlMsg]]
+    result*: Option[PayPerCrawlPPUZoneConfigurationResult]
+    result_info*: Option[PayPerCrawlResultInfo]
+    success*: Option[bool]
+
+  PayPerCrawlPPUZoneConfigurationUpdate* = ref object of RootObj
+    enabled*: Option[bool]
+
+  PayPerCrawlPPUZonesCanBeEnabledPayload* = ref object of RootObj
+    zones*: seq[PayPerCrawlPPUZoneCanBeEnabledUpdate]
 
   PayPerCrawlRESTError* = ref object of RootObj
     code*: Option[int64]
@@ -28325,11 +29034,39 @@ type
     connect_status*: Option[string]
     stripe_account_id*: Option[string]
 
+  PayPerCrawlUsageReportCreated* = ref object of RootObj
+    entry_count*: int64
+    sha256*: string
+      ## SHA-256 checksum of the exact submitted request body
+    submission_id*: int64
+      ## Monotonically increasing submission ID scoped to the participant account
+
+  PayPerCrawlUsageReportCreatedResponse* = ref object of RootObj
+    result*: PayPerCrawlUsageReportCreated
+    success*: bool
+
+  PayPerCrawlUsageReportValidationError* = ref object of RootObj
+    code*: string
+    field*: Option[string]
+    line*: Option[int64]
+    message*: string
+
+  PayPerCrawlUsageReportValidationResponse* = ref object of RootObj
+    result*: PayPerCrawlUsageReportValidationResult
+    success*: bool
+
+  PayPerCrawlUsageReportValidationResult* = ref object of RootObj
+    entry_count*: int64
+    error*: PayPerCrawlUsageReportValidationError
+
   PayPerCrawlZonesCanBeEnabledPayload* = ref object of RootObj
     zones*: Option[seq[PayPerCrawlDaricZoneCanBeEnabled]]
 
   PayPerCrawlZonesCanBeEnabledQueryPayload* = ref object of RootObj
     zones*: Option[seq[string]]
+
+  PayPerCrawlZonesCanBeEnabledUpdatePayload* = ref object of RootObj
+    zones*: seq[PayPerCrawlDaricZoneCanBeEnabledUpdate]
 
   PayPerCrawlApiErrorResponse* = ref object of RootObj
     errors*: Option[seq[PayPerCrawlRESTError]]
@@ -28444,14 +29181,14 @@ type
 
   PostureApiBaseFindingType* = ref object of RootObj
     ## Basic finding type information.
-    category*: PostureApiFindingCategory
+    category*: JsonNode
     description*: Option[string]
       ## Detailed description of the finding.
     id*: string
       ## The unique identifier of the finding.
     name*: string
       ## The name of the finding.
-    severity*: PostureApiSeverityEnum
+    severity*: string
     vendor*: string
       ## The SaaS/Cloud vendor of the platform with which the finding is associated.
 
@@ -28552,6 +29289,8 @@ type
       ## Account-specified display label for the webhook configuration.
     signing_secret*: Option[string]
       ## Secret key used for HMAC signing when authentication_type is "HMAC-Signing".
+    status*: Option[string]
+      ## Status of the webhook configuration. Defaults to enabled when omitted.
 
   PostureApiCredentialHealthStatusEnum* = enum
     ## Health status of integration credentials.
@@ -28791,14 +29530,14 @@ type
     severity*: PostureApiSeverityEnum
 
   PostureApiFindingType* = ref object of RootObj
-    category*: PostureApiFindingCategory
+    category*: JsonNode
     description*: Option[string]
       ## Detailed description of the finding.
     id*: string
       ## The unique identifier of the finding.
     name*: string
       ## The name of the finding.
-    severity*: PostureApiSeverityEnum
+    severity*: string
     vendor*: string
       ## The SaaS/Cloud vendor of the platform with which the finding is associated.
     remediation*: Option[PostureApiFindingRemediation]
@@ -29275,12 +30014,10 @@ type
     Jira = "Jira"
     Microsoft = "Microsoft"
     MicrosoftInternal = "Microsoft Internal"
-    Okta = "Okta"
     OpenAI = "OpenAI"
     Slack = "Slack"
     Salesforce = "Salesforce"
     ServiceNow = "ServiceNow"
-    Workday = "Workday"
     Zoom = "Zoom"
 
   PostureApiVendorsEnum* = enum
@@ -29301,6 +30038,7 @@ type
     SALESFORCE = "SALESFORCE"
     SERVICENOW = "SERVICENOW"
     SLACK = "SLACK"
+    ZOOM = "ZOOM"
 
   PostureApiWebhook* = ref object of RootObj
     ## Webhook configuration for sending finding notifications.
@@ -29764,6 +30502,10 @@ type
     operation_results*: seq[R2DataCatalogMaintenanceRunOperation]
     outcome*: Option[string]
     primary_error_code*: Option[int32]
+    request_id*: Option[string]
+      ## The request ID supplied when this run was queued via the manual queue endpoint,
+      ## so customers can locate their manually-triggered run in this history listing.
+      ## Absent for runs picked up by normal polling.
     run_id*: int64
     started_at*: string
     status*: string
@@ -31391,7 +32133,7 @@ type
     name*: string
       ## The fully qualified domain name (FQDN) in punycode format for internationalized
       ## domain names (IDNs).
-    pricing*: Option[RegistrarApiSandboxPricing]
+    pricing*: Option[RegistrarApiSandboxPricingRegistration]
     reason*: Option[string]
       ## Appears only when `registrable` is `false` and explains the result.
       ## - `extension_not_supported_via_api`: Cloudflare Registrar supports this
@@ -31469,7 +32211,7 @@ type
     name*: string
       ## The fully qualified domain name (FQDN) in punycode format for internationalized
       ## domain names (IDNs).
-    pricing*: Option[RegistrarApiSandboxPricing]
+    pricing*: Option[RegistrarApiSandboxPricingRegistration]
     reason*: Option[string]
       ## Appears only when `registrable` is `false` and explains the advisory search
       ## result. Use POST /domain-check for authoritative status.
@@ -31499,6 +32241,79 @@ type
       ## - `premium`: Premium domain with higher pricing from the registry.
       ##
 
+  RegistrarApiSandboxDomainTransferCheckReason* = enum
+    ## Transfer eligibility reason code.
+    ## - `extension_not_supported_via_api`: This API excludes the extension; dashboard
+    ## flows support it.
+    ## - `extension_not_supported`: Cloudflare Registrar excludes the extension.
+    ## - `domain_premium`: This API currently excludes premium transfers.
+    ## - `extension_disallows_transfer`: Extension currently blocks transfer
+    ## operations.
+    ## - `domain_not_exists`: No registration record exists for the domain.
+    ## - `domain_on_cloudflare`: Cloudflare already serves as the domain's registrar.
+    ## - `domain_locked`: Losing registrar reports transfer-prohibited lock status.
+    ## - `registry_status`: Registry status currently blocks transfer (for example,
+    ## pending transfer or deletion state).
+    ## - `domain_outside_transfer_window`: Domain is within a transfer wait window (for
+    ## example, recently registered).
+    ## - `domain_max_term`: Completing transfer would exceed the registry maximum term.
+    ## - `invalid_auth_code`: The provided auth code is incorrect.
+    ## - `invalid_auth_code_format`: Auth code fails Base64 validation.
+    ## - `dnssec_enabled`: DNSSEC is enabled. It must be disabled before transfer.
+    ## - `zone_not_found`: The target account lacks a Cloudflare zone for the domain.
+    ## - `zone_status_invalid`: The Cloudflare zone cannot transfer in its current
+    ## state.
+    ## - `invalid_zone_plan`: The zone plan fails transfer requirements.
+    ## - `domain_unsupported`: This endpoint rejects the domain name format.
+    ##
+    extensionNotSupportedViaApi = "extension_not_supported_via_api"
+    extensionNotSupported = "extension_not_supported"
+    domainPremium = "domain_premium"
+    extensionDisallowsTransfer = "extension_disallows_transfer"
+    domainNotExists = "domain_not_exists"
+    domainOnCloudflare = "domain_on_cloudflare"
+    domainLocked = "domain_locked"
+    registryStatus = "registry_status"
+    domainOutsideTransferWindow = "domain_outside_transfer_window"
+    domainMaxTerm = "domain_max_term"
+    invalidAuthCode = "invalid_auth_code"
+    invalidAuthCodeFormat = "invalid_auth_code_format"
+    dnssecEnabled = "dnssec_enabled"
+    zoneNotFound = "zone_not_found"
+    zoneStatusInvalid = "zone_status_invalid"
+    invalidZonePlan = "invalid_zone_plan"
+    domainUnsupported = "domain_unsupported"
+
+  RegistrarApiSandboxDomainTransferCheckRequest* = ref object of RootObj
+    ## Request body for checking domain transfer eligibility.
+    domains*: seq[JsonNode]
+      ## List of domain objects to evaluate for transfer eligibility.
+
+  RegistrarApiSandboxDomainTransferCheckResponse* = ref object of RootObj
+    errors*: RegistrarApiSandboxMessages
+    messages*: RegistrarApiSandboxMessages
+    result*: JsonNode
+      ## Contains the transfer eligibility results.
+    success*: bool
+      ## Whether the API call was successful.
+
+  RegistrarApiSandboxDomainTransferCheckResult* = ref object of RootObj
+    ## Transfer eligibility for a single domain.
+    ## `reasons` is always present:
+    ## - Empty when `transferable` is `true`.
+    ## - One or more reason objects when `transferable` is `false`.
+    ##
+    name*: string
+      ## The check evaluates this domain name.
+    pricing*: Option[RegistrarApiSandboxPricingTransfer]
+    reasons*: seq[JsonNode]
+      ## Machine-readable transfer eligibility reasons.
+    transferable*: bool
+      ## Indicates whether this API can currently transfer the domain.
+      ## - `true`: Transfer prerequisites pass.
+      ## - `false`: One or more prerequisites fail. See `reasons`.
+      ##
+
   RegistrarApiSandboxDomainUpdateProperties* = ref object of RootObj
     auto_renew*: Option[RegistrarApiSandboxAutoRenew]
     locked*: Option[RegistrarApiSandboxLocked]
@@ -31523,13 +32338,16 @@ type
   RegistrarApiSandboxExpiresAt* = string
 
   RegistrarApiSandboxExtensionItem* = ref object of RootObj
-    ## Extension entry with metadata and JSON Schema documents for the registration
-    ## operation.
+    ## Extension entry with metadata and JSON Schema documents for registration and
+    ## transfer operations.
     metadata*: JsonNode
       ## Extension metadata.
     registration_schema*: JsonNode
       ## JSON Schema describing the expected input structure for registration operations
       ## on this extension.
+    transfer_schema*: JsonNode
+      ## JSON Schema describing the expected input structure for transfer operations on
+      ## this extension.
 
   RegistrarApiSandboxExtensionResponseCollection* = ref object of RootObj
     errors*: RegistrarApiSandboxMessages
@@ -31561,27 +32379,21 @@ type
 
   RegistrarApiSandboxOrganization* = string
 
-  RegistrarApiSandboxPricing* = ref object of RootObj
-    ## Provides annual pricing information for a registrable domain. This object
-    ## appears only when `registrable` is `true`. The API returns all per-year
-    ## prices as strings to preserve decimal precision.
+  RegistrarApiSandboxPricingBase* = ref object of RootObj
+    ## Provides annual pricing information for a given domain.
+    ## The API returns all per-year prices as strings to preserve decimal precision.
     ##
-    ## `registration_cost` and `renewal_cost` frequently have the same value, but
-    ## may differ, especially when registries set different premium rates for
-    ## initial registration and renewal. For a multi-year registration (e.g., 4
-    ## years), `registration_cost` applies to the first year and `renewal_cost`
-    ## applies to each subsequent year. The values reflect the current registry
-    ## rate, which may change over time. Search and Check may surface premium
-    ## pricing, but this API currently supports standard registrations only.
+    ## `renewal_cost` and `registration_cost` or `transfer_cost` are frequently the
+    ## same value,
+    ## but may differ due to premium rates for certain domains.
+    ##
+    ## For a multi-year operations, the operation's cost applies to the first year
+    ## and `renewal_cost` applies to each subsequent year. The values reflect the
+    ## current
+    ## registry rate, which can change over time.
     ##
     currency*: string
       ## ISO-4217 currency code for the prices (e.g., "USD", "EUR", "GBP").
-    registration_cost*: string
-      ## The first-year cost to register this domain. For premium domains
-      ## (`tier: premium`), the registry sets this price, which may significantly
-      ## exceed standard pricing. For multi-year registrations, this cost applies
-      ## to the first year only; `renewal_cost` applies to subsequent years.
-      ##
     renewal_cost*: string
       ## Per-year renewal cost for this domain. Applied to each year beyond
       ## the first year of a multi-year registration, and to each annual
@@ -31589,6 +32401,32 @@ type
       ## especially for premium domains where initial registration often
       ## costs more than renewals.
       ##
+
+  RegistrarApiSandboxPricingRegistration* = ref object of RootObj
+    currency*: string
+      ## ISO-4217 currency code for the prices (e.g., "USD", "EUR", "GBP").
+    renewal_cost*: string
+      ## Per-year renewal cost for this domain. Applied to each year beyond
+      ## the first year of a multi-year registration, and to each annual
+      ## auto-renewal thereafter. May differ from `registration_cost`,
+      ## especially for premium domains where initial registration often
+      ## costs more than renewals.
+      ##
+    registration_cost*: string
+      ## The first-year cost to register this domain.
+
+  RegistrarApiSandboxPricingTransfer* = ref object of RootObj
+    currency*: string
+      ## ISO-4217 currency code for the prices (e.g., "USD", "EUR", "GBP").
+    renewal_cost*: string
+      ## Per-year renewal cost for this domain. Applied to each year beyond
+      ## the first year of a multi-year registration, and to each annual
+      ## auto-renewal thereafter. May differ from `registration_cost`,
+      ## especially for premium domains where initial registration often
+      ## costs more than renewals.
+      ##
+    transfer_cost*: string
+      ## The first-year cost to transfer this domain.
 
   RegistrarApiSandboxPrivacy* = bool
 
@@ -31618,7 +32456,7 @@ type
     domain_name*: RegistrarApiSandboxDomainName
     expires_at*: Option[string]
       ## When the domain registration expires. Ready registrations include this value;
-      ## only `registration_pending` may return null.
+      ## only `registration_pending` and `transfer_pending` may return null.
     locked*: bool
       ## Whether the domain is locked for transfer.
     privacy_mode*: string
@@ -31627,6 +32465,7 @@ type
       ## Current registration status.
       ## - `active`: The domain operates with an active registration.
       ## - `registration_pending`: Registration remains in progress.
+      ## - `transfer_pending`: Domain transfer is in progress.
       ## - `expired`: The domain registration expired.
       ## - `suspended`: The registry suspended the domain.
       ## - `redemption_period`: The domain entered the redemption grace period.
@@ -31764,7 +32603,7 @@ type
       ## and `.ca` legal type fields. Omit this object when the extension's
       ## registration schema excludes `contact_extensions`.
       ##
-    contacts*: Option[RegistrarApiSandboxRegistrationContacts]
+    contacts*: Option[JsonNode]
     domain_name*: RegistrarApiSandboxDomainName
     privacy_mode*: Option[string]
       ## Sets the WHOIS privacy mode for the registration. Defaults to `redaction`.
@@ -32016,7 +32855,7 @@ type
     name*: string
       ## The fully qualified domain name (FQDN) in punycode format for internationalized
       ## domain names (IDNs).
-    pricing*: Option[RegistrarApiPricing]
+    pricing*: Option[RegistrarApiPricingRegistration]
     reason*: Option[string]
       ## Appears only when `registrable` is `false` and explains the result.
       ## - `extension_not_supported_via_api`: Cloudflare Registrar supports this
@@ -32094,7 +32933,7 @@ type
     name*: string
       ## The fully qualified domain name (FQDN) in punycode format for internationalized
       ## domain names (IDNs).
-    pricing*: Option[RegistrarApiPricing]
+    pricing*: Option[RegistrarApiPricingRegistration]
     reason*: Option[string]
       ## Appears only when `registrable` is `false` and explains the advisory search
       ## result. Use POST /domain-check for authoritative status.
@@ -32124,6 +32963,79 @@ type
       ## - `premium`: Premium domain with higher pricing from the registry.
       ##
 
+  RegistrarApiDomainTransferCheckReason* = enum
+    ## Transfer eligibility reason code.
+    ## - `extension_not_supported_via_api`: This API excludes the extension; dashboard
+    ## flows support it.
+    ## - `extension_not_supported`: Cloudflare Registrar excludes the extension.
+    ## - `domain_premium`: This API currently excludes premium transfers.
+    ## - `extension_disallows_transfer`: Extension currently blocks transfer
+    ## operations.
+    ## - `domain_not_exists`: No registration record exists for the domain.
+    ## - `domain_on_cloudflare`: Cloudflare already serves as the domain's registrar.
+    ## - `domain_locked`: Losing registrar reports transfer-prohibited lock status.
+    ## - `registry_status`: Registry status currently blocks transfer (for example,
+    ## pending transfer or deletion state).
+    ## - `domain_outside_transfer_window`: Domain is within a transfer wait window (for
+    ## example, recently registered).
+    ## - `domain_max_term`: Completing transfer would exceed the registry maximum term.
+    ## - `invalid_auth_code`: The provided auth code is incorrect.
+    ## - `invalid_auth_code_format`: Auth code fails Base64 validation.
+    ## - `dnssec_enabled`: DNSSEC is enabled. It must be disabled before transfer.
+    ## - `zone_not_found`: The target account lacks a Cloudflare zone for the domain.
+    ## - `zone_status_invalid`: The Cloudflare zone cannot transfer in its current
+    ## state.
+    ## - `invalid_zone_plan`: The zone plan fails transfer requirements.
+    ## - `domain_unsupported`: This endpoint rejects the domain name format.
+    ##
+    extensionNotSupportedViaApi = "extension_not_supported_via_api"
+    extensionNotSupported = "extension_not_supported"
+    domainPremium = "domain_premium"
+    extensionDisallowsTransfer = "extension_disallows_transfer"
+    domainNotExists = "domain_not_exists"
+    domainOnCloudflare = "domain_on_cloudflare"
+    domainLocked = "domain_locked"
+    registryStatus = "registry_status"
+    domainOutsideTransferWindow = "domain_outside_transfer_window"
+    domainMaxTerm = "domain_max_term"
+    invalidAuthCode = "invalid_auth_code"
+    invalidAuthCodeFormat = "invalid_auth_code_format"
+    dnssecEnabled = "dnssec_enabled"
+    zoneNotFound = "zone_not_found"
+    zoneStatusInvalid = "zone_status_invalid"
+    invalidZonePlan = "invalid_zone_plan"
+    domainUnsupported = "domain_unsupported"
+
+  RegistrarApiDomainTransferCheckRequest* = ref object of RootObj
+    ## Request body for checking domain transfer eligibility.
+    domains*: seq[JsonNode]
+      ## List of domain objects to evaluate for transfer eligibility.
+
+  RegistrarApiDomainTransferCheckResponse* = ref object of RootObj
+    errors*: RegistrarApiMessages
+    messages*: RegistrarApiMessages
+    result*: JsonNode
+      ## Contains the transfer eligibility results.
+    success*: bool
+      ## Whether the API call was successful.
+
+  RegistrarApiDomainTransferCheckResult* = ref object of RootObj
+    ## Transfer eligibility for a single domain.
+    ## `reasons` is always present:
+    ## - Empty when `transferable` is `true`.
+    ## - One or more reason objects when `transferable` is `false`.
+    ##
+    name*: string
+      ## The check evaluates this domain name.
+    pricing*: Option[RegistrarApiPricingTransfer]
+    reasons*: seq[JsonNode]
+      ## Machine-readable transfer eligibility reasons.
+    transferable*: bool
+      ## Indicates whether this API can currently transfer the domain.
+      ## - `true`: Transfer prerequisites pass.
+      ## - `false`: One or more prerequisites fail. See `reasons`.
+      ##
+
   RegistrarApiDomainUpdateProperties* = ref object of RootObj
     auto_renew*: Option[RegistrarApiAutoRenew]
     locked*: Option[RegistrarApiLocked]
@@ -32148,13 +33060,16 @@ type
   RegistrarApiExpiresAt* = string
 
   RegistrarApiExtensionItem* = ref object of RootObj
-    ## Extension entry with metadata and JSON Schema documents for the registration
-    ## operation.
+    ## Extension entry with metadata and JSON Schema documents for registration and
+    ## transfer operations.
     metadata*: JsonNode
       ## Extension metadata.
     registration_schema*: JsonNode
       ## JSON Schema describing the expected input structure for registration operations
       ## on this extension.
+    transfer_schema*: JsonNode
+      ## JSON Schema describing the expected input structure for transfer operations on
+      ## this extension.
 
   RegistrarApiExtensionResponseCollection* = ref object of RootObj
     errors*: RegistrarApiMessages
@@ -32186,27 +33101,21 @@ type
 
   RegistrarApiOrganization* = string
 
-  RegistrarApiPricing* = ref object of RootObj
-    ## Provides annual pricing information for a registrable domain. This object
-    ## appears only when `registrable` is `true`. The API returns all per-year
-    ## prices as strings to preserve decimal precision.
+  RegistrarApiPricingBase* = ref object of RootObj
+    ## Provides annual pricing information for a given domain.
+    ## The API returns all per-year prices as strings to preserve decimal precision.
     ##
-    ## `registration_cost` and `renewal_cost` frequently have the same value, but
-    ## may differ, especially when registries set different premium rates for
-    ## initial registration and renewal. For a multi-year registration (e.g., 4
-    ## years), `registration_cost` applies to the first year and `renewal_cost`
-    ## applies to each subsequent year. The values reflect the current registry
-    ## rate, which may change over time. Search and Check may surface premium
-    ## pricing, but this API currently supports standard registrations only.
+    ## `renewal_cost` and `registration_cost` or `transfer_cost` are frequently the
+    ## same value,
+    ## but may differ due to premium rates for certain domains.
+    ##
+    ## For a multi-year operations, the operation's cost applies to the first year
+    ## and `renewal_cost` applies to each subsequent year. The values reflect the
+    ## current
+    ## registry rate, which can change over time.
     ##
     currency*: string
       ## ISO-4217 currency code for the prices (e.g., "USD", "EUR", "GBP").
-    registration_cost*: string
-      ## The first-year cost to register this domain. For premium domains
-      ## (`tier: premium`), the registry sets this price, which may significantly
-      ## exceed standard pricing. For multi-year registrations, this cost applies
-      ## to the first year only; `renewal_cost` applies to subsequent years.
-      ##
     renewal_cost*: string
       ## Per-year renewal cost for this domain. Applied to each year beyond
       ## the first year of a multi-year registration, and to each annual
@@ -32214,6 +33123,32 @@ type
       ## especially for premium domains where initial registration often
       ## costs more than renewals.
       ##
+
+  RegistrarApiPricingRegistration* = ref object of RootObj
+    currency*: string
+      ## ISO-4217 currency code for the prices (e.g., "USD", "EUR", "GBP").
+    renewal_cost*: string
+      ## Per-year renewal cost for this domain. Applied to each year beyond
+      ## the first year of a multi-year registration, and to each annual
+      ## auto-renewal thereafter. May differ from `registration_cost`,
+      ## especially for premium domains where initial registration often
+      ## costs more than renewals.
+      ##
+    registration_cost*: string
+      ## The first-year cost to register this domain.
+
+  RegistrarApiPricingTransfer* = ref object of RootObj
+    currency*: string
+      ## ISO-4217 currency code for the prices (e.g., "USD", "EUR", "GBP").
+    renewal_cost*: string
+      ## Per-year renewal cost for this domain. Applied to each year beyond
+      ## the first year of a multi-year registration, and to each annual
+      ## auto-renewal thereafter. May differ from `registration_cost`,
+      ## especially for premium domains where initial registration often
+      ## costs more than renewals.
+      ##
+    transfer_cost*: string
+      ## The first-year cost to transfer this domain.
 
   RegistrarApiPrivacy* = bool
 
@@ -32243,7 +33178,7 @@ type
     domain_name*: RegistrarApiDomainName
     expires_at*: Option[string]
       ## When the domain registration expires. Ready registrations include this value;
-      ## only `registration_pending` may return null.
+      ## only `registration_pending` and `transfer_pending` may return null.
     locked*: bool
       ## Whether the domain is locked for transfer.
     privacy_mode*: string
@@ -32252,6 +33187,7 @@ type
       ## Current registration status.
       ## - `active`: The domain operates with an active registration.
       ## - `registration_pending`: Registration remains in progress.
+      ## - `transfer_pending`: Domain transfer is in progress.
       ## - `expired`: The domain registration expired.
       ## - `suspended`: The registry suspended the domain.
       ## - `redemption_period`: The domain entered the redemption grace period.
@@ -32389,7 +33325,7 @@ type
       ## and `.ca` legal type fields. Omit this object when the extension's
       ## registration schema excludes `contact_extensions`.
       ##
-    contacts*: Option[RegistrarApiRegistrationContacts]
+    contacts*: Option[JsonNode]
     domain_name*: RegistrarApiDomainName
     privacy_mode*: Option[string]
       ## Sets the WHOIS privacy mode for the registration. Defaults to `redaction`.
@@ -32453,6 +33389,32 @@ type
       ## Status of the auth-code entry and verification step.
     unlock_domain*: Option[string]
       ## Status of the domain-unlock step at the foreign registrar.
+
+  RegistrarApiTransferInCreateRequest* = ref object of RootObj
+    auth_code*: Option[string]
+      ## The EPP/authorization code from your current registrar, base64-encoded
+      ## per RFC 4648 §4. Obtain this from your current registrar's control panel.
+      ## Required for all extensions, except for UK.
+      ##
+    auto_renew*: Option[bool]
+      ## Enable or disable automatic renewal after transfer. Defaults to `false` if
+      ## omitted.
+      ##
+    contact_extensions*: Option[JsonNode]
+      ## Registry-specific contact extension values for the registrant.
+      ## `GET /accounts/{account_id}/registrar/extensions/{extension}` documents the
+      ## required keys and allowed values for each extension in the
+      ## `transfer_schema.properties.contact_extensions` object.
+      ##
+      ## Examples include `.us` nexus fields, `.uk` registrant type fields,
+      ## and `.ca` legal type fields. Include this object only when the extension's
+      ## transfer schema defines `contact_extensions`.
+      ##
+    contacts*: Option[JsonNode]
+    privacy_mode*: Option[string]
+      ## WHOIS privacy mode to apply after transfer completes. Defaults to
+      ## the extension's default privacy mode (typically `redaction`).
+      ##
 
   RegistrarApiUpdatedAt* = string
 
@@ -35844,6 +36806,7 @@ type
     origin_direct*: Option[SpectrumConfigOriginDirect]
     origin_dns*: Option[SpectrumConfigOriginDns]
     origin_port*: Option[SpectrumConfigOriginPort]
+    origin_worker_id*: Option[SpectrumConfigOriginWorkerId]
     protocol*: SpectrumConfigProtocol
     proxy_protocol*: Option[SpectrumConfigProxyProtocol]
     tls*: Option[SpectrumConfigTls]
@@ -35937,6 +36900,8 @@ type
     ## Notes: If specifying a port range, the number of ports in the range must match
     ## the number of ports specified in the "protocol" field.
 
+  SpectrumConfigOriginWorkerId* = string
+
   SpectrumConfigPaygoAppConfig* = ref object of RootObj
     created_on*: SpectrumConfigCreated
     id*: SpectrumConfigAppIdentifier
@@ -35979,10 +36944,12 @@ type
     ## Spectrum will send traffic directly to your origin, and the application's type
     ## is derived from the `protocol`. When set to "http" or "https", Spectrum will
     ## apply Cloudflare's HTTP/HTTPS features as it sends traffic to your origin, and
-    ## the application type matches this property exactly.
+    ## the application type matches this property exactly. When set to "worker",
+    ## traffic is sent to the Worker specified by `origin_worker_id`.
     direct = "direct"
     http = "http"
     https = "https"
+    worker = "worker"
 
   SpectrumConfigUpdateAppConfig* = ref object of RootObj
 
@@ -37056,6 +38023,14 @@ type
 
   TeamsDevicesAutoConnect* = float64
 
+  TeamsDevicesBrowserExtensionConfig* = ref object of RootObj
+    ## Browser extension proxy settings. Required when profile_type is
+    ## browser_extension and invalid for WARP profiles.
+    proxy_control*: string
+      ## Whether the user may disable the browser extension proxy.
+    proxy_enabled*: bool
+      ## Whether the browser extension proxy is active.
+
   TeamsDevicesCaptivePortal* = float64
 
   TeamsDevicesCarbonblackInputRequest* = ref object of RootObj
@@ -37217,6 +38192,7 @@ type
     global_acceleration*: Option[TeamsDevicesGlobalAcceleration]
     `include`*: Option[TeamsDevicesInclude]
     policy_id*: Option[TeamsDevicesSchemasUuid]
+    profile_type*: Option[TeamsDevicesProfileType]
     register_interface_ip_with_dns*: Option[TeamsDevicesRegisterInterfaceIpWithDns]
     sccm_vpn_boundary_support*: Option[TeamsDevicesSccmVpnBoundarySupport]
     service_mode_v2*: Option[TeamsDevicesServiceModeV2]
@@ -37332,6 +38308,7 @@ type
     allow_updates*: Option[TeamsDevicesAllowUpdates]
     allowed_to_leave*: Option[TeamsDevicesAllowedToLeave]
     auto_connect*: Option[TeamsDevicesAutoConnect]
+    browser_extension_config*: Option[TeamsDevicesBrowserExtensionConfig]
     captive_portal*: Option[TeamsDevicesCaptivePortal]
     default*: Option[TeamsDevicesDefault]
     description*: Option[TeamsDevicesSchemasDescription]
@@ -37352,6 +38329,7 @@ type
       ## The name of the device settings profile.
     policy_id*: Option[TeamsDevicesSchemasUuid]
     precedence*: Option[TeamsDevicesPrecedence]
+    profile_type*: Option[TeamsDevicesProfileType]
     register_interface_ip_with_dns*: Option[TeamsDevicesRegisterInterfaceIpWithDns]
     sccm_vpn_boundary_support*: Option[TeamsDevicesSccmVpnBoundarySupport]
     service_mode_v2*: Option[TeamsDevicesServiceModeV2]
@@ -37526,6 +38504,9 @@ type
     ## https://developers.cloudflare.com/china-network/concepts/global-acceleration/.
     api_endpoints*: seq[string]
       ## IP:port entries for the API endpoints.
+    autoswitch*: Option[bool]
+      ## Automatically switch Global Acceleration regions based on device location.
+      ## Defaults to false when not provided.
     enabled*: bool
       ## Global acceleration settings are used only when "enabled".
     masque_endpoints*: seq[string]
@@ -37714,6 +38695,21 @@ type
     version*: string
       ## Version of OS.
 
+  TeamsDevicesOverrideCode* = ref object of RootObj
+    code*: string
+      ## Uninstall protection override code.
+
+  TeamsDevicesOverrideCodeCreateRequest* = ref object of RootObj
+    device_id*: Option[string]
+      ## Physical device ID. Required when scope is device and forbidden when scope is
+      ## account.
+    duration_hours*: int64
+      ## Number of hours for which the override code should remain valid.
+    scope*: string
+      ## Whether the code applies to every device in the account or one physical device.
+    `type`*: string
+      ## The feature that the override code applies to.
+
   TeamsDevicesOverrideCodes* = ref object of RootObj
     disable_for_time*: Option[JsonNode]
 
@@ -37723,7 +38719,6 @@ type
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful.
-    result_info*: Option[TeamsDevicesResultInfo]
 
   TeamsDevicesPaginationInfo* = ref object of RootObj
     count*: int64
@@ -37783,8 +38778,15 @@ type
       ##
     serial_number*: Option[string]
       ## The device serial number.
+    tags*: JsonNode
+      ## Tags assigned to the device. An empty object if the device has no tags.
     updated_at*: string
       ## The RFC3339 timestamp when the device was last updated.
+
+  TeamsDevicesPhysicalDeviceUpdateRequest* = ref object of RootObj
+    tags*: Option[JsonNode]
+      ## Replaces all tags assigned to the physical device. An empty object removes all
+      ## tags.
 
   TeamsDevicesPlatform* = enum
     windows = "windows"
@@ -37809,6 +38811,12 @@ type
       ## registration.
 
   TeamsDevicesPrecedence* = float64
+
+  TeamsDevicesProfileType* = enum
+    ## The client type to which the device settings profile applies. This field is set
+    ## when the profile is created and cannot be changed.
+    warp = "warp"
+    browserExtension = "browser_extension"
 
   TeamsDevicesRegisterInterfaceIpWithDns* = bool
 
@@ -39996,7 +41004,7 @@ type
     client_version*: Option[TunnelVersion]
     colo_name*: Option[TunnelColoName]
     id*: Option[TunnelConnectionId]
-    is_pending_reconnect*: Option[TunnelIsPendingReconnect]
+    is_pending_reconnect*: Option[JsonNode]
     opened_at*: Option[string]
       ## Timestamp of when the connection was established.
     origin_ip*: Option[JsonNode]
@@ -41453,6 +42461,10 @@ type
     result_info*: Option[JsonNode]
 
   WaitingroomApiResponseCommon* = ref object of RootObj
+    errors*: WaitingroomMessages
+    messages*: WaitingroomMessages
+    result*: Option[JsonNode]
+    success*: bool
 
   WaitingroomApiResponseCommon2* = ref object of RootObj
     errors*: WaitingroomMessages
@@ -41468,7 +42480,10 @@ type
       ## Whether the API call was successful.
 
   WaitingroomApiResponseSingle* = ref object of RootObj
+    errors*: WaitingroomMessages
+    messages*: WaitingroomMessages
     result*: JsonNode
+    success*: bool
 
   WaitingroomCookieAttributes* = ref object of RootObj
     ## Configures cookie attributes for the waiting room cookie. This encrypted cookie
@@ -41520,6 +42535,7 @@ type
     daDK = "da-DK"
     fiFI = "fi-FI"
     ltLT = "lt-LT"
+    lvLV = "lv-LV"
     msMY = "ms-MY"
     nbNO = "nb-NO"
     roRO = "ro-RO"
@@ -41559,7 +42575,10 @@ type
   WaitingroomEventDetailsQueueingMethod* = string
 
   WaitingroomEventDetailsResponse* = ref object of RootObj
+    errors*: WaitingroomMessages
+    messages*: WaitingroomMessages
     result*: WaitingroomEventDetailsResult
+    success*: bool
 
   WaitingroomEventDetailsResult* = ref object of RootObj
     created_on*: Option[WaitingroomTimestamp]
@@ -41590,7 +42609,10 @@ type
   WaitingroomEventId* = string
 
   WaitingroomEventIdResponse* = ref object of RootObj
+    errors*: WaitingroomMessages
+    messages*: WaitingroomMessages
     result*: JsonNode
+    success*: bool
 
   WaitingroomEventName* = string
 
@@ -41601,7 +42623,10 @@ type
   WaitingroomEventQueueingMethod* = string
 
   WaitingroomEventResponse* = ref object of RootObj
+    errors*: WaitingroomMessages
+    messages*: WaitingroomMessages
     result*: WaitingroomEventResult
+    success*: bool
 
   WaitingroomEventResponseCollection* = ref object of RootObj
     errors*: WaitingroomMessages
@@ -41683,7 +42708,10 @@ type
   WaitingroomPath* = string
 
   WaitingroomPreviewResponse* = ref object of RootObj
+    errors*: WaitingroomMessages
+    messages*: WaitingroomMessages
     result*: JsonNode
+    success*: bool
 
   WaitingroomPreviewUrl* = string
 
@@ -41813,7 +42841,10 @@ type
   WaitingroomSessionDuration* = int64
 
   WaitingroomSingleResponse* = ref object of RootObj
+    errors*: WaitingroomMessages
+    messages*: WaitingroomMessages
     result*: WaitingroomWaitingroom
+    success*: bool
 
   WaitingroomStatus* = enum
     eventPrequeueing = "event_prequeueing"
@@ -41824,7 +42855,10 @@ type
   WaitingroomStatusEventId* = string
 
   WaitingroomStatusResponse* = ref object of RootObj
+    errors*: WaitingroomMessages
+    messages*: WaitingroomMessages
     result*: JsonNode
+    success*: bool
 
   WaitingroomSuspended* = bool
 
@@ -41860,7 +42894,10 @@ type
   WaitingroomWaitingRoomId* = string
 
   WaitingroomWaitingRoomIdResponse* = ref object of RootObj
+    errors*: WaitingroomMessages
+    messages*: WaitingroomMessages
     result*: JsonNode
+    success*: bool
 
   WaitingroomWaitingroom* = ref object of RootObj
     additional_routes*: Option[WaitingroomAdditionalRoutes]
@@ -41894,7 +42931,10 @@ type
     search_engine_crawler_bypass*: Option[WaitingroomSearchEngineCrawlerBypass]
 
   WaitingroomZoneSettingsResponse* = ref object of RootObj
+    errors*: WaitingroomMessages
+    messages*: WaitingroomMessages
     result*: JsonNode
+    success*: bool
 
   Web3ApiResponseCollection* = ref object of RootObj
     errors*: Web3Messages
@@ -42459,6 +43499,193 @@ type
       ## Message explaining that the tag limit has been exceeded and suggesting to remove
       ## a tag.
 
+  WorkersPreview* = ref object of RootObj
+    created_on*: string
+      ## When the Preview was created.
+    deployed_on*: Option[string]
+      ## When the Preview's most recent deployment was created. `null` if the Preview has
+      ## never been deployed.
+    id*: string
+      ## Immutable ID of the Preview.
+    logpush*: bool
+      ## Whether logpush is enabled for the Preview.
+    name*: string
+      ## Human-readable name of the Preview.
+    observability*: JsonNode
+      ## Observability settings for the Preview.
+    slug*: string
+      ## Immutable URL-safe identifier for the Preview.
+    tags*: seq[string]
+      ## Tags associated with the Preview.
+    tail_consumers*: seq[JsonNode]
+      ## Other Workers that should consume logs from the Preview.
+    updated_on*: string
+      ## When the Preview was most recently updated.
+    urls*: seq[string]
+      ## Routable URLs for the Preview.
+
+  WorkersPreviewDeployment* = ref object of RootObj
+    annotations*: Option[JsonNode]
+      ## Metadata about the deployment.
+    assets*: Option[WorkersAssets]
+    bindings*: Option[JsonNode]
+      ## Bindings attached to the deployment, as an array of objects
+      ## that each name themselves. An upload can send `env` or
+      ## `bindings`, and a read returns both. Uploads to a Preview whose
+      ## parent Worker has a previews base config must use `env`.
+      ##
+    cache_options*: Option[WorkersCacheOptions]
+    compatibility_date*: Option[WorkersCompatibilityDate]
+    compatibility_flags*: Option[WorkersCompatibilityFlags]
+    containers*: Option[WorkersContainers]
+    env*: Option[JsonNode]
+      ## Bindings attached to the deployment, keyed by binding name. An
+      ## upload can send `env` or `bindings`, and a read returns both.
+      ##
+    exports*: Option[JsonNode]
+      ## Declarative exports for the deployment, including Durable
+      ## Object classes (with their `storage` backend) and named Worker
+      ## entrypoints. On reads, tombstoned lifecycle entries are
+      ## omitted, so only live exports (`created` and
+      ## `expecting-transfer`) are returned. `exports` and `migrations`
+      ## are mutually exclusive on upload.
+      ##
+    limits*: Option[JsonNode]
+      ## Resource limits enforced at runtime.
+    main_module*: Option[string]
+      ## The name of the module that exports a `fetch` handler. Multipart uploads
+      ## reference the file part by filename.
+    migrations*: Option[JsonNode]
+      ## Migrations for Durable Objects associated with the deployment. Migrations are
+      ## applied when the deployment is created.
+    placement*: Option[WorkersPlacementInfoNoStatus]
+    usage_model*: Option[string]
+      ## Usage model for the deployment.
+    modules*: Option[seq[JsonNode]]
+      ## Code, sourcemaps, and other content used at runtime.
+    author_email*: string
+      ## Email of the user who created the deployment. May be empty for deployments
+      ## created using an API token.
+    author_id*: string
+      ## Identifier of the user who created the deployment.
+    created_on*: string
+      ## When the deployment was created.
+    exports_reconciliation*: Option[JsonNode]
+      ## Summary of the declarative exports reconciliation that ran on
+      ## this upload. Populated only when the uploaded metadata included
+      ## an `exports` block. Durable Object entries drive reconciliation;
+      ## `type: worker` entries do not contribute to this summary.
+      ##
+    id*: string
+      ## Deployment identifier.
+    migration_tag*: Option[string]
+      ## Durable Object migration tag. Omitted if the Preview does not use Durable
+      ## Objects.
+    number*: int64
+      ## The integer deployment number, starting from one.
+    source*: Option[string]
+      ## The client used to create the deployment.
+    startup_time_ms*: Option[int64]
+      ## Time in milliseconds spent on Worker startup.
+    urls*: seq[string]
+      ## All routable URLs that always point to this deployment.
+
+  WorkersPreviewDeploymentConfig* = ref object of RootObj
+    ## Configuration shared by JSON and multipart preview deployment uploads.
+    annotations*: Option[JsonNode]
+      ## Metadata about the deployment.
+    assets*: Option[WorkersAssets]
+    bindings*: Option[JsonNode]
+      ## Bindings attached to the deployment, as an array of objects
+      ## that each name themselves. An upload can send `env` or
+      ## `bindings`, and a read returns both. Uploads to a Preview whose
+      ## parent Worker has a previews base config must use `env`.
+      ##
+    cache_options*: Option[WorkersCacheOptions]
+    compatibility_date*: Option[WorkersCompatibilityDate]
+    compatibility_flags*: Option[WorkersCompatibilityFlags]
+    containers*: Option[WorkersContainers]
+    env*: Option[JsonNode]
+      ## Bindings attached to the deployment, keyed by binding name. An
+      ## upload can send `env` or `bindings`, and a read returns both.
+      ##
+    exports*: Option[JsonNode]
+      ## Declarative exports for the deployment, including Durable
+      ## Object classes (with their `storage` backend) and named Worker
+      ## entrypoints. On reads, tombstoned lifecycle entries are
+      ## omitted, so only live exports (`created` and
+      ## `expecting-transfer`) are returned. `exports` and `migrations`
+      ## are mutually exclusive on upload.
+      ##
+    limits*: Option[JsonNode]
+      ## Resource limits enforced at runtime.
+    main_module*: Option[string]
+      ## The name of the module that exports a `fetch` handler. Multipart uploads
+      ## reference the file part by filename.
+    migrations*: Option[JsonNode]
+      ## Migrations for Durable Objects associated with the deployment. Migrations are
+      ## applied when the deployment is created.
+    placement*: Option[WorkersPlacementInfoNoStatus]
+    usage_model*: Option[string]
+      ## Usage model for the deployment.
+
+  WorkersPreviewDeploymentRequest* = ref object of RootObj
+    ## Preview deployment configuration with base64-encoded modules.
+    annotations*: Option[JsonNode]
+      ## Metadata about the deployment.
+    assets*: Option[WorkersAssets]
+    bindings*: Option[JsonNode]
+      ## Bindings attached to the deployment, as an array of objects
+      ## that each name themselves. An upload can send `env` or
+      ## `bindings`, and a read returns both. Uploads to a Preview whose
+      ## parent Worker has a previews base config must use `env`.
+      ##
+    cache_options*: Option[WorkersCacheOptions]
+    compatibility_date*: Option[WorkersCompatibilityDate]
+    compatibility_flags*: Option[WorkersCompatibilityFlags]
+    containers*: Option[WorkersContainers]
+    env*: Option[JsonNode]
+      ## Bindings attached to the deployment, keyed by binding name. An
+      ## upload can send `env` or `bindings`, and a read returns both.
+      ##
+    exports*: Option[JsonNode]
+      ## Declarative exports for the deployment, including Durable
+      ## Object classes (with their `storage` backend) and named Worker
+      ## entrypoints. On reads, tombstoned lifecycle entries are
+      ## omitted, so only live exports (`created` and
+      ## `expecting-transfer`) are returned. `exports` and `migrations`
+      ## are mutually exclusive on upload.
+      ##
+    limits*: Option[JsonNode]
+      ## Resource limits enforced at runtime.
+    main_module*: Option[string]
+      ## The name of the module that exports a `fetch` handler. Multipart uploads
+      ## reference the file part by filename.
+    migrations*: Option[JsonNode]
+      ## Migrations for Durable Objects associated with the deployment. Migrations are
+      ## applied when the deployment is created.
+    placement*: Option[WorkersPlacementInfoNoStatus]
+    usage_model*: Option[string]
+      ## Usage model for the deployment.
+    modules*: Option[seq[JsonNode]]
+      ## Code, sourcemaps, and other content used at runtime.
+
+  WorkersPreviewsBaseConfig* = ref object of RootObj
+    cache_options*: Option[JsonNode]
+      ## Cache options used when creating new Previews.
+    env*: Option[JsonNode]
+      ## Bindings used when creating new Previews, keyed by binding name.
+    limits*: Option[JsonNode]
+      ## Resource limits enforced at runtime for newly created Previews.
+    logpush*: Option[bool]
+      ## Whether logpush is enabled when creating new Previews.
+    observability*: Option[JsonNode]
+      ## Observability settings used when creating new Previews.
+    placement*: Option[JsonNode]
+      ## Placement configuration used when creating new Previews.
+    tail_consumers*: Option[seq[JsonNode]]
+      ## Other Workers that should consume logs from newly created Previews.
+
   WorkersVersion* = ref object of RootObj
     annotations*: Option[JsonNode]
       ## Metadata about the version.
@@ -42554,6 +43781,8 @@ type
       ## Name of the Worker.
     observability*: JsonNode
       ## Observability settings for the Worker.
+    previews_base_config*: Option[JsonNode]
+      ## Template configuration used when creating new Previews for this Worker.
     references*: JsonNode
       ## Other resources that reference the Worker and depend on it existing.
     subdomain*: JsonNode
@@ -42603,6 +43832,21 @@ type
       ## Whether the API call was successful.
 
   WorkersAssets* = ref object of RootObj
+    ## Configuration for assets within a Worker.
+    ##
+    ## [`_headers`](https://developers.cloudflare.com/workers/static-assets/headers/#cu
+    ## stom-headers) and
+    ## [`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects
+    ## /) files should be
+    ## included as modules named `_headers` and `_redirects` with content type
+    ## `text/plain`.
+    ##
+    config*: Option[JsonNode]
+      ## Configuration for assets within a Worker.
+    jwt*: Option[string]
+      ## Token provided upon successful upload of all files from a registered manifest.
+
+  WorkersAssets2* = ref object of RootObj
     ## Configuration for assets within a Worker.
     config*: Option[JsonNode]
       ## Configuration for assets within a Worker.
@@ -42733,6 +43977,14 @@ type
     json*: JsonNode
       ## JSON data to use.
     name*: WorkersBindingName
+    `type`*: string
+      ## The kind of resource that the binding provides.
+
+  WorkersBindingKindK2* = ref object of RootObj
+    ## A K2 stream binding. Available only to accounts enabled for K2.
+    name*: WorkersBindingName
+    stream*: string
+      ## ID of a K2 stream owned by the account deploying the Worker.
     `type`*: string
       ## The kind of resource that the binding provides.
 
@@ -42985,6 +44237,12 @@ type
     source*: string
     strategy*: string
     versions*: seq[JsonNode]
+      ## Worker versions included in this deployment. Each object must contain a
+      ## `version_id` UUID and a `percentage`; percentages across all objects must total
+      ## 100. In the `cf` CLI, pass the entire array as one JSON value to `--versions`,
+      ## either inline, for example `--versions
+      ## '[{"version_id":"023e105f-2a42-4f8b-a1c1-73f6a2a30c0f","percentage":100}]'`, or
+      ## from a JSON file with `--versions @versions.json`.
 
   WorkersDispatchNamespaceName* = string
 
@@ -43100,6 +44358,21 @@ type
     ##
     enabled*: bool
       ## Whether caching is enabled for this entrypoint.
+
+  WorkersEnv* = ref object of RootObj
+    ## Bindings attached to a Worker, keyed by binding name. `bindings`
+    ## carries the same information as an array of objects that each
+    ## name themselves, and an upload can use one form or the other.
+    ##
+
+  WorkersEnvBindingItem* = ref object of RootObj
+    ## A single entry in the `env` map. An entry holds the same payload
+    ## as an entry of `bindings` without the `name` property, because
+    ## the map key supplies the name. See `binding_item` for the payload
+    ## of each binding kind.
+    ##
+    `type`*: string
+      ## The kind of resource that the binding provides.
 
   WorkersEnvironment* = string
 
@@ -43414,7 +44687,7 @@ type
     migrations*: Option[JsonNode]
       ## Migrations to apply for Durable Objects associated with this Worker.
       ##
-    observability*: Option[WorkersObservability]
+    observability*: Option[WorkersObservability2]
     placement*: Option[JsonNode]
     tags*: Option[JsonNode]
     tail_consumers*: Option[JsonNode]
@@ -43456,6 +44729,21 @@ type
       ## ID of the Durable Object.
 
   WorkersObservability* = ref object of RootObj
+    ## Observability settings for the Worker.
+    enabled*: Option[bool]
+      ## Whether observability is enabled for the Worker.
+    head_sampling_rate*: Option[float64]
+      ## The sampling rate for observability. From 0 to 1 (1 = 100%, 0.1 = 10%).
+    issues*: Option[JsonNode]
+      ## Real-time Issues settings for the Worker.
+    logs*: Option[JsonNode]
+      ## Log settings for the Worker.
+    redact_query_string*: Option[bool]
+      ## Whether query strings are removed from request URLs in logs and traces.
+    traces*: Option[JsonNode]
+      ## Trace settings for the Worker.
+
+  WorkersObservability2* = ref object of RootObj
     ## Observability settings for the Worker.
     enabled*: bool
       ## Whether observability is enabled for the Worker.
@@ -43516,6 +44804,19 @@ type
   WorkersPlacementTarget* = ref object of RootObj
     ## A target to run your Worker near.
 
+  WorkersQuery* = ref object of RootObj
+    params*: Option[seq[JsonNode]]
+    sql*: string
+
+  WorkersQueryById* = ref object of RootObj
+    durable_object_id*: string
+    queries*: seq[WorkersQuery]
+
+  WorkersQueryByName* = ref object of RootObj
+    durable_object_name*: string
+    jurisdiction*: string
+    queries*: seq[WorkersQuery]
+
   WorkersRoute* = ref object of RootObj
     id*: JsonNode
     pattern*: string
@@ -43555,7 +44856,7 @@ type
     migrations*: Option[JsonNode]
       ## Migrations to apply for Durable Objects associated with this Worker.
       ##
-    observability*: Option[WorkersObservability]
+    observability*: Option[WorkersObservability2]
     placement*: Option[JsonNode]
     tags*: Option[JsonNode]
     tail_consumers*: Option[JsonNode]
@@ -43597,7 +44898,7 @@ type
     named_handlers*: Option[seq[JsonNode]]
       ## Named exports, such as Durable Object class implementations and named
       ## entrypoints.
-    observability*: Option[WorkersObservability]
+    observability*: Option[WorkersObservability2]
     placement*: Option[WorkersPlacementInfo]
     placement_mode*: Option[JsonNode]
     placement_status*: Option[JsonNode]
@@ -43650,7 +44951,7 @@ type
     named_handlers*: Option[seq[JsonNode]]
       ## Named exports, such as Durable Object class implementations and named
       ## entrypoints.
-    observability*: Option[WorkersObservability]
+    observability*: Option[WorkersObservability2]
     placement*: Option[WorkersPlacementInfo]
     placement_mode*: Option[JsonNode]
     placement_status*: Option[JsonNode]
@@ -44843,7 +46144,7 @@ type
     messages*: ZeroTrustGatewayMessages
     success*: bool
       ## Indicate whether the API call was successful.
-    result_info*: Option[ZeroTrustGatewayResultInfo]
+    result_info*: Option[JsonNode]
     result*: Option[seq[JsonNode]]
 
   ZeroTrustGatewayResponseCollection2* = ref object of RootObj

@@ -47,7 +47,8 @@ type
       ## Report UUID
     request: JsonNode
     status: string
-      ## RFI status
+      ## RFI status. Project-specific dashboard surfaces may return a narrowed
+      ## customer-facing vocabulary.
     summary: string
       ## RFI summary
     tlp: string
@@ -82,7 +83,8 @@ type
       ## Report UUID
     request: JsonNode
     status: string
-      ## RFI status
+      ## RFI status. Project-specific dashboard surfaces may return a narrowed
+      ## customer-facing vocabulary.
     summary: string
       ## RFI summary
     tlp: string
@@ -126,7 +128,8 @@ type
       ## Report UUID
     request: JsonNode
     status: string
-      ## RFI status
+      ## RFI status. Project-specific dashboard surfaces may return a narrowed
+      ## customer-facing vocabulary.
     summary: string
       ## RFI summary
     tlp: string

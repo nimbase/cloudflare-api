@@ -279,15 +279,15 @@ proc getAccountsAccountIdSecurityCenterInsightsClass*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc getAccountsAccountIdSecurityCenterInsightsCount*(client: CloudflareClient,
-                                                      accountId: types.SecurityCenterIdentifier,
-                                                      source: SecurityCenterInsightSourceOption): Future[types.SecurityCenterPartnerInsightCountResponse] {.async.} =
+proc getAccountsAccountIdSecurityCenterInsightsPartnerCount*(client: CloudflareClient,
+                                                             accountId: types.SecurityCenterIdentifier,
+                                                             source: SecurityCenterInsightSourceOption): Future[types.SecurityCenterPartnerInsightCountResponse] {.async.} =
   ## Retrieves the uncapped count of active, non-dismissed, unclassified RiskRecon
   ## insights for the account.
 
   var q = initOrderedTable[string, string]()
   q["source"] = $source
-  let res = await client.httpGET(fmt"/accounts/{accountId}/security-center/insights/count", q)
+  let res = await client.httpGET(fmt"/accounts/{accountId}/security-center/insights/partner-count", q)
   let body = await res.body
   case res.code
   of Http200:
@@ -519,6 +519,22 @@ proc getZonesZoneIdSecurityCenterInsightsClass*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, types.SecurityCenterValueCountsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getZonesZoneIdSecurityCenterInsightsPartnerCount*(client: CloudflareClient,
+                                                       zoneId: types.SecurityCenterIdentifier,
+                                                       source: SecurityCenterInsightSourceOption): Future[types.SecurityCenterPartnerInsightCountResponse] {.async.} =
+  ## Retrieves the uncapped count of active, non-dismissed, unclassified RiskRecon
+  ## insights for the zone.
+
+  var q = initOrderedTable[string, string]()
+  q["source"] = $source
+  let res = await client.httpGET(fmt"/zones/{zoneId}/security-center/insights/partner-count", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.SecurityCenterPartnerInsightCountResponse)
   else:
     raise newException(CloudflareClientError, body)
 

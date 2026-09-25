@@ -87,6 +87,10 @@ suite "brapi serialization":
     let obj = cloudflare.PostAccountsAccountIdBrowserRenderingMarkdownResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdBrowserRenderingMarkdownResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdBrowserRenderingRecordingSessionIdResponse":
+    let obj = cloudflare.GetAccountsAccountIdBrowserRenderingRecordingSessionIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdBrowserRenderingRecordingSessionIdResponse)) == openjson.toJson(obj)
+
   test "round-trips PostAccountsAccountIdBrowserRenderingScrapeResponse":
     let obj = cloudflare.PostAccountsAccountIdBrowserRenderingScrapeResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdBrowserRenderingScrapeResponse)) == openjson.toJson(obj)
@@ -184,4 +188,14 @@ suite "brapi endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdBrowserRenderingDevtoolsSessionSessionId("test", "test")
+
+  test "GET /accounts/{account_id}/browser-rendering/recording/{session_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdBrowserRenderingRecordingSessionId("test", "test")
+
+  test "GET /accounts/{account_id}/browser-rendering/recording/{session_id}/network":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdBrowserRenderingRecordingSessionIdNetwork("test", "test", "test", "test")
 

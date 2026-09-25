@@ -27,7 +27,7 @@ proc getAccountsAccountIdRegistrarSandboxExtensions*(client: CloudflareClient,
                                                      direction: ExtensionDirectionOption = directionAsc,
                                                      sortBy: ExtensionSortByOption = sortByName): Future[types.RegistrarApiSandboxExtensionResponseCollection] {.async.} =
   ## Returns metadata and JSON Schema documents describing the expected input
-  ## structure for registration operations on each supported
+  ## structure for registration and transfer operations on each supported
   ## extension (TLD).
   ##
   ## This endpoint uses cursor-based pagination. Results are ordered by
@@ -58,7 +58,7 @@ proc getAccountsAccountIdRegistrarSandboxExtensionsExtension*(client: Cloudflare
                                                               accountId: types.RegistrarApiSandboxIdentifier,
                                                               extension: string): Future[types.RegistrarApiSandboxExtensionResponseSingle] {.async.} =
   ## Returns metadata and JSON Schema documents describing the expected input
-  ## structure for registration operations on a specific
+  ## structure for registration and transfer operations on a specific
   ## extension (TLD).
   ##
   ## Supports HTTP conditional GET via `ETag`. Include the `ETag` value
@@ -81,7 +81,7 @@ proc getAccountsAccountIdRegistrarExtensions*(client: CloudflareClient,
                                               direction: ExtensionDirectionOption = directionAsc,
                                               sortBy: ExtensionSortByOption = sortByName): Future[types.RegistrarApiExtensionResponseCollection] {.async.} =
   ## Returns metadata and JSON Schema documents describing the expected input
-  ## structure for registration operations on each supported
+  ## structure for registration and transfer operations on each supported
   ## extension (TLD).
   ##
   ## This endpoint uses cursor-based pagination. Results are ordered by
@@ -112,7 +112,7 @@ proc getAccountsAccountIdRegistrarExtensionsExtension*(client: CloudflareClient,
                                                        accountId: types.RegistrarApiIdentifier,
                                                        extension: string): Future[types.RegistrarApiExtensionResponseSingle] {.async.} =
   ## Returns metadata and JSON Schema documents describing the expected input
-  ## structure for registration operations on a specific
+  ## structure for registration and transfer operations on a specific
   ## extension (TLD).
   ##
   ## Supports HTTP conditional GET via `ETag`. Include the `ETag` value

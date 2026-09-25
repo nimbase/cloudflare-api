@@ -36,7 +36,8 @@ proc getAccountsAccountIdRegistrarDomainsDomainName*(client: CloudflareClient,
 
 proc putAccountsAccountIdRegistrarDomainsDomainName*(client: CloudflareClient,
                                                      domainName: types.RegistrarApiDomainName,
-                                                     accountId: types.RegistrarApiIdentifier): Future[types.RegistrarApiDomainResponseSingle] {.async.} =
+                                                     accountId: types.RegistrarApiIdentifier,
+                                                     body: types.RegistrarApiDomainUpdateProperties): Future[types.RegistrarApiDomainResponseSingle] {.async.} =
   ## Updates an individual domain.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/registrar/domains/{domainName}", body)

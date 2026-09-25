@@ -24,18 +24,18 @@ suite "custom_assets_for_a_zone serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CustomPagesCustomAssetResult)) == openjson.toJson(obj)
 
 suite "custom_assets_for_a_zone endpoints":
-  test "GET /zones/{zone_identifier}/custom_pages/assets":
+  test "GET /zones/{zone_id}/custom_pages/assets":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdentifierCustomPagesAssets("test", 1, 1)
+    discard waitFor client.getZonesZoneIdCustomPagesAssets("test", 1, 1)
 
-  test "GET /zones/{zone_identifier}/custom_pages/assets/{asset_name}":
+  test "GET /zones/{zone_id}/custom_pages/assets/{asset_name}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdentifierCustomPagesAssetsAssetName("test", "test")
+    discard waitFor client.getZonesZoneIdCustomPagesAssetsAssetName("test", "test")
 
-  test "DELETE /zones/{zone_identifier}/custom_pages/assets/{asset_name}":
+  test "DELETE /zones/{zone_id}/custom_pages/assets/{asset_name}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteZonesZoneIdentifierCustomPagesAssetsAssetName("test", "test")
+    discard waitFor client.deleteZonesZoneIdCustomPagesAssetsAssetName("test", "test")
 

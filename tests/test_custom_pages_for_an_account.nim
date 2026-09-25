@@ -32,13 +32,13 @@ suite "custom_pages_for_an_account serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CustomPagesApiResponseCommonFailure)) == openjson.toJson(obj)
 
 suite "custom_pages_for_an_account endpoints":
-  test "GET /accounts/{account_identifier}/custom_pages":
+  test "GET /accounts/{account_id}/custom_pages":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdentifierCustomPages("test")
+    discard waitFor client.getAccountsAccountIdCustomPages("test")
 
-  test "POST /accounts/{account_identifier}/custom_pages/preview_tokens":
+  test "POST /accounts/{account_id}/custom_pages/preview_tokens":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdentifierCustomPagesPreviewTokens("test", newCustomPagesPreviewRequest())
+    discard waitFor client.postAccountsAccountIdCustomPagesPreviewTokens("test", newCustomPagesPreviewRequest())
 

@@ -31,6 +31,10 @@ suite "physical_devices serialization":
     let obj = newTeamsDevicesV4ErrorResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesV4ErrorResponse)) == openjson.toJson(obj)
 
+  test "round-trips TeamsDevicesPhysicalDeviceUpdateRequest":
+    let obj = newTeamsDevicesPhysicalDeviceUpdateRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesPhysicalDeviceUpdateRequest)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdDevicesPhysicalDevicesResponse":
     let obj = cloudflare.GetAccountsAccountIdDevicesPhysicalDevicesResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdDevicesPhysicalDevicesResponse)) == openjson.toJson(obj)
@@ -42,6 +46,10 @@ suite "physical_devices serialization":
   test "round-trips DeleteAccountsAccountIdDevicesPhysicalDevicesDeviceIdResponse":
     let obj = cloudflare.DeleteAccountsAccountIdDevicesPhysicalDevicesDeviceIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdDevicesPhysicalDevicesDeviceIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips PatchAccountsAccountIdDevicesPhysicalDevicesDeviceIdResponse":
+    let obj = cloudflare.PatchAccountsAccountIdDevicesPhysicalDevicesDeviceIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdDevicesPhysicalDevicesDeviceIdResponse)) == openjson.toJson(obj)
 
   test "round-trips PostAccountsAccountIdDevicesPhysicalDevicesDeviceIdRevokeResponse":
     let obj = cloudflare.PostAccountsAccountIdDevicesPhysicalDevicesDeviceIdRevokeResponse()
@@ -61,6 +69,11 @@ suite "physical_devices endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdDevicesPhysicalDevicesDeviceId("test", "test")
+
+  test "PATCH /accounts/{account_id}/devices/physical-devices/{device_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.patchAccountsAccountIdDevicesPhysicalDevicesDeviceId("test", "test", newTeamsDevicesPhysicalDeviceUpdateRequest())
 
   test "POST /accounts/{account_id}/devices/physical-devices/{device_id}/revoke":
     let client = initCloudflareClient("test-key")

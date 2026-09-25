@@ -54,6 +54,31 @@ type
     messages: seq[JsonNode]
     result: JsonNode
     success: bool
+  PostAccountsAccountIdWorkersObservabilityIssuesGroupsRequest = object
+    issue_ids: seq[string]
+    title: string
+  PostAccountsAccountIdWorkersObservabilityIssuesGroupsResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    success: bool
+  DeleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    success: bool
+  PostAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersRequest = object
+    issue_ids: seq[string]
+  PostAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    success: bool
+  DeleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersIssueIdResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    success: bool
   GetAccountsAccountIdWorkersObservabilityIssuesSummaryResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
@@ -65,7 +90,8 @@ type
     result: JsonNode
     success: bool
   PatchAccountsAccountIdWorkersObservabilityIssuesIssueIdRequest = object
-    status: string
+    status: Option[string]
+    title: Option[string]
   PatchAccountsAccountIdWorkersObservabilityIssuesIssueIdResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
@@ -91,7 +117,6 @@ type
   IssueOrderByOption* = enum
     orderById = "id"
     orderByService = "service"
-    orderByFingerprint = "fingerprint"
     orderByTitle = "title"
     orderByType = "type"
     orderByStatus = "status"
@@ -115,6 +140,7 @@ proc getAccountsAccountIdWorkersObservabilityIssues*(client: CloudflareClient,
                                                      orderBy: IssueOrderByOption = orderById,
                                                      search: string = default(string),
                                                      service: string = default(string),
+                                                     `type`: string = default(string),
                                                      status: IssueStatusOption = statusActive): Future[GetAccountsAccountIdWorkersObservabilityIssuesResponse] {.async.} =
   ## List detected issues.
 
@@ -125,6 +151,7 @@ proc getAccountsAccountIdWorkersObservabilityIssues*(client: CloudflareClient,
   q["orderBy"] = $orderBy
   q["search"] = $search
   q["service"] = $service
+  q["type"] = $`type`
   q["status"] = $status
   let res = await client.httpGET("/accounts/{account_id}/workers/observability/issues", q)
   let body = await res.body
@@ -197,6 +224,57 @@ proc deleteAccountsAccountIdWorkersObservabilityIssuesAutomationsAutomationId*(c
   else:
     raise newException(CloudflareClientError, body)
 
+proc postAccountsAccountIdWorkersObservabilityIssuesGroups*(client: CloudflareClient,
+                                                            body: PostAccountsAccountIdWorkersObservabilityIssuesGroupsRequest): Future[PostAccountsAccountIdWorkersObservabilityIssuesGroupsResponse] {.async.} =
+  ## Group two or more issues under a new customer-defined identity.
+
+  let res = await client.httpPOST("/accounts/{account_id}/workers/observability/issues/groups", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdWorkersObservabilityIssuesGroupsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupId*(client: CloudflareClient,
+                                                                     groupId: string): Future[DeleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdResponse] {.async.} =
+  ## Dissolve an issue group and restore its members as standalone issues.
+
+  let res = await client.httpDELETE(fmt"/accounts/{account_id}/workers/observability/issues/groups/{groupId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, DeleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembers*(client: CloudflareClient,
+                                                                          groupId: string,
+                                                                          body: PostAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersRequest): Future[PostAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersResponse] {.async.} =
+  ## Add one or more ungrouped issues to an existing issue group.
+
+  let res = await client.httpPOST(fmt"/accounts/{account_id}/workers/observability/issues/groups/{groupId}/members", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersIssueId*(client: CloudflareClient,
+                                                                                   groupId: string,
+                                                                                   issueId: string): Future[DeleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersIssueIdResponse] {.async.} =
+  ## Remove an issue from a group, dissolving the group when fewer than two members
+  ## remain.
+
+  let res = await client.httpDELETE(fmt"/accounts/{account_id}/workers/observability/issues/groups/{groupId}/members/{issueId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, DeleteAccountsAccountIdWorkersObservabilityIssuesGroupsGroupIdMembersIssueIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdWorkersObservabilityIssuesSummary*(client: CloudflareClient,
                                                             service: string = default(string)): Future[GetAccountsAccountIdWorkersObservabilityIssuesSummaryResponse] {.async.} =
   ## Retrieve aggregate issue counts for the account.
@@ -226,7 +304,7 @@ proc getAccountsAccountIdWorkersObservabilityIssuesIssueId*(client: CloudflareCl
 proc patchAccountsAccountIdWorkersObservabilityIssuesIssueId*(client: CloudflareClient,
                                                               issueId: string,
                                                               body: PatchAccountsAccountIdWorkersObservabilityIssuesIssueIdRequest): Future[PatchAccountsAccountIdWorkersObservabilityIssuesIssueIdResponse] {.async.} =
-  ## Modify an issue status.
+  ## Modify an issue status or group title.
 
   let res = await client.httpPATCH(fmt"/accounts/{account_id}/workers/observability/issues/{issueId}", body)
   let body = await res.body

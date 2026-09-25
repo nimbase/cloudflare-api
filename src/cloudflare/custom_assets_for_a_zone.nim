@@ -9,24 +9,23 @@ import ./private/metaclient
 import ./private/types
 
 type
-  PostZonesZoneIdentifierCustomPagesAssetsRequest = object
+  PostZonesZoneIdCustomPagesAssetsRequest = object
     description: types.CustomPagesAssetDescription
     name: types.CustomPagesAssetName
     url: types.CustomPagesAssetUrl
-  PutZonesZoneIdentifierCustomPagesAssetsAssetNameRequest = object
+  PutZonesZoneIdCustomPagesAssetsAssetNameRequest = object
     description: types.CustomPagesAssetDescription
     url: types.CustomPagesAssetUrl
 
-proc getZonesZoneIdentifierCustomPagesAssets*(client: CloudflareClient,
-                                              zoneIdentifier: types.CustomPagesIdentifier,
-                                              page: int64 = 1,
-                                              perPage: int64 = 20): Future[types.CustomPagesCustomAssetResultList] {.async.} =
-  ## Fetches all the custom assets at the zone level.
+proc getZonesZoneIdCustomPagesAssets*(client: CloudflareClient,
+                                      zoneId: types.CustomPagesIdentifier,
+                                      page: int64 = 1, perPage: int64 = 20): Future[types.CustomPagesCustomAssetResultList] {.async.} =
+  ## Lists custom assets for a zone.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  let res = await client.httpGET(fmt"/zones/{zoneIdentifier}/custom_pages/assets", q)
+  let res = await client.httpGET(fmt"/zones/{zoneId}/custom_pages/assets", q)
   let body = await res.body
   case res.code
   of Http200:
@@ -34,12 +33,12 @@ proc getZonesZoneIdentifierCustomPagesAssets*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc postZonesZoneIdentifierCustomPagesAssets*(client: CloudflareClient,
-                                               zoneIdentifier: types.CustomPagesIdentifier,
-                                               body: PostZonesZoneIdentifierCustomPagesAssetsRequest): Future[types.CustomPagesCustomAssetResult] {.async.} =
-  ## Creates a new custom asset at the zone level.
+proc postZonesZoneIdCustomPagesAssets*(client: CloudflareClient,
+                                       zoneId: types.CustomPagesIdentifier,
+                                       body: PostZonesZoneIdCustomPagesAssetsRequest): Future[types.CustomPagesCustomAssetResult] {.async.} =
+  ## Creates a custom asset for a zone.
 
-  let res = await client.httpPOST(fmt"/zones/{zoneIdentifier}/custom_pages/assets", body)
+  let res = await client.httpPOST(fmt"/zones/{zoneId}/custom_pages/assets", body)
   let body = await res.body
   case res.code
   of Http200:
@@ -47,12 +46,12 @@ proc postZonesZoneIdentifierCustomPagesAssets*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc getZonesZoneIdentifierCustomPagesAssetsAssetName*(client: CloudflareClient,
-                                                       assetName: types.CustomPagesAssetName,
-                                                       zoneIdentifier: types.CustomPagesIdentifier): Future[types.CustomPagesCustomAssetResult] {.async.} =
-  ## Fetches the details of a custom asset.
+proc getZonesZoneIdCustomPagesAssetsAssetName*(client: CloudflareClient,
+                                               assetName: types.CustomPagesAssetName,
+                                               zoneId: types.CustomPagesIdentifier): Future[types.CustomPagesCustomAssetResult] {.async.} =
+  ## Returns a custom asset for a zone.
 
-  let res = await client.httpGET(fmt"/zones/{zoneIdentifier}/custom_pages/assets/{assetName}")
+  let res = await client.httpGET(fmt"/zones/{zoneId}/custom_pages/assets/{assetName}")
   let body = await res.body
   case res.code
   of Http200:
@@ -60,13 +59,13 @@ proc getZonesZoneIdentifierCustomPagesAssetsAssetName*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc putZonesZoneIdentifierCustomPagesAssetsAssetName*(client: CloudflareClient,
-                                                       assetName: types.CustomPagesAssetName,
-                                                       zoneIdentifier: types.CustomPagesIdentifier,
-                                                       body: PutZonesZoneIdentifierCustomPagesAssetsAssetNameRequest): Future[types.CustomPagesCustomAssetResult] {.async.} =
-  ## Updates the configuration of an existing custom asset.
+proc putZonesZoneIdCustomPagesAssetsAssetName*(client: CloudflareClient,
+                                               assetName: types.CustomPagesAssetName,
+                                               zoneId: types.CustomPagesIdentifier,
+                                               body: PutZonesZoneIdCustomPagesAssetsAssetNameRequest): Future[types.CustomPagesCustomAssetResult] {.async.} =
+  ## Updates a custom asset for a zone.
 
-  let res = await client.httpPUT(fmt"/zones/{zoneIdentifier}/custom_pages/assets/{assetName}", body)
+  let res = await client.httpPUT(fmt"/zones/{zoneId}/custom_pages/assets/{assetName}", body)
   let body = await res.body
   case res.code
   of Http200:
@@ -74,10 +73,10 @@ proc putZonesZoneIdentifierCustomPagesAssetsAssetName*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc deleteZonesZoneIdentifierCustomPagesAssetsAssetName*(client: CloudflareClient,
-                                                          assetName: types.CustomPagesAssetName,
-                                                          zoneIdentifier: types.CustomPagesIdentifier): Future[AsyncResponse] {.async.} =
-  ## Deletes an existing custom asset.
+proc deleteZonesZoneIdCustomPagesAssetsAssetName*(client: CloudflareClient,
+                                                  assetName: types.CustomPagesAssetName,
+                                                  zoneId: types.CustomPagesIdentifier): Future[AsyncResponse] {.async.} =
+  ## Deletes a custom asset from a zone.
 
-  let res = await client.httpDELETE(fmt"/zones/{zoneIdentifier}/custom_pages/assets/{assetName}")
+  let res = await client.httpDELETE(fmt"/zones/{zoneId}/custom_pages/assets/{assetName}")
   return res

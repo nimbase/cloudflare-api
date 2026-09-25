@@ -103,7 +103,8 @@ proc getAccountsAccountIdDevicesRegistrations*(client: CloudflareClient,
 proc postAccountsAccountIdDevicesRegistrationsRevoke*(client: CloudflareClient,
                                                       accountId: string,
                                                       id: seq[string] = @[]): Future[PostAccountsAccountIdDevicesRegistrationsRevokeResponse] {.async.} =
-  ## Revokes a list of WARP registrations.
+  ## Revokes a list of WARP registrations. Prefer "delete" operation instead,
+  ## "revoke" does not release virtual IPs.
 
   var q = initOrderedTable[string, string]()
   for v in id: q["id"] = $v

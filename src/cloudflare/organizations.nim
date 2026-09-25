@@ -33,13 +33,18 @@ type
   DeleteOrganizationsOrganizationIdResponse* = object
     errors: seq[JsonNode]
     messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiDeleteOrganizationResponse
+    result: types.OrganizationsApiDeleteOrganizationResult
     success: bool
   GetOrganizationsOrganizationIdAccountsResponse* = object
     errors: seq[JsonNode]
     messages: seq[types.OrganizationsApiV4Message]
     result: seq[types.OrganizationsApiAccount]
     result_info: types.OrganizationsApiPageTokenResultInfo
+    success: bool
+  PutOrganizationsOrganizationIdInvitesMemberCodeResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[types.OrganizationsApiV4Message]
+    result: types.OrganizationsApiMember
     success: bool
   OrganizationOrderByOption* = enum
     orderByAccountName = "account_name"
@@ -183,6 +188,21 @@ proc getOrganizationsOrganizationIdAccounts*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc putOrganizationsOrganizationIdInvitesMemberCode*(client: CloudflareClient,
+                                                      organizationId: types.OrganizationsApiOrganizationID,
+                                                      memberCode: string,
+                                                      body: types.OrganizationsApiHandleOrganizationInviteRequest): Future[PutOrganizationsOrganizationIdInvitesMemberCodeResponse] {.async.} =
+  ## Accept or reject an invitation to a specific organization. (Currently in Public
+  ## Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+
+  let res = await client.httpPUT(fmt"/organizations/{organizationId}/invites/{memberCode}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PutOrganizationsOrganizationIdInvitesMemberCodeResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getOrganizationsOrganizationIdProfile*(client: CloudflareClient,
                                             organizationId: types.OrganizationsApiOrganizationID): Future[types.OrganizationsApiProfileResponse] {.async.} =
   ## Get an organizations profile if it exists. (Currently in Public Beta - see
@@ -198,7 +218,7 @@ proc getOrganizationsOrganizationIdProfile*(client: CloudflareClient,
 
 proc putOrganizationsOrganizationIdProfile*(client: CloudflareClient,
                                             organizationId: types.OrganizationsApiOrganizationID,
-                                            body: types.OrganizationsApiProfile): Future[AsyncResponse] {.async.} =
+                                            body: types.OrganizationsApiModifyOrganizationProfileRequest): Future[AsyncResponse] {.async.} =
   ## Modify organization profile. (Currently in Public Beta - see
   ## https://developers.cloudflare.com/fundamentals/organizations/)
 

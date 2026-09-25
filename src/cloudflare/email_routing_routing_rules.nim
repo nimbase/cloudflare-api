@@ -53,7 +53,7 @@ proc getZonesZoneIdEmailRoutingRules*(client: CloudflareClient,
                                       page: float64 = default(float64),
                                       perPage: float64 = default(float64),
                                       enabled: EmailRoutingRoutingRuleEnabledOption = enabledTrue): Future[types.EmailRulesResponseCollection] {.async.} =
-  ## Lists existing routing rules.
+  ## Lists the routing rules that match incoming messages for a zone.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -141,7 +141,8 @@ proc putZonesZoneIdEmailRoutingRulesRuleIdentifier*(client: CloudflareClient,
 proc deleteZonesZoneIdEmailRoutingRulesRuleIdentifier*(client: CloudflareClient,
                                                        ruleIdentifier: types.EmailRuleIdentifier,
                                                        zoneId: types.EmailIdentifier): Future[types.EmailRuleResponseSingle] {.async.} =
-  ## Delete a specific routing rule.
+  ## Deletes a routing rule so matching incoming messages are no longer forwarded by
+  ## it.
 
   let res = await client.httpDELETE(fmt"/zones/{zoneId}/email/routing/rules/{ruleIdentifier}")
   let body = await res.body

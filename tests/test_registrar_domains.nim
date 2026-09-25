@@ -41,5 +41,5 @@ suite "registrar_domains endpoints":
   test "PUT /accounts/{account_id}/registrar/domains/{domain_name}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdRegistrarDomainsDomainName("test", "test")
+    discard waitFor client.putAccountsAccountIdRegistrarDomainsDomainName("test", "test", newRegistrarApiDomainUpdateProperties())
 

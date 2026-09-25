@@ -22,7 +22,7 @@ type
   PostAccountsAccountIdMoveResponse* = object
     errors: seq[JsonNode]
     messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiMoveAccountResponse
+    result: types.OrganizationsApiMoveAccountResult
     success: bool
   GetAccountsAccountIdOrganizationsResponse* = object
     errors: seq[JsonNode]

@@ -43,6 +43,10 @@ suite "zero_trust_organization serialization":
     let obj = newAccessLoginDesign()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessLoginDesign)) == openjson.toJson(obj)
 
+  test "round-trips AccessServiceTokenInactivity":
+    let obj = newAccessServiceTokenInactivity()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessServiceTokenInactivity)) == openjson.toJson(obj)
+
   test "round-trips AccessSingleResponse2":
     let obj = newAccessSingleResponse2()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse2)) == openjson.toJson(obj)

@@ -24,7 +24,7 @@ proc getAccountsAccountIdEmailRoutingAddresses*(client: CloudflareClient,
                                                 perPage: float64 = default(float64),
                                                 direction: EmailRoutingDestinationAddresseDirectionOption = directionAsc,
                                                 verified: EmailRoutingDestinationAddresseVerifiedOption = verifiedTrue): Future[types.EmailDestinationAddressesResponseCollection] {.async.} =
-  ## Lists existing destination addresses.
+  ## Lists destination addresses configured for Email Routing in an account.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page

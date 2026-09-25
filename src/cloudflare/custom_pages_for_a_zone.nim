@@ -9,15 +9,15 @@ import ./private/metaclient
 import ./private/types
 
 type
-  PutZonesZoneIdentifierCustomPagesIdentifierRequest = object
+  PutZonesZoneIdCustomPagesIdentifierRequest = object
     state: types.CustomPagesState
     url: types.CustomPagesUrl
 
-proc getZonesZoneIdentifierCustomPages*(client: CloudflareClient,
-                                        zoneIdentifier: types.CustomPagesIdentifier): Future[types.CustomPagesCustomPageResultList] {.async.} =
-  ## Fetches all the custom pages at the zone level.
+proc getZonesZoneIdCustomPages*(client: CloudflareClient,
+                                zoneId: types.CustomPagesIdentifier): Future[types.CustomPagesCustomPageResultList] {.async.} =
+  ## Lists all custom page configurations for a zone.
 
-  let res = await client.httpGET(fmt"/zones/{zoneIdentifier}/custom_pages")
+  let res = await client.httpGET(fmt"/zones/{zoneId}/custom_pages")
   let body = await res.body
   case res.code
   of Http200:
@@ -25,14 +25,13 @@ proc getZonesZoneIdentifierCustomPages*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc postZonesZoneIdentifierCustomPagesPreviewTokens*(client: CloudflareClient,
-                                                      zoneIdentifier: types.CustomPagesIdentifier,
-                                                      body: types.CustomPagesPreviewRequest): Future[types.CustomPagesPreviewTokenResult] {.async.} =
-  ## Creates a signed JWT token used to preview custom pages before they are
-  ## published. The API gateway rewrites zone-scoped requests to the account-level
-  ## service endpoint.
+proc postZonesZoneIdCustomPagesPreviewTokens*(client: CloudflareClient,
+                                              zoneId: types.CustomPagesIdentifier,
+                                              body: types.CustomPagesPreviewRequest): Future[types.CustomPagesPreviewTokenResult] {.async.} =
+  ## Creates a signed JWT for previewing a zone-level custom page before it is
+  ## published.
 
-  let res = await client.httpPOST(fmt"/zones/{zoneIdentifier}/custom_pages/preview_tokens", body)
+  let res = await client.httpPOST(fmt"/zones/{zoneId}/custom_pages/preview_tokens", body)
   let body = await res.body
   case res.code
   of Http200:
@@ -40,12 +39,12 @@ proc postZonesZoneIdentifierCustomPagesPreviewTokens*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc getZonesZoneIdentifierCustomPagesIdentifier*(client: CloudflareClient,
-                                                  identifier: types.CustomPagesErrorPageType,
-                                                  zoneIdentifier: types.CustomPagesIdentifier): Future[types.CustomPagesCustomPage] {.async.} =
-  ## Fetches the details of a custom page.
+proc getZonesZoneIdCustomPagesIdentifier*(client: CloudflareClient,
+                                          identifier: types.CustomPagesErrorPageType,
+                                          zoneId: types.CustomPagesIdentifier): Future[types.CustomPagesCustomPage] {.async.} =
+  ## Returns the configuration for a custom page type at the zone level.
 
-  let res = await client.httpGET(fmt"/zones/{zoneIdentifier}/custom_pages/{identifier}")
+  let res = await client.httpGET(fmt"/zones/{zoneId}/custom_pages/{identifier}")
   let body = await res.body
   case res.code
   of Http200:
@@ -53,13 +52,13 @@ proc getZonesZoneIdentifierCustomPagesIdentifier*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc putZonesZoneIdentifierCustomPagesIdentifier*(client: CloudflareClient,
-                                                  identifier: types.CustomPagesErrorPageType,
-                                                  zoneIdentifier: types.CustomPagesIdentifier,
-                                                  body: PutZonesZoneIdentifierCustomPagesIdentifierRequest): Future[types.CustomPagesCustomPageResult] {.async.} =
-  ## Updates the configuration of an existing custom page.
+proc putZonesZoneIdCustomPagesIdentifier*(client: CloudflareClient,
+                                          identifier: types.CustomPagesErrorPageType,
+                                          zoneId: types.CustomPagesIdentifier,
+                                          body: PutZonesZoneIdCustomPagesIdentifierRequest): Future[types.CustomPagesCustomPageResult] {.async.} =
+  ## Updates the configuration for a custom page type at the zone level.
 
-  let res = await client.httpPUT(fmt"/zones/{zoneIdentifier}/custom_pages/{identifier}", body)
+  let res = await client.httpPUT(fmt"/zones/{zoneId}/custom_pages/{identifier}", body)
   let body = await res.body
   case res.code
   of Http200:

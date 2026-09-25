@@ -20,10 +20,14 @@ type
     name: types.ZeroTrustGatewayName7
 
 proc getAccountsAccountIdGatewayPacfiles*(client: CloudflareClient,
-                                          accountId: types.ZeroTrustGatewayIdentifier2): Future[types.ZeroTrustGatewayResponseCollection10] {.async.} =
+                                          accountId: types.ZeroTrustGatewayIdentifier2,
+                                          page: int64 = 1, perPage: int64 = 50): Future[types.ZeroTrustGatewayResponseCollection10] {.async.} =
   ## List all Zero Trust Gateway PAC files for an account.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/gateway/pacfiles")
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/accounts/{accountId}/gateway/pacfiles", q)
   let body = await res.body
   case res.code
   of Http200:

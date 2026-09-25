@@ -12,8 +12,12 @@ type
   PostZonesZoneIdFirewallRulesRequest = object
     action: types.FirewallAction
     filter: types.FirewallFilter
+  PutZonesZoneIdFirewallRulesRequest = object
+    id: string
   DeleteZonesZoneIdFirewallRulesRequest = object
     id: types.FirewallFirewallRulesComponentsSchemasId
+  PatchZonesZoneIdFirewallRulesRequest = object
+    id: string
   PutZonesZoneIdFirewallRulesRuleIdRequest = object
     action: types.FirewallAction
     filter: types.FirewallFilter
@@ -69,7 +73,8 @@ proc postZonesZoneIdFirewallRules*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc putZonesZoneIdFirewallRules*(client: CloudflareClient,
-                                  zoneId: types.FirewallIdentifier): Future[types.FirewallFilterRulesResponseCollection] {.async.} =
+                                  zoneId: types.FirewallIdentifier,
+                                  body: PutZonesZoneIdFirewallRulesRequest): Future[types.FirewallFilterRulesResponseCollection] {.async.} =
   ## **This endpoint has been deprecated and returns 410 Gone. Please use the
   ## [Rulesets API](https://developers.cloudflare.com/ruleset-engine/) instead.**
   ##
@@ -100,7 +105,8 @@ proc deleteZonesZoneIdFirewallRules*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdFirewallRules*(client: CloudflareClient,
-                                    zoneId: types.FirewallIdentifier): Future[types.FirewallFilterRulesResponseCollection] {.async.} =
+                                    zoneId: types.FirewallIdentifier,
+                                    body: PatchZonesZoneIdFirewallRulesRequest): Future[types.FirewallFilterRulesResponseCollection] {.async.} =
   ## **This endpoint has been deprecated and returns 410 Gone. Please use the
   ## [Rulesets API](https://developers.cloudflare.com/ruleset-engine/) instead.**
   ##

@@ -15,6 +15,7 @@ type
     strategy: string
   PostAccountsAccountIdAiGatewayBillingTopupRequest = object
     amount: int64
+    payment_method_id: Option[string]
   PostAccountsAccountIdAiGatewayBillingTopupConfigRequest = object
     amount: int64
     threshold: int64
@@ -22,6 +23,15 @@ type
     payment_methods: Option[seq[JsonNode]]
   PostAccountsAccountIdAiGatewayBillingTopupStatusRequest = object
     payment_intent_id: string
+  PostAccountsAccountIdAiWebsearchRequest = object
+    byok_alias: Option[string]
+    limit: Option[int64]
+    options: JsonNode
+    provider: Option[string]
+    query: string
+  PostAccountsAccountIdAiWebsearchResponse* = object
+    items: seq[JsonNode]
+    metadata: JsonNode
   AiGatewayTypeOption* = enum
     typeAuto = "auto"
     typeAll = "all"
@@ -222,5 +232,18 @@ proc getAccountsAccountIdAiGatewayBillingUsageHistory*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, types.AigBillingGetUsageHistoryResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdAiWebsearch*(client: CloudflareClient,
+                                       accountId: string,
+                                       body: PostAccountsAccountIdAiWebsearchRequest): Future[PostAccountsAccountIdAiWebsearchResponse] {.async.} =
+  ## Run a web search through a configured AI Gateway.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/ai/websearch", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdAiWebsearchResponse)
   else:
     raise newException(CloudflareClientError, body)

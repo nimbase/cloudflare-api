@@ -15,10 +15,6 @@ suite "triggers serialization":
     let obj = newBuildsCreateTriggerRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsCreateTriggerRequest)) == openjson.toJson(obj)
 
-  test "round-trips BuildsInsertBuildResponse":
-    let obj = newBuildsInsertBuildResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsInsertBuildResponse)) == openjson.toJson(obj)
-
   test "round-trips BuildsUpdateTriggerRequest":
     let obj = newBuildsUpdateTriggerRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsUpdateTriggerRequest)) == openjson.toJson(obj)
@@ -30,6 +26,10 @@ suite "triggers serialization":
   test "round-trips BuildsCreateBuildRequest":
     let obj = newBuildsCreateBuildRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsCreateBuildRequest)) == openjson.toJson(obj)
+
+  test "round-trips BuildsBuildResponse":
+    let obj = newBuildsBuildResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsBuildResponse)) == openjson.toJson(obj)
 
   test "round-trips BuildsTriggerResponse":
     let obj = newBuildsTriggerResponse()

@@ -71,6 +71,10 @@ suite "devices serialization":
     let obj = newTeamsDevicesFallbackDomain()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesFallbackDomain)) == openjson.toJson(obj)
 
+  test "round-trips TeamsDevicesBrowserExtensionConfig":
+    let obj = newTeamsDevicesBrowserExtensionConfig()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesBrowserExtensionConfig)) == openjson.toJson(obj)
+
   test "round-trips TeamsDevicesDevicesPolicyCertificates":
     let obj = newTeamsDevicesDevicesPolicyCertificates()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesDevicesPolicyCertificates)) == openjson.toJson(obj)
@@ -93,11 +97,6 @@ suite "devices endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdDevices("test")
 
-  test "GET /accounts/{account_id}/devices/policies":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDevicesPolicies("test")
-
   test "GET /accounts/{account_id}/devices/policy":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -113,6 +112,11 @@ suite "devices endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.putAccountsAccountIdDevicesPolicyExclude("test")
 
+  test "DELETE /accounts/{account_id}/devices/policy/exclude":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdDevicesPolicyExclude("test", true)
+
   test "GET /accounts/{account_id}/devices/policy/fallback_domains":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -122,6 +126,11 @@ suite "devices endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.putAccountsAccountIdDevicesPolicyFallbackDomains("test")
+
+  test "DELETE /accounts/{account_id}/devices/policy/fallback_domains":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdDevicesPolicyFallbackDomains("test", true)
 
   test "GET /accounts/{account_id}/devices/policy/include":
     let client = initCloudflareClient("test-key")
@@ -153,6 +162,11 @@ suite "devices endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.putAccountsAccountIdDevicesPolicyPolicyIdExclude("test", "test")
 
+  test "DELETE /accounts/{account_id}/devices/policy/{policy_id}/exclude":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdDevicesPolicyPolicyIdExclude("test", "test", true)
+
   test "GET /accounts/{account_id}/devices/policy/{policy_id}/fallback_domains":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -162,6 +176,11 @@ suite "devices endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.putAccountsAccountIdDevicesPolicyPolicyIdFallbackDomains("test", "test")
+
+  test "DELETE /accounts/{account_id}/devices/policy/{policy_id}/fallback_domains":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdDevicesPolicyPolicyIdFallbackDomains("test", "test", true)
 
   test "GET /accounts/{account_id}/devices/policy/{policy_id}/include":
     let client = initCloudflareClient("test-key")

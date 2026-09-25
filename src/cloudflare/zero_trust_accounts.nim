@@ -24,7 +24,7 @@ proc getAccountsAccountIdDevicesSettings*(client: CloudflareClient,
 proc putAccountsAccountIdDevicesSettings*(client: CloudflareClient,
                                           accountId: types.TeamsDevicesIdentifier,
                                           body: types.TeamsDevicesZeroTrustAccountDeviceSettings): Future[types.TeamsDevicesZeroTrustAccountDeviceSettingsResponse] {.async.} =
-  ## Updates the current device settings for a Zero Trust account.
+  ## Deprecated: use "PATCH /accounts/{account_id}/devices/settings" instead
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/devices/settings", body)
   let body = await res.body
@@ -49,7 +49,7 @@ proc deleteAccountsAccountIdDevicesSettings*(client: CloudflareClient,
 proc patchAccountsAccountIdDevicesSettings*(client: CloudflareClient,
                                             accountId: types.TeamsDevicesIdentifier,
                                             body: types.TeamsDevicesZeroTrustAccountDeviceSettings): Future[types.TeamsDevicesZeroTrustAccountDeviceSettingsResponse] {.async.} =
-  ## Patches the current device settings for a Zero Trust account.
+  ## Updates the device settings for a Zero Trust account.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/devices/settings", body)
   let body = await res.body

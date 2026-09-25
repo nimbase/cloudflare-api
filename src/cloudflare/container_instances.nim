@@ -20,7 +20,8 @@ proc getAccountsAccountIdContainersApplicationsApplicationIdInstances*(client: C
                                                                        pageToken: string = default(string),
                                                                        state: ContainerInstanceStateOption = stateActive,
                                                                        namePrefix: string = default(string)): Future[JsonNode] {.async.} =
-  ## Lists container instances belonging to an application.
+  ## Deprecated: use `instances-v2` instead. Lists container instances belonging to
+  ## an application.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
@@ -28,6 +29,27 @@ proc getAccountsAccountIdContainersApplicationsApplicationIdInstances*(client: C
   q["state"] = $state
   q["name_prefix"] = $namePrefix
   let res = await client.httpGET(fmt"/accounts/{account_id}/containers/applications/{applicationId}/instances", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdContainersApplicationsApplicationIdInstancesV2*(client: CloudflareClient,
+                                                                         applicationId: types.CcApplicationID,
+                                                                         perPage: int64 = default(int64),
+                                                                         pageToken: string = default(string),
+                                                                         state: ContainerInstanceStateOption = stateActive,
+                                                                         namePrefix: string = default(string)): Future[JsonNode] {.async.} =
+  ## Lists container instances belonging to an application.
+
+  var q = initOrderedTable[string, string]()
+  q["per_page"] = $perPage
+  q["page_token"] = $pageToken
+  q["state"] = $state
+  q["name_prefix"] = $namePrefix
+  let res = await client.httpGET(fmt"/accounts/{account_id}/containers/applications/{applicationId}/instances-v2", q)
   let body = await res.body
   case res.code
   of Http200:

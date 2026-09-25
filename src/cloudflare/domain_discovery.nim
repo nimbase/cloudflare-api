@@ -224,3 +224,46 @@ proc getAccountsAccountIdRegistrarDomainSearch*(client: CloudflareClient,
     result = fromJson(body, types.RegistrarApiDomainSearchResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdRegistrarDomainTransferCheck*(client: CloudflareClient,
+                                                        accountId: types.RegistrarApiIdentifier,
+                                                        body: types.RegistrarApiDomainTransferCheckRequest): Future[types.RegistrarApiDomainTransferCheckResponse] {.async.} =
+  ## Performs real-time, authoritative eligibility checks directly against needed
+  ## upstreams.
+  ## Use this endpoint to verify a domain is available before
+  ## attempting a transfer via `POST /registrations/:domain_name/transfer-in`.
+  ##
+  ## **Note:** This endpoint uses POST to accept a list of domains in the request
+  ## body. It is a read-only operation — it does not create, modify, or reserve
+  ## any domains.
+  ##
+  ## ### Behavior
+  ## - Maximum 10 domains per request
+  ## - Pricing is only returned for domains where `transferable: true`
+  ## - Results are not cached; each request queries the registry & other needed
+  ## upstreams
+  ##
+  ## ## Extension Support
+  ##
+  ## All `.uk` extensions (`.uk`, `.co.uk`, etc) do not support auth codes. As such,
+  ## Cloudflare will ignore the `auth_code` section of this request for Nominet
+  ## domains.
+  ##
+  ## This means that a `.uk` domain depends on public data to obtain domain
+  ## information,
+  ## so it might be a few minutes outdated.
+  ##
+  ## ### Workflow
+  ## 1. Call this endpoint with domains the user wants to transfer.
+  ## 2. For each domain where `transferable: true`, present pricing to the user.
+  ## 3. For each domain where `transferable: false`, present reasons to the user
+  ## 4. Proceed to `POST /registrations/:domain_name/transfer-in` only for the
+  ## `transferable: true` domains.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/registrar/domain-transfer-check", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.RegistrarApiDomainTransferCheckResponse)
+  else:
+    raise newException(CloudflareClientError, body)

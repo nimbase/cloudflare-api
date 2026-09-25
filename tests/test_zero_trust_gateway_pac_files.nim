@@ -31,7 +31,7 @@ suite "zero_trust_gateway_pac_files endpoints":
   test "GET /accounts/{account_id}/gateway/pacfiles":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdGatewayPacfiles("test")
+    discard waitFor client.getAccountsAccountIdGatewayPacfiles("test", 1, 1)
 
   test "GET /accounts/{account_id}/gateway/pacfiles/{pacfile_id}":
     let client = initCloudflareClient("test-key")

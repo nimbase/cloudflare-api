@@ -9,24 +9,23 @@ import ./private/metaclient
 import ./private/types
 
 type
-  PostAccountsAccountIdentifierCustomPagesAssetsRequest = object
+  PostAccountsAccountIdCustomPagesAssetsRequest = object
     description: types.CustomPagesAssetDescription
     name: types.CustomPagesAssetName
     url: types.CustomPagesAssetUrl
-  PutAccountsAccountIdentifierCustomPagesAssetsAssetNameRequest = object
+  PutAccountsAccountIdCustomPagesAssetsAssetNameRequest = object
     description: types.CustomPagesAssetDescription
     url: types.CustomPagesAssetUrl
 
-proc getAccountsAccountIdentifierCustomPagesAssets*(client: CloudflareClient,
-                                                    accountIdentifier: types.CustomPagesIdentifier,
-                                                    page: int64 = 1,
-                                                    perPage: int64 = 20): Future[types.CustomPagesCustomAssetResultList] {.async.} =
-  ## Fetches all the custom assets at the account level.
+proc getAccountsAccountIdCustomPagesAssets*(client: CloudflareClient,
+                                            accountId: types.CustomPagesIdentifier,
+                                            page: int64 = 1, perPage: int64 = 20): Future[types.CustomPagesCustomAssetResultList] {.async.} =
+  ## Lists custom assets for an account.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
-  let res = await client.httpGET(fmt"/accounts/{accountIdentifier}/custom_pages/assets", q)
+  let res = await client.httpGET(fmt"/accounts/{accountId}/custom_pages/assets", q)
   let body = await res.body
   case res.code
   of Http200:
@@ -34,12 +33,12 @@ proc getAccountsAccountIdentifierCustomPagesAssets*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc postAccountsAccountIdentifierCustomPagesAssets*(client: CloudflareClient,
-                                                     accountIdentifier: types.CustomPagesIdentifier,
-                                                     body: PostAccountsAccountIdentifierCustomPagesAssetsRequest): Future[types.CustomPagesCustomAssetResult] {.async.} =
-  ## Creates a new custom asset at the account level.
+proc postAccountsAccountIdCustomPagesAssets*(client: CloudflareClient,
+                                             accountId: types.CustomPagesIdentifier,
+                                             body: PostAccountsAccountIdCustomPagesAssetsRequest): Future[types.CustomPagesCustomAssetResult] {.async.} =
+  ## Creates a custom asset for an account.
 
-  let res = await client.httpPOST(fmt"/accounts/{accountIdentifier}/custom_pages/assets", body)
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/custom_pages/assets", body)
   let body = await res.body
   case res.code
   of Http200:
@@ -47,12 +46,12 @@ proc postAccountsAccountIdentifierCustomPagesAssets*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc getAccountsAccountIdentifierCustomPagesAssetsAssetName*(client: CloudflareClient,
-                                                             assetName: types.CustomPagesAssetName,
-                                                             accountIdentifier: types.CustomPagesIdentifier): Future[types.CustomPagesCustomAssetResult] {.async.} =
-  ## Fetches the details of a custom asset.
+proc getAccountsAccountIdCustomPagesAssetsAssetName*(client: CloudflareClient,
+                                                     assetName: types.CustomPagesAssetName,
+                                                     accountId: types.CustomPagesIdentifier): Future[types.CustomPagesCustomAssetResult] {.async.} =
+  ## Returns a custom asset for an account.
 
-  let res = await client.httpGET(fmt"/accounts/{accountIdentifier}/custom_pages/assets/{assetName}")
+  let res = await client.httpGET(fmt"/accounts/{accountId}/custom_pages/assets/{assetName}")
   let body = await res.body
   case res.code
   of Http200:
@@ -60,13 +59,13 @@ proc getAccountsAccountIdentifierCustomPagesAssetsAssetName*(client: CloudflareC
   else:
     raise newException(CloudflareClientError, body)
 
-proc putAccountsAccountIdentifierCustomPagesAssetsAssetName*(client: CloudflareClient,
-                                                             assetName: types.CustomPagesAssetName,
-                                                             accountIdentifier: types.CustomPagesIdentifier,
-                                                             body: PutAccountsAccountIdentifierCustomPagesAssetsAssetNameRequest): Future[types.CustomPagesCustomAssetResult] {.async.} =
-  ## Updates the configuration of an existing custom asset.
+proc putAccountsAccountIdCustomPagesAssetsAssetName*(client: CloudflareClient,
+                                                     assetName: types.CustomPagesAssetName,
+                                                     accountId: types.CustomPagesIdentifier,
+                                                     body: PutAccountsAccountIdCustomPagesAssetsAssetNameRequest): Future[types.CustomPagesCustomAssetResult] {.async.} =
+  ## Updates a custom asset for an account.
 
-  let res = await client.httpPUT(fmt"/accounts/{accountIdentifier}/custom_pages/assets/{assetName}", body)
+  let res = await client.httpPUT(fmt"/accounts/{accountId}/custom_pages/assets/{assetName}", body)
   let body = await res.body
   case res.code
   of Http200:
@@ -74,10 +73,10 @@ proc putAccountsAccountIdentifierCustomPagesAssetsAssetName*(client: CloudflareC
   else:
     raise newException(CloudflareClientError, body)
 
-proc deleteAccountsAccountIdentifierCustomPagesAssetsAssetName*(client: CloudflareClient,
-                                                                assetName: types.CustomPagesAssetName,
-                                                                accountIdentifier: types.CustomPagesIdentifier): Future[AsyncResponse] {.async.} =
-  ## Deletes an existing custom asset.
+proc deleteAccountsAccountIdCustomPagesAssetsAssetName*(client: CloudflareClient,
+                                                        assetName: types.CustomPagesAssetName,
+                                                        accountId: types.CustomPagesIdentifier): Future[AsyncResponse] {.async.} =
+  ## Deletes a custom asset from an account.
 
-  let res = await client.httpDELETE(fmt"/accounts/{accountIdentifier}/custom_pages/assets/{assetName}")
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/custom_pages/assets/{assetName}")
   return res

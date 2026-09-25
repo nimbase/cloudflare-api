@@ -65,12 +65,16 @@ proc postAccountsAccountIdBillableUsage*(client: CloudflareClient,
   ## filter are combined with OR. Filter values that do not match usage
   ## produce an empty result set.
   ##
-  ## Results can be grouped by up to two customer resource-tag keys. Grouped
-  ## values are returned in the `Tags` field. Usage without a requested tag
-  ## remains in an untagged group, with that key omitted from `Tags`.
+  ## Results can be grouped by up to two groups, in any combination of
+  ## dimension keys and resource-tag keys. Tag groups are returned in the
+  ## `Tags` field. Usage without a requested tag remains in an untagged
+  ## group, with that key omitted from `Tags`.
   ##
-  ## Requests using tag filtering or grouping return HTTP 400 when tag-aware
-  ## usage data is unavailable.
+  ## Requests that use tag filtering or tag grouping return HTTP 400 when the
+  ## underlying usage data source does not support tags.
+  ##
+  ## Requests that use dimension grouping return HTTP 400 when the
+  ## underlying usage data source does not support dimensions.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/billable/usage", body)
   let body = await res.body

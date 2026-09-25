@@ -139,10 +139,15 @@ proc patchAccountsAccountIdGatewayListsListId*(client: CloudflareClient,
 
 proc getAccountsAccountIdGatewayListsListIdItems*(client: CloudflareClient,
                                                   listId: types.ZeroTrustGatewayUuid2,
-                                                  accountId: types.ZeroTrustGatewayIdentifier2): Future[types.ZeroTrustGatewayListItemResponseCollection] {.async.} =
+                                                  accountId: types.ZeroTrustGatewayIdentifier2,
+                                                  page: int64 = 1,
+                                                  perPage: int64 = 50): Future[types.ZeroTrustGatewayListItemResponseCollection] {.async.} =
   ## Fetch all items in a single Zero Trust list.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/gateway/lists/{listId}/items")
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/accounts/{accountId}/gateway/lists/{listId}/items", q)
   let body = await res.body
   case res.code
   of Http200:

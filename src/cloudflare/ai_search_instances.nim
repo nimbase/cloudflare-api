@@ -222,6 +222,7 @@ proc getAccountsAccountIdAiSearchInstances*(client: CloudflareClient,
                                             accountId: string, page: int64 = 1,
                                             perPage: int64 = 20,
                                             search: string = default(string),
+                                            hostname: string = default(string),
                                             namespace: string = default(string),
                                             orderBy: AiSearchInstanceOrderByOption = orderByCreatedAt,
                                             orderByDirection: AiSearchInstanceOrderByDirectionOption = orderByDirectionDesc): Future[GetAccountsAccountIdAiSearchInstancesResponse] {.async.} =
@@ -234,6 +235,7 @@ proc getAccountsAccountIdAiSearchInstances*(client: CloudflareClient,
   q["page"] = $page
   q["per_page"] = $perPage
   q["search"] = $search
+  q["hostname"] = $hostname
   q["namespace"] = $namespace
   q["order_by"] = $orderBy
   q["order_by_direction"] = $orderByDirection
@@ -248,7 +250,10 @@ proc getAccountsAccountIdAiSearchInstances*(client: CloudflareClient,
 proc postAccountsAccountIdAiSearchInstances*(client: CloudflareClient,
                                              accountId: string,
                                              body: PostAccountsAccountIdAiSearchInstancesRequest): Future[PostAccountsAccountIdAiSearchInstancesResponse] {.async.} =
-  ## Create a new AI Search instance with the given configuration.
+  ## Create a new AI Search instance with the given configuration. If type is omitted
+  ## or null, a non-blank HTTP(S) source infers web-crawler and an existing R2 bucket
+  ## source infers r2. A missing or blank source without a type creates a managed
+  ## upload-only instance. Search for Agents instances require the default namespace.
   ##
   ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
   ## (and descendant paths) instead.
@@ -279,7 +284,10 @@ proc getAccountsAccountIdAiSearchInstancesId*(client: CloudflareClient,
 proc putAccountsAccountIdAiSearchInstancesId*(client: CloudflareClient,
                                               accountId: string, id: string,
                                               body: PutAccountsAccountIdAiSearchInstancesIdRequest): Future[PutAccountsAccountIdAiSearchInstancesIdResponse] {.async.} =
-  ## Update the configuration of an AI Search instance.
+  ## Update an AI Search instance. Submitting Search for Agents metadata requires the
+  ## default namespace; omitting or removing it is allowed elsewhere. Submit Search
+  ## for Agents metadata and restrictive or unknown public endpoint changes or custom
+  ## domains in separate PUT requests, even when resubmitting unchanged metadata.
   ##
   ## Deprecated: use /accounts/{account_id}/ai-search/namespaces/{name}/instances
   ## (and descendant paths) instead.
@@ -363,6 +371,7 @@ proc getAccountsAccountIdAiSearchNamespacesNameInstances*(client: CloudflareClie
                                                           page: int64 = 1,
                                                           perPage: int64 = 20,
                                                           search: string = default(string),
+                                                          hostname: string = default(string),
                                                           namespace: string = default(string),
                                                           orderBy: AiSearchInstanceOrderByOption = orderByCreatedAt,
                                                           orderByDirection: AiSearchInstanceOrderByDirectionOption = orderByDirectionDesc,
@@ -373,6 +382,7 @@ proc getAccountsAccountIdAiSearchNamespacesNameInstances*(client: CloudflareClie
   q["page"] = $page
   q["per_page"] = $perPage
   q["search"] = $search
+  q["hostname"] = $hostname
   q["namespace"] = $namespace
   q["order_by"] = $orderBy
   q["order_by_direction"] = $orderByDirection
@@ -388,7 +398,10 @@ proc postAccountsAccountIdAiSearchNamespacesNameInstances*(client: CloudflareCli
                                                            accountId: string,
                                                            name: string,
                                                            body: PostAccountsAccountIdAiSearchNamespacesNameInstancesRequest): Future[PostAccountsAccountIdAiSearchNamespacesNameInstancesResponse] {.async.} =
-  ## Create a new AI Search instance with the given configuration.
+  ## Create a new AI Search instance with the given configuration. If type is omitted
+  ## or null, a non-blank HTTP(S) source infers web-crawler and an existing R2 bucket
+  ## source infers r2. A missing or blank source without a type creates a managed
+  ## upload-only instance. Search for Agents instances require the default namespace.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances", body)
   let body = await res.body
@@ -417,7 +430,10 @@ proc putAccountsAccountIdAiSearchNamespacesNameInstancesId*(client: CloudflareCl
                                                             id: string,
                                                             name: string,
                                                             body: PutAccountsAccountIdAiSearchNamespacesNameInstancesIdRequest): Future[PutAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse] {.async.} =
-  ## Update the configuration of an AI Search instance.
+  ## Update an AI Search instance. Submitting Search for Agents metadata requires the
+  ## default namespace; omitting or removing it is allowed elsewhere. Submit Search
+  ## for Agents metadata and restrictive or unknown public endpoint changes or custom
+  ## domains in separate PUT requests, even when resubmitting unchanged metadata.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances/{id}", body)
   let body = await res.body

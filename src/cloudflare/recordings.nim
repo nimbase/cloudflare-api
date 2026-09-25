@@ -133,7 +133,7 @@ proc getAccountsAccountIdRealtimeKitAppIdRecordingsRecordingId*(client: Cloudfla
 
 proc putAccountsAccountIdRealtimeKitAppIdRecordingsRecordingId*(client: CloudflareClient,
                                                                 accountId: types.RealtimekitAccountIdentifier,
-                                                                appId: string,
+                                                                appId: types.RealtimekitAppId,
                                                                 recordingId: string,
                                                                 body: PutAccountsAccountIdRealtimeKitAppIdRecordingsRecordingIdRequest): Future[JsonNode] {.async.} =
   ## Pause/Resume/Stop a given recording ID.

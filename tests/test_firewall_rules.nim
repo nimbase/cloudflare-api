@@ -45,16 +45,6 @@ suite "firewall_rules endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getZonesZoneIdFirewallRules("test", "test", "test", 1.0, 1.0, "test", true)
 
-  test "PUT /zones/{zone_id}/firewall/rules":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putZonesZoneIdFirewallRules("test")
-
-  test "PATCH /zones/{zone_id}/firewall/rules":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchZonesZoneIdFirewallRules("test")
-
   test "GET /zones/{zone_id}/firewall/rules/{rule_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

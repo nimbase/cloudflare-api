@@ -43,3 +43,16 @@ proc getAccountsAccountIdWorkersDurableObjectsNamespacesIdObjects*(client: Cloud
     result = fromJson(body, JsonNode)
   else:
     raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdWorkersDurableObjectsNamespacesIdQueryV2*(client: CloudflareClient,
+                                                                    accountId: types.WorkersIdentifier,
+                                                                    id: types.WorkersSchemasId): Future[JsonNode] {.async.} =
+  ## Executes one or more SQL queries against a Durable Object.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/workers/durable_objects/namespaces/{id}/query/v2", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)

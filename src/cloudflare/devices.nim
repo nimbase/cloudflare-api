@@ -14,7 +14,9 @@ type
     allow_updates: Option[types.TeamsDevicesAllowUpdates]
     allowed_to_leave: Option[types.TeamsDevicesAllowedToLeave]
     auto_connect: Option[types.TeamsDevicesAutoConnect]
+    browser_extension_config: Option[types.TeamsDevicesBrowserExtensionConfig]
     captive_portal: Option[types.TeamsDevicesCaptivePortal]
+    default: Option[types.TeamsDevicesDefault]
     description: Option[JsonNode]
     disable_auto_fallback: Option[types.TeamsDevicesDisableAutoFallback]
     dns_search_suffixes: Option[types.TeamsDevicesDnsSearchSuffixes]
@@ -25,9 +27,10 @@ type
     `include`: Option[types.TeamsDevicesIncludeRequest]
     lan_allow_minutes: Option[types.TeamsDevicesLanAllowMinutes]
     lan_allow_subnet_size: Option[types.TeamsDevicesLanAllowSubnetSize]
-    match: types.TeamsDevicesSchemasMatch
+    match: Option[types.TeamsDevicesSchemasMatch]
     name: string
-    precedence: types.TeamsDevicesPrecedence
+    precedence: Option[types.TeamsDevicesPrecedence]
+    profile_type: Option[types.TeamsDevicesProfileType]
     register_interface_ip_with_dns: Option[types.TeamsDevicesRegisterInterfaceIpWithDns]
     sccm_vpn_boundary_support: Option[types.TeamsDevicesSccmVpnBoundarySupport]
     service_mode_v2: Option[types.TeamsDevicesServiceModeV2]
@@ -63,7 +66,9 @@ type
     allow_updates: Option[types.TeamsDevicesAllowUpdates]
     allowed_to_leave: Option[types.TeamsDevicesAllowedToLeave]
     auto_connect: Option[types.TeamsDevicesAutoConnect]
+    browser_extension_config: Option[types.TeamsDevicesBrowserExtensionConfig]
     captive_portal: Option[types.TeamsDevicesCaptivePortal]
+    default: Option[types.TeamsDevicesDefault]
     description: Option[types.TeamsDevicesSchemasDescription]
     disable_auto_fallback: Option[types.TeamsDevicesDisableAutoFallback]
     dns_search_suffixes: Option[types.TeamsDevicesDnsSearchSuffixes]
@@ -105,10 +110,13 @@ proc getAccountsAccountIdDevices*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdDevicesPolicies*(client: CloudflareClient,
-                                          accountId: types.TeamsDevicesIdentifier): Future[types.TeamsDevicesDeviceSettingsResponseCollection] {.async.} =
+                                          accountId: types.TeamsDevicesIdentifier,
+                                          profileType: types.TeamsDevicesProfileType = default(types.TeamsDevicesProfileType)): Future[types.TeamsDevicesDeviceSettingsResponseCollection] {.async.} =
   ## Fetches a list of the device settings profiles for an account.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/devices/policies")
+  var q = initOrderedTable[string, string]()
+  q["profile_type"] = $profileType
+  let res = await client.httpGET(fmt"/accounts/{accountId}/devices/policies", q)
   let body = await res.body
   case res.code
   of Http200:
@@ -179,6 +187,21 @@ proc putAccountsAccountIdDevicesPolicyExclude*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc deleteAccountsAccountIdDevicesPolicyExclude*(client: CloudflareClient,
+                                                  accountId: types.TeamsDevicesIdentifier,
+                                                  resetDefaults: bool = true): Future[types.TeamsDevicesSplitTunnelResponseCollection] {.async.} =
+  ## Resets the Split Tunnel exclude list to the default value.
+
+  var q = initOrderedTable[string, string]()
+  q["reset_defaults"] = $resetDefaults
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/devices/policy/exclude", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.TeamsDevicesSplitTunnelResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdDevicesPolicyFallbackDomains*(client: CloudflareClient,
                                                        accountId: types.TeamsDevicesIdentifier): Future[types.TeamsDevicesFallbackDomainResponseCollection] {.async.} =
   ## Fetches a list of domains to bypass Gateway DNS resolution. These domains will
@@ -198,6 +221,21 @@ proc putAccountsAccountIdDevicesPolicyFallbackDomains*(client: CloudflareClient,
   ## use the specified local DNS resolver instead.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/devices/policy/fallback_domains", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.TeamsDevicesFallbackDomainResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdDevicesPolicyFallbackDomains*(client: CloudflareClient,
+                                                          accountId: types.TeamsDevicesIdentifier,
+                                                          resetDefaults: bool = true): Future[types.TeamsDevicesFallbackDomainResponseCollection] {.async.} =
+  ## Restores the default Local Domain Fallback list for the default device profile.
+
+  var q = initOrderedTable[string, string]()
+  q["reset_defaults"] = $resetDefaults
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/devices/policy/fallback_domains", q)
   let body = await res.body
   case res.code
   of Http200:
@@ -298,6 +336,23 @@ proc putAccountsAccountIdDevicesPolicyPolicyIdExclude*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc deleteAccountsAccountIdDevicesPolicyPolicyIdExclude*(client: CloudflareClient,
+                                                          policyId: types.TeamsDevicesSchemasUuid,
+                                                          accountId: types.TeamsDevicesIdentifier,
+                                                          resetDefaults: bool = true): Future[types.TeamsDevicesSplitTunnelResponseCollection] {.async.} =
+  ## Resets the Split Tunnel exclude list to the default value for the selected
+  ## device profile.
+
+  var q = initOrderedTable[string, string]()
+  q["reset_defaults"] = $resetDefaults
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/devices/policy/{policyId}/exclude", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.TeamsDevicesSplitTunnelResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdDevicesPolicyPolicyIdFallbackDomains*(client: CloudflareClient,
                                                                policyId: types.TeamsDevicesSchemasUuid,
                                                                accountId: types.TeamsDevicesIdentifier): Future[types.TeamsDevicesFallbackDomainResponseCollection] {.async.} =
@@ -321,6 +376,22 @@ proc putAccountsAccountIdDevicesPolicyPolicyIdFallbackDomains*(client: Cloudflar
   ## specified device settings profile.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/devices/policy/{policyId}/fallback_domains", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.TeamsDevicesFallbackDomainResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdDevicesPolicyPolicyIdFallbackDomains*(client: CloudflareClient,
+                                                                  policyId: types.TeamsDevicesSchemasUuid,
+                                                                  accountId: types.TeamsDevicesIdentifier,
+                                                                  resetDefaults: bool = true): Future[types.TeamsDevicesFallbackDomainResponseCollection] {.async.} =
+  ## Restores the default Local Domain Fallback list for a specific device profile.
+
+  var q = initOrderedTable[string, string]()
+  q["reset_defaults"] = $resetDefaults
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/devices/policy/{policyId}/fallback_domains", q)
   let body = await res.body
   case res.code
   of Http200:

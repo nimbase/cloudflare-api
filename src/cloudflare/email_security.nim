@@ -11,14 +11,14 @@ import ./private/types
 type
   PostAccountsAccountIdEmailSecurityInvestigateMoveRequest = object
     destination: types.EmailSecurityMailboxDestination
-    expected_disposition: Option[types.EmailSecurityDispositionLabel]
+    expected_disposition: Option[string]
     ids: Option[seq[types.EmailSecurityInvestigateId]]
     postfix_ids: Option[seq[types.EmailSecurityPostfixId]]
   PostAccountsAccountIdEmailSecurityInvestigatePreviewRequest = object
     postfix_id: types.EmailSecurityPostfixId
   PostAccountsAccountIdEmailSecurityInvestigateInvestigateIdMoveRequest = object
     destination: types.EmailSecurityMailboxDestination
-    expected_disposition: Option[types.EmailSecurityDispositionLabel]
+    expected_disposition: Option[string]
   EmailSecurityFinalDispositionOption* = enum
     finalDispositionMALICIOUS = "MALICIOUS"
     finalDispositionSUSPICIOUS = "SUSPICIOUS"
