@@ -22,7 +22,7 @@ proc getAccountsAccountIdPagesProjectsProjectNameDeployments*(client: Cloudflare
                                                               env: PagesDeploymentEnvOption = envProduction,
                                                               page: int64 = default(int64),
                                                               perPage: int64 = default(int64)): Future[JsonNode] {.async.} =
-  ## Fetch a list of project deployments.
+  ## List the production or preview deployments for a Cloudflare Pages project.
 
   var q = initOrderedTable[string, string]()
   q["env"] = $env
@@ -39,8 +39,8 @@ proc getAccountsAccountIdPagesProjectsProjectNameDeployments*(client: Cloudflare
 proc postAccountsAccountIdPagesProjectsProjectNameDeployments*(client: CloudflareClient,
                                                                projectName: types.PagesProjectName,
                                                                accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
-  ## Start a new deployment from production. The repository and account must have
-  ## already been authorized on the Cloudflare Pages dashboard.
+  ## Create a Cloudflare Pages deployment from a Git branch or Direct Upload
+  ## manifest. Git repositories must already be authorized in Cloudflare Pages.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/pages/projects/{projectName}/deployments")
   let body = await res.body
@@ -51,10 +51,10 @@ proc postAccountsAccountIdPagesProjectsProjectNameDeployments*(client: Cloudflar
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentId*(client: CloudflareClient,
-                                                                          deploymentId: types.PagesIdentifier,
+                                                                          deploymentId: types.PagesDeploymentId,
                                                                           projectName: types.PagesProjectName,
                                                                           accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
-  ## Fetch information about a deployment.
+  ## Retrieve the status and details of a Cloudflare Pages deployment.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/pages/projects/{projectName}/deployments/{deploymentId}")
   let body = await res.body
@@ -65,11 +65,11 @@ proc getAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentId*(client
     raise newException(CloudflareClientError, body)
 
 proc deleteAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentId*(client: CloudflareClient,
-                                                                             deploymentId: types.PagesIdentifier,
+                                                                             deploymentId: types.PagesDeploymentId,
                                                                              projectName: types.PagesProjectName,
                                                                              accountId: types.PagesIdentifier,
                                                                              force: bool = default(bool)): Future[JsonNode] {.async.} =
-  ## Delete a deployment.
+  ## Remove a deployment from a Cloudflare Pages project.
 
   var q = initOrderedTable[string, string]()
   q["force"] = $force
@@ -82,10 +82,10 @@ proc deleteAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentId*(cli
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentIdHistoryLogs*(client: CloudflareClient,
-                                                                                     deploymentId: types.PagesIdentifier,
+                                                                                     deploymentId: types.PagesDeploymentId,
                                                                                      projectName: types.PagesProjectName,
                                                                                      accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
-  ## Fetch deployment logs for a project.
+  ## Retrieve the build logs for a Cloudflare Pages deployment.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/pages/projects/{projectName}/deployments/{deploymentId}/history/logs")
   let body = await res.body
@@ -96,10 +96,10 @@ proc getAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentIdHistoryL
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentIdRetry*(client: CloudflareClient,
-                                                                                deploymentId: types.PagesIdentifier,
+                                                                                deploymentId: types.PagesDeploymentId,
                                                                                 projectName: types.PagesProjectName,
                                                                                 accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
-  ## Retry a previous deployment.
+  ## Retry a previous Cloudflare Pages deployment.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/pages/projects/{projectName}/deployments/{deploymentId}/retry")
   let body = await res.body
@@ -110,11 +110,10 @@ proc postAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentIdRetry*(
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentIdRollback*(client: CloudflareClient,
-                                                                                   deploymentId: types.PagesIdentifier,
+                                                                                   deploymentId: types.PagesDeploymentId,
                                                                                    projectName: types.PagesProjectName,
                                                                                    accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
-  ## Rollback the production deployment to a previous deployment. You can only
-  ## rollback to succesful builds on production.
+  ## Roll back production to a previous successful Cloudflare Pages deployment.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/pages/projects/{projectName}/deployments/{deploymentId}/rollback")
   let body = await res.body
@@ -125,7 +124,7 @@ proc postAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentIdRollbac
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentIdTails*(client: CloudflareClient,
-                                                                                deploymentId: types.PagesIdentifier,
+                                                                                deploymentId: types.PagesDeploymentId,
                                                                                 projectName: types.PagesProjectName,
                                                                                 accountId: types.PagesIdentifier,
                                                                                 body: PostAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentIdTailsRequest): Future[JsonNode] {.async.} =
@@ -141,7 +140,7 @@ proc postAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentIdTails*(
 
 proc deleteAccountsAccountIdPagesProjectsProjectNameDeploymentsDeploymentIdTailsTailId*(client: CloudflareClient,
                                                                                         tailId: types.PagesIdentifier,
-                                                                                        deploymentId: types.PagesIdentifier,
+                                                                                        deploymentId: types.PagesDeploymentId,
                                                                                         projectName: types.PagesProjectName,
                                                                                         accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
   ## Deletes a tail from a Pages deployment.

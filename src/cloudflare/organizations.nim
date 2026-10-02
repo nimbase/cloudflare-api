@@ -90,7 +90,8 @@ proc getOrganizations*(client: CloudflareClient, id: seq[string] = @[],
 
 proc postOrganizations*(client: CloudflareClient,
                         body: types.OrganizationsApiOrganization): Future[PostOrganizationsResponse] {.async.} =
-  ## Create a new organization for a user. (Currently in Public Beta - see
+  ## Create a new organization for a user. Sub-organization creation availability
+  ## depends on the organization's capabilities. (Currently in Public Beta - see
   ## https://developers.cloudflare.com/fundamentals/organizations/)
 
   let res = await client.httpPOST("/organizations", body)
@@ -117,7 +118,7 @@ proc getOrganizationsOrganizationId*(client: CloudflareClient,
 proc putOrganizationsOrganizationId*(client: CloudflareClient,
                                      organizationId: types.OrganizationsApiOrganizationID,
                                      body: types.OrganizationsApiOrganization): Future[PutOrganizationsOrganizationIdResponse] {.async.} =
-  ## Modify organization. (Currently in Public Beta - see
+  ## Update an organization's name. (Currently in Public Beta - see
   ## https://developers.cloudflare.com/fundamentals/organizations/)
 
   let res = await client.httpPUT(fmt"/organizations/{organizationId}", body)
@@ -132,8 +133,9 @@ proc deleteOrganizationsOrganizationId*(client: CloudflareClient,
                                         organizationId: types.OrganizationsApiOrganizationID): Future[DeleteOrganizationsOrganizationIdResponse] {.async.} =
   ## Delete an organization. The organization MUST be empty before deleting.
   ## It must not contain any sub-organizations, accounts, members or users.
-  ## (Currently in Public Beta - see
-  ## https://developers.cloudflare.com/fundamentals/organizations/)
+  ## Sub-organization
+  ## deletion availability depends on the organization's capabilities. (Currently in
+  ## Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
   ##
   ## **Access Control:** Restricted to enterprise organizations.
 
@@ -161,8 +163,8 @@ proc getOrganizationsOrganizationIdAccounts*(client: CloudflareClient,
                                              includeTotal: bool = true,
                                              pageToken: string = default(string),
                                              pageSize: int64 = default(int64)): Future[GetOrganizationsOrganizationIdAccountsResponse] {.async.} =
-  ## Retrieve a list of accounts that belong to a specific organization. (Currently
-  ## in Public Beta - see
+  ## Retrieve the accounts immediately attached to a specific organization. Accounts
+  ## attached to sub-organizations are not included. (Currently in Public Beta - see
   ## https://developers.cloudflare.com/fundamentals/organizations/)
 
   var q = initOrderedTable[string, string]()

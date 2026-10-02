@@ -381,6 +381,9 @@ type
     result: JsonNode
     success: bool
       ## Response status.
+  BrapiBrowserOption* = enum
+    browserKitesurf = "kitesurf"
+
   BrapiStatusOption* = enum
     statusQueued = "queued"
     statusErrored = "errored"
@@ -393,6 +396,7 @@ type
 proc postAccountsAccountIdBrowserRenderingAccessibilityTree*(client: CloudflareClient,
                                                              accountId: string,
                                                              cacheTTL: float64 = default(float64),
+                                                             browser: BrapiBrowserOption = browserKitesurf,
                                                              body: PostAccountsAccountIdBrowserRenderingAccessibilityTreeRequest): Future[PostAccountsAccountIdBrowserRenderingAccessibilityTreeResponse] {.async.} =
   ## Returns the page's accessibility tree. Use `interestingOnly` to only return
   ## semantically meaningful nodes; use `root` to scope the tree to a
@@ -401,6 +405,7 @@ proc postAccountsAccountIdBrowserRenderingAccessibilityTree*(client: CloudflareC
 
   var q = initOrderedTable[string, string]()
   q["cacheTTL"] = $cacheTTL
+  q["browser"] = $browser
   let res = await client.httpPOST(fmt"/accounts/{accountId}/browser-rendering/accessibilityTree", q)
   let body = await res.body
   case res.code
@@ -412,12 +417,14 @@ proc postAccountsAccountIdBrowserRenderingAccessibilityTree*(client: CloudflareC
 proc postAccountsAccountIdBrowserRenderingContent*(client: CloudflareClient,
                                                    accountId: string,
                                                    cacheTTL: float64 = default(float64),
+                                                   browser: BrapiBrowserOption = browserKitesurf,
                                                    body: PostAccountsAccountIdBrowserRenderingContentRequest): Future[PostAccountsAccountIdBrowserRenderingContentResponse] {.async.} =
   ## Fetches rendered HTML content from provided URL or HTML. Check available options
   ## like `gotoOptions` and `waitFor*` to control page load behaviour.
 
   var q = initOrderedTable[string, string]()
   q["cacheTTL"] = $cacheTTL
+  q["browser"] = $browser
   let res = await client.httpPOST(fmt"/accounts/{accountId}/browser-rendering/content", q)
   let body = await res.body
   case res.code
@@ -478,23 +485,6 @@ proc deleteAccountsAccountIdBrowserRenderingCrawlJobId*(client: CloudflareClient
   else:
     raise newException(CloudflareClientError, body)
 
-proc getAccountsAccountIdBrowserRenderingDevtoolsBrowser*(client: CloudflareClient,
-                                                          accountId: string,
-                                                          keepAlive: float64 = default(float64),
-                                                          lab: bool = false,
-                                                          recording: bool = false): Future[AsyncResponse] {.async.} =
-  ## Acquires and establishes a WebSocket connection to a browser session. Session
-  ## guardrails may be supplied in the `cf-brapi-guardrails` header as
-  ## base64url-encoded JSON of the same `guardrails` object the POST body accepts
-  ## (for example `{"allowedDomains":["*.example.com"]}`).
-
-  var q = initOrderedTable[string, string]()
-  q["keep_alive"] = $keepAlive
-  q["lab"] = $lab
-  q["recording"] = $recording
-  let res = await client.httpGET(fmt"/accounts/{accountId}/browser-rendering/devtools/browser", q)
-  return res
-
 proc postAccountsAccountIdBrowserRenderingDevtoolsBrowser*(client: CloudflareClient,
                                                            accountId: string,
                                                            keepAlive: float64 = default(float64),
@@ -519,21 +509,6 @@ proc postAccountsAccountIdBrowserRenderingDevtoolsBrowser*(client: CloudflareCli
     result = fromJson(body, PostAccountsAccountIdBrowserRenderingDevtoolsBrowserResponse)
   else:
     raise newException(CloudflareClientError, body)
-
-proc getAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionId*(client: CloudflareClient,
-                                                                   accountId: string,
-                                                                   sessionId: string,
-                                                                   keepAlive: float64 = default(float64),
-                                                                   lab: bool = false,
-                                                                   recording: bool = false): Future[AsyncResponse] {.async.} =
-  ## Establishes a WebSocket connection to an existing browser session.
-
-  var q = initOrderedTable[string, string]()
-  q["keep_alive"] = $keepAlive
-  q["lab"] = $lab
-  q["recording"] = $recording
-  let res = await client.httpGET(fmt"/accounts/{accountId}/browser-rendering/devtools/browser/{sessionId}", q)
-  return res
 
 proc deleteAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionId*(client: CloudflareClient,
                                                                       accountId: string,
@@ -685,15 +660,6 @@ proc postAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionIdLiveView*(clie
   else:
     raise newException(CloudflareClientError, body)
 
-proc getAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionIdPageTargetId*(client: CloudflareClient,
-                                                                               accountId: string,
-                                                                               sessionId: string,
-                                                                               targetId: string): Future[AsyncResponse] {.async.} =
-  ## Establishes a WebSocket connection to a specific Chrome DevTools target or page.
-
-  let res = await client.httpGET(fmt"/accounts/{accountId}/browser-rendering/devtools/browser/{sessionId}/page/{targetId}")
-  return res
-
 proc getAccountsAccountIdBrowserRenderingDevtoolsSession*(client: CloudflareClient,
                                                           accountId: string,
                                                           limit: float64 = default(float64),
@@ -727,12 +693,14 @@ proc getAccountsAccountIdBrowserRenderingDevtoolsSessionSessionId*(client: Cloud
 proc postAccountsAccountIdBrowserRenderingJson*(client: CloudflareClient,
                                                 accountId: string,
                                                 cacheTTL: float64 = default(float64),
+                                                browser: BrapiBrowserOption = browserKitesurf,
                                                 body: PostAccountsAccountIdBrowserRenderingJsonRequest): Future[PostAccountsAccountIdBrowserRenderingJsonResponse] {.async.} =
   ## Gets json from a webpage from a provided URL or HTML. Pass `prompt` or `schema`
   ## in the body. Control page loading with `gotoOptions` and `waitFor*` options.
 
   var q = initOrderedTable[string, string]()
   q["cacheTTL"] = $cacheTTL
+  q["browser"] = $browser
   let res = await client.httpPOST(fmt"/accounts/{accountId}/browser-rendering/json", q)
   let body = await res.body
   case res.code
@@ -744,11 +712,13 @@ proc postAccountsAccountIdBrowserRenderingJson*(client: CloudflareClient,
 proc postAccountsAccountIdBrowserRenderingLinks*(client: CloudflareClient,
                                                  accountId: string,
                                                  cacheTTL: float64 = default(float64),
+                                                 browser: BrapiBrowserOption = browserKitesurf,
                                                  body: PostAccountsAccountIdBrowserRenderingLinksRequest): Future[PostAccountsAccountIdBrowserRenderingLinksResponse] {.async.} =
   ## Get links from a web page.
 
   var q = initOrderedTable[string, string]()
   q["cacheTTL"] = $cacheTTL
+  q["browser"] = $browser
   let res = await client.httpPOST(fmt"/accounts/{accountId}/browser-rendering/links", q)
   let body = await res.body
   case res.code
@@ -760,12 +730,14 @@ proc postAccountsAccountIdBrowserRenderingLinks*(client: CloudflareClient,
 proc postAccountsAccountIdBrowserRenderingMarkdown*(client: CloudflareClient,
                                                     accountId: string,
                                                     cacheTTL: float64 = default(float64),
+                                                    browser: BrapiBrowserOption = browserKitesurf,
                                                     body: PostAccountsAccountIdBrowserRenderingMarkdownRequest): Future[PostAccountsAccountIdBrowserRenderingMarkdownResponse] {.async.} =
   ## Gets markdown of a webpage from provided URL or HTML. Control page loading with
   ## `gotoOptions` and `waitFor*` options.
 
   var q = initOrderedTable[string, string]()
   q["cacheTTL"] = $cacheTTL
+  q["browser"] = $browser
   let res = await client.httpPOST(fmt"/accounts/{accountId}/browser-rendering/markdown", q)
   let body = await res.body
   case res.code
@@ -777,12 +749,14 @@ proc postAccountsAccountIdBrowserRenderingMarkdown*(client: CloudflareClient,
 proc postAccountsAccountIdBrowserRenderingPdf*(client: CloudflareClient,
                                                accountId: string,
                                                cacheTTL: float64 = default(float64),
+                                               browser: BrapiBrowserOption = browserKitesurf,
                                                body: PostAccountsAccountIdBrowserRenderingPdfRequest): Future[AsyncResponse] {.async.} =
   ## Fetches rendered PDF from provided URL or HTML. Check available options like
   ## `gotoOptions` and `waitFor*` to control page load behaviour.
 
   var q = initOrderedTable[string, string]()
   q["cacheTTL"] = $cacheTTL
+  q["browser"] = $browser
   let res = await client.httpPOST(fmt"/accounts/{accountId}/browser-rendering/pdf", q)
   return res
 
@@ -822,11 +796,13 @@ proc getAccountsAccountIdBrowserRenderingRecordingSessionIdNetwork*(client: Clou
 proc postAccountsAccountIdBrowserRenderingScrape*(client: CloudflareClient,
                                                   accountId: string,
                                                   cacheTTL: float64 = default(float64),
+                                                  browser: BrapiBrowserOption = browserKitesurf,
                                                   body: PostAccountsAccountIdBrowserRenderingScrapeRequest): Future[PostAccountsAccountIdBrowserRenderingScrapeResponse] {.async.} =
   ## Get meta attributes like height, width, text and others of selected elements.
 
   var q = initOrderedTable[string, string]()
   q["cacheTTL"] = $cacheTTL
+  q["browser"] = $browser
   let res = await client.httpPOST(fmt"/accounts/{accountId}/browser-rendering/scrape", q)
   let body = await res.body
   case res.code
@@ -838,6 +814,7 @@ proc postAccountsAccountIdBrowserRenderingScrape*(client: CloudflareClient,
 proc postAccountsAccountIdBrowserRenderingScreenshot*(client: CloudflareClient,
                                                       accountId: string,
                                                       cacheTTL: float64 = default(float64),
+                                                      browser: BrapiBrowserOption = browserKitesurf,
                                                       body: PostAccountsAccountIdBrowserRenderingScreenshotRequest): Future[PostAccountsAccountIdBrowserRenderingScreenshotResponse] {.async.} =
   ## Takes a screenshot of a webpage from provided URL or HTML. Control page loading
   ## with `gotoOptions` and `waitFor*` options. Customize screenshots with
@@ -845,6 +822,7 @@ proc postAccountsAccountIdBrowserRenderingScreenshot*(client: CloudflareClient,
 
   var q = initOrderedTable[string, string]()
   q["cacheTTL"] = $cacheTTL
+  q["browser"] = $browser
   let res = await client.httpPOST(fmt"/accounts/{accountId}/browser-rendering/screenshot", q)
   let body = await res.body
   case res.code
@@ -856,6 +834,7 @@ proc postAccountsAccountIdBrowserRenderingScreenshot*(client: CloudflareClient,
 proc postAccountsAccountIdBrowserRenderingSnapshot*(client: CloudflareClient,
                                                     accountId: string,
                                                     cacheTTL: float64 = default(float64),
+                                                    browser: BrapiBrowserOption = browserKitesurf,
                                                     body: PostAccountsAccountIdBrowserRenderingSnapshotRequest): Future[PostAccountsAccountIdBrowserRenderingSnapshotResponse] {.async.} =
   ## Returns the page's HTML content and screenshot. Control page loading with
   ## `gotoOptions` and `waitFor*` options. Customize screenshots with `viewport`,
@@ -863,6 +842,7 @@ proc postAccountsAccountIdBrowserRenderingSnapshot*(client: CloudflareClient,
 
   var q = initOrderedTable[string, string]()
   q["cacheTTL"] = $cacheTTL
+  q["browser"] = $browser
   let res = await client.httpPOST(fmt"/accounts/{accountId}/browser-rendering/snapshot", q)
   let body = await res.body
   case res.code

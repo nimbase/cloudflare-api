@@ -31,11 +31,20 @@ suite "dlp_document_fingerprints serialization":
     let obj = newDlpDocumentFingerprint()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpDocumentFingerprint)) == openjson.toJson(obj)
 
+  test "round-trips DlpNewDocumentFingerprint":
+    let obj = newDlpNewDocumentFingerprint()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpNewDocumentFingerprint)) == openjson.toJson(obj)
+
 suite "dlp_document_fingerprints endpoints":
   test "GET /accounts/{account_id}/dlp/document_fingerprints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdDlpDocumentFingerprints("test")
+
+  test "POST /accounts/{account_id}/dlp/document_fingerprints":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdDlpDocumentFingerprints("test", newDlpNewDocumentFingerprint())
 
   test "GET /accounts/{account_id}/dlp/document_fingerprints/{document_fingerprint_id}":
     let client = initCloudflareClient("test-key")

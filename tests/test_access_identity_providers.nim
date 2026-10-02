@@ -15,6 +15,10 @@ suite "access_identity_providers serialization":
     let obj = newAccessIdentityProviders()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessIdentityProviders)) == openjson.toJson(obj)
 
+  test "round-trips AccessScimUserResponse":
+    let obj = newAccessScimUserResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessScimUserResponse)) == openjson.toJson(obj)
+
   test "round-trips AccessResponseCollection":
     let obj = newAccessResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection)) == openjson.toJson(obj)
@@ -42,6 +46,10 @@ suite "access_identity_providers serialization":
   test "round-trips AccessSamlCertificateSetResponse":
     let obj = newAccessSamlCertificateSetResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSamlCertificateSetResponse)) == openjson.toJson(obj)
+
+  test "round-trips AccessScimGroupResponse":
+    let obj = newAccessScimGroupResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessScimGroupResponse)) == openjson.toJson(obj)
 
 suite "access_identity_providers endpoints":
   test "GET /accounts/{account_id}/access/identity_providers":
@@ -73,4 +81,24 @@ suite "access_identity_providers endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdAccessIdentityProvidersIdentityProviderIdSamlCertificate("test", "test")
+
+  test "GET /accounts/{account_id}/access/identity_providers/{identity_provider_id}/scim/groups/{group_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdAccessIdentityProvidersIdentityProviderIdScimGroupsGroupId("test", "test", "test")
+
+  test "DELETE /accounts/{account_id}/access/identity_providers/{identity_provider_id}/scim/groups/{group_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdAccessIdentityProvidersIdentityProviderIdScimGroupsGroupId("test", "test", "test")
+
+  test "GET /accounts/{account_id}/access/identity_providers/{identity_provider_id}/scim/users/{user_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdAccessIdentityProvidersIdentityProviderIdScimUsersUserId("test", "test", "test")
+
+  test "DELETE /accounts/{account_id}/access/identity_providers/{identity_provider_id}/scim/users/{user_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdAccessIdentityProvidersIdentityProviderIdScimUsersUserId("test", "test", "test")
 

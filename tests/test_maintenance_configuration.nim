@@ -32,6 +32,16 @@ suite "maintenance_configuration serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2DataCatalogCatalogMaintenanceConfig)) == openjson.toJson(obj)
 
 suite "maintenance_configuration endpoints":
+  test "GET /accounts/{account_id}/basin-catalog/{bucket_name}/maintenance-configs":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdBasinCatalogBucketNameMaintenanceConfigs("test", "test")
+
+  test "POST /accounts/{account_id}/basin-catalog/{bucket_name}/maintenance-configs":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdBasinCatalogBucketNameMaintenanceConfigs("test", "test", newR2DataCatalogCatalogMaintenanceUpdateRequest())
+
   test "GET /accounts/{account_id}/r2-catalog/{bucket_name}/maintenance-configs":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

@@ -11,10 +11,6 @@ import cloudflare
 import ./common
 
 suite "access_service_tokens serialization":
-  test "round-trips AccessResponseCollection3":
-    let obj = newAccessResponseCollection3()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection3)) == openjson.toJson(obj)
-
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
@@ -22,6 +18,10 @@ suite "access_service_tokens serialization":
   test "round-trips AccessCreateResponse":
     let obj = newAccessCreateResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessCreateResponse)) == openjson.toJson(obj)
+
+  test "round-trips AccessResponseCollection4":
+    let obj = newAccessResponseCollection4()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection4)) == openjson.toJson(obj)
 
   test "round-trips AccessSingleResponse2":
     let obj = newAccessSingleResponse2()

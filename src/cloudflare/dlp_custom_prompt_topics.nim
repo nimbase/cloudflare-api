@@ -4,21 +4,10 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[strformat, options, json]
+import std/[strformat, json]
 import ./private/metaclient
+import ./private/types
 
-type
-  PostAccountsAccountIdDlpCustomPromptTopicsRequest = object
-    description: Option[string]
-    enabled: bool
-    name: string
-    profile_id: Option[string]
-    topic: string
-  PutAccountsAccountIdDlpCustomPromptTopicsEntryIdRequest = object
-    description: Option[string]
-    enabled: bool
-    name: string
-    topic: string
 
 proc getAccountsAccountIdDlpCustomPromptTopics*(client: CloudflareClient,
                                                 accountId: string): Future[JsonNode] {.async.} =
@@ -34,7 +23,7 @@ proc getAccountsAccountIdDlpCustomPromptTopics*(client: CloudflareClient,
 
 proc postAccountsAccountIdDlpCustomPromptTopics*(client: CloudflareClient,
                                                  accountId: string,
-                                                 body: PostAccountsAccountIdDlpCustomPromptTopicsRequest): Future[JsonNode] {.async.} =
+                                                 body: types.DlpNewCustomPromptTopic): Future[JsonNode] {.async.} =
   ## Creates a DLP custom prompt topic entry.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/dlp/custom_prompt_topics", body)
@@ -61,7 +50,7 @@ proc getAccountsAccountIdDlpCustomPromptTopicsEntryId*(client: CloudflareClient,
 proc putAccountsAccountIdDlpCustomPromptTopicsEntryId*(client: CloudflareClient,
                                                        accountId: string,
                                                        entryId: string,
-                                                       body: PutAccountsAccountIdDlpCustomPromptTopicsEntryIdRequest): Future[JsonNode] {.async.} =
+                                                       body: types.DlpCustomPromptTopicUpdate): Future[JsonNode] {.async.} =
   ## Updates a DLP custom prompt topic entry.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/dlp/custom_prompt_topics/{entryId}", body)

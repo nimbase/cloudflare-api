@@ -4,15 +4,10 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[strformat, options, json]
+import std/[strformat, json]
 import ./private/metaclient
 import ./private/types
 
-type
-  PostAccountsAccountIdDlpDocumentFingerprintsRequest = object
-    description: Option[string]
-    match_percent: int32
-    name: string
 
 proc getAccountsAccountIdDlpDocumentFingerprints*(client: CloudflareClient,
                                                   accountId: string): Future[JsonNode] {.async.} =
@@ -28,7 +23,7 @@ proc getAccountsAccountIdDlpDocumentFingerprints*(client: CloudflareClient,
 
 proc postAccountsAccountIdDlpDocumentFingerprints*(client: CloudflareClient,
                                                    accountId: string,
-                                                   body: PostAccountsAccountIdDlpDocumentFingerprintsRequest): Future[JsonNode] {.async.} =
+                                                   body: types.DlpNewDocumentFingerprint): Future[JsonNode] {.async.} =
   ## Creates a new document fingerprint for DLP scanning. Document fingerprints
   ## detect documents that are structurally similar to the uploaded sample.
 

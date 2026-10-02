@@ -50,7 +50,7 @@ proc postZonesZoneIdKeylessCertificates*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdKeylessCertificatesKeylessCertificateId*(client: CloudflareClient,
-                                                            keylessCertificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                            keylessCertificateId: types.TlsCertificatesAndHostnamesKeylessCertificateIdentifier,
                                                             zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesKeylessResponseSingle] {.async.} =
   ## Get details for one Keyless SSL configuration.
 
@@ -63,7 +63,7 @@ proc getZonesZoneIdKeylessCertificatesKeylessCertificateId*(client: CloudflareCl
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdKeylessCertificatesKeylessCertificateId*(client: CloudflareClient,
-                                                               keylessCertificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                               keylessCertificateId: types.TlsCertificatesAndHostnamesKeylessCertificateIdentifier,
                                                                zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesKeylessResponseSingleId] {.async.} =
   ## Removes a Keyless SSL configuration. SSL connections will no longer use the
   ## keyless server for cryptographic operations.
@@ -77,7 +77,7 @@ proc deleteZonesZoneIdKeylessCertificatesKeylessCertificateId*(client: Cloudflar
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdKeylessCertificatesKeylessCertificateId*(client: CloudflareClient,
-                                                              keylessCertificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                              keylessCertificateId: types.TlsCertificatesAndHostnamesKeylessCertificateIdentifier,
                                                               zoneId: types.TlsCertificatesAndHostnamesIdentifier,
                                                               body: PatchZonesZoneIdKeylessCertificatesKeylessCertificateIdRequest): Future[types.TlsCertificatesAndHostnamesKeylessResponseSingle] {.async.} =
   ## This will update attributes of a Keyless SSL. Consists of one or more of the

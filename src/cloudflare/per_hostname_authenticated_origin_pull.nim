@@ -89,7 +89,7 @@ proc postZonesZoneIdOriginTlsClientAuthHostnamesCertificates*(client: Cloudflare
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdOriginTlsClientAuthHostnamesCertificatesCertificateId*(client: CloudflareClient,
-                                                                          certificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                                          certificateId: types.TlsCertificatesAndHostnamesHostnameAopCertificateIdentifier,
                                                                           zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateResponseSingle4] {.async.} =
   ## Get the certificate by ID to be used for client authentication on a hostname.
 
@@ -102,7 +102,7 @@ proc getZonesZoneIdOriginTlsClientAuthHostnamesCertificatesCertificateId*(client
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdOriginTlsClientAuthHostnamesCertificatesCertificateId*(client: CloudflareClient,
-                                                                             certificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                                             certificateId: types.TlsCertificatesAndHostnamesHostnameAopCertificateIdentifier,
                                                                              zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateResponseSingle4] {.async.} =
   ## Removes a client certificate used for authenticated origin pulls on a specific
   ## hostname.

@@ -55,7 +55,7 @@ type
 proc getAccountsAccountIdFlagshipAppsAppIdFlags*(client: CloudflareClient,
                                                  accountId: string,
                                                  appId: string,
-                                                 limit: string = default(string),
+                                                 limit: int64 = default(int64),
                                                  cursor: string = default(string)): Future[GetAccountsAccountIdFlagshipAppsAppIdFlagsResponse] {.async.} =
   ## Lists an app's flags ordered by key. Pass `cursor` from `result_info` to page
   ## forward; a null cursor indicates the last page.
@@ -106,7 +106,8 @@ proc putAccountsAccountIdFlagshipAppsAppIdFlagsFlagKey*(client: CloudflareClient
                                                         flagKey: string,
                                                         body: PutAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyRequest): Future[PutAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse] {.async.} =
   ## Replaces the entire flag definition. Omitted fields are dropped, not preserved —
-  ## read before writing. Each update appends a changelog entry.
+  ## read before writing. The path key identifies the flag and cannot be renamed by
+  ## changing the body `key`. Each update appends a changelog entry.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/flagship/apps/{appId}/flags/{flagKey}", body)
   let body = await res.body
@@ -120,8 +121,9 @@ proc deleteAccountsAccountIdFlagshipAppsAppIdFlagsFlagKey*(client: CloudflareCli
                                                            accountId: string,
                                                            appId: string,
                                                            flagKey: string): Future[DeleteAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse] {.async.} =
-  ## Deletes a flag permanently. Subsequent evaluations fall back to the
-  ## caller-supplied default. Cannot be undone.
+  ## Deletes a flag permanently. After deletion propagates, direct evaluations return
+  ## not found; typed binding accessors may return the caller-supplied default.
+  ## Cannot be undone.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/flagship/apps/{appId}/flags/{flagKey}")
   let body = await res.body

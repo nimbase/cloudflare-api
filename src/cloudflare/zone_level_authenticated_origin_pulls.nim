@@ -74,7 +74,7 @@ proc putZonesZoneIdOriginTlsClientAuthSettings*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdOriginTlsClientAuthCertificateId*(client: CloudflareClient,
-                                                     certificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                     certificateId: types.TlsCertificatesAndHostnamesZoneAopCertificateIdentifier,
                                                      zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateResponseSingle3] {.async.} =
   ## Retrieves details for a specific client certificate used in zone-level
   ## authenticated origin pulls.
@@ -88,7 +88,7 @@ proc getZonesZoneIdOriginTlsClientAuthCertificateId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdOriginTlsClientAuthCertificateId*(client: CloudflareClient,
-                                                        certificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                        certificateId: types.TlsCertificatesAndHostnamesZoneAopCertificateIdentifier,
                                                         zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateResponseSingle3] {.async.} =
   ## Removes a client certificate used for zone-level authenticated origin pulls.
 

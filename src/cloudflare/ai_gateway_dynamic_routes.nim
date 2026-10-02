@@ -53,7 +53,7 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutes*(client: CloudflareCli
                                                            gatewayId: string,
                                                            page: int64 = default(int64),
                                                            perPage: int64 = default(int64)): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesResponse] {.async.} =
-  ## List all AI Gateway Dynamic Routes.
+  ## Lists the dynamic routes configured on an AI Gateway.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -70,7 +70,8 @@ proc postAccountsAccountIdAiGatewayGatewaysGatewayIdRoutes*(client: CloudflareCl
                                                             accountId: string,
                                                             gatewayId: string,
                                                             body: PostAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesRequest): Future[PostAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesResponse] {.async.} =
-  ## Create a new AI Gateway Dynamic Route.
+  ## Creates a dynamic route on an AI Gateway from the specified routing elements.
+  ## Clients call the route by using `dynamic/{name}` as the model name.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/routes", body)
   let body = await res.body
@@ -84,7 +85,8 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesId*(client: CloudflareC
                                                              accountId: string,
                                                              gatewayId: string,
                                                              id: string): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdResponse] {.async.} =
-  ## Get an AI Gateway Dynamic Route.
+  ## Retrieves a dynamic route with its routing elements, active version, and current
+  ## deployment.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/routes/{id}")
   let body = await res.body
@@ -98,7 +100,7 @@ proc deleteAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesId*(client: Cloudfla
                                                                 accountId: string,
                                                                 gatewayId: string,
                                                                 id: string): Future[DeleteAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdResponse] {.async.} =
-  ## Delete an AI Gateway Dynamic Route.
+  ## Deletes a dynamic route from an AI Gateway.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/routes/{id}")
   let body = await res.body
@@ -113,7 +115,8 @@ proc patchAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesId*(client: Cloudflar
                                                                gatewayId: string,
                                                                id: string,
                                                                body: PatchAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdRequest): Future[PatchAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdResponse] {.async.} =
-  ## Update an AI Gateway Dynamic Route.
+  ## Updates the name of a dynamic route. To change routing behaviour, create and
+  ## deploy a new version.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/routes/{id}", body)
   let body = await res.body
@@ -127,7 +130,7 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeployments*(client: 
                                                                         accountId: string,
                                                                         gatewayId: string,
                                                                         id: string): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeploymentsResponse] {.async.} =
-  ## List all AI Gateway Dynamic Route Deployments.
+  ## Lists the deployment history of a dynamic route.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/routes/{id}/deployments")
   let body = await res.body
@@ -142,7 +145,8 @@ proc postAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeployments*(client:
                                                                          gatewayId: string,
                                                                          id: string,
                                                                          body: PostAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeploymentsRequest): Future[PostAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeploymentsResponse] {.async.} =
-  ## Create a new AI Gateway Dynamic Route Deployment.
+  ## Deploys the specified version of a dynamic route so that it serves traffic.
+  ## Deploy an earlier version to roll back.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/routes/{id}/deployments", body)
   let body = await res.body
@@ -156,7 +160,7 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersions*(client: Clo
                                                                      accountId: string,
                                                                      gatewayId: string,
                                                                      id: string): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersionsResponse] {.async.} =
-  ## List all AI Gateway Dynamic Route Versions.
+  ## Lists the saved versions of a dynamic route.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/routes/{id}/versions")
   let body = await res.body
@@ -171,7 +175,8 @@ proc postAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersions*(client: Cl
                                                                       gatewayId: string,
                                                                       id: string,
                                                                       body: PostAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersionsRequest): Future[PostAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersionsResponse] {.async.} =
-  ## Create a new AI Gateway Dynamic Route Version.
+  ## Creates a new version of a dynamic route from the specified routing elements.
+  ## The version does not serve traffic until you deploy it.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/routes/{id}/versions", body)
   let body = await res.body
@@ -186,7 +191,7 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersionsVersionId*(cl
                                                                               gatewayId: string,
                                                                               id: string,
                                                                               versionId: string): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersionsVersionIdResponse] {.async.} =
-  ## Get an AI Gateway Dynamic Route Version.
+  ## Retrieves a saved version of a dynamic route, including its routing elements.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/routes/{id}/versions/{versionId}")
   let body = await res.body

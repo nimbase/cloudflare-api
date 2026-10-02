@@ -19,6 +19,10 @@ suite "ai_gateway_provider_configs serialization":
     let obj = cloudflare.PostAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdResponse":
+    let obj = cloudflare.GetAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdResponse)) == openjson.toJson(obj)
+
   test "round-trips PutAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdResponse":
     let obj = cloudflare.PutAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PutAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdResponse)) == openjson.toJson(obj)
@@ -32,6 +36,11 @@ suite "ai_gateway_provider_configs endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigs("test", "test", 1, 1)
+
+  test "GET /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/provider_configs/{id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsId("test", "test", "test")
 
   test "DELETE /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/provider_configs/{id}":
     let client = initCloudflareClient("test-key")

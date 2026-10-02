@@ -120,7 +120,7 @@ proc getAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScripts*(clie
 proc deleteAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScripts*(client: CloudflareClient,
                                                                                accountId: types.WorkersIdentifier,
                                                                                dispatchNamespace: types.WorkersDispatchNamespaceName,
-                                                                               tags: string = default(string),
+                                                                               tags: string,
                                                                                limit: int64 = default(int64)): Future[types.WorkersNamespaceScriptDeleteBulkResponse] {.async.} =
   ## Delete multiple scripts from a Workers for Platforms dispatch namespace based on
   ## optional tag filters.
@@ -425,14 +425,37 @@ proc deleteAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScr
                                                                                                 accountId: types.WorkersIdentifier,
                                                                                                 dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                                 scriptName: types.WorkersScriptName,
-                                                                                                tag: types.WorkersTag): Future[types.WorkersApiResponseNullResult] {.async.} =
+                                                                                                tag: JsonNode): Future[JsonNode] {.async.} =
   ## Delete a tag from a script uploaded to a Workers for Platforms dispatch
   ## namespace.
+  ##
+  ## On `api-version` dates on or after `2026-10-01`, `tag` identifies a key and the
+  ## operation returns the complete updated tag map. Deleting a missing key succeeds.
+  ## Earlier versions retain the legacy string-tag behavior and return a null result.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/tags/{tag}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.WorkersApiResponseNullResult)
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScriptNameTagsTag*(client: CloudflareClient,
+                                                                                               accountId: types.WorkersIdentifier,
+                                                                                               dispatchNamespace: types.WorkersDispatchNamespaceName,
+                                                                                               scriptName: types.WorkersScriptName,
+                                                                                               tag: types.WorkersTypedTagKey,
+                                                                                               body: types.WorkersTagPatch): Future[types.WorkersTagsKvResponse] {.async.} =
+  ## Add or update one tag key/value on a script uploaded to a Workers for Platforms
+  ## dispatch namespace without replacing its other tags.
+  ##
+  ## This operation requires an `api-version` on or after `2026-10-01`.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/workers/dispatch/namespaces/{dispatchNamespace}/scripts/{scriptName}/tags/{tag}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.WorkersTagsKvResponse)
   else:
     raise newException(CloudflareClientError, body)

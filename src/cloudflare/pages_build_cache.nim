@@ -12,7 +12,8 @@ import ./private/types
 proc postAccountsAccountIdPagesProjectsProjectNamePurgeBuildCache*(client: CloudflareClient,
                                                                    projectName: types.PagesProjectName,
                                                                    accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
-  ## Purge all cached build artifacts for a Pages project
+  ## Remove cached build artifacts so subsequent builds run without the project's
+  ## existing build cache.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/pages/projects/{projectName}/purge_build_cache")
   let body = await res.body

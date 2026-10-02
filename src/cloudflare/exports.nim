@@ -74,9 +74,9 @@ proc postAccountsAccountIdDataSecurityPostureFindingsStorageNamespaceIdInstances
   ## Creates a CSV export for Finding instances and accepts optional filters in the
   ## payload.
   ##
-  ## The `storage_namespace_id` path parameter is derived from the finding ID by
-  ## base64-decoding it
-  ## (which yields `integration_id:finding_type_id`) and replacing the colon with a
+  ## Identify the finding as `<integration_id>-<finding_type_id>`: join the
+  ## `integration.id` and
+  ## `finding.id` of the finding (from the List posture findings response) with a
   ## hyphen.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/data-security/posture/findings/{storageNamespaceId}/instances/export", body)

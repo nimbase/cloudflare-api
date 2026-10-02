@@ -229,7 +229,7 @@ proc postAccountsAccountIdRegistrarDomainTransferCheck*(client: CloudflareClient
                                                         accountId: types.RegistrarApiIdentifier,
                                                         body: types.RegistrarApiDomainTransferCheckRequest): Future[types.RegistrarApiDomainTransferCheckResponse] {.async.} =
   ## Performs real-time, authoritative eligibility checks directly against needed
-  ## upstreams.
+  ## requirements.
   ## Use this endpoint to verify a domain is available before
   ## attempting a transfer via `POST /registrations/:domain_name/transfer-in`.
   ##
@@ -246,7 +246,7 @@ proc postAccountsAccountIdRegistrarDomainTransferCheck*(client: CloudflareClient
   ## ## Extension Support
   ##
   ## All `.uk` extensions (`.uk`, `.co.uk`, etc) do not support auth codes. As such,
-  ## Cloudflare will ignore the `auth_code` section of this request for Nominet
+  ## Cloudflare will ignore the `auth_code` section of this request for `.uk`
   ## domains.
   ##
   ## This means that a `.uk` domain depends on public data to obtain domain

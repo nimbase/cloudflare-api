@@ -27,6 +27,10 @@ suite "security_center_insights serialization":
     let obj = newSecurityCenterApiResponseCommon()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterApiResponseCommon)) == openjson.toJson(obj)
 
+  test "round-trips SecurityCenterIssue":
+    let obj = newSecurityCenterIssue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterIssue)) == openjson.toJson(obj)
+
   test "round-trips SecurityCenterPartnerInsightCountResponse":
     let obj = newSecurityCenterPartnerInsightCountResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterPartnerInsightCountResponse)) == openjson.toJson(obj)

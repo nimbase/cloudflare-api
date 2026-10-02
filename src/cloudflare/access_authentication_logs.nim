@@ -71,7 +71,7 @@ proc getAccountsAccountIdAccessLogsAccessRequests*(client: CloudflareClient,
                                                    idpOp: AccessAuthenticationLogIdpOpOption = idpOpEq,
                                                    nonIdentityOp: AccessAuthenticationLogNonIdentityOpOption = nonIdentityOpEq,
                                                    userIdOp: AccessAuthenticationLogUserIdOpOption = userIdOpEq,
-                                                   fields: string = default(string)): Future[types.AccessResponseCollection11] {.async.} =
+                                                   fields: string = default(string)): Future[types.AccessResponseCollection12] {.async.} =
   ## Gets a list of Access authentication audit logs for an account.
 
   var q = initOrderedTable[string, string]()
@@ -98,6 +98,6 @@ proc getAccountsAccountIdAccessLogsAccessRequests*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection11)
+    result = fromJson(body, types.AccessResponseCollection12)
   else:
     raise newException(CloudflareClientError, body)

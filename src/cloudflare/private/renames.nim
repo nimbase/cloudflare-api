@@ -22,6 +22,16 @@ proc renameHook*(v: types.AccessGithubOrganizationRule, fieldName: var string) {
   elif fieldName == "github_organization":
     fieldName = "github-organization"
 
+proc renameHook*(v: types.AccessGroupDetails, fieldName: var string) {.inline.} =
+  if fieldName == "displayName":
+    fieldName = "display_name"
+  elif fieldName == "display_name":
+    fieldName = "displayName"
+  elif fieldName == "externalId":
+    fieldName = "external_id"
+  elif fieldName == "external_id":
+    fieldName = "externalId"
+
 proc renameHook*(v: types.AccessGroups, fieldName: var string) {.inline.} =
   if fieldName == "displayName":
     fieldName = "display_name"
@@ -1464,6 +1474,12 @@ proc renameHook*(v: types.McnResourceDetailsSectionItem, fieldName: var string) 
   elif fieldName == "help_text":
     fieldName = "helpText"
 
+proc renameHook*(v: types.MonetizationMonetizationAccountEligibilityCheckInput, fieldName: var string) {.inline.} =
+  if fieldName == "acceptedTermsOfService":
+    fieldName = "accepted_terms_of_service"
+  elif fieldName == "accepted_terms_of_service":
+    fieldName = "acceptedTermsOfService"
+
 proc renameHook*(v: types.ObservatoryAvailabilities, fieldName: var string) {.inline.} =
   if fieldName == "regionsPerPlan":
     fieldName = "regions_per_plan"
@@ -1716,24 +1732,6 @@ proc renameHook*(v: types.R2QueuesConfig, fieldName: var string) {.inline.} =
   elif fieldName == "queue_name":
     fieldName = "queueName"
 
-proc renameHook*(v: types.R2R2BucketJob, fieldName: var string) {.inline.} =
-  if fieldName == "endTime":
-    fieldName = "end_time"
-  elif fieldName == "end_time":
-    fieldName = "endTime"
-  elif fieldName == "jobType":
-    fieldName = "job_type"
-  elif fieldName == "job_type":
-    fieldName = "jobType"
-  elif fieldName == "prefixDelete":
-    fieldName = "prefix_delete"
-  elif fieldName == "prefix_delete":
-    fieldName = "prefixDelete"
-  elif fieldName == "startTime":
-    fieldName = "start_time"
-  elif fieldName == "start_time":
-    fieldName = "startTime"
-
 proc renameHook*(v: types.R2R2BucketJobsResult, fieldName: var string) {.inline.} =
   if fieldName == "nextContinuationToken":
     fieldName = "next_continuation_token"
@@ -1766,6 +1764,24 @@ proc renameHook*(v: types.R2R2ObjectHttpMetadata, fieldName: var string) {.inlin
   elif fieldName == "content_type":
     fieldName = "contentType"
 
+proc renameHook*(v: types.R2R2PrefixDeleteJob, fieldName: var string) {.inline.} =
+  if fieldName == "endTime":
+    fieldName = "end_time"
+  elif fieldName == "end_time":
+    fieldName = "endTime"
+  elif fieldName == "jobType":
+    fieldName = "job_type"
+  elif fieldName == "job_type":
+    fieldName = "jobType"
+  elif fieldName == "prefixDelete":
+    fieldName = "prefix_delete"
+  elif fieldName == "prefix_delete":
+    fieldName = "prefixDelete"
+  elif fieldName == "startTime":
+    fieldName = "start_time"
+  elif fieldName == "start_time":
+    fieldName = "startTime"
+
 proc renameHook*(v: types.R2R2StorageClassMigrationJob, fieldName: var string) {.inline.} =
   if fieldName == "endTime":
     fieldName = "end_time"
@@ -1783,12 +1799,6 @@ proc renameHook*(v: types.R2R2StorageClassMigrationJob, fieldName: var string) {
     fieldName = "storage_class_migration"
   elif fieldName == "storage_class_migration":
     fieldName = "storageClassMigration"
-
-proc renameHook*(v: types.R2R2StorageClassMigrationJobsResult, fieldName: var string) {.inline.} =
-  if fieldName == "nextContinuationToken":
-    fieldName = "next_continuation_token"
-  elif fieldName == "next_continuation_token":
-    fieldName = "nextContinuationToken"
 
 proc renameHook*(v: types.R2TempAccessCredsRequest, fieldName: var string) {.inline.} =
   if fieldName == "parentAccessKeyId":

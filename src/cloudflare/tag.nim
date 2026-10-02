@@ -67,8 +67,8 @@ type
       ## accounts.
     external_references_annotated: seq[JsonNode]
     internal_aliases: seq[JsonNode]
-      ## Internal structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: never
-      ## returned to non-CFONE accounts.
+      ## Owner-private structured aliases ({ value, confidence 1-10, tlp }). Returned to
+      ## the owning account and omitted from shared-catalog non-owner responses.
     internal_description: string
     last_seen: string
     motive: string
@@ -117,8 +117,8 @@ type
       ## accounts.
     external_references_annotated: seq[JsonNode]
     internal_aliases: seq[JsonNode]
-      ## Internal structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: never
-      ## returned to non-CFONE accounts.
+      ## Owner-private structured aliases ({ value, confidence 1-10, tlp }). Returned to
+      ## the owning account and omitted from shared-catalog non-owner responses.
     internal_description: string
     last_seen: string
     motive: string
@@ -193,8 +193,8 @@ type
       ## accounts.
     external_references_annotated: seq[JsonNode]
     internal_aliases: seq[JsonNode]
-      ## Internal structured aliases ({ value, confidence 1-10, tlp }). CFONE-only: never
-      ## returned to non-CFONE accounts.
+      ## Owner-private structured aliases ({ value, confidence 1-10, tlp }). Returned to
+      ## the owning account and omitted from shared-catalog non-owner responses.
     internal_description: string
     last_seen: string
     motive: string
@@ -286,8 +286,10 @@ proc getAccountsAccountIdCloudforceOneEventsTags*(client: CloudflareClient,
   ## Returns all Source-of-Truth tags for an account. Supports legacy free-text
   ## `search` on tag value and `categoryUuid` exact match, plus a structured
   ## `filters` JSON array for filtering by metadata fields (originCountryISO,
-  ## actorCategory, motive, priority, etc.). Country values may be passed as alpha-2,
-  ## alpha-3, name, or common alias.
+  ## actorCategory, motive, priority, etc.). The authenticated account owns these
+  ## account-scoped tags and receives their complete owner projection. Country values
+  ## may be passed as alpha-2, alpha-3, name, or common alias. Purple TLP remains
+  ## CFONE-only.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -310,14 +312,14 @@ proc getAccountsAccountIdCloudforceOneEventsTagsCategoriesActors*(client: Cloudf
                                                                   pageSize: float64 = default(float64),
                                                                   value: string = default(string),
                                                                   filters: seq[string] = @[]): Future[GetAccountsAccountIdCloudforceOneEventsTagsCategoriesActorsResponse] {.async.} =
-  ## Returns all known Actors from the shared CFONE catalog. Non-CFONE accounts
-  ## receive a redacted public projection: identity (`uuid`, `value`, `categoryUuid`,
-  ## `categoryName`), metadata (`description`, `dateOfDiscovery`, `tlp`,
-  ## `confidence`, `properties`), origin (`originCountryISO`,
-  ## `originCountryISO_annotated`), and public aliases/references (`aliasGroupNames`,
-  ## `aliases`, `externalReferences`, `externalReferences_annotated`). CFONE-internal
-  ## fields (internal aliases, attribution, motive, opsec level, etc.) are stripped
-  ## from the response.
+  ## Returns all known Actors from the shared CFONE-owned catalog. Accounts other
+  ## than the catalog owner receive a redacted public projection: identity (`uuid`,
+  ## `value`, `categoryUuid`, `categoryName`), metadata (`description`,
+  ## `dateOfDiscovery`, `tlp`, `confidence`, `properties`), origin
+  ## (`originCountryISO`, `originCountryISO_annotated`), and public
+  ## aliases/references (`aliasGroupNames`, `aliases`, `externalReferences`,
+  ## `externalReferences_annotated`). Owner-private fields (internal aliases,
+  ## attribution, motive, opsec level, etc.) are stripped from non-owner responses.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -335,7 +337,8 @@ proc getAccountsAccountIdCloudforceOneEventsTagsCategoriesActors*(client: Cloudf
 proc postAccountsAccountIdCloudforceOneEventsTagsCreate*(client: CloudflareClient,
                                                          accountId: string,
                                                          body: PostAccountsAccountIdCloudforceOneEventsTagsCreateRequest): Future[PostAccountsAccountIdCloudforceOneEventsTagsCreateResponse] {.async.} =
-  ## Creates a new tag to be used accross threat events.
+  ## Creates an account-owned tag for threat events and returns its complete owner
+  ## projection.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/tags/create", body)
   let body = await res.body
@@ -348,8 +351,8 @@ proc postAccountsAccountIdCloudforceOneEventsTagsCreate*(client: CloudflareClien
 proc getAccountsAccountIdCloudforceOneEventsTagsTagUuid*(client: CloudflareClient,
                                                          accountId: string,
                                                          tagUuid: string): Future[GetAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse] {.async.} =
-  ## Returns a single Source-of-Truth tag by UUID, including custom fields
-  ## (properties).
+  ## Returns the complete owner projection of an account-scoped Source-of-Truth tag
+  ## by UUID, including custom fields (properties). Purple TLP remains CFONE-only.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/tags/{tagUuid}")
   let body = await res.body
@@ -376,7 +379,8 @@ proc patchAccountsAccountIdCloudforceOneEventsTagsTagUuid*(client: CloudflareCli
                                                            accountId: string,
                                                            tagUuid: string,
                                                            body: PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidRequest): Future[PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse] {.async.} =
-  ## Updates a Source-of-Truth tag by UUID.
+  ## Updates an account-owned Source-of-Truth tag by UUID and returns its complete
+  ## owner projection.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/tags/{tagUuid}", body)
   let body = await res.body

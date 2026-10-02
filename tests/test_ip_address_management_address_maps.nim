@@ -67,13 +67,13 @@ suite "ip_address_management_address_maps endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdAddressingAddressMapsAddressMapIdIpsIpAddress("test", "test", "test")
 
-  test "PUT /accounts/{account_id}/addressing/address_maps/{address_map_id}/zones/{zone_id}":
+  test "PUT /accounts/{account_id}/addressing/address_maps/{address_map_id}/zones/{member_zone_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdAddressingAddressMapsAddressMapIdZonesZoneId("test", "test", "test")
+    discard waitFor client.putAccountsAccountIdAddressingAddressMapsAddressMapIdZonesMemberZoneId("test", "test", "test")
 
-  test "DELETE /accounts/{account_id}/addressing/address_maps/{address_map_id}/zones/{zone_id}":
+  test "DELETE /accounts/{account_id}/addressing/address_maps/{address_map_id}/zones/{member_zone_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdAddressingAddressMapsAddressMapIdZonesZoneId("test", "test", "test")
+    discard waitFor client.deleteAccountsAccountIdAddressingAddressMapsAddressMapIdZonesMemberZoneId("test", "test", "test")
 

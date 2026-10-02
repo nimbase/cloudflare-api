@@ -31,9 +31,9 @@ suite "pages_project serialization":
     let obj = newPagesApiResponseCommon()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PagesApiResponseCommon)) == openjson.toJson(obj)
 
-  test "round-trips PagesSource":
-    let obj = newPagesSource()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PagesSource)) == openjson.toJson(obj)
+  test "round-trips PagesSourceConnectRequest":
+    let obj = newPagesSourceConnectRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PagesSourceConnectRequest)) == openjson.toJson(obj)
 
   test "round-trips PagesDeploymentConfigValuesRequest":
     let obj = newPagesDeploymentConfigValuesRequest()
@@ -58,7 +58,7 @@ suite "pages_project endpoints":
   test "POST /accounts/{account_id}/pages/projects/{project_name}/source":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdPagesProjectsProjectNameSource("test", "test", newPagesSource())
+    discard waitFor client.postAccountsAccountIdPagesProjectsProjectNameSource("test", "test", newPagesSourceConnectRequest())
 
   test "DELETE /accounts/{account_id}/pages/projects/{project_name}/source":
     let client = initCloudflareClient("test-key")

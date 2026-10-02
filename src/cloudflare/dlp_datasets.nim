@@ -4,20 +4,10 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[strformat, options, json]
+import std/[strformat, json]
 import ./private/metaclient
+import ./private/types
 
-type
-  PostAccountsAccountIdDlpDatasetsRequest = object
-    case_sensitive: Option[bool]
-    description: Option[string]
-    encoding_version: Option[int32]
-    name: string
-    secret: Option[bool]
-  PutAccountsAccountIdDlpDatasetsDatasetIdRequest = object
-    case_sensitive: Option[bool]
-    description: Option[string]
-    name: Option[string]
 
 proc getAccountsAccountIdDlpDatasets*(client: CloudflareClient,
                                       accountId: string): Future[JsonNode] {.async.} =
@@ -34,7 +24,7 @@ proc getAccountsAccountIdDlpDatasets*(client: CloudflareClient,
 
 proc postAccountsAccountIdDlpDatasets*(client: CloudflareClient,
                                        accountId: string,
-                                       body: PostAccountsAccountIdDlpDatasetsRequest): Future[JsonNode] {.async.} =
+                                       body: types.DlpNewDataset): Future[JsonNode] {.async.} =
   ## Creates a new DLP (Data Loss Prevention) dataset for storing custom detection
   ## patterns. Datasets can contain exact match data, word lists, or EDM (Exact Data
   ## Match) configurations.
@@ -63,7 +53,7 @@ proc getAccountsAccountIdDlpDatasetsDatasetId*(client: CloudflareClient,
 proc putAccountsAccountIdDlpDatasetsDatasetId*(client: CloudflareClient,
                                                accountId: string,
                                                datasetId: string,
-                                               body: PutAccountsAccountIdDlpDatasetsDatasetIdRequest): Future[JsonNode] {.async.} =
+                                               body: types.DlpDatasetUpdate): Future[JsonNode] {.async.} =
   ## Updates the configuration of an existing DLP dataset, such as its name,
   ## description, or detection settings.
 

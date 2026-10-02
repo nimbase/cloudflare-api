@@ -14,6 +14,7 @@ type
     is_ui_read_only: Option[types.AccessIsUiReadOnly2]
     login_design: Option[types.AccessLoginDesign]
     name: types.AccessName15
+    strict_service_token_auth: Option[types.AccessStrictServiceTokenAuth]
     ui_read_only_toggle_reason: Option[types.AccessUiReadOnlyToggleReason]
     user_seat_expiration_inactive_time: Option[types.AccessUserSeatExpirationInactiveTime2]
   PutZonesZoneIdAccessOrganizationsRequest = object
@@ -21,6 +22,7 @@ type
     is_ui_read_only: Option[types.AccessIsUiReadOnly2]
     login_design: Option[types.AccessLoginDesign]
     name: Option[types.AccessName15]
+    strict_service_token_auth: Option[types.AccessStrictServiceTokenAuth]
     ui_read_only_toggle_reason: Option[types.AccessUiReadOnlyToggleReason]
     user_seat_expiration_inactive_time: Option[types.AccessUserSeatExpirationInactiveTime2]
   PostZonesZoneIdAccessOrganizationsRevokeUserRequest = object
@@ -40,27 +42,27 @@ proc getZonesZoneIdAccessOrganizations*(client: CloudflareClient,
 
 proc postZonesZoneIdAccessOrganizations*(client: CloudflareClient,
                                          zoneId: types.AccessIdentifier4,
-                                         body: PostZonesZoneIdAccessOrganizationsRequest): Future[types.AccessSingleResponse15] {.async.} =
+                                         body: PostZonesZoneIdAccessOrganizationsRequest): Future[types.AccessSingleResponse16] {.async.} =
   ## Sets up a Zero Trust organization for your account.
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/access/organizations", body)
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, types.AccessSingleResponse15)
+    result = fromJson(body, types.AccessSingleResponse16)
   else:
     raise newException(CloudflareClientError, body)
 
 proc putZonesZoneIdAccessOrganizations*(client: CloudflareClient,
                                         zoneId: types.AccessIdentifier4,
-                                        body: PutZonesZoneIdAccessOrganizationsRequest): Future[types.AccessSingleResponse15] {.async.} =
+                                        body: PutZonesZoneIdAccessOrganizationsRequest): Future[types.AccessSingleResponse16] {.async.} =
   ## Updates the configuration for your Zero Trust organization.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/access/organizations", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse15)
+    result = fromJson(body, types.AccessSingleResponse16)
   else:
     raise newException(CloudflareClientError, body)
 

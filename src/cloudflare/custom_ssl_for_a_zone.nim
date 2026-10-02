@@ -92,7 +92,7 @@ proc putZonesZoneIdCustomCertificatesPrioritize*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdCustomCertificatesCustomCertificateId*(client: CloudflareClient,
-                                                          customCertificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                          customCertificateId: types.TlsCertificatesAndHostnamesCustomCertificateIdentifier,
                                                           zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateResponseSingle] {.async.} =
   ## Retrieves details for a specific custom SSL certificate, including certificate
   ## metadata, bundle method, geographic restrictions, and associated keyless server
@@ -107,7 +107,7 @@ proc getZonesZoneIdCustomCertificatesCustomCertificateId*(client: CloudflareClie
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdCustomCertificatesCustomCertificateId*(client: CloudflareClient,
-                                                             customCertificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                             customCertificateId: types.TlsCertificatesAndHostnamesCustomCertificateIdentifier,
                                                              zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateResponseIdOnly] {.async.} =
   ## Remove a SSL certificate from a zone.
 
@@ -120,7 +120,7 @@ proc deleteZonesZoneIdCustomCertificatesCustomCertificateId*(client: CloudflareC
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdCustomCertificatesCustomCertificateId*(client: CloudflareClient,
-                                                            customCertificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                            customCertificateId: types.TlsCertificatesAndHostnamesCustomCertificateIdentifier,
                                                             zoneId: types.TlsCertificatesAndHostnamesIdentifier,
                                                             body: PatchZonesZoneIdCustomCertificatesCustomCertificateIdRequest): Future[types.TlsCertificatesAndHostnamesCertificateResponseSingle] {.async.} =
   ## Upload a new private key and/or PEM/CRT for the SSL certificate. Note: PATCHing

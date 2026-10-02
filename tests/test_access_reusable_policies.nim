@@ -15,9 +15,9 @@ suite "access_reusable_policies serialization":
     let obj = newAccessIdResponse4()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessIdResponse4)) == openjson.toJson(obj)
 
-  test "round-trips AccessSingleResponse10":
-    let obj = newAccessSingleResponse10()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse10)) == openjson.toJson(obj)
+  test "round-trips AccessResponseCollection10":
+    let obj = newAccessResponseCollection10()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection10)) == openjson.toJson(obj)
 
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()
@@ -27,9 +27,9 @@ suite "access_reusable_policies serialization":
     let obj = newAccessPolicyReq()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessPolicyReq)) == openjson.toJson(obj)
 
-  test "round-trips AccessResponseCollection9":
-    let obj = newAccessResponseCollection9()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection9)) == openjson.toJson(obj)
+  test "round-trips AccessSingleResponse11":
+    let obj = newAccessSingleResponse11()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse11)) == openjson.toJson(obj)
 
 suite "access_reusable_policies endpoints":
   test "GET /accounts/{account_id}/access/policies":

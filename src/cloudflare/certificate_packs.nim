@@ -73,7 +73,7 @@ proc getZonesZoneIdSslCertificatePacksQuota*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdSslCertificatePacksCertificatePackId*(client: CloudflareClient,
-                                                         certificatePackId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                         certificatePackId: types.TlsCertificatesAndHostnamesCertificatePackIdentifier,
                                                          zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCertificatePackResponseSingle] {.async.} =
   ## For a given zone, get a certificate pack.
 
@@ -86,7 +86,7 @@ proc getZonesZoneIdSslCertificatePacksCertificatePackId*(client: CloudflareClien
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdSslCertificatePacksCertificatePackId*(client: CloudflareClient,
-                                                            certificatePackId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                            certificatePackId: types.TlsCertificatesAndHostnamesCertificatePackIdentifier,
                                                             zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesDeleteAdvancedCertificatePackResponseSingle] {.async.} =
   ## For a given zone, delete an advanced certificate pack.
 
@@ -99,7 +99,7 @@ proc deleteZonesZoneIdSslCertificatePacksCertificatePackId*(client: CloudflareCl
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdSslCertificatePacksCertificatePackId*(client: CloudflareClient,
-                                                           certificatePackId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                           certificatePackId: types.TlsCertificatesAndHostnamesCertificatePackIdentifier,
                                                            zoneId: types.TlsCertificatesAndHostnamesIdentifier,
                                                            body: PatchZonesZoneIdSslCertificatePacksCertificatePackIdRequest): Future[types.TlsCertificatesAndHostnamesAdvancedCertificatePackResponseSingle] {.async.} =
   ## For a given zone, restart validation or add cloudflare branding for an advanced

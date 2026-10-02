@@ -27,6 +27,10 @@ suite "durable_objects_namespace serialization":
     let obj = newWorkersApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersApiResponseCommonFailure)) == openjson.toJson(obj)
 
+  test "round-trips WorkersQueryResult":
+    let obj = newWorkersQueryResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersQueryResult)) == openjson.toJson(obj)
+
   test "round-trips WorkersApiResponseCollection":
     let obj = newWorkersApiResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersApiResponseCollection)) == openjson.toJson(obj)

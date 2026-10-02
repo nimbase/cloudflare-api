@@ -25,10 +25,6 @@ type
     enabled: bool
   PutAccountsAccountIdR2BucketsBucketNameLockRequest = object
     rules: Option[seq[types.R2BucketLockRule]]
-  PostAccountsAccountIdR2BucketsBucketNameStorageClassMigrationJobsRequest = object
-    destination_storage_class: Option[string]
-    job_type: string
-    source_storage_class: Option[string]
   R2BucketOrderOption* = enum
     orderName = "name"
 
@@ -38,12 +34,14 @@ type
 
   R2BucketJobTypeOption* = enum
     jobTypePrefixDelete = "prefixDelete"
+    jobTypeStorageClassMigration = "storageClassMigration"
 
 
 proc getAccountsAccountIdEventNotificationsR2BucketNameConfiguration*(client: CloudflareClient,
                                                                       bucketName: types.R2BucketName,
                                                                       accountId: types.R2AccountIdentifier): Future[JsonNode] {.async.} =
-  ## List all event notification rules for a bucket.
+  ## Lists event notification rules for an R2 bucket, grouped by the Cloudflare Queue
+  ## that receives matching object events.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/event_notifications/r2/{bucketName}/configuration")
   let body = await res.body
@@ -57,7 +55,8 @@ proc getAccountsAccountIdEventNotificationsR2BucketNameConfigurationQueuesQueueI
                                                                                    queueId: types.R2QueueIdentifier,
                                                                                    bucketName: types.R2BucketName,
                                                                                    accountId: types.R2AccountIdentifier): Future[JsonNode] {.async.} =
-  ## Get a single event notification rule.
+  ## Gets the event notification rules for the specified R2 bucket and Cloudflare
+  ## Queue. The response includes the queue's configuration and its array of rules.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/event_notifications/r2/{bucketName}/configuration/queues/{queueId}")
   let body = await res.body
@@ -72,7 +71,10 @@ proc putAccountsAccountIdEventNotificationsR2BucketNameConfigurationQueuesQueueI
                                                                                    bucketName: types.R2BucketName,
                                                                                    accountId: types.R2AccountIdentifier,
                                                                                    body: PutAccountsAccountIdEventNotificationsR2BucketNameConfigurationQueuesQueueIdRequest): Future[JsonNode] {.async.} =
-  ## Create event notification rule.
+  ## Creates rules that send notifications for matching R2 object events to the
+  ## specified Cloudflare Queue. Rules can filter objects by key prefix and suffix.
+  ## New rules are added to any existing rules for the queue; a rule that overlaps an
+  ## existing rule is rejected.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/event_notifications/r2/{bucketName}/configuration/queues/{queueId}", body)
   let body = await res.body
@@ -87,8 +89,9 @@ proc deleteAccountsAccountIdEventNotificationsR2BucketNameConfigurationQueuesQue
                                                                                       bucketName: types.R2BucketName,
                                                                                       accountId: types.R2AccountIdentifier,
                                                                                       body: DeleteAccountsAccountIdEventNotificationsR2BucketNameConfigurationQueuesQueueIdRequest): Future[JsonNode] {.async.} =
-  ## Delete an event notification rule. **If no body is provided, all rules for
-  ## specified queue will be deleted**.
+  ## Deletes the specified event notification rules for an R2 bucket and Cloudflare
+  ## Queue. Provide ruleIds in the request body to select rules. If no body is
+  ## provided, all rules for that bucket and queue are deleted.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/event_notifications/r2/{bucketName}/configuration/queues/{queueId}", body)
   let body = await res.body
@@ -106,7 +109,8 @@ proc getAccountsAccountIdR2Buckets*(client: CloudflareClient,
                                     order: R2BucketOrderOption = orderName,
                                     direction: R2BucketDirectionOption = directionAsc,
                                     cursor: string = default(string)): Future[JsonNode] {.async.} =
-  ## Lists all R2 buckets on your account.
+  ## Lists a page of R2 buckets in the account and selected jurisdiction. Use the
+  ## returned cursor to retrieve the next page.
 
   var q = initOrderedTable[string, string]()
   q["name_contains"] = $nameContains
@@ -126,7 +130,8 @@ proc getAccountsAccountIdR2Buckets*(client: CloudflareClient,
 proc postAccountsAccountIdR2Buckets*(client: CloudflareClient,
                                      accountId: types.R2AccountIdentifier,
                                      body: PostAccountsAccountIdR2BucketsRequest): Future[JsonNode] {.async.} =
-  ## Creates a new R2 bucket.
+  ## Creates an R2 bucket in the account and selected jurisdiction, with an optional
+  ## location hint and default storage class.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/r2/buckets", body)
   let body = await res.body
@@ -170,7 +175,9 @@ proc putAccountsAccountIdR2BucketsBucketName*(client: CloudflareClient,
 proc deleteAccountsAccountIdR2BucketsBucketName*(client: CloudflareClient,
                                                  bucketName: types.R2BucketName,
                                                  accountId: types.R2AccountIdentifier): Future[types.R2V4Response] {.async.} =
-  ## Deletes an existing R2 bucket.
+  ## Deletes an empty R2 bucket and its configuration. The bucket must have no
+  ## objects, no in-progress multipart uploads, and no event notification rules;
+  ## otherwise the request fails.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/r2/buckets/{bucketName}")
   let body = await res.body
@@ -183,7 +190,9 @@ proc deleteAccountsAccountIdR2BucketsBucketName*(client: CloudflareClient,
 proc patchAccountsAccountIdR2BucketsBucketName*(client: CloudflareClient,
                                                 accountId: types.R2AccountIdentifier,
                                                 bucketName: types.R2BucketName): Future[JsonNode] {.async.} =
-  ## Updates properties of an existing R2 bucket.
+  ## Changes the default storage class for newly uploaded objects in an existing R2
+  ## bucket. Existing objects retain their storage class, and individual uploads can
+  ## override the bucket default.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/r2/buckets/{bucketName}")
   let body = await res.body
@@ -210,7 +219,9 @@ proc putAccountsAccountIdR2BucketsBucketNameCors*(client: CloudflareClient,
                                                   bucketName: types.R2BucketName,
                                                   accountId: types.R2AccountIdentifier,
                                                   body: PutAccountsAccountIdR2BucketsBucketNameCorsRequest): Future[JsonNode] {.async.} =
-  ## Set the CORS policy for a bucket.
+  ## Replaces the Cross-Origin Resource Sharing (CORS) rules for an R2 bucket. Rules
+  ## specify which origins, methods, and headers are allowed for browser requests to
+  ## objects in the bucket.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/cors", body)
   let body = await res.body
@@ -293,7 +304,9 @@ proc deleteAccountsAccountIdR2BucketsBucketNameDomainsCustomDomain*(client: Clou
                                                                     bucketName: types.R2BucketName,
                                                                     accountId: types.R2AccountIdentifier,
                                                                     domain: types.R2DomainName): Future[JsonNode] {.async.} =
-  ## Remove custom domain registration from an existing R2 bucket.
+  ## Disconnects a custom domain from an R2 bucket and removes its configuration.
+  ## Access through other enabled custom domains or the bucket's r2.dev domain is
+  ## unaffected.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/domains/custom/{domain}")
   let body = await res.body
@@ -306,7 +319,8 @@ proc deleteAccountsAccountIdR2BucketsBucketNameDomainsCustomDomain*(client: Clou
 proc getAccountsAccountIdR2BucketsBucketNameDomainsManaged*(client: CloudflareClient,
                                                             accountId: types.R2AccountIdentifier,
                                                             bucketName: types.R2BucketName): Future[JsonNode] {.async.} =
-  ## Gets state of public access over the bucket's R2-managed (r2.dev) domain.
+  ## Gets the R2 bucket's managed r2.dev domain and whether public access is enabled.
+  ## The r2.dev domain is rate-limited and intended for development use.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/domains/managed")
   let body = await res.body
@@ -320,7 +334,9 @@ proc putAccountsAccountIdR2BucketsBucketNameDomainsManaged*(client: CloudflareCl
                                                             accountId: types.R2AccountIdentifier,
                                                             bucketName: types.R2BucketName,
                                                             body: types.R2EditManagedDomainRequest): Future[JsonNode] {.async.} =
-  ## Updates state of public access over the bucket's R2-managed (r2.dev) domain.
+  ## Enables or disables public access to the R2 bucket through its managed r2.dev
+  ## domain. Custom domain access is unaffected. The r2.dev domain is rate-limited
+  ## and intended for development use.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/domains/managed", body)
   let body = await res.body
@@ -337,9 +353,11 @@ proc getAccountsAccountIdR2BucketsBucketNameJobs*(client: CloudflareClient,
                                                   status: types.R2R2BucketJobStatus = default(types.R2R2BucketJobStatus),
                                                   maxKeys: int64 = default(int64),
                                                   continuationToken: string = default(string)): Future[JsonNode] {.async.} =
-  ## Lists background jobs for an R2 bucket. Use this endpoint to poll jobs returned
-  ## by
-  ## asynchronous operations such as deleting objects by prefix or emptying a bucket.
+  ## Lists background jobs for an R2 bucket, including prefix-delete (and
+  ## bucket-emptying)
+  ## jobs and storage-class migration jobs. Jobs of every type are returned unless
+  ## `jobType`
+  ## is provided.
 
   var q = initOrderedTable[string, string]()
   q["jobType"] = $jobType
@@ -358,10 +376,11 @@ proc getAccountsAccountIdR2BucketsBucketNameJobsJobId*(client: CloudflareClient,
                                                        accountId: types.R2AccountIdentifier,
                                                        bucketName: types.R2BucketName,
                                                        jobId: string): Future[JsonNode] {.async.} =
-  ## Gets the current status of a background job for an R2 bucket. Poll this endpoint
-  ## with
-  ## the job identifier returned when the operation was submitted until the status is
-  ## `COMPLETED`, `FAILED`, or `CANCELLED`.
+  ## Gets the current status of a background job of any type for an R2 bucket. Poll
+  ## this
+  ## endpoint with the job identifier returned when the operation was submitted until
+  ## the
+  ## status is `COMPLETED`, `FAILED`, or `CANCELLED`.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/jobs/{jobId}")
   let body = await res.body
@@ -388,7 +407,9 @@ proc putAccountsAccountIdR2BucketsBucketNameLifecycle*(client: CloudflareClient,
                                                        bucketName: types.R2BucketName,
                                                        accountId: types.R2AccountIdentifier,
                                                        body: PutAccountsAccountIdR2BucketsBucketNameLifecycleRequest): Future[JsonNode] {.async.} =
-  ## Set the object lifecycle rules for a bucket.
+  ## Replaces the object lifecycle rules for an R2 bucket. Rules match object-key
+  ## prefixes and can expire objects, abort incomplete multipart uploads, or
+  ## transition objects to Infrequent Access storage.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/lifecycle", body)
   let body = await res.body
@@ -401,9 +422,9 @@ proc putAccountsAccountIdR2BucketsBucketNameLifecycle*(client: CloudflareClient,
 proc getAccountsAccountIdR2BucketsBucketNameLocalUploads*(client: CloudflareClient,
                                                           bucketName: types.R2BucketName,
                                                           accountId: types.R2AccountIdentifier): Future[JsonNode] {.async.} =
-  ## Get the local uploads configuration for a bucket. When enabled, object's data is
-  ## written to the nearest region first, then asynchronously replicated to the
-  ## bucket's primary region.
+  ## Gets the Local Uploads configuration for an R2 bucket. When enabled, object data
+  ## is written near the client before being asynchronously copied to the bucket's
+  ## primary region. Local Uploads is only supported in the default jurisdiction.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/local-uploads")
   let body = await res.body
@@ -417,9 +438,10 @@ proc putAccountsAccountIdR2BucketsBucketNameLocalUploads*(client: CloudflareClie
                                                           bucketName: types.R2BucketName,
                                                           accountId: types.R2AccountIdentifier,
                                                           body: PutAccountsAccountIdR2BucketsBucketNameLocalUploadsRequest): Future[JsonNode] {.async.} =
-  ## Set the local uploads configuration for a bucket. When enabled, object's data is
-  ## written to the nearest region first, then asynchronously replicated to the
-  ## bucket's primary region.
+  ## Enables or disables Local Uploads for an R2 bucket in the default jurisdiction.
+  ## When enabled, object data is written near the client before being asynchronously
+  ## copied to the bucket's primary region. Disabling Local Uploads allows existing
+  ## replication to finish.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/local-uploads", body)
   let body = await res.body
@@ -446,7 +468,9 @@ proc putAccountsAccountIdR2BucketsBucketNameLock*(client: CloudflareClient,
                                                   bucketName: types.R2BucketName,
                                                   accountId: types.R2AccountIdentifier,
                                                   body: PutAccountsAccountIdR2BucketsBucketNameLockRequest): Future[JsonNode] {.async.} =
-  ## Set lock rules for a bucket.
+  ## Replaces the lock rules for an R2 bucket. Enabled rules prevent matching objects
+  ## from being overwritten or deleted for a duration, until a date, or indefinitely.
+  ## Rules apply to existing and newly uploaded objects.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/lock", body)
   let body = await res.body
@@ -485,7 +509,9 @@ proc getAccountsAccountIdR2BucketsBucketNameSippy*(client: CloudflareClient,
 proc putAccountsAccountIdR2BucketsBucketNameSippy*(client: CloudflareClient,
                                                    accountId: types.R2AccountIdentifier,
                                                    bucketName: types.R2BucketName): Future[JsonNode] {.async.} =
-  ## Sets configuration for Sippy for an existing R2 bucket.
+  ## Configures and enables Sippy on-demand migration for an R2 bucket. When a
+  ## requested object is missing from R2, Sippy serves it from the configured source
+  ## storage provider and copies it to R2.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/sippy", body)
   let body = await res.body
@@ -498,57 +524,11 @@ proc putAccountsAccountIdR2BucketsBucketNameSippy*(client: CloudflareClient,
 proc deleteAccountsAccountIdR2BucketsBucketNameSippy*(client: CloudflareClient,
                                                       bucketName: types.R2BucketName,
                                                       accountId: types.R2AccountIdentifier): Future[JsonNode] {.async.} =
-  ## Disables Sippy on this bucket.
+  ## Disables Sippy on-demand migration for an R2 bucket. Requests no longer fetch
+  ## missing objects from the source storage provider. Objects already copied to R2
+  ## remain in the bucket.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/sippy")
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, JsonNode)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc getAccountsAccountIdR2BucketsBucketNameStorageClassMigrationJobs*(client: CloudflareClient,
-                                                                       accountId: types.R2AccountIdentifier,
-                                                                       bucketName: types.R2BucketName,
-                                                                       status: types.R2R2BucketJobStatus = default(types.R2R2BucketJobStatus),
-                                                                       maxKeys: int64 = default(int64),
-                                                                       continuationToken: string = default(string)): Future[JsonNode] {.async.} =
-  ## Lists storage-class migration jobs for an R2 bucket.
-
-  var q = initOrderedTable[string, string]()
-  q["status"] = $status
-  q["maxKeys"] = $maxKeys
-  q["continuationToken"] = $continuationToken
-  let res = await client.httpGET(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/storage-class-migration-jobs", q)
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, JsonNode)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc postAccountsAccountIdR2BucketsBucketNameStorageClassMigrationJobs*(client: CloudflareClient,
-                                                                        accountId: types.R2AccountIdentifier,
-                                                                        bucketName: types.R2BucketName,
-                                                                        body: PostAccountsAccountIdR2BucketsBucketNameStorageClassMigrationJobsRequest): Future[JsonNode] {.async.} =
-  ## Creates a storage-class migration background job for an R2 bucket.
-
-  let res = await client.httpPOST(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/storage-class-migration-jobs", body)
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, JsonNode)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc getAccountsAccountIdR2BucketsBucketNameStorageClassMigrationJobsJobId*(client: CloudflareClient,
-                                                                            accountId: types.R2AccountIdentifier,
-                                                                            bucketName: types.R2BucketName,
-                                                                            jobId: string): Future[JsonNode] {.async.} =
-  ## Gets the current status of a storage-class migration job.
-
-  let res = await client.httpGET(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/storage-class-migration-jobs/{jobId}")
   let body = await res.body
   case res.code
   of Http200:

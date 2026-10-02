@@ -59,7 +59,9 @@ proc getAccountsAccountIdAbuseReports*(client: CloudflareClient,
                                        status: types.AbuseReportsReportStatus = default(types.AbuseReportsReportStatus),
                                        `type`: types.AbuseReportsReportType = default(types.AbuseReportsReportType),
                                        mitigationStatus: types.AbuseReportsMitigationStatus = default(types.AbuseReportsMitigationStatus)): Future[GetAccountsAccountIdAbuseReportsResponse] {.async.} =
-  ## List the abuse reports for a given account
+  ## List abuse reports made against domains or other content associated with the
+  ## account. To list reports that the account submitted, use the submitted abuse
+  ## reports endpoint instead.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -149,6 +151,9 @@ proc getAccountsAccountIdAbuseReportsReportIdAppealsEligibility*(client: Cloudfl
   ## behind that decision: whether it already has an open appeal, how many appeals
   ## have been submitted against it, and whether it has at least one mitigation that
   ## an appeal could reverse.
+  ## Report-level appeals are currently available only for DMCA (copyright) reports.
+  ## For other report types this operation returns the same `404 Report not found`
+  ## response as a report that does not exist for the account.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/abuse-reports/{reportId}/appeals/eligibility")
   let body = await res.body
@@ -212,9 +217,16 @@ proc postAccountsAccountIdAbuseReportsReportIdMitigationsAppeal*(client: Cloudfl
                                                                  accountId: string,
                                                                  reportId: string,
                                                                  body: types.AbuseReportsMitigationAppealRequest): Future[types.AbuseReportsMitigationAppealResult] {.async.} =
-  ## Request a review for mitigations on an account. Repeating a request for a
-  ## mitigation with an unresolved appeal is idempotent and returns that mitigation
-  ## in the in-review state.
+  ## Request a review of mitigations applied because of an abuse report, or submit a
+  ## report-level appeal.
+  ##
+  ## - To request a review of specific mitigations, send `appeals` with the
+  ## mitigation IDs and reasons. Repeating a request for a mitigation with an
+  ## unresolved appeal is idempotent and returns that mitigation in the in-review
+  ## state.
+  ## - To submit a report-level appeal, send `type` and, for a `counter_notice`, the
+  ## counter-notice details in `data`. Report-level appeals are currently available
+  ## only for DMCA (copyright) reports.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/abuse-reports/{reportId}/mitigations/appeal", body)
   let body = await res.body
@@ -227,7 +239,9 @@ proc postAccountsAccountIdAbuseReportsReportIdMitigationsAppeal*(client: Cloudfl
 proc getAccountsAccountIdAbuseReportsReportParam*(client: CloudflareClient,
                                                   accountId: string,
                                                   reportParam: string): Future[GetAccountsAccountIdAbuseReportsReportParamResponse] {.async.} =
-  ## Retrieve the details of an abuse report.
+  ## Retrieve the details of an abuse report made against a domain or other content
+  ## associated with the account. To retrieve a report that the account submitted,
+  ## use the submitted abuse report endpoint instead.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/abuse-reports/{reportParam}")
   let body = await res.body
@@ -245,9 +259,9 @@ proc postAccountsAccountIdAbuseReportsReportParam*(client: CloudflareClient,
   ##
   ## Requires the abuse-reports entitlement on the account (Enterprise
   ## accounts have it by default; other accounts must request access) and an
-  ## API token with the `Account > Abuse Reports > Edit` permission. If the
-  ## account is not entitled, the request is rejected with an HTTP `401`
-  ## response (see below).
+  ## API token with the `Trust and Safety Write` permission. If the account
+  ## is not entitled, the request is rejected with an HTTP `401` response
+  ## (see below).
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/abuse-reports/{reportParam}", body)
   let body = await res.body

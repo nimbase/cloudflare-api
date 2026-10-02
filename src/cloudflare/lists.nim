@@ -126,7 +126,7 @@ proc postAccountsAccountIdRulesListsListIdItems*(client: CloudflareClient,
                                                  body: types.ListsItemsUpdateRequestCollection): Future[types.ListsListsAsyncResponse] {.async.} =
   ## Appends new items to the list.
   ##
-  ## This operation is asynchronous. To get current the operation status, invoke the
+  ## This operation is asynchronous. To get the current operation status, invoke the
   ## `Get bulk operation status` endpoint with the returned `operation_id`.
   ##
   ## There is a limit of 1 pending bulk operation per account. If an outstanding bulk
@@ -147,7 +147,7 @@ proc putAccountsAccountIdRulesListsListIdItems*(client: CloudflareClient,
   ## Removes all existing items from the list and adds the provided items to the
   ## list.
   ##
-  ## This operation is asynchronous. To get current the operation status, invoke the
+  ## This operation is asynchronous. To get the current operation status, invoke the
   ## `Get bulk operation status` endpoint with the returned `operation_id`.
   ##
   ## There is a limit of 1 pending bulk operation per account. If an outstanding bulk
@@ -167,7 +167,7 @@ proc deleteAccountsAccountIdRulesListsListIdItems*(client: CloudflareClient,
                                                    body: DeleteAccountsAccountIdRulesListsListIdItemsRequest): Future[types.ListsListsAsyncResponse] {.async.} =
   ## Removes one or more items from a list.
   ##
-  ## This operation is asynchronous. To get current the operation status, invoke the
+  ## This operation is asynchronous. To get the current operation status, invoke the
   ## `Get bulk operation status` endpoint with the returned `operation_id`.
   ##
   ## There is a limit of 1 pending bulk operation per account. If an outstanding bulk

@@ -28,7 +28,9 @@ proc getAccountsAccountIdStorageKvNamespaces*(client: CloudflareClient,
                                               perPage: float64 = default(float64),
                                               order: WorkersKvNamespaceOrderOption = orderId,
                                               direction: WorkersKvNamespaceDirectionOption = directionAsc): Future[JsonNode] {.async.} =
-  ## Returns the namespaces owned by an account.
+  ## Lists Workers KV namespaces owned by the specified account. Use `page` and
+  ## `per_page` to select a page of results, and `order` and `direction` to control
+  ## sorting.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -46,9 +48,11 @@ proc getAccountsAccountIdStorageKvNamespaces*(client: CloudflareClient,
 proc postAccountsAccountIdStorageKvNamespaces*(client: CloudflareClient,
                                                accountId: types.WorkersKvIdentifier,
                                                body: types.WorkersKvCreateNamespaceBody): Future[JsonNode] {.async.} =
-  ## Creates a namespace under the given title. A `400` is returned if the account
-  ## already owns a namespace with this title. A namespace must be explicitly deleted
-  ## to be replaced.
+  ## Creates a Workers KV namespace in the specified account with the given title.
+  ## Returns `400` if the account already owns a namespace with that title; an
+  ## existing namespace must be explicitly deleted before it can be replaced. An
+  ## optional jurisdiction restricts where data is durably stored and can only be set
+  ## at creation time.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/storage/kv/namespaces", body)
   let body = await res.body
@@ -61,7 +65,7 @@ proc postAccountsAccountIdStorageKvNamespaces*(client: CloudflareClient,
 proc getAccountsAccountIdStorageKvNamespacesNamespaceId*(client: CloudflareClient,
                                                          namespaceId: types.WorkersKvNamespaceIdentifier,
                                                          accountId: types.WorkersKvIdentifier): Future[JsonNode] {.async.} =
-  ## Get the namespace corresponding to the given ID.
+  ## Returns the Workers KV namespace for the specified account and namespace ID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/storage/kv/namespaces/{namespaceId}")
   let body = await res.body
@@ -75,7 +79,8 @@ proc putAccountsAccountIdStorageKvNamespacesNamespaceId*(client: CloudflareClien
                                                          namespaceId: types.WorkersKvNamespaceIdentifier,
                                                          accountId: types.WorkersKvIdentifier,
                                                          body: types.WorkersKvCreateRenameNamespaceBody): Future[JsonNode] {.async.} =
-  ## Modifies a namespace's title.
+  ## Changes the title of the specified Workers KV namespace and returns the updated
+  ## namespace. The namespace ID and stored key-value pairs are unchanged.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/storage/kv/namespaces/{namespaceId}", body)
   let body = await res.body
@@ -88,7 +93,8 @@ proc putAccountsAccountIdStorageKvNamespacesNamespaceId*(client: CloudflareClien
 proc deleteAccountsAccountIdStorageKvNamespacesNamespaceId*(client: CloudflareClient,
                                                             namespaceId: types.WorkersKvNamespaceIdentifier,
                                                             accountId: types.WorkersKvIdentifier): Future[types.WorkersKvApiResponseCommonNoResult] {.async.} =
-  ## Deletes the namespace corresponding to the given ID.
+  ## Deletes the specified Workers KV namespace and its stored key-value pairs from
+  ## the account.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/storage/kv/namespaces/{namespaceId}")
   let body = await res.body
@@ -102,12 +108,13 @@ proc putAccountsAccountIdStorageKvNamespacesNamespaceIdBulk*(client: CloudflareC
                                                              namespaceId: types.WorkersKvNamespaceIdentifier,
                                                              accountId: types.WorkersKvIdentifier,
                                                              body: types.WorkersKvBulkWrite): Future[JsonNode] {.async.} =
-  ## Write multiple keys and values at once. Body should be an array of up to 10,000
-  ## key-value pairs to be stored, along with optional expiration information.
-  ## Existing values and expirations will be overwritten. If neither `expiration` nor
-  ## `expiration_ttl` is specified, the key-value pair will never expire. If both are
-  ## set, `expiration_ttl` is used and `expiration` is ignored. The entire request
-  ## size must be 100 megabytes or less.
+  ## Writes up to 10,000 key-value pairs to the specified Workers KV namespace from a
+  ## JSON array, with optional metadata and expiration settings for each pair.
+  ## Existing values and expirations are overwritten. If neither `expiration` nor
+  ## `expiration_ttl` is specified, the key-value pair will not expire. If both are
+  ## set, `expiration_ttl` takes precedence. The entire request must be 100 megabytes
+  ## or less. The result reports the number of successful writes and any keys that
+  ## failed and should be retried.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/storage/kv/namespaces/{namespaceId}/bulk", body)
   let body = await res.body
@@ -136,8 +143,9 @@ proc postAccountsAccountIdStorageKvNamespacesNamespaceIdBulkDelete*(client: Clou
                                                                     namespaceId: types.WorkersKvNamespaceIdentifier,
                                                                     accountId: types.WorkersKvIdentifier,
                                                                     body: types.WorkersKvBulkDelete): Future[JsonNode] {.async.} =
-  ## Remove multiple KV pairs from the namespace. Body should be an array of up to
-  ## 10,000 keys to be removed.
+  ## Deletes up to 10,000 key-value pairs from the specified Workers KV namespace.
+  ## Send a JSON array of the key names to delete. The result reports the number of
+  ## successful deletions and any keys that failed and should be retried.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/storage/kv/namespaces/{namespaceId}/bulk/delete", body)
   let body = await res.body
@@ -151,9 +159,11 @@ proc postAccountsAccountIdStorageKvNamespacesNamespaceIdBulkGet*(client: Cloudfl
                                                                  namespaceId: types.WorkersKvNamespaceIdentifier,
                                                                  accountId: types.WorkersKvIdentifier,
                                                                  body: PostAccountsAccountIdStorageKvNamespacesNamespaceIdBulkGetRequest): Future[JsonNode] {.async.} =
-  ## Retrieve up to 100 KV pairs from the namespace. Keys must contain text-based
-  ## values. JSON values can optionally be parsed instead of being returned as a
-  ## string value. Metadata can be included if `withMetadata` is true.
+  ## Retrieves the text-based values of up to 100 keys from the specified Workers KV
+  ## namespace. The result maps each requested key to its value. Set `type` to `json`
+  ## to parse JSON values instead of returning strings, and set `withMetadata` to
+  ## `true` to include metadata with each value. Binary values are not supported by
+  ## this operation.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/storage/kv/namespaces/{namespaceId}/bulk/get", body)
   let body = await res.body
@@ -169,7 +179,9 @@ proc getAccountsAccountIdStorageKvNamespacesNamespaceIdKeys*(client: CloudflareC
                                                              limit: float64 = default(float64),
                                                              prefix: string = default(string),
                                                              cursor: string = default(string)): Future[JsonNode] {.async.} =
-  ## Lists a namespace's keys.
+  ## Lists key names in the specified Workers KV namespace, with expiration times and
+  ## metadata when present. Use `prefix` to filter names and `cursor` to request the
+  ## next page. Values are not included.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
@@ -187,9 +199,9 @@ proc getAccountsAccountIdStorageKvNamespacesNamespaceIdMetadataKeyName*(client: 
                                                                         keyName: types.WorkersKvKeyName,
                                                                         namespaceId: types.WorkersKvNamespaceIdentifier,
                                                                         accountId: types.WorkersKvIdentifier): Future[JsonNode] {.async.} =
-  ## Returns the metadata associated with the given key in the given namespace. Use
-  ## URL-encoding to use special characters (for example, `:`, `!`, `%`) in the key
-  ## name.
+  ## Returns the JSON metadata associated with the specified key in the Workers KV
+  ## namespace, without retrieving its value. Use URL-encoding for special characters
+  ## (for example, `:`, `!`, `%`) in the key name when constructing the request URL.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/storage/kv/namespaces/{namespaceId}/metadata/{keyName}")
   let body = await res.body
@@ -203,11 +215,11 @@ proc getAccountsAccountIdStorageKvNamespacesNamespaceIdValuesKeyName*(client: Cl
                                                                       keyName: types.WorkersKvKeyName,
                                                                       namespaceId: types.WorkersKvNamespaceIdentifier,
                                                                       accountId: types.WorkersKvIdentifier): Future[AsyncResponse] {.async.} =
-  ## Returns the value associated with the given key in the given namespace. Use
-  ## URL-encoding to use special characters (for example, `:`, `!`, `%`) in the key
-  ## name. If the KV-pair is set to expire at some point, the expiration time as
-  ## measured in seconds since the UNIX epoch will be returned in the `expiration`
-  ## response header.
+  ## Returns the value stored under the specified key in the Workers KV namespace as
+  ## raw bytes. Use URL-encoding for special characters (for example, `:`, `!`, `%`)
+  ## in the key name when constructing the request URL. If the key-value pair
+  ## expires, the `expiration` response header contains its expiration time in
+  ## seconds since the UNIX epoch.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/storage/kv/namespaces/{namespaceId}/values/{keyName}")
   return res
@@ -218,14 +230,14 @@ proc putAccountsAccountIdStorageKvNamespacesNamespaceIdValuesKeyName*(client: Cl
                                                                       accountId: types.WorkersKvIdentifier,
                                                                       expiration: types.WorkersKvExpiration = default(types.WorkersKvExpiration),
                                                                       expirationTtl: types.WorkersKvExpirationTtl = default(types.WorkersKvExpirationTtl)): Future[types.WorkersKvApiResponseCommonNoResult] {.async.} =
-  ## Write a value identified by a key. Use URL-encoding to use special characters
-  ## (for example, `:`, `!`, `%`) in the key name. Body should be the value to be
-  ## stored. If JSON metadata to be associated with the key/value pair is needed, use
-  ## `multipart/form-data` content type for your PUT request (see dropdown below in
-  ## `REQUEST BODY SCHEMA`). Existing values, expirations, and metadata will be
-  ## overwritten. If neither `expiration` nor `expiration_ttl` is specified, the
-  ## key-value pair will never expire. If both are set, `expiration_ttl` is used and
-  ## `expiration` is ignored.
+  ## Writes a value under the specified key in the Workers KV namespace, creating the
+  ## key-value pair or replacing its existing value, expiration, and metadata. Send
+  ## the value as an `application/octet-stream` request body, or use
+  ## `multipart/form-data` with a `value` part and an optional JSON `metadata` part.
+  ## Use URL-encoding for special characters (for example, `:`, `!`, `%`) in the key
+  ## name when constructing the request URL. If neither `expiration` nor
+  ## `expiration_ttl` is specified, the key-value pair will not expire. If both are
+  ## set, `expiration_ttl` takes precedence.
 
   var q = initOrderedTable[string, string]()
   q["expiration"] = $expiration
@@ -242,8 +254,9 @@ proc deleteAccountsAccountIdStorageKvNamespacesNamespaceIdValuesKeyName*(client:
                                                                          keyName: types.WorkersKvKeyName,
                                                                          namespaceId: types.WorkersKvNamespaceIdentifier,
                                                                          accountId: types.WorkersKvIdentifier): Future[types.WorkersKvApiResponseCommonNoResult] {.async.} =
-  ## Remove a KV pair from the namespace. Use URL-encoding to use special characters
-  ## (for example, `:`, `!`, `%`) in the key name.
+  ## Deletes the specified key and its value from the Workers KV namespace. Use
+  ## URL-encoding for special characters (for example, `:`, `!`, `%`) in the key name
+  ## when constructing the request URL.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/storage/kv/namespaces/{namespaceId}/values/{keyName}")
   let body = await res.body

@@ -89,7 +89,7 @@ proc postZonesZoneIdClientCertificates*(client: CloudflareClient,
 
 proc getZonesZoneIdClientCertificatesClientCertificateId*(client: CloudflareClient,
                                                           zoneId: types.TlsCertificatesAndHostnamesIdentifier,
-                                                          clientCertificateId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesClientCertificateResponseSingle] {.async.} =
+                                                          clientCertificateId: types.TlsCertificatesAndHostnamesClientCertificateIdentifier): Future[types.TlsCertificatesAndHostnamesClientCertificateResponseSingle] {.async.} =
   ## Get Details for a single mTLS API Shield Client Certificate.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/client_certificates/{clientCertificateId}")
@@ -102,7 +102,7 @@ proc getZonesZoneIdClientCertificatesClientCertificateId*(client: CloudflareClie
 
 proc deleteZonesZoneIdClientCertificatesClientCertificateId*(client: CloudflareClient,
                                                              zoneId: types.TlsCertificatesAndHostnamesIdentifier,
-                                                             clientCertificateId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesClientCertificateResponseSingle] {.async.} =
+                                                             clientCertificateId: types.TlsCertificatesAndHostnamesClientCertificateIdentifier): Future[types.TlsCertificatesAndHostnamesClientCertificateResponseSingle] {.async.} =
   ## Set a API Shield mTLS Client Certificate to pending_revocation status for
   ## processing to revoked status.
 
@@ -116,7 +116,7 @@ proc deleteZonesZoneIdClientCertificatesClientCertificateId*(client: CloudflareC
 
 proc patchZonesZoneIdClientCertificatesClientCertificateId*(client: CloudflareClient,
                                                             zoneId: types.TlsCertificatesAndHostnamesIdentifier,
-                                                            clientCertificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                            clientCertificateId: types.TlsCertificatesAndHostnamesClientCertificateIdentifier,
                                                             body: PatchZonesZoneIdClientCertificatesClientCertificateIdRequest): Future[types.TlsCertificatesAndHostnamesClientCertificateResponseSingle] {.async.} =
   ## If a API Shield mTLS Client Certificate is in a pending_revocation state, you
   ## may reactivate it with this endpoint.

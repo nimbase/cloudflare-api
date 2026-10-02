@@ -119,16 +119,6 @@ suite "brapi endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdBrowserRenderingCrawlJobId("test", "test")
 
-  test "GET /accounts/{account_id}/browser-rendering/devtools/browser":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdBrowserRenderingDevtoolsBrowser("test", 1.0, true, true)
-
-  test "GET /accounts/{account_id}/browser-rendering/devtools/browser/{session_id}":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionId("test", "test", 1.0, true, true)
-
   test "DELETE /accounts/{account_id}/browser-rendering/devtools/browser/{session_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -173,11 +163,6 @@ suite "brapi endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionIdJsonVersion("test", "test")
-
-  test "GET /accounts/{account_id}/browser-rendering/devtools/browser/{session_id}/page/{target_id}":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdBrowserRenderingDevtoolsBrowserSessionIdPageTargetId("test", "test", "test")
 
   test "GET /accounts/{account_id}/browser-rendering/devtools/session":
     let client = initCloudflareClient("test-key")

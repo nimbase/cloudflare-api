@@ -11,7 +11,7 @@ import ./private/types
 
 proc getAccountsAccountIdAccessAppsCa*(client: CloudflareClient,
                                        accountId: types.AccessIdentifier,
-                                       page: int64 = 1, perPage: int64 = 100): Future[types.AccessResponseCollection4] {.async.} =
+                                       page: int64 = 1, perPage: int64 = 100): Future[types.AccessResponseCollection5] {.async.} =
   ## Lists short-lived certificate CAs and their public keys.
 
   var q = initOrderedTable[string, string]()
@@ -21,33 +21,33 @@ proc getAccountsAccountIdAccessAppsCa*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection4)
+    result = fromJson(body, types.AccessResponseCollection5)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdAccessAppsAppIdCa*(client: CloudflareClient,
                                             appId: types.AccessUuid,
-                                            accountId: types.AccessIdentifier): Future[types.AccessSingleResponse5] {.async.} =
+                                            accountId: types.AccessIdentifier): Future[types.AccessSingleResponse6] {.async.} =
   ## Fetches a short-lived certificate CA and its public key.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/apps/{appId}/ca")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse5)
+    result = fromJson(body, types.AccessSingleResponse6)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdAccessAppsAppIdCa*(client: CloudflareClient,
                                              appId: types.AccessUuid,
-                                             accountId: types.AccessIdentifier): Future[types.AccessSingleResponse5] {.async.} =
+                                             accountId: types.AccessIdentifier): Future[types.AccessSingleResponse6] {.async.} =
   ## Generates a new short-lived certificate CA and public key.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/access/apps/{appId}/ca")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse5)
+    result = fromJson(body, types.AccessSingleResponse6)
   else:
     raise newException(CloudflareClientError, body)
 

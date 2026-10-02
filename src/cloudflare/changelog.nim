@@ -20,7 +20,7 @@ proc getAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyChangelog*(client: Cloudfl
                                                                  accountId: string,
                                                                  appId: string,
                                                                  flagKey: string,
-                                                                 limit: string = default(string),
+                                                                 limit: int64 = default(int64),
                                                                  cursor: string = default(string)): Future[GetAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyChangelogResponse] {.async.} =
   ## Returns the audit history for a flag, newest first. Each entry includes the
   ## event type and full flag state after the change; `update` entries include a

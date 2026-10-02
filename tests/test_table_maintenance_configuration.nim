@@ -44,6 +44,21 @@ suite "table_maintenance_configuration serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2DataCatalogQueueMaintenanceRequest)) == openjson.toJson(obj)
 
 suite "table_maintenance_configuration endpoints":
+  test "GET /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-configs":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdBasinCatalogBucketNameNamespacesNamespaceTablesTableNameMaintenanceConfigs("test", "test", "test", "test")
+
+  test "POST /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-configs":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdBasinCatalogBucketNameNamespacesNamespaceTablesTableNameMaintenanceConfigs("test", "test", "test", "test", newR2DataCatalogTableMaintenanceUpdateRequest())
+
+  test "GET /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-runs":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdBasinCatalogBucketNameNamespacesNamespaceTablesTableNameMaintenanceRuns("test", "test", "test", "test", 1, "test")
+
   test "GET /accounts/{account_id}/r2-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}/maintenance-configs":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

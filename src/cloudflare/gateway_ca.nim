@@ -10,26 +10,26 @@ import ./private/types
 
 
 proc getAccountsAccountIdAccessGatewayCa*(client: CloudflareClient,
-                                          accountId: types.AccessIdentifier): Future[types.AccessResponseCollection6] {.async.} =
+                                          accountId: types.AccessIdentifier): Future[types.AccessResponseCollection7] {.async.} =
   ## Lists SSH Certificate Authorities (CA).
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/gateway_ca")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection6)
+    result = fromJson(body, types.AccessResponseCollection7)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdAccessGatewayCa*(client: CloudflareClient,
-                                           accountId: types.AccessIdentifier): Future[types.AccessSingleResponse7] {.async.} =
+                                           accountId: types.AccessIdentifier): Future[types.AccessSingleResponse8] {.async.} =
   ## Adds a new SSH Certificate Authority (CA).
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/access/gateway_ca")
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, types.AccessSingleResponse7)
+    result = fromJson(body, types.AccessSingleResponse8)
   else:
     raise newException(CloudflareClientError, body)
 

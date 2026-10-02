@@ -31,7 +31,7 @@ type
     invalidate_immediately: Option[types.TurnstileInvalidateImmediately]
 
 proc getAccountsAccountIdChallengesWidgets*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Lists all turnstile widgets of an account.
+  ## Lists Turnstile widgets for an account.
 
   let res = await client.httpGET("/accounts/{account_id}/challenges/widgets")
   let body = await res.body
@@ -43,7 +43,7 @@ proc getAccountsAccountIdChallengesWidgets*(client: CloudflareClient): Future[Js
 
 proc postAccountsAccountIdChallengesWidgets*(client: CloudflareClient,
                                              body: PostAccountsAccountIdChallengesWidgetsRequest): Future[JsonNode] {.async.} =
-  ## Lists challenge widgets.
+  ## Creates a Turnstile widget for an account.
 
   let res = await client.httpPOST("/accounts/{account_id}/challenges/widgets", body)
   let body = await res.body
@@ -54,7 +54,7 @@ proc postAccountsAccountIdChallengesWidgets*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdChallengesWidgetsSitekey*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Show a single challenge widget configuration.
+  ## Returns the configuration of a Turnstile widget.
 
   let res = await client.httpGET("/accounts/{account_id}/challenges/widgets/{sitekey}")
   let body = await res.body
@@ -66,7 +66,7 @@ proc getAccountsAccountIdChallengesWidgetsSitekey*(client: CloudflareClient): Fu
 
 proc putAccountsAccountIdChallengesWidgetsSitekey*(client: CloudflareClient,
                                                    body: PutAccountsAccountIdChallengesWidgetsSitekeyRequest): Future[JsonNode] {.async.} =
-  ## Update the configuration of a widget.
+  ## Updates the configuration of a Turnstile widget.
 
   let res = await client.httpPUT("/accounts/{account_id}/challenges/widgets/{sitekey}", body)
   let body = await res.body
@@ -77,7 +77,7 @@ proc putAccountsAccountIdChallengesWidgetsSitekey*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteAccountsAccountIdChallengesWidgetsSitekey*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Destroy a Turnstile Widget.
+  ## Deletes a Turnstile widget from an account.
 
   let res = await client.httpDELETE("/accounts/{account_id}/challenges/widgets/{sitekey}")
   let body = await res.body
@@ -89,7 +89,7 @@ proc deleteAccountsAccountIdChallengesWidgetsSitekey*(client: CloudflareClient):
 
 proc postAccountsAccountIdChallengesWidgetsSitekeyRotateSecret*(client: CloudflareClient,
                                                                 body: PostAccountsAccountIdChallengesWidgetsSitekeyRotateSecretRequest): Future[JsonNode] {.async.} =
-  ## Generate a new secret key for this widget. If `invalidate_immediately`
+  ## Generates a new secret key for this widget. If `invalidate_immediately`
   ## is set to `false`, the previous secret remains valid for 2 hours.
   ##
   ## Note that secrets cannot be rotated again during the grace period.

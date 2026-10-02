@@ -15,9 +15,9 @@ suite "zero_trust_seats serialization":
     let obj = newAccessIdentifier2()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessIdentifier2)) == openjson.toJson(obj)
 
-  test "round-trips AccessResponseCollection13":
-    let obj = newAccessResponseCollection13()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection13)) == openjson.toJson(obj)
+  test "round-trips AccessResponseCollection14":
+    let obj = newAccessResponseCollection14()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection14)) == openjson.toJson(obj)
 
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()

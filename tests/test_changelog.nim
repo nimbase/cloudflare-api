@@ -27,5 +27,5 @@ suite "changelog endpoints":
   test "GET /accounts/{account_id}/flagship/apps/{app_id}/flags/{flag_key}/changelog":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyChangelog("test", "test", "test", "test", "test")
+    discard waitFor client.getAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyChangelog("test", "test", "test", 1, "test")
 

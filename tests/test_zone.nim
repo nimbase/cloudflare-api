@@ -63,10 +63,20 @@ suite "zone endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.putZonesZoneIdActivationCheck("test")
 
+  test "POST /zones/{zone_id}/environments/{environment_id}/invalidate_cache":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postZonesZoneIdEnvironmentsEnvironmentIdInvalidateCache("test", "test")
+
   test "POST /zones/{zone_id}/environments/{environment_id}/purge_cache":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postZonesZoneIdEnvironmentsEnvironmentIdPurgeCache("test", "test")
+
+  test "POST /zones/{zone_id}/invalidate_cache":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postZonesZoneIdInvalidateCache("test")
 
   test "POST /zones/{zone_id}/purge_cache":
     let client = initCloudflareClient("test-key")

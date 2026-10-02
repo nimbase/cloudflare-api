@@ -11,13 +11,9 @@ import cloudflare
 import ./common
 
 suite "zone_level_access_short_lived_certificate_cas serialization":
-  test "round-trips AccessResponseCollection20":
-    let obj = newAccessResponseCollection20()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection20)) == openjson.toJson(obj)
-
-  test "round-trips AccessSingleResponse19":
-    let obj = newAccessSingleResponse19()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse19)) == openjson.toJson(obj)
+  test "round-trips AccessSingleResponse20":
+    let obj = newAccessSingleResponse20()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse20)) == openjson.toJson(obj)
 
   test "round-trips AccessIdResponse5":
     let obj = newAccessIdResponse5()
@@ -26,6 +22,10 @@ suite "zone_level_access_short_lived_certificate_cas serialization":
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
+
+  test "round-trips AccessResponseCollection21":
+    let obj = newAccessResponseCollection21()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection21)) == openjson.toJson(obj)
 
 suite "zone_level_access_short_lived_certificate_cas endpoints":
   test "GET /zones/{zone_id}/access/apps/ca":

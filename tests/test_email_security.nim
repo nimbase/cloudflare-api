@@ -67,13 +67,17 @@ suite "email_security serialization":
     let obj = newEmailSecurityBulkJobDetail()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityBulkJobDetail)) == openjson.toJson(obj)
 
+  test "round-trips EmailSecurityCursorResultInfo":
+    let obj = newEmailSecurityCursorResultInfo()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityCursorResultInfo)) == openjson.toJson(obj)
+
   test "round-trips EmailSecurityApiResponseCollection":
     let obj = newEmailSecurityApiResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityApiResponseCollection)) == openjson.toJson(obj)
 
-  test "round-trips EmailSecurityCursorResultInfo":
-    let obj = newEmailSecurityCursorResultInfo()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityCursorResultInfo)) == openjson.toJson(obj)
+  test "round-trips EmailSecuritySubmissionResult":
+    let obj = newEmailSecuritySubmissionResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecuritySubmissionResult)) == openjson.toJson(obj)
 
   test "round-trips EmailSecurityBulkActionRequest":
     let obj = newEmailSecurityBulkActionRequest()
@@ -88,11 +92,6 @@ suite "email_security serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.EmailSecurityMessageRaw)) == openjson.toJson(obj)
 
 suite "email_security endpoints":
-  test "GET /accounts/{account_id}/email-security/investigate/bulk":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailSecurityInvestigateBulk(1, 1, actionTypeMOVE, statusPENDING)
-
   test "POST /accounts/{account_id}/email-security/investigate/bulk":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -113,16 +112,6 @@ suite "email_security endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdEmailSecurityInvestigateBulkJobIdCancel()
 
-  test "GET /accounts/{account_id}/email-security/investigate/bulk/{job_id}/messages":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailSecurityInvestigateBulkJobIdMessages(1, 1, statusPENDING)
-
-  test "POST /accounts/{account_id}/email-security/investigate/release":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdEmailSecurityInvestigateRelease()
-
   test "GET /accounts/{account_id}/email-security/investigate/{investigate_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -131,7 +120,7 @@ suite "email_security endpoints":
   test "GET /accounts/{account_id}/email-security/investigate/{investigate_id}/action_log":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailSecurityInvestigateInvestigateIdActionLog()
+    discard waitFor client.getAccountsAccountIdEmailSecurityInvestigateInvestigateIdActionLog(1, 1)
 
   test "GET /accounts/{account_id}/email-security/investigate/{investigate_id}/detections":
     let client = initCloudflareClient("test-key")
@@ -161,5 +150,10 @@ suite "email_security endpoints":
   test "GET /accounts/{account_id}/email-security/phishguard/reports":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailSecurityPhishguardReports("test", "test", "test", "test")
+    discard waitFor client.getAccountsAccountIdEmailSecurityPhishguardReports("test", "test", "test", "test", 1, 1)
+
+  test "POST /accounts/{account_id}/email-security/submissions":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdEmailSecuritySubmissions()
 

@@ -11,17 +11,17 @@ import cloudflare
 import ./common
 
 suite "gateway_ca serialization":
-  test "round-trips AccessSingleResponse7":
-    let obj = newAccessSingleResponse7()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse7)) == openjson.toJson(obj)
-
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips AccessResponseCollection6":
-    let obj = newAccessResponseCollection6()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection6)) == openjson.toJson(obj)
+  test "round-trips AccessSingleResponse8":
+    let obj = newAccessSingleResponse8()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse8)) == openjson.toJson(obj)
+
+  test "round-trips AccessResponseCollection7":
+    let obj = newAccessResponseCollection7()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection7)) == openjson.toJson(obj)
 
   test "round-trips AccessIdResponse":
     let obj = newAccessIdResponse()

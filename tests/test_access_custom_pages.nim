@@ -15,9 +15,9 @@ suite "access_custom_pages serialization":
     let obj = newAccessSingleResponseWithoutHtml()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponseWithoutHtml)) == openjson.toJson(obj)
 
-  test "round-trips AccessResponseCollection10":
-    let obj = newAccessResponseCollection10()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection10)) == openjson.toJson(obj)
+  test "round-trips AccessResponseCollection11":
+    let obj = newAccessResponseCollection11()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection11)) == openjson.toJson(obj)
 
   test "round-trips AccessIdResponse3":
     let obj = newAccessIdResponse3()
@@ -35,13 +35,13 @@ suite "access_custom_pages serialization":
     let obj = newAccessCustomPageValidate()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessCustomPageValidate)) == openjson.toJson(obj)
 
+  test "round-trips AccessSingleResponse12":
+    let obj = newAccessSingleResponse12()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse12)) == openjson.toJson(obj)
+
   test "round-trips AccessValidateResponse":
     let obj = newAccessValidateResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessValidateResponse)) == openjson.toJson(obj)
-
-  test "round-trips AccessSingleResponse11":
-    let obj = newAccessSingleResponse11()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse11)) == openjson.toJson(obj)
 
 suite "access_custom_pages endpoints":
   test "GET /accounts/{account_id}/access/custom_pages":

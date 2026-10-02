@@ -51,7 +51,7 @@ suite "flags endpoints":
   test "GET /accounts/{account_id}/flagship/apps/{app_id}/flags":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdFlagshipAppsAppIdFlags("test", "test", "test", "test")
+    discard waitFor client.getAccountsAccountIdFlagshipAppsAppIdFlags("test", "test", 1, "test")
 
   test "GET /accounts/{account_id}/flagship/apps/{app_id}/flags/{flag_key}":
     let client = initCloudflareClient("test-key")

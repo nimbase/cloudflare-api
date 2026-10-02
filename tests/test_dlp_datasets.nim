@@ -19,6 +19,10 @@ suite "dlp_datasets serialization":
     let obj = newDlpDatasetCreation()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpDatasetCreation)) == openjson.toJson(obj)
 
+  test "round-trips DlpNewDatasetColumn":
+    let obj = newDlpNewDatasetColumn()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpNewDatasetColumn)) == openjson.toJson(obj)
+
   test "round-trips DlpApiResponseSingle":
     let obj = newDlpApiResponseSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpApiResponseSingle)) == openjson.toJson(obj)
@@ -26,6 +30,10 @@ suite "dlp_datasets serialization":
   test "round-trips DlpApiResponseCommonFailure":
     let obj = newDlpApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpApiResponseCommonFailure)) == openjson.toJson(obj)
+
+  test "round-trips DlpDatasetUpdate":
+    let obj = newDlpDatasetUpdate()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpDatasetUpdate)) == openjson.toJson(obj)
 
   test "round-trips DlpDataset":
     let obj = newDlpDataset()
@@ -35,16 +43,30 @@ suite "dlp_datasets serialization":
     let obj = newDlpDatasetNewVersion()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpDatasetNewVersion)) == openjson.toJson(obj)
 
+  test "round-trips DlpNewDataset":
+    let obj = newDlpNewDataset()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpNewDataset)) == openjson.toJson(obj)
+
 suite "dlp_datasets endpoints":
   test "GET /accounts/{account_id}/dlp/datasets":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdDlpDatasets("test")
 
+  test "POST /accounts/{account_id}/dlp/datasets":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdDlpDatasets("test", newDlpNewDataset())
+
   test "GET /accounts/{account_id}/dlp/datasets/{dataset_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdDlpDatasetsDatasetId("test", "test")
+
+  test "PUT /accounts/{account_id}/dlp/datasets/{dataset_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.putAccountsAccountIdDlpDatasetsDatasetId("test", "test", newDlpDatasetUpdate())
 
   test "DELETE /accounts/{account_id}/dlp/datasets/{dataset_id}":
     let client = initCloudflareClient("test-key")

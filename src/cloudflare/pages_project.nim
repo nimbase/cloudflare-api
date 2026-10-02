@@ -26,7 +26,7 @@ proc getAccountsAccountIdPagesProjects*(client: CloudflareClient,
                                         accountId: types.PagesIdentifier,
                                         page: int64 = default(int64),
                                         perPage: int64 = default(int64)): Future[JsonNode] {.async.} =
-  ## Fetch a list of all user projects.
+  ## List the Cloudflare Pages projects in an account.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -42,7 +42,8 @@ proc getAccountsAccountIdPagesProjects*(client: CloudflareClient,
 proc postAccountsAccountIdPagesProjects*(client: CloudflareClient,
                                          accountId: types.PagesIdentifier,
                                          body: PostAccountsAccountIdPagesProjectsRequest): Future[JsonNode] {.async.} =
-  ## Create a new project.
+  ## Create a Cloudflare Pages project for configuring and deploying a site or
+  ## application.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/pages/projects", body)
   let body = await res.body
@@ -55,7 +56,8 @@ proc postAccountsAccountIdPagesProjects*(client: CloudflareClient,
 proc getAccountsAccountIdPagesProjectsProjectName*(client: CloudflareClient,
                                                    projectName: types.PagesProjectName,
                                                    accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
-  ## Fetch a project by name.
+  ## Retrieve the configuration and deployment settings for a Cloudflare Pages
+  ## project.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/pages/projects/{projectName}")
   let body = await res.body
@@ -68,7 +70,7 @@ proc getAccountsAccountIdPagesProjectsProjectName*(client: CloudflareClient,
 proc deleteAccountsAccountIdPagesProjectsProjectName*(client: CloudflareClient,
                                                       projectName: types.PagesProjectName,
                                                       accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
-  ## Delete a project by name.
+  ## Permanently delete a Cloudflare Pages project and its deployments.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/pages/projects/{projectName}")
   let body = await res.body
@@ -82,8 +84,8 @@ proc patchAccountsAccountIdPagesProjectsProjectName*(client: CloudflareClient,
                                                      projectName: types.PagesProjectName,
                                                      accountId: types.PagesIdentifier,
                                                      body: PatchAccountsAccountIdPagesProjectsProjectNameRequest): Future[JsonNode] {.async.} =
-  ## Set new attributes for an existing project. Modify environment variables. To
-  ## delete an environment variable, set the key to null.
+  ## Update the build, deployment, source, or environment settings for a Cloudflare
+  ## Pages project. To delete an environment variable, set its key to `null`.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/pages/projects/{projectName}", body)
   let body = await res.body
@@ -96,8 +98,9 @@ proc patchAccountsAccountIdPagesProjectsProjectName*(client: CloudflareClient,
 proc postAccountsAccountIdPagesProjectsProjectNameSource*(client: CloudflareClient,
                                                           projectName: types.PagesProjectName,
                                                           accountId: types.PagesIdentifier,
-                                                          body: types.PagesSource): Future[JsonNode] {.async.} =
-  ## Connect a Git repository source to an existing Pages project.
+                                                          body: types.PagesSourceConnectRequest): Future[JsonNode] {.async.} =
+  ## Connect a GitHub or GitLab repository to a Cloudflare Pages project to enable
+  ## Git-based deployments.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/pages/projects/{projectName}/source", body)
   let body = await res.body
@@ -110,7 +113,8 @@ proc postAccountsAccountIdPagesProjectsProjectNameSource*(client: CloudflareClie
 proc deleteAccountsAccountIdPagesProjectsProjectNameSource*(client: CloudflareClient,
                                                             projectName: types.PagesProjectName,
                                                             accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
-  ## Disconnect the Git repository source from an existing Pages project.
+  ## Disconnect the Git repository from a Cloudflare Pages project to stop Git-based
+  ## deployments.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/pages/projects/{projectName}/source")
   let body = await res.body

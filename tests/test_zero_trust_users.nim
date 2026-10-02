@@ -27,6 +27,10 @@ suite "zero_trust_users serialization":
     let obj = newAccessFailedLoginResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessFailedLoginResponse)) == openjson.toJson(obj)
 
+  test "round-trips AccessResponseCollection25":
+    let obj = newAccessResponseCollection25()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection25)) == openjson.toJson(obj)
+
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
@@ -42,10 +46,6 @@ suite "zero_trust_users serialization":
   test "round-trips AccessDeleteUserResponse":
     let obj = newAccessDeleteUserResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessDeleteUserResponse)) == openjson.toJson(obj)
-
-  test "round-trips AccessResponseCollection24":
-    let obj = newAccessResponseCollection24()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection24)) == openjson.toJson(obj)
 
 suite "zero_trust_users endpoints":
   test "GET /accounts/{account_id}/access/users":

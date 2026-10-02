@@ -48,7 +48,7 @@ proc postZonesZoneIdAcmCustomTrustStore*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdAcmCustomTrustStoreCustomOriginTrustStoreId*(client: CloudflareClient,
-                                                                customOriginTrustStoreId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                                customOriginTrustStoreId: types.TlsCertificatesAndHostnamesCustomTrustStoreIdentifier,
                                                                 zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCustomTrustStoreResponseSingle] {.async.} =
   ## Retrieves details about a specific root CA certificate in the custom origin
   ## trust store, including expiration and subject information.
@@ -62,7 +62,7 @@ proc getZonesZoneIdAcmCustomTrustStoreCustomOriginTrustStoreId*(client: Cloudfla
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdAcmCustomTrustStoreCustomOriginTrustStoreId*(client: CloudflareClient,
-                                                                   customOriginTrustStoreId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                                   customOriginTrustStoreId: types.TlsCertificatesAndHostnamesCustomTrustStoreIdentifier,
                                                                    zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCustomTrustStoreResponseIdOnly] {.async.} =
   ## Removes a root CA certificate from the custom origin trust store. Origins using
   ## certificates signed by this CA will no longer be trusted.

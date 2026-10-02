@@ -59,6 +59,10 @@ suite "workers_for_platforms serialization":
     let obj = newWorkersNamespaceSingleResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersNamespaceSingleResponse)) == openjson.toJson(obj)
 
+  test "round-trips WorkersTagPatch":
+    let obj = newWorkersTagPatch()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersTagPatch)) == openjson.toJson(obj)
+
   test "round-trips WorkersNamespaceScriptResponseSingle":
     let obj = newWorkersNamespaceScriptResponseSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersNamespaceScriptResponseSingle)) == openjson.toJson(obj)
@@ -78,6 +82,10 @@ suite "workers_for_platforms serialization":
   test "round-trips WorkersCreateAssetsUploadSessionObject":
     let obj = newWorkersCreateAssetsUploadSessionObject()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersCreateAssetsUploadSessionObject)) == openjson.toJson(obj)
+
+  test "round-trips WorkersTagsKvResponse":
+    let obj = newWorkersTagsKvResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersTagsKvResponse)) == openjson.toJson(obj)
 
 suite "workers_for_platforms endpoints":
   test "GET /accounts/{account_id}/workers/dispatch/namespaces":
@@ -188,5 +196,10 @@ suite "workers_for_platforms endpoints":
   test "DELETE /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}/tags/{tag}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScriptNameTagsTag("test", "test", "test", "test")
+    discard waitFor client.deleteAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScriptNameTagsTag("test", "test", "test", openjson.newJObject())
+
+  test "PATCH /accounts/{account_id}/workers/dispatch/namespaces/{dispatch_namespace}/scripts/{script_name}/tags/{tag}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.patchAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScriptNameTagsTag("test", "test", "test", "test", newWorkersTagPatch())
 

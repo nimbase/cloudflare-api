@@ -10,13 +10,13 @@ import ./private/types
 
 
 proc getAccountsAccountIdAccessAuthenticatorDeviceAaguids*(client: CloudflareClient,
-                                                           accountId: types.AccessIdentifier): Future[types.AccessResponseCollection16] {.async.} =
+                                                           accountId: types.AccessIdentifier): Future[types.AccessResponseCollection17] {.async.} =
   ## Returns a list of Authenticator Device AAGUIDs for MFA configuration.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/authenticator_device_aaguids")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection16)
+    result = fromJson(body, types.AccessResponseCollection17)
   else:
     raise newException(CloudflareClientError, body)

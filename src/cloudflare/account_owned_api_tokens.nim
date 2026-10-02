@@ -20,9 +20,10 @@ proc getAccountsAccountIdTokens*(client: CloudflareClient,
                                  perPage: float64 = default(float64),
                                  direction: AccountOwnedApiTokenDirectionOption = directionAsc,
                                  includeExpired: bool = false): Future[types.IamCollectionTokensResponse] {.async.} =
-  ## List all Account Owned API tokens created for this account. Results include
-  ## active, disabled, and recently-expired tokens when include_expired is set to
-  ## true.
+  ## List Account Owned API tokens created for this account. Callers with
+  ## `com.cloudflare.api.account.token.list_self` permission only receive
+  ## tokens they created. Results include active, disabled, and
+  ## recently-expired tokens when `include_expired` is set to true.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -54,7 +55,10 @@ proc getAccountsAccountIdTokensPermissionGroups*(client: CloudflareClient,
                                                  accountId: types.IamAccountIdentifier,
                                                  name: string = default(string),
                                                  scope: string = default(string)): Future[types.IamPermissionsGroupResponseCollection] {.async.} =
-  ## Find all available permission groups for Account Owned API Tokens
+  ## Find all available permission groups for Account Owned API Tokens.
+  ## Each permission group indicates whether the caller can select it when
+  ## creating a token. Token creation performs the authoritative permission
+  ## check.
 
   var q = initOrderedTable[string, string]()
   q["name"] = $name

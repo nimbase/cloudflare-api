@@ -23,14 +23,14 @@ type
     previous_client_secret_expires_at: Option[types.AccessPreviousClientSecretExpiresAt]
 
 proc getZonesZoneIdAccessServiceTokens*(client: CloudflareClient,
-                                        zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection19] {.async.} =
+                                        zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection20] {.async.} =
   ## Lists all service tokens.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/access/service_tokens")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection19)
+    result = fromJson(body, types.AccessResponseCollection20)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -51,40 +51,40 @@ proc postZonesZoneIdAccessServiceTokens*(client: CloudflareClient,
 
 proc getZonesZoneIdAccessServiceTokensServiceTokenId*(client: CloudflareClient,
                                                       serviceTokenId: types.AccessUuid,
-                                                      zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse18] {.async.} =
+                                                      zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse19] {.async.} =
   ## Fetches a single service token.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/access/service_tokens/{serviceTokenId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse18)
+    result = fromJson(body, types.AccessSingleResponse19)
   else:
     raise newException(CloudflareClientError, body)
 
 proc putZonesZoneIdAccessServiceTokensServiceTokenId*(client: CloudflareClient,
                                                       serviceTokenId: types.AccessUuid,
                                                       zoneId: types.AccessIdentifier,
-                                                      body: PutZonesZoneIdAccessServiceTokensServiceTokenIdRequest): Future[types.AccessSingleResponse18] {.async.} =
+                                                      body: PutZonesZoneIdAccessServiceTokensServiceTokenIdRequest): Future[types.AccessSingleResponse19] {.async.} =
   ## Updates a configured service token.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/access/service_tokens/{serviceTokenId}", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse18)
+    result = fromJson(body, types.AccessSingleResponse19)
   else:
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdAccessServiceTokensServiceTokenId*(client: CloudflareClient,
                                                          serviceTokenId: types.AccessUuid,
-                                                         zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse18] {.async.} =
+                                                         zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse19] {.async.} =
   ## Deletes a service token.
 
   let res = await client.httpDELETE(fmt"/zones/{zoneId}/access/service_tokens/{serviceTokenId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse18)
+    result = fromJson(body, types.AccessSingleResponse19)
   else:
     raise newException(CloudflareClientError, body)

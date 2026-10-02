@@ -399,7 +399,9 @@ proc postAccountsAccountIdArtifactsNamespacesNamespaceTokens*(client: Cloudflare
 proc deleteAccountsAccountIdArtifactsNamespacesNamespaceTokensId*(client: CloudflareClient,
                                                                   namespace: string,
                                                                   id: string): Future[DeleteAccountsAccountIdArtifactsNamespacesNamespaceTokensIdResponse] {.async.} =
-  ## Revokes an Artifacts repository token.
+  ## Revokes an Artifacts repository token. Token IDs are resolved through an
+  ## eventually consistent index, so revoking a token within about a second of
+  ## creating it can return 404; retry after a short delay.
 
   let res = await client.httpDELETE(fmt"/accounts/{account_id}/artifacts/namespaces/{namespace}/tokens/{id}")
   let body = await res.body

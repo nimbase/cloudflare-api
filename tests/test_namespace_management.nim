@@ -24,6 +24,11 @@ suite "namespace_management serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2DataCatalogApiResponseCommonFailure)) == openjson.toJson(obj)
 
 suite "namespace_management endpoints":
+  test "GET /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdBasinCatalogBucketNameNamespaces("test", "test", "test", 1, "test", true, true)
+
   test "GET /accounts/{account_id}/r2-catalog/{bucket_name}/namespaces":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

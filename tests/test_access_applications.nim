@@ -35,21 +35,21 @@ suite "access_applications serialization":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
 
+  test "round-trips AccessSingleResponse9":
+    let obj = newAccessSingleResponse9()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse9)) == openjson.toJson(obj)
+
   test "round-trips AccessEmptyResponse2":
     let obj = newAccessEmptyResponse2()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessEmptyResponse2)) == openjson.toJson(obj)
 
-  test "round-trips AccessSingleResponse8":
-    let obj = newAccessSingleResponse8()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse8)) == openjson.toJson(obj)
-
-  test "round-trips AccessResponseCollection7":
-    let obj = newAccessResponseCollection7()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection7)) == openjson.toJson(obj)
-
   test "round-trips AccessIdResponse":
     let obj = newAccessIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips AccessResponseCollection8":
+    let obj = newAccessResponseCollection8()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection8)) == openjson.toJson(obj)
 
   test "round-trips AccessSingleResponseUpdate":
     let obj = newAccessSingleResponseUpdate()

@@ -23,6 +23,7 @@ type
     name: types.AccessName
     service_token_inactivity: Option[types.AccessServiceTokenInactivity]
     session_duration: Option[types.AccessSessionDuration]
+    strict_service_token_auth: Option[types.AccessStrictServiceTokenAuth]
     ui_read_only_toggle_reason: Option[types.AccessUiReadOnlyToggleReason]
     user_seat_expiration_inactive_time: Option[types.AccessUserSeatExpirationInactiveTime]
     warp_auth_non_browser_401: Option[types.AccessWarpAuthNonBrowser401]
@@ -42,6 +43,7 @@ type
     name: Option[types.AccessName]
     service_token_inactivity: Option[types.AccessServiceTokenInactivity]
     session_duration: Option[types.AccessSessionDuration]
+    strict_service_token_auth: Option[types.AccessStrictServiceTokenAuth]
     ui_read_only_toggle_reason: Option[types.AccessUiReadOnlyToggleReason]
     user_seat_expiration_inactive_time: Option[types.AccessUserSeatExpirationInactiveTime]
     warp_auth_non_browser_401: Option[types.AccessWarpAuthNonBrowser401]

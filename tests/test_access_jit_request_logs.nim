@@ -11,13 +11,13 @@ import cloudflare
 import ./common
 
 suite "access_jit_request_logs serialization":
+  test "round-trips AccessResponseCollection13":
+    let obj = newAccessResponseCollection13()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection13)) == openjson.toJson(obj)
+
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
-
-  test "round-trips AccessResponseCollection12":
-    let obj = newAccessResponseCollection12()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection12)) == openjson.toJson(obj)
 
   test "round-trips AccessResponseSingle":
     let obj = newAccessResponseSingle()

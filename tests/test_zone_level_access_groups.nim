@@ -11,21 +11,21 @@ import cloudflare
 import ./common
 
 suite "zone_level_access_groups serialization":
-  test "round-trips AccessSingleResponse17":
-    let obj = newAccessSingleResponse17()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse17)) == openjson.toJson(obj)
+  test "round-trips AccessResponseCollection19":
+    let obj = newAccessResponseCollection19()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection19)) == openjson.toJson(obj)
 
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips AccessResponseCollection18":
-    let obj = newAccessResponseCollection18()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection18)) == openjson.toJson(obj)
-
   test "round-trips AccessIdResponse":
     let obj = newAccessIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips AccessSingleResponse18":
+    let obj = newAccessSingleResponse18()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse18)) == openjson.toJson(obj)
 
 suite "zone_level_access_groups endpoints":
   test "GET /zones/{zone_id}/access/groups":

@@ -16,7 +16,7 @@ proc getAccountsAccountIdAccessLogsJitRequests*(client: CloudflareClient,
                                                 status: types.AccessJitRequestStatus = default(types.AccessJitRequestStatus),
                                                 search: string = default(string),
                                                 since: string = default(string),
-                                                until: string = default(string)): Future[types.AccessResponseCollection12] {.async.} =
+                                                until: string = default(string)): Future[types.AccessResponseCollection13] {.async.} =
   ## Lists account-wide Access JIT request logs reconstructed from request lifecycle
   ## events.
 
@@ -31,7 +31,7 @@ proc getAccountsAccountIdAccessLogsJitRequests*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection12)
+    result = fromJson(body, types.AccessResponseCollection13)
   else:
     raise newException(CloudflareClientError, body)
 

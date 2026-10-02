@@ -52,7 +52,7 @@ proc postCertificates*(client: CloudflareClient, body: PostCertificatesRequest):
     raise newException(CloudflareClientError, body)
 
 proc getCertificatesCertificateId*(client: CloudflareClient,
-                                   certificateId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateResponseSingle2] {.async.} =
+                                   certificateId: types.TlsCertificatesAndHostnamesOriginCaCertificateIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateResponseSingle2] {.async.} =
   ## Get an existing Origin CA certificate by its serial number. You can use an
   ## Origin CA Key as your User Service Key or an API token when calling this
   ## endpoint ([see above](#requests)).
@@ -66,7 +66,7 @@ proc getCertificatesCertificateId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteCertificatesCertificateId*(client: CloudflareClient,
-                                      certificateId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateRevokeResponse] {.async.} =
+                                      certificateId: types.TlsCertificatesAndHostnamesOriginCaCertificateIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateRevokeResponse] {.async.} =
   ## Revoke an existing Origin CA certificate by its serial number. You can use an
   ## Origin CA Key as your User Service Key or an API token when calling this
   ## endpoint ([see above](#requests)).

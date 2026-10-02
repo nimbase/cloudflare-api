@@ -20,27 +20,27 @@ type
     name: Option[types.AccessName18]
 
 proc getZonesZoneIdAccessCertificates*(client: CloudflareClient,
-                                       zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection21] {.async.} =
+                                       zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection22] {.async.} =
   ## Lists all mTLS certificates.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/access/certificates")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection21)
+    result = fromJson(body, types.AccessResponseCollection22)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postZonesZoneIdAccessCertificates*(client: CloudflareClient,
                                         zoneId: types.AccessIdentifier,
-                                        body: PostZonesZoneIdAccessCertificatesRequest): Future[types.AccessSingleResponse20] {.async.} =
+                                        body: PostZonesZoneIdAccessCertificatesRequest): Future[types.AccessSingleResponse21] {.async.} =
   ## Adds a new mTLS root certificate to Access.
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/access/certificates", body)
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, types.AccessSingleResponse20)
+    result = fromJson(body, types.AccessSingleResponse21)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -71,28 +71,28 @@ proc putZonesZoneIdAccessCertificatesSettings*(client: CloudflareClient,
 
 proc getZonesZoneIdAccessCertificatesCertificateId*(client: CloudflareClient,
                                                     certificateId: types.AccessUuid,
-                                                    zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse20] {.async.} =
+                                                    zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse21] {.async.} =
   ## Fetches a single mTLS certificate.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/access/certificates/{certificateId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse20)
+    result = fromJson(body, types.AccessSingleResponse21)
   else:
     raise newException(CloudflareClientError, body)
 
 proc putZonesZoneIdAccessCertificatesCertificateId*(client: CloudflareClient,
                                                     certificateId: types.AccessUuid,
                                                     zoneId: types.AccessIdentifier,
-                                                    body: PutZonesZoneIdAccessCertificatesCertificateIdRequest): Future[types.AccessSingleResponse20] {.async.} =
+                                                    body: PutZonesZoneIdAccessCertificatesCertificateIdRequest): Future[types.AccessSingleResponse21] {.async.} =
   ## Updates a configured mTLS certificate.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/access/certificates/{certificateId}", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse20)
+    result = fromJson(body, types.AccessSingleResponse21)
   else:
     raise newException(CloudflareClientError, body)
 

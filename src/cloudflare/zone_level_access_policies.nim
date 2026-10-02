@@ -36,42 +36,42 @@ type
 
 proc getZonesZoneIdAccessAppsAppIdPolicies*(client: CloudflareClient,
                                             appId: types.AccessUuid,
-                                            zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection23] {.async.} =
+                                            zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection24] {.async.} =
   ## Lists Access policies configured for an application.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/access/apps/{appId}/policies")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection23)
+    result = fromJson(body, types.AccessResponseCollection24)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postZonesZoneIdAccessAppsAppIdPolicies*(client: CloudflareClient,
                                              appId: types.AccessUuid,
                                              zoneId: types.AccessIdentifier,
-                                             body: PostZonesZoneIdAccessAppsAppIdPoliciesRequest): Future[types.AccessSingleResponse22] {.async.} =
+                                             body: PostZonesZoneIdAccessAppsAppIdPoliciesRequest): Future[types.AccessSingleResponse23] {.async.} =
   ## Create a new Access policy for an application.
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/access/apps/{appId}/policies", body)
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, types.AccessSingleResponse22)
+    result = fromJson(body, types.AccessSingleResponse23)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdAccessAppsAppIdPoliciesPolicyId*(client: CloudflareClient,
                                                     policyId: types.AccessUuid,
                                                     appId: types.AccessUuid,
-                                                    zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse22] {.async.} =
+                                                    zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse23] {.async.} =
   ## Fetches a single Access policy.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/access/apps/{appId}/policies/{policyId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse22)
+    result = fromJson(body, types.AccessSingleResponse23)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -79,14 +79,14 @@ proc putZonesZoneIdAccessAppsAppIdPoliciesPolicyId*(client: CloudflareClient,
                                                     policyId: types.AccessUuid,
                                                     appId: types.AccessUuid,
                                                     zoneId: types.AccessIdentifier,
-                                                    body: PutZonesZoneIdAccessAppsAppIdPoliciesPolicyIdRequest): Future[types.AccessSingleResponse22] {.async.} =
+                                                    body: PutZonesZoneIdAccessAppsAppIdPoliciesPolicyIdRequest): Future[types.AccessSingleResponse23] {.async.} =
   ## Update a configured Access policy.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/access/apps/{appId}/policies/{policyId}", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse22)
+    result = fromJson(body, types.AccessSingleResponse23)
   else:
     raise newException(CloudflareClientError, body)
 

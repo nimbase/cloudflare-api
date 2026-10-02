@@ -102,7 +102,9 @@ proc postAccountsAccountIdEmailSecuritySettingsAllowPolicies*(client: Cloudflare
 
 proc postAccountsAccountIdEmailSecuritySettingsAllowPoliciesBatch*(client: CloudflareClient,
                                                                    body: PostAccountsAccountIdEmailSecuritySettingsAllowPoliciesBatchRequest): Future[JsonNode] {.async.} =
-  ## Executes multiple operations atomically. All four operation arrays
+  ## Executes multiple allow policy operations atomically: delete, partially update,
+  ## replace, and create allow policies in a single request. All four operation
+  ## arrays
   ## (deletes, patches, puts, posts) are required and executed in order.
   ## Send empty arrays for unused operations.
 
@@ -209,8 +211,11 @@ proc postAccountsAccountIdEmailSecuritySettingsBlockSenders*(client: CloudflareC
 
 proc postAccountsAccountIdEmailSecuritySettingsBlockSendersBatch*(client: CloudflareClient,
                                                                   body: PostAccountsAccountIdEmailSecuritySettingsBlockSendersBatchRequest): Future[JsonNode] {.async.} =
-  ## Executes multiple operations atomically. All four operation arrays
-  ## (deletes, patches, puts, posts) are required and executed in order.
+  ## Executes multiple blocked sender operations atomically: delete, partially
+  ## update,
+  ## replace, and create blocked sender patterns in a single request. All four
+  ## operation
+  ## arrays (deletes, patches, puts, posts) are required and executed in order.
   ## Send empty arrays for unused operations.
 
   let res = await client.httpPOST("/accounts/{account_id}/email-security/settings/block_senders/batch", body)
@@ -316,7 +321,10 @@ proc postAccountsAccountIdEmailSecuritySettingsContentPolicies*(client: Cloudfla
 
 proc postAccountsAccountIdEmailSecuritySettingsContentPoliciesBatch*(client: CloudflareClient,
                                                                      body: PostAccountsAccountIdEmailSecuritySettingsContentPoliciesBatchRequest): Future[JsonNode] {.async.} =
-  ## Executes multiple operations atomically. All four operation arrays
+  ## Executes multiple content policy operations atomically: delete, partially
+  ## update,
+  ## replace, and create content policies in a single request. All four operation
+  ## arrays
   ## (deletes, patches, puts, posts) are required and executed in order.
   ## Send empty arrays for unused operations.
 
@@ -720,8 +728,11 @@ proc postAccountsAccountIdEmailSecuritySettingsTrustedDomains*(client: Cloudflar
 
 proc postAccountsAccountIdEmailSecuritySettingsTrustedDomainsBatch*(client: CloudflareClient,
                                                                     body: PostAccountsAccountIdEmailSecuritySettingsTrustedDomainsBatchRequest): Future[JsonNode] {.async.} =
-  ## Executes multiple operations atomically. All four operation arrays
-  ## (deletes, patches, puts, posts) are required and executed in order.
+  ## Executes multiple trusted domain operations atomically: delete, partially
+  ## update,
+  ## replace, and create trusted domain patterns in a single request. All four
+  ## operation
+  ## arrays (deletes, patches, puts, posts) are required and executed in order.
   ## Send empty arrays for unused operations.
 
   let res = await client.httpPOST("/accounts/{account_id}/email-security/settings/trusted_domains/batch", body)
@@ -815,7 +826,9 @@ proc postAccountsAccountIdEmailSecuritySettingsUrlIgnorePatterns*(client: Cloudf
 
 proc postAccountsAccountIdEmailSecuritySettingsUrlIgnorePatternsBatch*(client: CloudflareClient,
                                                                        body: PostAccountsAccountIdEmailSecuritySettingsUrlIgnorePatternsBatchRequest): Future[JsonNode] {.async.} =
-  ## Sends a batch of URL ignore patterns API calls to execute together.
+  ## Executes multiple operations atomically. All four operation arrays
+  ## (deletes, patches, puts, posts) are required and executed in order.
+  ## Send empty arrays for unused operations.
 
   let res = await client.httpPOST("/accounts/{account_id}/email-security/settings/url_ignore_patterns/batch", body)
   let body = await res.body

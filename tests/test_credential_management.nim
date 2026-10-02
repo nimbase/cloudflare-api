@@ -24,8 +24,23 @@ suite "credential_management serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2DataCatalogCatalogCredentialRequest)) == openjson.toJson(obj)
 
 suite "credential_management endpoints":
+  test "POST /accounts/{account_id}/basin-catalog/{bucket_name}/credential":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdBasinCatalogBucketNameCredential("test", "test", newR2DataCatalogCatalogCredentialRequest())
+
+  test "GET /accounts/{account_id}/basin-catalog/{bucket_name}/credential/status":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdBasinCatalogBucketNameCredentialStatus("test", "test")
+
   test "POST /accounts/{account_id}/r2-catalog/{bucket_name}/credential":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdR2CatalogBucketNameCredential("test", "test", newR2DataCatalogCatalogCredentialRequest())
+
+  test "GET /accounts/{account_id}/r2-catalog/{bucket_name}/credential/status":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdR2CatalogBucketNameCredentialStatus("test", "test")
 

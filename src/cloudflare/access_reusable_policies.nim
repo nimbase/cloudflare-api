@@ -11,7 +11,7 @@ import ./private/types
 
 proc getAccountsAccountIdAccessPolicies*(client: CloudflareClient,
                                          accountId: types.AccessIdentifier,
-                                         page: int64 = 1, perPage: int64 = 100): Future[types.AccessResponseCollection9] {.async.} =
+                                         page: int64 = 1, perPage: int64 = 100): Future[types.AccessResponseCollection10] {.async.} =
   ## Lists Access reusable policies.
 
   var q = initOrderedTable[string, string]()
@@ -21,47 +21,47 @@ proc getAccountsAccountIdAccessPolicies*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection9)
+    result = fromJson(body, types.AccessResponseCollection10)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdAccessPolicies*(client: CloudflareClient,
                                           accountId: types.AccessIdentifier,
-                                          body: types.AccessPolicyReq): Future[types.AccessSingleResponse10] {.async.} =
+                                          body: types.AccessPolicyReq): Future[types.AccessSingleResponse11] {.async.} =
   ## Creates a new Access reusable policy.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/access/policies", body)
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, types.AccessSingleResponse10)
+    result = fromJson(body, types.AccessSingleResponse11)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdAccessPoliciesPolicyId*(client: CloudflareClient,
                                                  accountId: types.AccessIdentifier,
-                                                 policyId: types.AccessUuid2): Future[types.AccessSingleResponse10] {.async.} =
+                                                 policyId: types.AccessUuid2): Future[types.AccessSingleResponse11] {.async.} =
   ## Fetches a single Access reusable policy.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/policies/{policyId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse10)
+    result = fromJson(body, types.AccessSingleResponse11)
   else:
     raise newException(CloudflareClientError, body)
 
 proc putAccountsAccountIdAccessPoliciesPolicyId*(client: CloudflareClient,
                                                  accountId: types.AccessIdentifier,
                                                  policyId: types.AccessUuid2,
-                                                 body: types.AccessPolicyReq): Future[types.AccessSingleResponse10] {.async.} =
+                                                 body: types.AccessPolicyReq): Future[types.AccessSingleResponse11] {.async.} =
   ## Updates a Access reusable policy.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/access/policies/{policyId}", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse10)
+    result = fromJson(body, types.AccessSingleResponse11)
   else:
     raise newException(CloudflareClientError, body)
 

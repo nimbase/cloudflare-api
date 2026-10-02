@@ -21,7 +21,7 @@ proc getAccountsAccountIdAccessUsers*(client: CloudflareClient,
                                       name: string = default(string),
                                       email: string = default(string),
                                       search: string = default(string),
-                                      page: int64 = 1, perPage: int64 = 1000): Future[types.AccessResponseCollection24] {.async.} =
+                                      page: int64 = 1, perPage: int64 = 1000): Future[types.AccessResponseCollection25] {.async.} =
   ## Gets a list of users for an account.
 
   var q = initOrderedTable[string, string]()
@@ -34,7 +34,7 @@ proc getAccountsAccountIdAccessUsers*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection24)
+    result = fromJson(body, types.AccessResponseCollection25)
   else:
     raise newException(CloudflareClientError, body)
 

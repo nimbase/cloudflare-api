@@ -4,14 +4,82 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
+import std/[strformat, json]
 import ./private/metaclient
 import ./private/types
 
 
-proc getAnalyticsSql*(client: CloudflareClient, query: string): Future[types.AnalyticsSqlSqlQueryResponse] {.async.} =
+proc getAccountsAccountTagAnalyticsSql*(client: CloudflareClient,
+                                        accountTag: string, query: string): Future[JsonNode] {.async.} =
+  ## Executes a SQL query scoped to the account in the request path. API Gateway
+  ## forwards the path account in its signed JWT to the existing SQL API handler, so
+  ## an accountTag predicate or JSON scope is not required. Explicit account scope
+  ## must match the path account. Any zone restrictions must belong to that account.
+  ## Query parameters, time ranges, output formats, authorization, and responses
+  ## follow the legacy query endpoint.
+
+  var q = initOrderedTable[string, string]()
+  q["query"] = $query
+  let res = await client.httpGET(fmt"/accounts/{accountTag}/analytics/sql", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountTagAnalyticsSql*(client: CloudflareClient,
+                                         accountTag: string,
+                                         body: types.AnalyticsSqlSqlQueryRequest): Future[JsonNode] {.async.} =
+  ## Executes a SQL query scoped to the account in the request path. API Gateway
+  ## forwards the path account in its signed JWT to the existing SQL API handler, so
+  ## an accountTag predicate or JSON scope is not required. Explicit account scope
+  ## must match the path account. Any zone restrictions must belong to that account.
+  ## Query parameters, time ranges, output formats, authorization, and responses
+  ## follow the legacy query endpoint.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountTag}/analytics/sql", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountTagAnalyticsSqlIntrospection*(client: CloudflareClient,
+                                                     accountTag: string,
+                                                     includeColumns: bool = false,
+                                                     includeCustomAttributes: bool = false,
+                                                     includeWae: bool = true,
+                                                     includeLex: bool = true,
+                                                     datasetName: string = default(string)): Future[types.AnalyticsSqlIntrospectionResponse] {.async.} =
+  ## Returns the dataset catalogue for the account in the request path. API Gateway
+  ## forwards the path account in its signed JWT to the existing introspection
+  ## handler; account_tag is not required as a query parameter. If supplied, it must
+  ## match the path account. Dataset and column discovery options are identical to
+  ## the legacy introspection endpoint.
+
+  var q = initOrderedTable[string, string]()
+  q["include_columns"] = $includeColumns
+  q["include_custom_attributes"] = $includeCustomAttributes
+  q["include_wae"] = $includeWae
+  q["include_lex"] = $includeLex
+  q["dataset_name"] = $datasetName
+  let res = await client.httpGET(fmt"/accounts/{accountTag}/analytics/sql/introspection", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AnalyticsSqlIntrospectionResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAnalyticsSql*(client: CloudflareClient, query: string): Future[JsonNode] {.async.} =
   ## Executes a SQL query against the analytics datasets available to the caller. SQL
   ## placeholders can be bound with query parameters named `param_<name>`, such as
-  ## `param_status=404` for `$status`.
+  ## `param_status=404` for `$status`. A trailing `FORMAT JSON`, `FORMAT
+  ## JSONEachRow`, `FORMAT TabSeparated`, or `FORMAT TSV` is supported for all
+  ## datasets. Without FORMAT, each backend retains its existing default JSON
+  ## response.
 
   var q = initOrderedTable[string, string]()
   q["query"] = $query
@@ -19,22 +87,25 @@ proc getAnalyticsSql*(client: CloudflareClient, query: string): Future[types.Ana
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AnalyticsSqlSqlQueryResponse)
+    result = fromJson(body, JsonNode)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAnalyticsSql*(client: CloudflareClient,
-                       body: types.AnalyticsSqlSqlQueryRequest): Future[types.AnalyticsSqlSqlQueryResponse] {.async.} =
+                       body: types.AnalyticsSqlSqlQueryRequest): Future[JsonNode] {.async.} =
   ## Executes a SQL query against the analytics datasets available to the caller.
   ## Send either raw SQL or a JSON object containing the query and optional
   ## positional or named parameters, time range, and account or zone scope. Raw SQL
-  ## placeholders can also be bound with query parameters named `param_<name>`.
+  ## placeholders can also be bound with query parameters named `param_<name>`. A
+  ## trailing `FORMAT JSON`, `FORMAT JSONEachRow`, `FORMAT TabSeparated`, or `FORMAT
+  ## TSV` is supported for all datasets. Without FORMAT, each backend retains its
+  ## existing default JSON response.
 
   let res = await client.httpPOST("/analytics/sql", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AnalyticsSqlSqlQueryResponse)
+    result = fromJson(body, JsonNode)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -42,16 +113,19 @@ proc getAnalyticsSqlIntrospection*(client: CloudflareClient, accountTag: string,
                                    includeColumns: bool = false,
                                    includeCustomAttributes: bool = false,
                                    includeWae: bool = true,
-                                   includeLex: bool = false,
+                                   includeLex: bool = true,
                                    datasetName: string = default(string)): Future[types.AnalyticsSqlIntrospectionResponse] {.async.} =
   ## Returns the analytics dataset catalogue. By default, the response contains
-  ## dataset names, titles, descriptions, and kinds. Set `include_columns` to include
-  ## each dataset's column names, descriptions, and data types. The caller must have
-  ## Account Analytics Read permission on the account identified by `account_tag`.
-  ## Dataset names, descriptions, and columns are the same for every authorized
-  ## account. When `include_custom_attributes` is set, the response also includes
-  ## custom attribute names and types discovered from that account's own data, which
-  ## legitimately differs per caller.
+  ## dataset names, titles, categories, descriptions, kinds, and hidden flags. Set
+  ## `include_columns` to include each dataset's column names, descriptions, data
+  ## types, and hidden flags. The caller must have Account Analytics Read permission
+  ## on the account identified by `account_tag`. Dataset names, descriptions, and
+  ## columns are the same for every authorized account. When
+  ## `include_custom_attributes` is set, the response also includes custom attribute
+  ## names and types discovered from that account's own data, which legitimately
+  ## differs per caller. `hidden` marks catalogue entries a client should
+  ## de-emphasise. It has no effect on access: hidden datasets and columns are
+  ## returned here and remain fully queryable.
   ##
   ## The catalogue lists the datasets this deployment is able to describe, which is
   ## not a fixed list. Some datasets are described by the service that owns them and

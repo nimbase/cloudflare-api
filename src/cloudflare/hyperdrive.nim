@@ -114,16 +114,15 @@ proc postAccountsAccountIdHyperdriveConfigsHyperdriveIdRestart*(client: Cloudfla
   else:
     raise newException(CloudflareClientError, body)
 
-proc postAccountsAccountIdHyperdriveIntegrationsOperationsIntegrationCreateDatabaseSignature*(client: CloudflareClient,
-                                                                                              accountId: types.HyperdriveIdentifier,
-                                                                                              integration: types.HyperdriveHyperdriveIntegration): Future[JsonNode] {.async.} =
+proc postAccountsAccountIdHyperdriveIntegrationsOperationsPlanetScaleCreateDatabaseSignature*(client: CloudflareClient,
+                                                                                              accountId: types.HyperdriveIdentifier): Future[JsonNode] {.async.} =
   ## Returns a short-lived signed authorization for creating a database that is
   ## billed through Cloudflare. The caller passes these values to the integration
   ## partner's own CLI, which verifies the signature before creating the database.
   ## Requires the account to be entitled to Cloudflare-billed databases for the
   ## integration.
 
-  let res = await client.httpPOST(fmt"/accounts/{accountId}/hyperdrive/integrationsOperations/{integration}/createDatabaseSignature")
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/hyperdrive/integrationsOperations/planetScale/createDatabaseSignature")
   let body = await res.body
   case res.code
   of Http200:

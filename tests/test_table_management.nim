@@ -28,6 +28,16 @@ suite "table_management serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2DataCatalogGetTableResponse)) == openjson.toJson(obj)
 
 suite "table_management endpoints":
+  test "GET /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdBasinCatalogBucketNameNamespacesNamespaceTables("test", "test", "test", "test", 1, true, true)
+
+  test "GET /accounts/{account_id}/basin-catalog/{bucket_name}/namespaces/{namespace}/tables/{table_name}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdBasinCatalogBucketNameNamespacesNamespaceTablesTableName("test", "test", "test", "test")
+
   test "GET /accounts/{account_id}/r2-catalog/{bucket_name}/namespaces/{namespace}/tables":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

@@ -130,6 +130,30 @@ proc getAccountsAccountIdAccessIdentityProvidersIdentityProviderIdScimGroups*(cl
   else:
     raise newException(CloudflareClientError, body)
 
+proc getAccountsAccountIdAccessIdentityProvidersIdentityProviderIdScimGroupsGroupId*(client: CloudflareClient,
+                                                                                     identityProviderId: types.AccessUuid,
+                                                                                     accountId: types.AccessIdentifier,
+                                                                                     groupId: types.AccessIdentifier): Future[types.AccessScimGroupResponse] {.async.} =
+  ## Returns a SCIM Group resource, including its direct members, synced to
+  ## Cloudflare via the System for Cross-domain Identity Management (SCIM).
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/access/identity_providers/{identityProviderId}/scim/groups/{groupId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessScimGroupResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdAccessIdentityProvidersIdentityProviderIdScimGroupsGroupId*(client: CloudflareClient,
+                                                                                        identityProviderId: types.AccessUuid,
+                                                                                        accountId: types.AccessIdentifier,
+                                                                                        groupId: types.AccessIdentifier): Future[AsyncResponse] {.async.} =
+  ## Deletes a SCIM Group resource from the identity provider's SCIM population.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/access/identity_providers/{identityProviderId}/scim/groups/{groupId}")
+  return res
+
 proc getAccountsAccountIdAccessIdentityProvidersIdentityProviderIdScimUsers*(client: CloudflareClient,
                                                                              identityProviderId: types.AccessUuid,
                                                                              accountId: types.AccessIdentifier,
@@ -158,3 +182,27 @@ proc getAccountsAccountIdAccessIdentityProvidersIdentityProviderIdScimUsers*(cli
     result = fromJson(body, types.AccessScimUsersResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdAccessIdentityProvidersIdentityProviderIdScimUsersUserId*(client: CloudflareClient,
+                                                                                   identityProviderId: types.AccessUuid,
+                                                                                   accountId: types.AccessIdentifier,
+                                                                                   userId: types.AccessIdentifier): Future[types.AccessScimUserResponse] {.async.} =
+  ## Returns a SCIM User resource synced to Cloudflare via the System for
+  ## Cross-domain Identity Management (SCIM).
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/access/identity_providers/{identityProviderId}/scim/users/{userId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessScimUserResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdAccessIdentityProvidersIdentityProviderIdScimUsersUserId*(client: CloudflareClient,
+                                                                                      identityProviderId: types.AccessUuid,
+                                                                                      accountId: types.AccessIdentifier,
+                                                                                      userId: types.AccessIdentifier): Future[AsyncResponse] {.async.} =
+  ## Deletes a SCIM User resource from the identity provider's SCIM population.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/access/identity_providers/{identityProviderId}/scim/users/{userId}")
+  return res

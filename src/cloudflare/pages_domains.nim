@@ -15,7 +15,7 @@ type
 proc getAccountsAccountIdPagesProjectsProjectNameDomains*(client: CloudflareClient,
                                                           projectName: types.PagesProjectName,
                                                           accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
-  ## Fetch a list of all domains associated with a Pages project.
+  ## List the custom domains associated with a Cloudflare Pages project.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/pages/projects/{projectName}/domains")
   let body = await res.body
@@ -29,7 +29,7 @@ proc postAccountsAccountIdPagesProjectsProjectNameDomains*(client: CloudflareCli
                                                            projectName: types.PagesProjectName,
                                                            accountId: types.PagesIdentifier,
                                                            body: PostAccountsAccountIdPagesProjectsProjectNameDomainsRequest): Future[JsonNode] {.async.} =
-  ## Add a new domain for the Pages project.
+  ## Attach a custom domain to a Cloudflare Pages project.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/pages/projects/{projectName}/domains", body)
   let body = await res.body
@@ -43,7 +43,8 @@ proc getAccountsAccountIdPagesProjectsProjectNameDomainsDomainName*(client: Clou
                                                                     domainName: types.PagesDomainName,
                                                                     projectName: types.PagesProjectName,
                                                                     accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
-  ## Fetch a single domain.
+  ## Retrieve the configuration and validation status of a custom domain attached to
+  ## a Cloudflare Pages project.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/pages/projects/{projectName}/domains/{domainName}")
   let body = await res.body
@@ -57,7 +58,7 @@ proc deleteAccountsAccountIdPagesProjectsProjectNameDomainsDomainName*(client: C
                                                                        domainName: types.PagesDomainName,
                                                                        projectName: types.PagesProjectName,
                                                                        accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
-  ## Delete a Pages project's domain.
+  ## Remove a custom domain from a Cloudflare Pages project.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/pages/projects/{projectName}/domains/{domainName}")
   let body = await res.body
@@ -71,7 +72,7 @@ proc patchAccountsAccountIdPagesProjectsProjectNameDomainsDomainName*(client: Cl
                                                                       domainName: types.PagesDomainName,
                                                                       projectName: types.PagesProjectName,
                                                                       accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
-  ## Retry the validation status of a single domain.
+  ## Retry validation for a custom domain attached to a Cloudflare Pages project.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/pages/projects/{projectName}/domains/{domainName}")
   let body = await res.body

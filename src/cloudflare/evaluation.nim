@@ -19,8 +19,9 @@ proc getAccountsAccountIdFlagshipAppsAppIdEvaluate*(client: CloudflareClient,
                                                     flagKey: string,
                                                     targetingKey: string = default(string)): Future[types.FlagshipEvaluationResult] {.async.} =
   ## Evaluates a flag against the provided context. Pass context attributes as query
-  ## parameters; values are forwarded as strings. For low-latency in-Worker
-  ## evaluation, prefer the Flagship binding over this endpoint.
+  ## parameters; values are coerced to numbers or booleans where unambiguous. For
+  ## low-latency in-Worker evaluation, prefer the Flagship binding over this
+  ## endpoint.
 
   var q = initOrderedTable[string, string]()
   q["flagKey"] = $flagKey

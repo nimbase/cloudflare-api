@@ -17,7 +17,7 @@ proc getAccountsAccountIdAccessApps*(client: CloudflareClient,
                                      targetAttributes: string = default(string),
                                      exact: bool = default(bool),
                                      search: string = default(string),
-                                     page: int64 = 1, perPage: int64 = 1000): Future[types.AccessResponseCollection7] {.async.} =
+                                     page: int64 = 1, perPage: int64 = 1000): Future[types.AccessResponseCollection8] {.async.} =
   ## Lists all Access applications in an account.
 
   var q = initOrderedTable[string, string]()
@@ -33,7 +33,7 @@ proc getAccountsAccountIdAccessApps*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection7)
+    result = fromJson(body, types.AccessResponseCollection8)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -52,14 +52,14 @@ proc postAccountsAccountIdAccessApps*(client: CloudflareClient,
 
 proc getAccountsAccountIdAccessAppsAppId*(client: CloudflareClient,
                                           appId: types.AccessAppId,
-                                          accountId: types.AccessIdentifier): Future[types.AccessSingleResponse8] {.async.} =
+                                          accountId: types.AccessIdentifier): Future[types.AccessSingleResponse9] {.async.} =
   ## Fetches information about an Access application.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/apps/{appId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse8)
+    result = fromJson(body, types.AccessSingleResponse9)
   else:
     raise newException(CloudflareClientError, body)
 

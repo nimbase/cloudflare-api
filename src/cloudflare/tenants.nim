@@ -36,7 +36,8 @@ type
     success: bool
 
 proc getTenantsTenantId*(client: CloudflareClient, tenantId: string): Future[GetTenantsTenantIdResponse] {.async.} =
-  ## Retrieves a Tenant by Tenant ID.
+  ## Retrieves a tenant's identity, status, metadata, contacts, and organizational
+  ## units.
 
   let res = await client.httpGET(fmt"/tenants/{tenantId}")
   let body = await res.body
@@ -47,7 +48,7 @@ proc getTenantsTenantId*(client: CloudflareClient, tenantId: string): Future[Get
     raise newException(CloudflareClientError, body)
 
 proc getTenantsTenantIdAccountTypes*(client: CloudflareClient, tenantId: string): Future[GetTenantsTenantIdAccountTypesResponse] {.async.} =
-  ## List of account types available for the Tenant to provision accounts.
+  ## Lists the account types this tenant is allowed to provision.
 
   let res = await client.httpGET(fmt"/tenants/{tenantId}/account_types")
   let body = await res.body
@@ -58,7 +59,7 @@ proc getTenantsTenantIdAccountTypes*(client: CloudflareClient, tenantId: string)
     raise newException(CloudflareClientError, body)
 
 proc getTenantsTenantIdAccounts*(client: CloudflareClient, tenantId: string): Future[GetTenantsTenantIdAccountsResponse] {.async.} =
-  ## List of accounts for the Tenant.
+  ## Lists the Cloudflare accounts associated with this tenant.
 
   let res = await client.httpGET(fmt"/tenants/{tenantId}/accounts")
   let body = await res.body
@@ -69,7 +70,8 @@ proc getTenantsTenantIdAccounts*(client: CloudflareClient, tenantId: string): Fu
     raise newException(CloudflareClientError, body)
 
 proc getTenantsTenantIdEntitlements*(client: CloudflareClient, tenantId: string): Future[GetTenantsTenantIdEntitlementsResponse] {.async.} =
-  ## List of innate entitlements available for the Tenant.
+  ## Retrieves the innate and custom entitlement allocations available to this
+  ## tenant.
 
   let res = await client.httpGET(fmt"/tenants/{tenantId}/entitlements")
   let body = await res.body
@@ -80,7 +82,7 @@ proc getTenantsTenantIdEntitlements*(client: CloudflareClient, tenantId: string)
     raise newException(CloudflareClientError, body)
 
 proc getTenantsTenantIdMemberships*(client: CloudflareClient, tenantId: string): Future[GetTenantsTenantIdMembershipsResponse] {.async.} =
-  ## List of active members (Cloudflare users) for the Tenant.
+  ## Lists active Cloudflare users with memberships in this tenant.
 
   let res = await client.httpGET(fmt"/tenants/{tenantId}/memberships")
   let body = await res.body

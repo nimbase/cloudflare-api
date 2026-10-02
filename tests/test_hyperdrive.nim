@@ -83,3 +83,8 @@ suite "hyperdrive endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdHyperdriveConfigsHyperdriveIdRestart("test", "test")
 
+  test "POST /accounts/{account_id}/hyperdrive/integrationsOperations/planetScale/createDatabaseSignature":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdHyperdriveIntegrationsOperationsPlanetScaleCreateDatabaseSignature("test")
+

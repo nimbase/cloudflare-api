@@ -86,7 +86,7 @@ suite "email_sending_suppressions endpoints":
   test "GET /accounts/{account_id}/email/sending/suppressions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailSendingSuppressions("test", 1, "test", "test", "test", reasonManual)
+    discard waitFor client.getAccountsAccountIdEmailSendingSuppressions("test", 1, "test", "test", "test", reasonManual, scopeTypeAccount, "test")
 
   test "GET /accounts/{account_id}/email/sending/suppressions/{suppression_id}":
     let client = initCloudflareClient("test-key")

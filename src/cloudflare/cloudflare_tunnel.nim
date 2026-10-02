@@ -4,13 +4,13 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[strformat, options]
+import std/[strformat, options, json]
 import ./private/metaclient
 import ./private/types
 
 type
   PostAccountsAccountIdCfdTunnelRequest = object
-    config_src: Option[types.TunnelConfigSrc]
+    config_src: Option[JsonNode]
     name: types.TunnelTunnelName
     tunnel_secret: Option[types.TunnelTunnelSecret]
   PatchAccountsAccountIdCfdTunnelTunnelIdRequest = object
@@ -25,7 +25,7 @@ type
     name: Option[types.TunnelTunnelName]
     tunnel_secret: Option[types.TunnelTunnelSecret]
   PutAccountsAccountIdWarpConnectorTunnelIdFailoverRequest = object
-    client_id: types.TunnelClientIdInput
+    client_id: JsonNode
 
 proc getAccountsAccountIdCfdTunnel*(client: CloudflareClient,
                                     accountId: types.TunnelAccountId,
@@ -246,7 +246,7 @@ proc getAccountsAccountIdWarpConnector*(client: CloudflareClient,
                                         status: types.TunnelStatus = default(types.TunnelStatus),
                                         perPage: types.TunnelPerPage = default(types.TunnelPerPage),
                                         page: types.TunnelPageNumber = default(types.TunnelPageNumber)): Future[types.TunnelWarpConnectorResponseCollection] {.async.} =
-  ## Lists and filters Warp Connector Tunnels in an account.
+  ## Lists and filters Mesh nodes in an account.
 
   var q = initOrderedTable[string, string]()
   q["name"] = $name
@@ -271,7 +271,7 @@ proc getAccountsAccountIdWarpConnector*(client: CloudflareClient,
 proc postAccountsAccountIdWarpConnector*(client: CloudflareClient,
                                          accountId: types.TunnelAccountId,
                                          body: PostAccountsAccountIdWarpConnectorRequest): Future[types.TunnelWarpConnectorResponseSingle] {.async.} =
-  ## Creates a new Warp Connector Tunnel in an account.
+  ## Creates a new Mesh node in an account.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/warp_connector", body)
   let body = await res.body
@@ -284,7 +284,7 @@ proc postAccountsAccountIdWarpConnector*(client: CloudflareClient,
 proc getAccountsAccountIdWarpConnectorTunnelId*(client: CloudflareClient,
                                                 accountId: types.TunnelAccountId,
                                                 tunnelId: types.TunnelTunnelId): Future[types.TunnelWarpConnectorResponseSingle] {.async.} =
-  ## Fetches a single Warp Connector Tunnel.
+  ## Fetches a single Mesh node.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/warp_connector/{tunnelId}")
   let body = await res.body
@@ -297,7 +297,7 @@ proc getAccountsAccountIdWarpConnectorTunnelId*(client: CloudflareClient,
 proc deleteAccountsAccountIdWarpConnectorTunnelId*(client: CloudflareClient,
                                                    accountId: types.TunnelAccountId,
                                                    tunnelId: types.TunnelTunnelId): Future[types.TunnelWarpConnectorResponseSingle] {.async.} =
-  ## Deletes a Warp Connector Tunnel from an account.
+  ## Deletes a Mesh node from an account.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/warp_connector/{tunnelId}")
   let body = await res.body
@@ -311,7 +311,7 @@ proc patchAccountsAccountIdWarpConnectorTunnelId*(client: CloudflareClient,
                                                   accountId: types.TunnelAccountId,
                                                   tunnelId: types.TunnelTunnelId,
                                                   body: PatchAccountsAccountIdWarpConnectorTunnelIdRequest): Future[types.TunnelWarpConnectorResponseSingle] {.async.} =
-  ## Updates an existing Warp Connector Tunnel.
+  ## Updates an existing Mesh node.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/warp_connector/{tunnelId}", body)
   let body = await res.body
@@ -324,7 +324,7 @@ proc patchAccountsAccountIdWarpConnectorTunnelId*(client: CloudflareClient,
 proc getAccountsAccountIdWarpConnectorTunnelIdConnections*(client: CloudflareClient,
                                                            accountId: types.TunnelAccountId,
                                                            tunnelId: types.TunnelTunnelId): Future[types.TunnelTunnelWarpConnectorConnectionsResponse] {.async.} =
-  ## Fetches connection details for a WARP Connector Tunnel.
+  ## Lists connection details for a Mesh node.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/warp_connector/{tunnelId}/connections")
   let body = await res.body
@@ -338,7 +338,7 @@ proc getAccountsAccountIdWarpConnectorTunnelIdConnectorsConnectorId*(client: Clo
                                                                      accountId: types.TunnelAccountId,
                                                                      tunnelId: types.TunnelTunnelId,
                                                                      connectorId: types.TunnelClientId): Future[types.TunnelTunnelWarpConnectorClientResponse] {.async.} =
-  ## Fetches connector and connection details for a WARP Connector Tunnel.
+  ## Fetches connector and connection details for a Mesh node.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/warp_connector/{tunnelId}/connectors/{connectorId}")
   let body = await res.body
@@ -352,8 +352,8 @@ proc putAccountsAccountIdWarpConnectorTunnelIdFailover*(client: CloudflareClient
                                                         accountId: types.TunnelAccountId,
                                                         tunnelId: types.TunnelTunnelId,
                                                         body: PutAccountsAccountIdWarpConnectorTunnelIdFailoverRequest): Future[types.TunnelEmptyResponse] {.async.} =
-  ## Triggers a manual failover for a specific WARP Connector Tunnel, setting the
-  ## specified client as the active connector. The tunnel must be configured for high
+  ## Triggers a manual failover for a specific Mesh node, setting the specified
+  ## client as the active connector. The tunnel must be configured for high
   ## availability (HA) and the client must be linked to the tunnel.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/warp_connector/{tunnelId}/failover", body)
@@ -367,8 +367,7 @@ proc putAccountsAccountIdWarpConnectorTunnelIdFailover*(client: CloudflareClient
 proc getAccountsAccountIdWarpConnectorTunnelIdToken*(client: CloudflareClient,
                                                      accountId: types.TunnelAccountId,
                                                      tunnelId: types.TunnelTunnelId): Future[types.TunnelTunnelResponseToken] {.async.} =
-  ## Gets the token used to associate warp device with a specific Warp Connector
-  ## tunnel.
+  ## Gets the token used to associate a WARP device with a specific Mesh node.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/warp_connector/{tunnelId}/token")
   let body = await res.body

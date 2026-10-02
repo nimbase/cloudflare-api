@@ -11,13 +11,17 @@ import cloudflare
 import ./common
 
 suite "zone_level_access_applications serialization":
-  test "round-trips AccessSingleResponse21":
-    let obj = newAccessSingleResponse21()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse21)) == openjson.toJson(obj)
+  test "round-trips AccessResponseCollection23":
+    let obj = newAccessResponseCollection23()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection23)) == openjson.toJson(obj)
 
   test "round-trips AccessAppId":
     let obj = newAccessAppId()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessAppId)) == openjson.toJson(obj)
+
+  test "round-trips AccessSingleResponse22":
+    let obj = newAccessSingleResponse22()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse22)) == openjson.toJson(obj)
 
   test "round-trips AccessAppSettingsRequest":
     let obj = newAccessAppSettingsRequest()
@@ -34,10 +38,6 @@ suite "zone_level_access_applications serialization":
   test "round-trips AccessEmptyResponse2":
     let obj = newAccessEmptyResponse2()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessEmptyResponse2)) == openjson.toJson(obj)
-
-  test "round-trips AccessResponseCollection22":
-    let obj = newAccessResponseCollection22()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection22)) == openjson.toJson(obj)
 
   test "round-trips AccessIdResponse":
     let obj = newAccessIdResponse()

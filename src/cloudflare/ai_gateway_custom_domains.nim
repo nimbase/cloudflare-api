@@ -39,7 +39,8 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdCustomDomains*(client: Cloudf
                                                                   perPage: int64 = 20,
                                                                   status: AiGatewayCustomDomainStatusOption = statusInitializing,
                                                                   search: string = default(string)): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdCustomDomainsResponse] {.async.} =
-  ## Lists all AI Gateway evaluator types configured for the account.
+  ## Lists the custom domains attached to an AI Gateway, including the certificate
+  ## and validation status of each domain.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -73,7 +74,8 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdCustomDomainsHostname*(client
                                                                           accountId: string,
                                                                           gatewayId: string,
                                                                           hostname: string): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdCustomDomainsHostnameResponse] {.async.} =
-  ## Retrieves details for a specific AI Gateway dataset.
+  ## Retrieves a custom domain attached to an AI Gateway, including its status and
+  ## CNAME target.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/custom-domains/{hostname}")
   let body = await res.body
@@ -87,7 +89,8 @@ proc deleteAccountsAccountIdAiGatewayGatewaysGatewayIdCustomDomainsHostname*(cli
                                                                              accountId: string,
                                                                              gatewayId: string,
                                                                              hostname: string): Future[DeleteAccountsAccountIdAiGatewayGatewaysGatewayIdCustomDomainsHostnameResponse] {.async.} =
-  ## Deletes an AI Gateway dataset.
+  ## Deletes a custom domain from an AI Gateway and removes its Cloudflare for SaaS
+  ## custom hostname.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/custom-domains/{hostname}")
   let body = await res.body

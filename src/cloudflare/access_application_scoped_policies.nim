@@ -13,7 +13,7 @@ proc getAccountsAccountIdAccessAppsAppIdPolicies*(client: CloudflareClient,
                                                   appId: types.AccessUuid,
                                                   accountId: types.AccessIdentifier,
                                                   page: int64 = 1,
-                                                  perPage: int64 = 200): Future[types.AccessResponseCollection8] {.async.} =
+                                                  perPage: int64 = 200): Future[types.AccessResponseCollection9] {.async.} =
   ## Lists Access policies configured for an application. Returns both exclusively
   ## scoped and reusable policies used by the application.
 
@@ -24,14 +24,14 @@ proc getAccountsAccountIdAccessAppsAppIdPolicies*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection8)
+    result = fromJson(body, types.AccessResponseCollection9)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdAccessAppsAppIdPolicies*(client: CloudflareClient,
                                                    appId: types.AccessUuid,
                                                    accountId: types.AccessIdentifier,
-                                                   body: types.AccessAppPolicyWriteRequest): Future[types.AccessSingleResponse9] {.async.} =
+                                                   body: types.AccessAppPolicyWriteRequest): Future[types.AccessSingleResponse10] {.async.} =
   ## Creates a policy applying exclusive to a single application that defines the
   ## users or groups who can reach it. We recommend creating a reusable policy
   ## instead and subsequently referencing its ID in the application's 'policies'
@@ -41,14 +41,14 @@ proc postAccountsAccountIdAccessAppsAppIdPolicies*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, types.AccessSingleResponse9)
+    result = fromJson(body, types.AccessSingleResponse10)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdAccessAppsAppIdPoliciesPolicyId*(client: CloudflareClient,
                                                           appId: types.AccessUuid,
                                                           policyId: types.AccessUuid,
-                                                          accountId: types.AccessIdentifier): Future[types.AccessSingleResponse9] {.async.} =
+                                                          accountId: types.AccessIdentifier): Future[types.AccessSingleResponse10] {.async.} =
   ## Fetches a single Access policy configured for an application. Returns both
   ## exclusively owned and reusable policies used by the application.
 
@@ -56,7 +56,7 @@ proc getAccountsAccountIdAccessAppsAppIdPoliciesPolicyId*(client: CloudflareClie
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse9)
+    result = fromJson(body, types.AccessSingleResponse10)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -64,7 +64,7 @@ proc putAccountsAccountIdAccessAppsAppIdPoliciesPolicyId*(client: CloudflareClie
                                                           appId: types.AccessUuid,
                                                           policyId: types.AccessUuid,
                                                           accountId: types.AccessIdentifier,
-                                                          body: types.AccessAppPolicyWriteRequest): Future[types.AccessSingleResponse9] {.async.} =
+                                                          body: types.AccessAppPolicyWriteRequest): Future[types.AccessSingleResponse10] {.async.} =
   ## Updates an Access policy specific to an application. To update a reusable
   ## policy, use the /accounts/{account_id}/policies/{uid} endpoint.
 
@@ -72,7 +72,7 @@ proc putAccountsAccountIdAccessAppsAppIdPoliciesPolicyId*(client: CloudflareClie
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse9)
+    result = fromJson(body, types.AccessSingleResponse10)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -94,7 +94,7 @@ proc deleteAccountsAccountIdAccessAppsAppIdPoliciesPolicyId*(client: CloudflareC
 proc putAccountsAccountIdAccessAppsAppIdPoliciesPolicyIdMakeReusable*(client: CloudflareClient,
                                                                       appId: types.AccessUuid,
                                                                       policyId: types.AccessUuid,
-                                                                      accountId: types.AccessIdentifier): Future[types.AccessResponseCollection8] {.async.} =
+                                                                      accountId: types.AccessIdentifier): Future[types.AccessResponseCollection9] {.async.} =
   ## Converts an application-scoped policy to a reusable policy. The policy will no
   ## longer be exclusively scoped to the application. Further updates to the policy
   ## should go through the /accounts/{account_id}/policies/{uid} endpoint.
@@ -103,6 +103,6 @@ proc putAccountsAccountIdAccessAppsAppIdPoliciesPolicyIdMakeReusable*(client: Cl
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection8)
+    result = fromJson(body, types.AccessResponseCollection9)
   else:
     raise newException(CloudflareClientError, body)

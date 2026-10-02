@@ -11,6 +11,14 @@ import cloudflare
 import ./common
 
 suite "dlp_custom_prompt_topics serialization":
+  test "round-trips DlpNewCustomPromptTopic":
+    let obj = newDlpNewCustomPromptTopic()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpNewCustomPromptTopic)) == openjson.toJson(obj)
+
+  test "round-trips DlpCustomPromptTopicUpdate":
+    let obj = newDlpCustomPromptTopicUpdate()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpCustomPromptTopicUpdate)) == openjson.toJson(obj)
+
   test "round-trips DlpApiResponseSingle":
     let obj = newDlpApiResponseSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpApiResponseSingle)) == openjson.toJson(obj)
@@ -33,10 +41,20 @@ suite "dlp_custom_prompt_topics endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdDlpCustomPromptTopics("test")
 
+  test "POST /accounts/{account_id}/dlp/custom_prompt_topics":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdDlpCustomPromptTopics("test", newDlpNewCustomPromptTopic())
+
   test "GET /accounts/{account_id}/dlp/custom_prompt_topics/{entry_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdDlpCustomPromptTopicsEntryId("test", "test")
+
+  test "PUT /accounts/{account_id}/dlp/custom_prompt_topics/{entry_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.putAccountsAccountIdDlpCustomPromptTopicsEntryId("test", "test", newDlpCustomPromptTopicUpdate())
 
   test "DELETE /accounts/{account_id}/dlp/custom_prompt_topics/{entry_id}":
     let client = initCloudflareClient("test-key")

@@ -17,18 +17,24 @@ type
     cache_invalidate_on_update: bool
     cache_ttl: Option[int64]
     collect_logs: bool
+    dlp: Option[JsonNode]
+    guardrails: Option[JsonNode]
     id: string
+    log_classification: Option[bool]
     log_management: Option[int64]
     log_management_strategy: Option[string]
     logpush: Option[bool]
     logpush_public_key: Option[string]
+    otel: Option[seq[JsonNode]]
     rate_limiting_interval: Option[int64]
     rate_limiting_limit: Option[int64]
     rate_limiting_technique: Option[string]
     retry_backoff: Option[string]
     retry_delay: Option[int64]
     retry_max_attempts: Option[int64]
+    spend_limits: Option[JsonNode]
     store_id: Option[string]
+    stripe: Option[JsonNode]
     workers_ai_billing_mode: Option[string]
     zdr: Option[bool]
   PostAccountsAccountIdAiGatewayGatewaysResponse* = object
@@ -76,7 +82,7 @@ proc getAccountsAccountIdAiGatewayGateways*(client: CloudflareClient,
                                             accountId: string, page: int64 = 1,
                                             perPage: int64 = 20,
                                             search: string = default(string)): Future[GetAccountsAccountIdAiGatewayGatewaysResponse] {.async.} =
-  ## Lists all AI Gateway evaluator types configured for the account.
+  ## Lists the AI Gateways in the account. Use `search` to filter by gateway ID.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -93,7 +99,9 @@ proc getAccountsAccountIdAiGatewayGateways*(client: CloudflareClient,
 proc postAccountsAccountIdAiGatewayGateways*(client: CloudflareClient,
                                              accountId: string,
                                              body: PostAccountsAccountIdAiGatewayGatewaysRequest): Future[PostAccountsAccountIdAiGatewayGatewaysResponse] {.async.} =
-  ## Creates a new AI Gateway.
+  ## Creates an AI Gateway in the account with the specified caching, rate limiting,
+  ## logging, and authentication settings. The gateway ID appears in request URLs and
+  ## must be unique within the account.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/gateways", body)
   let body = await res.body
@@ -119,7 +127,7 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdUrlProvider*(client: Cloudfla
 
 proc getAccountsAccountIdAiGatewayGatewaysId*(client: CloudflareClient,
                                               accountId: string, id: string): Future[GetAccountsAccountIdAiGatewayGatewaysIdResponse] {.async.} =
-  ## Retrieves details for a specific AI Gateway dataset.
+  ## Retrieves the configuration of an AI Gateway.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/gateways/{id}")
   let body = await res.body
@@ -132,7 +140,8 @@ proc getAccountsAccountIdAiGatewayGatewaysId*(client: CloudflareClient,
 proc putAccountsAccountIdAiGatewayGatewaysId*(client: CloudflareClient,
                                               accountId: string, id: string,
                                               body: PutAccountsAccountIdAiGatewayGatewaysIdRequest): Future[PutAccountsAccountIdAiGatewayGatewaysIdResponse] {.async.} =
-  ## Updates an existing AI Gateway dataset.
+  ## Updates the configuration of an AI Gateway, such as its caching, rate limiting,
+  ## logging, and authentication settings.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/ai-gateway/gateways/{id}", body)
   let body = await res.body
@@ -144,7 +153,7 @@ proc putAccountsAccountIdAiGatewayGatewaysId*(client: CloudflareClient,
 
 proc deleteAccountsAccountIdAiGatewayGatewaysId*(client: CloudflareClient,
                                                  accountId: string, id: string): Future[DeleteAccountsAccountIdAiGatewayGatewaysIdResponse] {.async.} =
-  ## Deletes an AI Gateway dataset.
+  ## Permanently deletes an AI Gateway, its configuration, and its stored logs.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai-gateway/gateways/{id}")
   let body = await res.body

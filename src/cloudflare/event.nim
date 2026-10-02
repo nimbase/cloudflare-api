@@ -16,6 +16,7 @@ type
     page: Option[float64]
     page_size: Option[float64]
     search: Option[seq[JsonNode]]
+    search_branches: Option[seq[seq[JsonNode]]]
   GetAccountsAccountIdCloudforceOneEventsAggregateResponse* = object
     aggregate_by: string
       ## Column(s) that were aggregated by
@@ -525,6 +526,7 @@ proc getAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
                                               accountId: string,
                                               cursor: string = default(string),
                                               search: seq[string] = @[],
+                                              searchBranches: seq[string] = @[],
                                               page: float64 = default(float64),
                                               pageSize: float64 = default(float64),
                                               orderBy: string = default(string),
@@ -545,6 +547,7 @@ proc getAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor
   for v in search: q["search"] = $v
+  for v in searchBranches: q["searchBranches"] = $v
   q["page"] = $page
   q["pageSize"] = $pageSize
   q["orderBy"] = $orderBy

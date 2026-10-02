@@ -724,7 +724,7 @@ type
     appeal_count*: int64
       ## Number of appeals submitted against the report so far.
     appealable*: bool
-      ## Whether the report can currently be appealed.
+      ## Whether the report can currently be appealed under the policy applied to it.
     has_appealable_mitigations*: bool
       ## Whether the report has at least one mitigation an appeal could reverse.
     has_open_appeal*: bool
@@ -744,11 +744,11 @@ type
 
   AbuseReportsAuthErrorResponse* = ref object of RootObj
     ## The Abuse Reports API returns this HTTP 401 authorization error after
-    ## credentials pass authentication but fail the required Abuse Reports permission
-    ## check or, for report submission, the account entitlement check. Submission
-    ## entitlement failures return "Not entitled to use feature: Abuse Report API".
-    ## Enterprise accounts have the entitlement by default; other accounts must request
-    ## access.
+    ## credentials pass authentication but fail the required Trust and Safety
+    ## permission check or, for report submission, the account entitlement check.
+    ## Submission entitlement failures return "Not entitled to use feature: Abuse
+    ## Report API". Enterprise accounts have the entitlement by default; other accounts
+    ## must request access.
     err_code*: string
       ## Machine-readable error code.
     error_code*: string
@@ -868,8 +868,10 @@ type
 
   AbuseReportsCloudflareAPIErrorResponse* = ref object of RootObj
     ## Cloudflare's API layer uses this standard error envelope for requests that fail
-    ## authentication before they reach the Abuse Reports API. The example shows the
-    ## authentication error for missing or invalid credentials.
+    ## authentication or authorization before they reach the Abuse Reports API. The
+    ## example shows error code `10000`, returned for missing or invalid credentials
+    ## (HTTP 401) and for a token or OAuth grant that lacks the required Trust and
+    ## Safety permission (HTTP 403).
     errors*: seq[AbuseReportsErrorMessage]
       ## Cloudflare API error details.
     messages*: seq[AbuseReportsMessage]
@@ -1529,7 +1531,7 @@ type
     ## rejects requests with missing or invalid credentials before they reach the Abuse
     ## Reports API and returns the standard Cloudflare API error envelope. The Abuse
     ## Reports API returns its authorization error shape when valid credentials fail
-    ## the Abuse Reports permission check or the submission entitlement check.
+    ## the Trust and Safety permission check or the submission entitlement check.
 
   AbuseReportsUnexpectedActError* = string
 
@@ -2313,6 +2315,58 @@ type
 
   AccessEnabled* = bool
 
+  AccessEndUserAllPreviewWorkersDestination* = ref object of RootObj
+    overrides*: Option[AccessDestinationOverrides]
+    `type`*: string
+
+  AccessEndUserAllWorkersDestination* = ref object of RootObj
+    overrides*: Option[AccessDestinationOverrides]
+    `type`*: string
+
+  AccessEndUserDestinations* = seq[JsonNode]
+
+  AccessEndUserOauthConfiguration* = ref object of RootObj
+    dynamic_client_registration*: Option[JsonNode]
+      ## Settings for OAuth dynamic client registration.
+    enabled*: Option[bool]
+      ## Managed OAuth is required for end user applications and cannot be disabled.
+    grant*: Option[JsonNode]
+      ## Settings for OAuth grant behavior.
+
+  AccessEndUserPreviewWorkerDestination* = ref object of RootObj
+    overrides*: Option[AccessDestinationOverrides]
+    `type`*: string
+    worker_id*: string
+      ## The ID of the Cloudflare Worker whose previews to secure.
+
+  AccessEndUserProps* = ref object of RootObj
+    ## An end user application is a public self-hosted application backed by exactly
+    ## one organization-owned user population. End user applications use a canonical
+    ## allow-everyone policy and do not support custom policies, SCIM configuration,
+    ## MFA configuration, or private destinations.
+    ##
+    allowed_idps*: Option[AccessAllowedIdps]
+    destinations*: Option[AccessEndUserDestinations]
+    domain*: Option[AccessDomain]
+    name*: Option[AccessName8]
+    oauth_configuration*: AccessEndUserOauthConfiguration
+    self_hosted_domains*: Option[AccessSelfHostedDomains]
+    `type`*: JsonNode
+    user_populations*: seq[AccessUuid]
+      ## The single user population associated with this application.
+
+  AccessEndUserPublicDestination* = ref object of RootObj
+    overrides*: Option[AccessDestinationOverrides]
+    `type`*: Option[string]
+    uri*: string
+      ## The public hostname and optional path to secure.
+
+  AccessEndUserWorkerDestination* = ref object of RootObj
+    overrides*: Option[AccessDestinationOverrides]
+    `type`*: string
+    worker_id*: string
+      ## The ID of the Cloudflare Worker to secure.
+
   AccessEveryoneRule* = ref object of RootObj
     ## Matches everyone.
     everyone*: JsonNode
@@ -2558,6 +2612,17 @@ type
       ## The type of identity provider. To determine the value for a specific provider,
       ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
+
+  AccessGroupDetails* = ref object of RootObj
+    display_name*: Option[string]
+      ## The display name of the SCIM Group resource.
+    external_id*: Option[AccessExternalId]
+    id*: Option[AccessId]
+    members*: Option[seq[JsonNode]]
+      ## The direct members of the SCIM Group resource.
+    meta*: Option[AccessMeta]
+    schemas*: Option[seq[string]]
+      ## The list of URIs which indicate the attributes contained within a SCIM resource.
 
   AccessGroups* = ref object of RootObj
     display_name*: Option[string]
@@ -3402,6 +3467,7 @@ type
     name*: Option[AccessName]
     service_token_inactivity*: Option[AccessServiceTokenInactivity]
     session_duration*: Option[AccessSessionDuration]
+    strict_service_token_auth*: Option[AccessStrictServiceTokenAuth]
     ui_read_only_toggle_reason*: Option[AccessUiReadOnlyToggleReason]
     updated_at*: Option[AccessUpdatedAt]
     user_seat_expiration_inactive_time*: Option[AccessUserSeatExpirationInactiveTime]
@@ -3416,9 +3482,35 @@ type
     is_ui_read_only*: Option[AccessIsUiReadOnly2]
     login_design*: Option[AccessLoginDesign]
     name*: Option[AccessName15]
+    strict_service_token_auth*: Option[AccessStrictServiceTokenAuth]
     ui_read_only_toggle_reason*: Option[AccessUiReadOnlyToggleReason]
     updated_at*: Option[AccessTimestamp]
     user_seat_expiration_inactive_time*: Option[AccessUserSeatExpirationInactiveTime2]
+
+  AccessPasskeys* = ref object of RootObj
+    config*: JsonNode
+    id*: Option[AccessUuid]
+    name*: AccessName3
+    read_only*: Option[bool]
+      ## Indicates that the identity provider is immutable and cannot be updated or
+      ## deleted via the API.
+      ##
+    saml_certificate_set*: Option[JsonNode]
+      ## The SAML encryption certificate set details, including current and previous
+      ## certificates.
+      ## Only present for SAML identity providers with a certificate set assigned.
+      ##
+    saml_certificate_set_id*: Option[string]
+      ## The UID of the SAML encryption certificate set assigned to this Identity
+      ## Provider.
+      ## Only present for SAML identity providers with encryption configured.
+      ## Create a certificate set via POST to
+      ## `/identity_providers/{id}/saml_certificate`.
+      ##
+    scim_config*: Option[JsonNode]
+      ## The configuration settings for enabling a System for Cross-Domain Identity
+      ## Management (SCIM) with the identity provider.
+    `type`*: string
 
   AccessPathCookieAttribute* = bool
 
@@ -3674,22 +3766,22 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessCustomPageWithoutHtml]]
+    result*: Option[seq[AccessReusablePolicyResp]]
 
   AccessResponseCollection11* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[seq[AccessAccessRequests]]
+    result_info*: Option[JsonNode]
+    result*: Option[seq[AccessCustomPageWithoutHtml]]
 
   AccessResponseCollection12* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result_info*: Option[JsonNode]
-    result*: Option[seq[AccessJitRequestLog]]
+    result*: Option[seq[AccessAccessRequests]]
 
   AccessResponseCollection13* = ref object of RootObj
     errors*: AccessMessages
@@ -3697,7 +3789,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessSeats]]
+    result*: Option[seq[AccessJitRequestLog]]
 
   AccessResponseCollection14* = ref object of RootObj
     errors*: AccessMessages
@@ -3705,7 +3797,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessBookmarks]]
+    result*: Option[seq[AccessSeats]]
 
   AccessResponseCollection15* = ref object of RootObj
     errors*: AccessMessages
@@ -3713,7 +3805,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessTag]]
+    result*: Option[seq[AccessBookmarks]]
 
   AccessResponseCollection16* = ref object of RootObj
     errors*: AccessMessages
@@ -3721,7 +3813,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessAuthenticatorDeviceAaguid]]
+    result*: Option[seq[AccessTag]]
 
   AccessResponseCollection17* = ref object of RootObj
     errors*: AccessMessages
@@ -3729,7 +3821,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[JsonNode]]
+    result*: Option[seq[AccessAuthenticatorDeviceAaguid]]
 
   AccessResponseCollection18* = ref object of RootObj
     errors*: AccessMessages
@@ -3737,7 +3829,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessGroups3]]
+    result*: Option[seq[JsonNode]]
 
   AccessResponseCollection19* = ref object of RootObj
     errors*: AccessMessages
@@ -3745,7 +3837,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessServiceTokens2]]
+    result*: Option[seq[AccessGroups3]]
 
   AccessResponseCollection2* = ref object of RootObj
     errors*: AccessMessages
@@ -3761,7 +3853,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessCa2]]
+    result*: Option[seq[AccessServiceTokens2]]
 
   AccessResponseCollection21* = ref object of RootObj
     errors*: AccessMessages
@@ -3769,7 +3861,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessCertificates3]]
+    result*: Option[seq[AccessCa2]]
 
   AccessResponseCollection22* = ref object of RootObj
     errors*: AccessMessages
@@ -3777,7 +3869,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessApps]]
+    result*: Option[seq[AccessCertificates3]]
 
   AccessResponseCollection23* = ref object of RootObj
     errors*: AccessMessages
@@ -3785,9 +3877,17 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessPolicies]]
+    result*: Option[seq[AccessApps]]
 
   AccessResponseCollection24* = ref object of RootObj
+    errors*: AccessMessages
+    messages*: AccessMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result_info*: Option[JsonNode]
+    result*: Option[seq[AccessPolicies]]
+
+  AccessResponseCollection25* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
@@ -3801,7 +3901,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessServiceTokens]]
+    result*: Option[seq[AccessUserPopulation]]
 
   AccessResponseCollection4* = ref object of RootObj
     errors*: AccessMessages
@@ -3809,7 +3909,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessCa]]
+    result*: Option[seq[AccessServiceTokens]]
 
   AccessResponseCollection5* = ref object of RootObj
     errors*: AccessMessages
@@ -3817,7 +3917,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessCertificates]]
+    result*: Option[seq[AccessCa]]
 
   AccessResponseCollection6* = ref object of RootObj
     errors*: AccessMessages
@@ -3825,7 +3925,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessCertificates2]]
+    result*: Option[seq[AccessCertificates]]
 
   AccessResponseCollection7* = ref object of RootObj
     errors*: AccessMessages
@@ -3833,7 +3933,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessAppResponse]]
+    result*: Option[seq[AccessCertificates2]]
 
   AccessResponseCollection8* = ref object of RootObj
     errors*: AccessMessages
@@ -3841,7 +3941,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessAppPolicyResult]]
+    result*: Option[seq[AccessAppResponse]]
 
   AccessResponseCollection9* = ref object of RootObj
     errors*: AccessMessages
@@ -3849,7 +3949,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
-    result*: Option[seq[AccessReusablePolicyResp]]
+    result*: Option[seq[AccessAppPolicyResult]]
 
   AccessResponseCollectionHostnames* = ref object of RootObj
     errors*: AccessMessages
@@ -4239,6 +4339,13 @@ type
 
   AccessScimConfigSingleAuthentication2* = ref object of RootObj
 
+  AccessScimGroupResponse* = ref object of RootObj
+    errors*: AccessMessages
+    messages*: AccessMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[AccessGroupDetails]
+
   AccessScimGroupsResponse* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
@@ -4254,6 +4361,13 @@ type
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
     result*: Option[seq[AccessResponses]]
+
+  AccessScimUserResponse* = ref object of RootObj
+    errors*: AccessMessages
+    messages*: AccessMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[AccessUsers]
 
   AccessScimUsersResponse* = ref object of RootObj
     errors*: AccessMessages
@@ -4424,70 +4538,70 @@ type
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessReusablePolicyResp]
+    result*: Option[AccessAppPolicyResult]
 
   AccessSingleResponse11* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessCustomPage]
+    result*: Option[AccessReusablePolicyResp]
 
   AccessSingleResponse12* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessKeyConfig]
+    result*: Option[AccessCustomPage]
 
   AccessSingleResponse13* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessBookmarks]
+    result*: Option[AccessKeyConfig]
 
   AccessSingleResponse14* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessTag]
+    result*: Option[AccessBookmarks]
 
   AccessSingleResponse15* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessOrganizations2]
+    result*: Option[AccessTag]
 
   AccessSingleResponse16* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessIdentityProviders2]
+    result*: Option[AccessOrganizations2]
 
   AccessSingleResponse17* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessGroups3]
+    result*: Option[AccessIdentityProviders2]
 
   AccessSingleResponse18* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessServiceTokens2]
+    result*: Option[AccessGroups3]
 
   AccessSingleResponse19* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessCa2]
+    result*: Option[AccessServiceTokens2]
 
   AccessSingleResponse2* = ref object of RootObj
     errors*: AccessMessages
@@ -4501,16 +4615,23 @@ type
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessCertificates3]
+    result*: Option[AccessCa2]
 
   AccessSingleResponse21* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessApps]
+    result*: Option[AccessCertificates3]
 
   AccessSingleResponse22* = ref object of RootObj
+    errors*: AccessMessages
+    messages*: AccessMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[AccessApps]
+
+  AccessSingleResponse23* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
@@ -4536,35 +4657,35 @@ type
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessCa]
+    result*: Option[AccessUserPopulation]
 
   AccessSingleResponse6* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessCertificates]
+    result*: Option[AccessCa]
 
   AccessSingleResponse7* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessCertificates2]
+    result*: Option[AccessCertificates]
 
   AccessSingleResponse8* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessAppResponse]
+    result*: Option[AccessCertificates2]
 
   AccessSingleResponse9* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[AccessAppPolicyResult]
+    result*: Option[AccessAppResponse]
 
   AccessSingleResponseUpdate* = ref object of RootObj
     errors*: AccessMessages
@@ -4653,6 +4774,8 @@ type
 
   AccessStatus2* = seq[string]
 
+  AccessStrictServiceTokenAuth* = bool
+
   AccessStringKeyMapDeviceSession* = ref object of RootObj
 
   AccessTag* = ref object of RootObj
@@ -4740,6 +4863,7 @@ type
   AccessType* = enum
     ## The application type.
     selfHosted = "self_hosted"
+    endUser = "end_user"
     saas = "saas"
     ssh = "ssh"
     vnc = "vnc"
@@ -4791,6 +4915,17 @@ type
   AccessUseClientlessIsolationAppLauncherUrl* = bool
 
   AccessUserId* = string
+
+  AccessUserPopulation* = ref object of RootObj
+    created_at*: AccessCreatedAt
+    id*: AccessUuid
+    name*: AccessUserPopulationName
+    updated_at*: AccessUpdatedAt
+
+  AccessUserPopulationName* = string
+
+  AccessUserPopulationRequest* = ref object of RootObj
+    name*: AccessUserPopulationName
 
   AccessUserResult* = enum
     ## Policy evaluation result for an individual user.
@@ -5788,6 +5923,14 @@ type
     message*: string
       ## Human-readable error message.
 
+  AnalyticsSqlClickHouseJsonQueryResponse* = ref object of RootObj
+    data*: seq[JsonNode]
+    meta*: seq[JsonNode]
+    rows*: int64
+    rows_before_limit_at_least*: int64
+      ## ClickHouse pre-limit count, or rows when unavailable.
+    statistics*: AnalyticsSqlSqlQueryStatistics
+
   AnalyticsSqlCustomAttribute* = ref object of RootObj
     data_type*: string
       ## ClickHouse type of the attribute value.
@@ -5811,10 +5954,17 @@ type
       ## SQL data type of the column.
     description*: string
       ## Human-readable description of the column.
+    hidden*: bool
+      ## Whether the column is de-emphasised in column listings. A presentation hint
+      ## only: a hidden column is still returned here, is still selectable by name, and
+      ## is still included by `SELECT *`.
+      ##
     name*: string
       ## Column name used in SQL queries.
 
   AnalyticsSqlIntrospectionDataset* = ref object of RootObj
+    category*: string
+      ## Human-readable dataset category from the catalogue metadata.
     columns*: Option[seq[AnalyticsSqlIntrospectionColumn]]
       ## Present when `include_columns` is true.
     custom_attributes*: Option[seq[AnalyticsSqlCustomAttribute]]
@@ -5822,6 +5972,11 @@ type
       ## attributes.
     description*: string
       ## Human-readable description of the dataset.
+    hidden*: bool
+      ## Whether the dataset is de-emphasised in catalogue listings. A presentation hint
+      ## only: a hidden dataset is still returned here and is just as queryable as any
+      ## other.
+      ##
     kind*: AnalyticsSqlIntrospectionDatasetKind
     name*: string
       ## Dataset name used in SQL queries.
@@ -5858,6 +6013,12 @@ type
     unsampled = "unsampled"
     adaptive = "adaptive"
 
+  AnalyticsSqlLogExplorerQueryResponse* = ref object of RootObj
+    data*: seq[JsonNode]
+      ## Log Explorer query rows keyed by selected column names.
+    rows*: int64
+      ## Number of rows in data.
+
   AnalyticsSqlSqlQueryAccountScope* = ref object of RootObj
     account_tag*: string
       ## Account tag used to authorize and scope the query. Must be a 32-character
@@ -5870,9 +6031,11 @@ type
       ## object values for placeholders such as `$status`.
       ##
     query*: string
-      ## SQL query to execute.
+      ## SQL query to execute. A trailing FORMAT selects JSON, JSONEachRow, TabSeparated,
+      ## or TSV output on any dataset.
+      ##
     scope*: Option[AnalyticsSqlSqlQueryScope]
-    time_range*: Option[AnalyticsSqlSqlQueryTimeRange]
+    time_range*: Option[JsonNode]
 
   AnalyticsSqlSqlQueryResponse* = ref object of RootObj
     data*: seq[JsonNode]
@@ -7677,10 +7840,12 @@ type
       ## recurring).
     billing_account_id*: Option[string]
       ## Public identifier of the Cloudflare account (account tag). Omitted when account
-      ## is not part of the requested grouping.
+      ## is not part of the requested grouping, and always omitted for usage measured at
+      ## contract level, even when grouping by account: that usage is returned as its own
+      ## record with no account.
     billing_account_name*: Option[string]
       ## Display name of the Cloudflare account. Omitted when account is not part of the
-      ## requested grouping.
+      ## requested grouping, and for usage measured at contract level.
     billing_currency*: Option[string]
       ## Currency that a charge was billed in (ISO 4217).
     billing_period_end*: Option[string]
@@ -7767,9 +7932,13 @@ type
       ## The product family the charge belongs to (e.g., "R2", "Workers"). Cloudflare
       ## extension; replaces FOCUS ServiceName.
     x_zone_id*: Option[string]
-      ## The identifier for the Cloudflare zone (zone tag). Cloudflare extension.
+      ## The identifier for the Cloudflare zone (zone tag). Omitted when zone is not part
+      ## of the requested grouping, and always omitted for usage measured at contract
+      ## level, even when grouping by zone. Cloudflare extension.
     x_zone_name*: Option[string]
-      ## The display name of the Cloudflare zone. Cloudflare extension.
+      ## The display name of the Cloudflare zone. Omitted when zone is not part of the
+      ## requested grouping, and for usage measured at contract level. Cloudflare
+      ## extension.
 
   BillableUsageApiIdentifier* = string
 
@@ -8974,38 +9143,51 @@ type
 
   CachePurgeEverything* = ref object of RootObj
     purge_everything*: Option[bool]
-      ## For more information, please refer to [purge everything documentationpage](http
-      ## s://developers.cloudflare.com/cache/how-to/purge-cache/purge-everything/).
+      ## Set to `true` to target all cached content in the zone, or in the environment
+      ## for the environment endpoints. Must be the only field in the request. See [Purge
+      ## everything](https://developers.cloudflare.com/cache/how-to/purge-cache/purge-eve
+      ## rything/).
 
   CachePurgeFlexPurgeByHostnames* = ref object of RootObj
     hosts*: Option[seq[string]]
-      ## For more information purging by hostnames, please refer to [purge by hostname
-      ## documentationpage](https://developers.cloudflare.com/cache/how-to/purge-cache/p
-      ## urge-by-hostname/).
+      ## Hostnames, such as `www.example.com`. Targets all content cached for these
+      ## hostnames. See [Purge cache byhostname](https://developers.cloudflare.com/cache
+      ## /how-to/purge-cache/purge-by-hostname/).
 
   CachePurgeFlexPurgeByPrefixes* = ref object of RootObj
     prefixes*: Option[seq[string]]
-      ## For more information on purging by prefixes, please refer to [purge by prefix
-      ## documentationpage](https://developers.cloudflare.com/cache/how-to/purge-cache/p
-      ## urge_by_prefix/).
+      ## URL prefixes, each a hostname followed by a path, such as
+      ## `www.example.com/blog/`. Targets all content whose URL starts with one of these
+      ## prefixes. Do not include a scheme, query string, or fragment. See [Purge cache
+      ## byprefix](https://developers.cloudflare.com/cache/how-to/purge-cache/purge_by_p
+      ## refix/).
 
   CachePurgeFlexPurgeByTags* = ref object of RootObj
     tags*: Option[seq[string]]
-      ## For more information on cache tags and purging by tags, please refer to [purge
-      ## by cache-tags documentationpage](https://developers.cloudflare.com/cache/how-to
-      ## /purge-cache/purge-by-tags/).
+      ## Cache tags. Targets all content whose `Cache-Tag` response header contains at
+      ## least one of these tags. See [Purge cache bycache-tags](https://developers.clou
+      ## dflare.com/cache/how-to/purge-cache/purge-by-tags/).
 
   CachePurgeSingleFile* = ref object of RootObj
     files*: Option[seq[string]]
-      ## For more information on purging files, please refer to [purge by single-file
-      ## documentationpage](https://developers.cloudflare.com/cache/how-to/purge-cache/p
-      ## urge-by-single-file/).
+      ## Full URLs, such as `https://www.example.com/css/styles.css`. Targets the content
+      ## cached for each URL. If your cache key includes request headers, send objects
+      ## with `url` and `headers` instead. See [Purge bysingle-file](https://developers.
+      ## cloudflare.com/cache/how-to/purge-cache/purge-by-single-file/).
 
   CachePurgeSingleFileWithUrlAndHeaders* = ref object of RootObj
     files*: Option[seq[JsonNode]]
-      ## For more information on purging files with URL and headers, please refer to
-      ## [purge by single-file documentationpage](https://developers.cloudflare.com/cach
-      ## e/how-to/purge-cache/purge-by-single-file/).
+      ## URLs with the request headers your cache key uses. Use this form when your cache
+      ## key includes request headers, or the visitor's device type, country, or
+      ## language: send the header values each URL was cached with, such as
+      ## `CF-Device-Type`, `CF-IPCountry`, or `Accept-Language`.
+      ##
+      ## When you send the `Origin` header, include the scheme and hostname. Include the
+      ## port unless it is the default for the scheme: 80 for `http`, 443 for `https`.
+      ##
+      ## See [Purge bysingle-file](https://developers.cloudflare.com/cache/how-to/purge-
+      ## cache/purge-by-single-file/).
+      ##
 
   CachePurgeApiResponseCommonFailure* = ref object of RootObj
     errors*: JsonNode
@@ -9682,9 +9864,7 @@ type
     version*: int64
 
   CcApplicationConstraints* = ref object of RootObj
-    jurisdiction*: Option[string]
-      ## Currently supports only "eu" and "fedramp". Overlap between jurisdiction and
-      ## region is allowed for ENAM, WNAM (FedRAMP) and EEUR, WEUR (EU).
+    jurisdiction*: Option[CcApplicationJurisdiction]
     regions*: Option[seq[CcRegion]]
 
   CcApplicationDurableObjectsConfiguration* = ref object of RootObj
@@ -9728,6 +9908,8 @@ type
       ##
 
   CcApplicationID* = string
+
+  CcApplicationJurisdiction* = string
 
   CcApplicationName* = string
 
@@ -10719,6 +10901,82 @@ type
 
   CloudConnectorZoneIdentifier* = CloudConnectorIdentifier
 
+  CloudflareK2CreateK2StreamRequest* = ref object of RootObj
+    http*: CloudflareK2K2StreamHttpInput
+    name*: string
+      ## Specifies the name of the K2 stream.
+    retention_seconds*: Option[int64]
+      ## Sets the record retention period from 1 hour (3600 seconds) to 30 days (2592000
+      ## seconds), inclusive.
+    worker_binding*: Option[JsonNode]
+
+  CloudflareK2K2ConsumerLag* = ref object of RootObj
+    records*: Option[string]
+      ## Decimal-string distance from the subscription's committed position to the
+      ## observed exclusive stream tail, in records. Includes in-flight records and may
+      ## include expired records or records acknowledged beyond an earlier gap. Null
+      ## unless status is available.
+    status*: string
+      ## Unsupported means the subscription or stream topology cannot be measured;
+      ## unavailable means a required observation failed or was inconsistent.
+
+  CloudflareK2K2MonitoredSubscription* = ref object of RootObj
+    created_at*: string
+    id*: string
+    lag*: CloudflareK2K2ConsumerLag
+    modified_at*: string
+    name*: string
+    start_at*: JsonNode
+
+  CloudflareK2K2MonitoredSubscriptionListResponse* = ref object of RootObj
+    result*: seq[CloudflareK2K2MonitoredSubscription]
+    success*: CloudflareK2WorkersK2CommonSuccess
+
+  CloudflareK2K2Stream* = ref object of RootObj
+    created_at*: string
+    endpoint*: string
+      ## Indicates the base HTTP endpoint for producing and consuming records.
+    http*: CloudflareK2K2StreamHttpInput
+    id*: CloudflareK2WorkersK2StreamId
+    modified_at*: string
+    name*: string
+      ## Indicates the name of the K2 stream.
+    retention_seconds*: int64
+      ## Shows the configured record retention period from 1 hour (3600 seconds) to 30
+      ## days (2592000 seconds), inclusive.
+    worker_binding*: CloudflareK2K2StreamWorkerBindingInput
+
+  CloudflareK2K2StreamCorsOptions* = ref object of RootObj
+    origins*: Option[JsonNode]
+      ## Allows requests from these HTTP or HTTPS origins. Use a wildcard only as the
+      ## sole origin.
+
+  CloudflareK2K2StreamHttpInput* = ref object of RootObj
+
+  CloudflareK2K2StreamListResponse* = ref object of RootObj
+    result*: seq[CloudflareK2K2Stream]
+    result_info*: JsonNode
+    success*: CloudflareK2WorkersK2CommonSuccess
+
+  CloudflareK2K2StreamResponse* = ref object of RootObj
+    result*: CloudflareK2K2Stream
+    success*: CloudflareK2WorkersK2CommonSuccess
+
+  CloudflareK2K2StreamWorkerBindingInput* = ref object of RootObj
+
+  CloudflareK2UpdateK2StreamRequest* = ref object of RootObj
+    http*: Option[CloudflareK2K2StreamHttpInput]
+    retention_seconds*: Option[int64]
+      ## Sets the record retention period from 1 hour (3600 seconds) to 30 days (2592000
+      ## seconds), inclusive.
+    worker_binding*: Option[CloudflareK2K2StreamWorkerBindingInput]
+
+  CloudflareK2WorkersK2AccountId* = string
+
+  CloudflareK2WorkersK2CommonSuccess* = bool
+
+  CloudflareK2WorkersK2StreamId* = string
+
   CloudflarePipelinesConnectionSchema* = ref object of RootObj
     ## Defines the schema of the events in the data stream.
     fields*: Option[seq[CloudflarePipelinesSourceField]]
@@ -10915,8 +11173,6 @@ type
     format*: string
       ## Specifies the format of source data.
     `type`*: string
-
-  CloudforceOneEventsArticleTagDiagnosticJsonValue* = ref object of RootObj
 
   CloudforceOneEventsFieldDefinition* = ref object of RootObj
     allowed_values*: Option[seq[string]]
@@ -13119,7 +13375,7 @@ type
     allowed_match_count*: int32
       ## Related DLP policies will trigger when the match count exceeds the number set.
     confidence_threshold*: Option[JsonNode]
-    context_awareness*: Option[DlpContextAwareness]
+    context_awareness*: Option[JsonNode]
     created_at*: string
       ## When the profile was created.
     data_classes*: Option[seq[string]]
@@ -13146,7 +13402,7 @@ type
     ai_context_enabled*: Option[bool]
     allowed_match_count*: Option[int32]
     confidence_threshold*: Option[string]
-    context_awareness*: Option[DlpContextAwareness]
+    context_awareness*: Option[JsonNode]
     data_classes*: Option[seq[string]]
       ## Data class IDs to associate with the profile. If omitted, existing associations
       ## are unchanged.
@@ -13519,7 +13775,7 @@ type
     allowed_match_count*: Option[int32]
       ## Related DLP policies will trigger when the match count exceeds the number set.
     confidence_threshold*: Option[string]
-    context_awareness*: Option[DlpContextAwareness]
+    context_awareness*: Option[JsonNode]
     data_classes*: Option[seq[string]]
       ## Data class IDs to associate with the profile.
     data_tags*: Option[seq[string]]
@@ -13613,7 +13869,7 @@ type
     ai_context_enabled*: Option[bool]
     allowed_match_count*: Option[int32]
     confidence_threshold*: Option[string]
-    context_awareness*: Option[DlpContextAwareness]
+    context_awareness*: Option[JsonNode]
     entries*: Option[seq[DlpPredefinedProfileEntryUpdate]]
     ocr_enabled*: Option[bool]
     profile_id*: string
@@ -13710,7 +13966,7 @@ type
     ai_context_enabled*: Option[bool]
     allowed_match_count*: int32
     confidence_threshold*: Option[JsonNode]
-    context_awareness*: Option[DlpContextAwareness]
+    context_awareness*: Option[JsonNode]
     entries*: seq[DlpEntry]
     id*: string
       ## The id of the predefined profile (uuid).
@@ -13753,7 +14009,7 @@ type
     ai_context_enabled*: Option[bool]
     allowed_match_count*: Option[int32]
     confidence_threshold*: Option[string]
-    context_awareness*: Option[DlpContextAwareness]
+    context_awareness*: Option[JsonNode]
     entries*: Option[seq[DlpPredefinedProfileEntryUpdate]]
     ocr_enabled*: Option[bool]
 
@@ -13955,7 +14211,7 @@ type
     name*: string
     profile_id*: Option[string]
     updated_at*: string
-    word_list*: JsonNode
+    word_list*: seq[string]
 
   DlpApiResponseCollection* = ref object of RootObj
     errors*: DlpMessages
@@ -15143,7 +15399,6 @@ type
     soa*: Option[DnsSettingsSoaBase]
     zone_mode*: Option[DnsSettingsZoneMode]
     nameservers*: Option[JsonNode]
-      ## Settings determining the nameservers through which the zone should be available.
 
   DnsSettingsDnsSettingsZoneResponse* = ref object of RootObj
     flatten_all_cnames*: DnsSettingsFlattenAllCnames
@@ -15154,8 +15409,7 @@ type
     secondary_overrides*: DnsSettingsSecondaryOverrides
     soa*: DnsSettingsSoaResponse
     zone_mode*: DnsSettingsZoneMode
-    nameservers*: JsonNode
-      ## Settings determining the nameservers through which the zone should be available.
+    nameservers*: DnsSettingsZoneNameservers
 
   DnsSettingsDnsView* = ref object of RootObj
     created_time*: Option[DnsSettingsCreatedTime]
@@ -15244,6 +15498,92 @@ type
 
   DnsSettingsName* = string
 
+  DnsSettingsNameserverName* = string
+
+  DnsSettingsNameserverSetAddressGroups* = seq[string]
+
+  DnsSettingsNameserverSetAdvancedResponse* = ref object of RootObj
+    created_on*: string
+      ## When the nameserver set was created.
+    id*: DnsSettingsNameserverSetId
+    ip_set*: DnsSettingsNameserverSetIpSet
+    advanced*: bool
+      ## Whether the nameserver set uses Advanced anycast groups.
+    nameservers*: seq[DnsSettingsNameserverSetAdvancedResponseMember]
+
+  DnsSettingsNameserverSetAdvancedResponseMember* = ref object of RootObj
+    ipv4*: DnsSettingsNameserverSetIpv4Addresses
+    ipv4_groups*: DnsSettingsNameserverSetAddressGroups
+    ipv6*: DnsSettingsNameserverSetIpv6Addresses
+    ipv6_groups*: DnsSettingsNameserverSetAddressGroups
+    name*: DnsSettingsNameserverName
+
+  DnsSettingsNameserverSetCreate* = ref object of RootObj
+    advanced*: Option[bool]
+      ## Whether to allocate the nameservers from distinct Advanced anycast groups.
+    ip_set*: Option[DnsSettingsNameserverSetIpSet]
+    nameservers*: seq[DnsSettingsNameserverSetCreateMember]
+      ## Lists each nameserver and the number of addresses to allocate to it. Requires a
+      ## unique name for each entry in the set.
+
+  DnsSettingsNameserverSetCreateMember* = ref object of RootObj
+    ip_count*: Option[DnsSettingsNameserverSetIpCount]
+    name*: DnsSettingsNameserverName
+
+  DnsSettingsNameserverSetId* = string
+
+  DnsSettingsNameserverSetIpCount* = int64
+
+  DnsSettingsNameserverSetIpSet* = int64
+
+  DnsSettingsNameserverSetIpv4Addresses* = seq[string]
+
+  DnsSettingsNameserverSetIpv6Addresses* = seq[string]
+
+  DnsSettingsNameserverSetResponse* = ref object of RootObj
+
+  DnsSettingsNameserverSetResponseBase* = ref object of RootObj
+    created_on*: string
+      ## When the nameserver set was created.
+    id*: DnsSettingsNameserverSetId
+    ip_set*: DnsSettingsNameserverSetIpSet
+
+  DnsSettingsNameserverSetResponseMember* = ref object of RootObj
+    ipv4*: DnsSettingsNameserverSetIpv4Addresses
+    ipv6*: DnsSettingsNameserverSetIpv6Addresses
+    name*: DnsSettingsNameserverName
+
+  DnsSettingsNameserverSetStandardResponse* = ref object of RootObj
+    created_on*: string
+      ## When the nameserver set was created.
+    id*: DnsSettingsNameserverSetId
+    ip_set*: DnsSettingsNameserverSetIpSet
+    advanced*: bool
+      ## Whether the nameserver set uses Advanced anycast groups.
+    nameservers*: seq[DnsSettingsNameserverSetResponseMember]
+
+  DnsSettingsNameserverSetDeleteResponse* = ref object of RootObj
+    errors*: DnsSettingsMessages
+    messages*: DnsSettingsMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: JsonNode
+
+  DnsSettingsNameserverSetResponseCollection* = ref object of RootObj
+    errors*: DnsSettingsMessages
+    messages*: DnsSettingsMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result_info*: JsonNode
+    result*: seq[DnsSettingsNameserverSetResponse]
+
+  DnsSettingsNameserverSetResponseSingle* = ref object of RootObj
+    errors*: DnsSettingsMessages
+    messages*: DnsSettingsMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: DnsSettingsNameserverSetResponse
+
   DnsSettingsNsTtl* = float64
 
   DnsSettingsOrder* = enum
@@ -15252,9 +15592,9 @@ type
     createdOn = "created_on"
     modifiedOn = "modified_on"
 
-  DnsSettingsPage* = float64
+  DnsSettingsPage* = int64
 
-  DnsSettingsPerPage* = float64
+  DnsSettingsPerPage* = int64
 
   DnsSettingsSecondaryOverrides* = bool
 
@@ -15300,6 +15640,25 @@ type
       ## the local part of the email address.
     ttl*: float64
       ## The time to live (TTL) of the SOA record itself.
+
+  DnsSettingsZoneNameservers* = ref object of RootObj
+    ## Controls the nameservers through which the zone is available.
+
+  DnsSettingsZoneNameserversCloudflare* = ref object of RootObj
+    `type`*: string
+      ## Nameserver type.
+
+  DnsSettingsZoneNameserversCustomExisting* = ref object of RootObj
+    ns_set*: Option[int64]
+      ## Configured nameserver set number to use for this zone.
+    `type`*: string
+      ## Nameserver type.
+
+  DnsSettingsZoneNameserversCustomSet* = ref object of RootObj
+    nameserver_set_id*: JsonNode
+      ## Identifier of the account-owned Custom Nameserver Set to use for this zone.
+    `type`*: string
+      ## Nameserver type.
 
   DnsSettingsZoneMode* = enum
     ## Whether the zone mode is a regular or CDN/DNS only zone.
@@ -16154,6 +16513,7 @@ type
     created_at*: Option[JsonNode]
     id*: Option[JsonNode]
     is_regex*: Option[bool]
+      ## Whether `pattern` is a regular expression instead of a literal value.
     last_modified*: Option[JsonNode]
       ## Deprecated, use `modified_at` instead. End of life: November 1, 2026.
     modified_at*: Option[JsonNode]
@@ -16183,12 +16543,23 @@ type
     retry_after*: Option[string]
       ## When to retry the action if it failed.
     retry_count*: int64
-    status*: string
+    status*: EmailSecurityBulkActionMessageStatus
     status_message*: Option[string]
+
+  EmailSecurityBulkActionMessageStatus* = enum
+    ## Status of a message within a bulk action job.
+    PENDING = "PENDING"
+    PROCESSING = "PROCESSING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    CANCELLED = "CANCELLED"
+    SKIPPED = "SKIPPED"
 
   EmailSecurityBulkActionRequest* = ref object of RootObj
     action*: string
+      ## The action the job performs on every message matching the search parameters.
     comment*: Option[string]
+      ## Optional note describing the job.
     destination*: Option[JsonNode]
       ## Required when action is 'MOVE'.
     expected_disposition*: Option[string]
@@ -16217,9 +16588,20 @@ type
     messages_successful*: int64
     search_params*: EmailSecurityBulkSearchParams
     started_at*: Option[string]
-    status*: string
+    status*: EmailSecurityBulkJobStatus
     status_message*: Option[string]
     total_messages_discovered*: int64
+
+  EmailSecurityBulkJobId* = string
+
+  EmailSecurityBulkJobStatus* = enum
+    ## Status of a bulk action job.
+    PENDING = "PENDING"
+    DISCOVERING = "DISCOVERING"
+    PROCESSING = "PROCESSING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    CANCELLED = "CANCELLED"
 
   EmailSecurityBulkMessageActionParams* = ref object of RootObj
 
@@ -16228,36 +16610,56 @@ type
       ## Deprecated, use `GET /investigate/{investigate_id}/action_log` instead. End of
       ## life: November 1, 2026.
     alert_id*: Option[string]
+      ## Alert ID of the detection to filter by.
     delivery_status*: Option[string]
+      ## Delivery status to filter by.
     detections_only*: Option[bool]
+      ## Whether to include only detections in search results.
     domain*: Option[string]
+      ## Match messages that mention this domain — sender domain, recipient domain, or a
+      ## domain in a link.
     `end`*: Option[string]
       ## End of search date range.
     exact_subject*: Option[string]
+      ## Match messages whose subject line equals this value exactly.
     final_disposition*: Option[string]
+      ## Dispositions to filter by.
     message_action*: Option[string]
+      ## Message actions to filter by.
     message_id*: Option[string]
+      ## Message-ID header value to filter by.
     metric*: Option[string]
+      ## Metric name to filter the search by.
     query*: Option[string]
+      ## Space-delimited search term. Case-insensitive.
     recipient*: Option[string]
+      ## Match messages whose recipient is this email address or domain.
     sender*: Option[string]
+      ## Match messages whose sender is this email address or domain.
     smtp_helo_ip*: Option[string]
       ## Matches messages whose SMTP HELO server IP address equals this value.
     start*: Option[string]
       ## Beginning of search date range.
     subject*: Option[string]
+      ## Match messages whose subject contains these keywords, in any order.
     submissions*: Option[bool]
+      ## Whether to search reclassification submissions instead of original messages.
 
   EmailSecurityContentPolicy* = ref object of RootObj
     ## A content policy pattern that matches against the subject or body of an email.
     created_at*: Option[JsonNode]
     enabled*: Option[bool]
+      ## Whether the policy is active.
     id*: Option[JsonNode]
     modified_at*: Option[JsonNode]
     name*: Option[string]
+      ## Human-readable name of the policy.
     notes*: Option[string]
+      ## Optional note describing the purpose of the policy.
     pattern*: Option[string]
+      ## Regular expression the policy matches against.
     targets*: Option[seq[EmailSecurityContentPolicyTarget]]
+      ## Parts of the email the pattern is matched against.
 
   EmailSecurityContentPolicyId* = string
 
@@ -16311,6 +16713,7 @@ type
     created_at*: Option[JsonNode]
     id*: Option[JsonNode]
     is_regex*: bool
+      ## Whether `pattern` is a regular expression instead of a literal value.
     last_modified*: Option[JsonNode]
       ## Deprecated, use `modified_at` instead. End of life: November 1, 2026.
     modified_at*: Option[JsonNode]
@@ -16327,41 +16730,69 @@ type
     ## Create a content policy.
     created_at*: Option[JsonNode]
     enabled*: bool
+      ## Whether the policy is active.
     id*: Option[JsonNode]
     modified_at*: Option[JsonNode]
     name*: string
+      ## Human-readable name of the policy.
     notes*: Option[string]
+      ## Optional note describing the purpose of the policy.
     pattern*: string
+      ## Regular expression the policy matches against.
     targets*: seq[EmailSecurityContentPolicyTarget]
+      ## Parts of the email the pattern is matched against.
 
   EmailSecurityCreateDomain* = ref object of RootObj
     allowed_delivery_modes*: seq[EmailSecurityDeliveryMode]
+      ## Delivery modes to onboard the domain through.
     domain*: string
+      ## The email domain to protect.
     drop_dispositions*: seq[EmailSecurityDispositionLabel]
+      ## Dispositions to drop instead of delivering, e.g. `["MALICIOUS", "SPAM"]`.
     folder*: Option[JsonNode]
+      ## The mailbox folder to scan, for API-scanning domains.
     integration_id*: Option[string]
+      ## Identifier of the CASB integration that authorizes this domain. The integration
+      ## also enables API scanning, post-delivery actions, and directory sync.
     ip_restrictions*: seq[string]
+      ## Source IP ranges mail is accepted from. Any other source is rejected.
     lookback_hops*: Option[int64]
+      ## Number of hops to trace back through received headers when reconstructing the
+      ## original message (1-20).
     regions*: seq[EmailSecurityRegion]
+      ## Regions that process messages for this domain, e.g. `["GLOBAL"]` or `["US"]`.
     require_tls_inbound*: Option[bool]
+      ## Require TLS on inbound connections.
     require_tls_outbound*: Option[bool]
+      ## Require TLS on outbound connections.
     transport*: Option[string]
+      ## The mail transport hostname for MX/Inline delivery — the MX record Cloudflare
+      ## delivers email to (e.g. `mx.example.com`).
 
   EmailSecurityCreateImpersonationRegistry* = ref object of RootObj
     ## Create an impersonation registry entry.
     comments*: Option[string]
+      ## Optional note describing the entry.
     created_at*: Option[JsonNode]
     directory_id*: Option[int64]
+      ## Identifier of the directory the entry was synced from, when directory-synced.
     directory_node_id*: Option[int64]
+      ## Identifier of the directory node the entry was synced from, when
+      ## directory-synced.
     email*: string
+      ## Email address (or pattern) of the protected identity.
     external_directory_node_id*: Option[string]
+      ## Deprecated. External identifier of the directory node.
     id*: Option[JsonNode]
     is_email_regex*: bool
+      ## Whether `email` is a regular expression instead of a literal address.
     last_modified*: Option[JsonNode]
       ## Deprecated, use `modified_at` instead. End of life: November 1, 2026.
     modified_at*: Option[JsonNode]
     name*: string
+      ## Display name of the protected identity.
     provenance*: Option[string]
+      ## Source the entry was created from.
 
   EmailSecurityCreateSendingDomainRestriction* = ref object of RootObj
     ## Create a sending domain restriction.
@@ -16385,6 +16816,7 @@ type
       ## Select to prevent recently registered domains from triggering a Suspicious or
       ## Malicious disposition.
     is_regex*: bool
+      ## Whether `pattern` is a regular expression instead of a literal domain.
     is_similarity*: bool
       ## Select for partner or other approved domains that have similar spelling to your
       ## connected domains. Prevents listed domains from triggering a Spoof disposition.
@@ -16392,6 +16824,7 @@ type
       ## Deprecated, use `modified_at` instead. End of life: November 1, 2026.
     modified_at*: Option[JsonNode]
     pattern*: string
+      ## The domain pattern to trust, e.g. `example.com`.
 
   EmailSecurityCreateUrlIgnorePattern* = ref object of RootObj
     ## Creates a URL ignore pattern that exempts matching URLs from rewriting.
@@ -16451,6 +16884,7 @@ type
     RETROSCAN = "RETRO_SCAN"
 
   EmailSecurityDispositionLabel* = enum
+    ## The verdict Email Security assigns to a message.
     MALICIOUS = "MALICIOUS"
     MALICIOUSBEC = "MALICIOUS-BEC"
     SUSPICIOUS = "SUSPICIOUS"
@@ -16539,18 +16973,27 @@ type
   EmailSecurityImpersonationRegistry* = ref object of RootObj
     ## An impersonation registry entry.
     comments*: Option[string]
+      ## Optional note describing the entry.
     created_at*: Option[JsonNode]
     directory_id*: Option[int64]
+      ## Identifier of the directory the entry was synced from, when directory-synced.
     directory_node_id*: Option[int64]
+      ## Identifier of the directory node the entry was synced from, when
+      ## directory-synced.
     email*: Option[string]
+      ## Email address (or pattern) of the protected identity.
     external_directory_node_id*: Option[string]
+      ## Deprecated. External identifier of the directory node.
     id*: Option[JsonNode]
     is_email_regex*: Option[bool]
+      ## Whether `email` is a regular expression instead of a literal address.
     last_modified*: Option[JsonNode]
       ## Deprecated, use `modified_at` instead. End of life: November 1, 2026.
     modified_at*: Option[JsonNode]
     name*: Option[string]
+      ## Display name of the protected identity.
     provenance*: Option[string]
+      ## Source the entry was created from.
 
   EmailSecurityImpersonationRegistryId* = string
 
@@ -16563,6 +17006,7 @@ type
     text*: Option[string]
 
   EmailSecurityMailboxDestination* = enum
+    ## The mailbox folder to move messages to.
     Inbox = "Inbox"
     JunkEmail = "JunkEmail"
     DeletedItems = "DeletedItems"
@@ -16667,6 +17111,19 @@ type
     inbound*: JsonNode
     outbound*: JsonNode
 
+  EmailSecurityMissedDetectionSubmission* = ref object of RootObj
+    eml_content*: Option[string]
+      ## Base64 encoded content of the EML file.
+    escalated_submission_id*: Option[string]
+      ## Submission ID of the original user submission, when escalating an escalated user
+      ## report.
+    expected_disposition*: EmailSecuritySubmissionDisposition
+    message_id*: string
+      ## Message-ID header value of the reported message.
+    postfix_id*: EmailSecurityPostfixId
+    recipient_emails*: seq[string]
+      ## Recipient email addresses of the reported message.
+
   EmailSecurityMoveResponseItem* = ref object of RootObj
     completed_at*: Option[string]
       ## When the move operation completed (UTC).
@@ -16731,13 +17188,25 @@ type
     SNOOPYOFFICE365 = "SNOOPY-OFFICE_365"
     SNOOPYGOOGLEDIRECTORY = "SNOOPY-GOOGLE_DIRECTORY"
 
+  EmailSecurityReclassificationSubmission* = ref object of RootObj
+    alert_id*: string
+      ## Alert ID of the detection to reclassify.
+    escalated_submission_id*: Option[string]
+      ## Submission ID of the original user submission, when reclassifying an escalated
+      ## user report.
+    expected_disposition*: EmailSecuritySubmissionDisposition
+
   EmailSecurityReclassifyRequest* = ref object of RootObj
     eml_content*: Option[string]
       ## Base64 encoded content of the EML file.
     escalated_submission_id*: Option[string]
+      ## Submission ID of the original user submission, when reclassifying an escalated
+      ## user report.
     expected_disposition*: string
+      ## The disposition the message should have.
 
   EmailSecurityRegion* = enum
+    ## The region that processes messages for this domain.
     GLOBAL = "GLOBAL"
     AU = "AU"
     DE = "DE"
@@ -16757,17 +17226,31 @@ type
     ## absent — the domain name is immutable after creation.
     ##
     allowed_delivery_modes*: seq[EmailSecurityDeliveryMode]
+      ## Delivery modes to onboard the domain through.
     drop_dispositions*: seq[EmailSecurityDispositionLabel]
+      ## Dispositions to drop instead of delivering, e.g. `["MALICIOUS", "SPAM"]`.
     folder*: Option[JsonNode]
+      ## The mailbox folder to scan, for API-scanning domains.
     integration_id*: Option[string]
+      ## Identifier of the CASB integration that authorizes this domain. The integration
+      ## also enables API scanning, post-delivery actions, and directory sync.
     ip_restrictions*: seq[string]
+      ## Source IP ranges mail is accepted from. Any other source is rejected.
     lookback_hops*: Option[int64]
+      ## Number of hops to trace back through received headers when reconstructing the
+      ## original message (1-20).
     regions*: seq[EmailSecurityRegion]
+      ## Regions that process messages for this domain, e.g. `["GLOBAL"]` or `["US"]`.
     require_tls_inbound*: Option[bool]
+      ## Require TLS on inbound connections.
     require_tls_outbound*: Option[bool]
+      ## Require TLS on outbound connections.
     transport*: Option[string]
+      ## The mail transport hostname for MX/Inline delivery — the MX record Cloudflare
+      ## delivers email to (e.g. `mx.example.com`).
 
   EmailSecurityScannableFolder* = enum
+    ## The mailbox folder to scan, for API-scanning domains.
     AllItems = "AllItems"
     Inbox = "Inbox"
     null = "null"
@@ -16803,33 +17286,48 @@ type
     customer_status*: Option[EmailSecurityCustomerStatus]
     escalated_as*: Option[EmailSecurityOptionalSubmissionDisposition]
     escalated_at*: Option[string]
+      ## When the submission was escalated to the security team.
     escalated_by*: Option[string]
+      ## Email address of the user who escalated the submission.
     escalated_submission_id*: Option[string]
+      ## Submission ID of the escalated team submission, when this user submission was
+      ## escalated.
     original_disposition*: Option[EmailSecurityOptionalSubmissionDisposition]
     original_edf_hash*: Option[string]
+      ## EDF hash of the original message.
     original_postfix_id*: Option[string]
       ## The postfix ID of the original message that was submitted.
     outcome*: Option[string]
+      ## Processing outcome of the submission.
     outcome_disposition*: Option[EmailSecurityOptionalSubmissionDisposition]
     requested_at*: string
       ## When the submission was requested (UTC).
     requested_by*: Option[string]
+      ## Email address of the user who requested the submission.
     requested_disposition*: Option[EmailSecurityOptionalSubmissionDisposition]
     requested_ts*: Option[string]
       ## Deprecated, use `requested_at` instead.
     status*: Option[string]
+      ## Processing status of the submission.
     subject*: Option[string]
+      ## Subject line of the submitted message.
     submission_id*: string
     `type`*: Option[string]
       ## Indicates whether a team member or an end user created the submission.
 
   EmailSecuritySubmissionDisposition* = enum
+    ## The disposition a message is submitted to have.
     MALICIOUS = "MALICIOUS"
     SUSPICIOUS = "SUSPICIOUS"
     SPOOF = "SPOOF"
     SPAM = "SPAM"
     BULK = "BULK"
     NONE = "NONE"
+
+  EmailSecuritySubmissionResult* = ref object of RootObj
+    accepted*: bool
+    error*: Option[string]
+    id*: string
 
   EmailSecurityThreatCategory* = ref object of RootObj
     description*: Option[string]
@@ -16853,6 +17351,7 @@ type
       ## Select to prevent recently registered domains from triggering a Suspicious or
       ## Malicious disposition.
     is_regex*: Option[bool]
+      ## Whether `pattern` is a regular expression instead of a literal domain.
     is_similarity*: Option[bool]
       ## Select for partner or other approved domains that have similar spelling to your
       ## connected domains. Prevents listed domains from triggering a Spoof disposition.
@@ -16860,6 +17359,7 @@ type
       ## Deprecated, use `modified_at` instead. End of life: November 1, 2026.
     modified_at*: Option[JsonNode]
     pattern*: Option[string]
+      ## The domain pattern to trust, e.g. `example.com`.
 
   EmailSecurityTrustedDomainId* = string
 
@@ -16908,6 +17408,7 @@ type
     created_at*: Option[JsonNode]
     id*: Option[JsonNode]
     is_regex*: Option[bool]
+      ## Whether `pattern` is a regular expression instead of a literal value.
     last_modified*: Option[JsonNode]
       ## Deprecated, use `modified_at` instead. End of life: November 1, 2026.
     modified_at*: Option[JsonNode]
@@ -16924,40 +17425,67 @@ type
     ## Update a content policy.
     created_at*: Option[JsonNode]
     enabled*: Option[bool]
+      ## Whether the policy is active.
     id*: Option[JsonNode]
     modified_at*: Option[JsonNode]
     name*: Option[string]
+      ## Human-readable name of the policy.
     notes*: Option[string]
+      ## Optional note describing the purpose of the policy.
     pattern*: Option[string]
+      ## Regular expression the policy matches against.
     targets*: Option[seq[EmailSecurityContentPolicyTarget]]
+      ## Parts of the email the pattern is matched against.
 
   EmailSecurityUpdateDomain* = ref object of RootObj
     allowed_delivery_modes*: Option[seq[EmailSecurityDeliveryMode]]
+      ## Delivery modes to onboard the domain through.
     drop_dispositions*: Option[seq[EmailSecurityDispositionLabel]]
+      ## Dispositions to drop instead of delivering, e.g. `["MALICIOUS", "SPAM"]`.
     folder*: Option[JsonNode]
+      ## The mailbox folder to scan, for API-scanning domains.
     integration_id*: Option[string]
+      ## Identifier of the CASB integration that authorizes this domain. The integration
+      ## also enables API scanning, post-delivery actions, and directory sync.
     ip_restrictions*: Option[seq[string]]
+      ## Source IP ranges mail is accepted from. Any other source is rejected.
     lookback_hops*: Option[int64]
+      ## Number of hops to trace back through received headers when reconstructing the
+      ## original message (1-20).
     regions*: Option[seq[EmailSecurityRegion]]
+      ## Regions that process messages for this domain, e.g. `["GLOBAL"]` or `["US"]`.
     require_tls_inbound*: Option[bool]
+      ## Require TLS on inbound connections.
     require_tls_outbound*: Option[bool]
+      ## Require TLS on outbound connections.
     transport*: Option[string]
+      ## The mail transport hostname for MX/Inline delivery — the MX record Cloudflare
+      ## delivers email to (e.g. `mx.example.com`).
 
   EmailSecurityUpdateImpersonationRegistry* = ref object of RootObj
     ## Update an impersonation registry entry.
     comments*: Option[string]
+      ## Optional note describing the entry.
     created_at*: Option[JsonNode]
     directory_id*: Option[int64]
+      ## Identifier of the directory the entry was synced from, when directory-synced.
     directory_node_id*: Option[int64]
+      ## Identifier of the directory node the entry was synced from, when
+      ## directory-synced.
     email*: Option[string]
+      ## Email address (or pattern) of the protected identity.
     external_directory_node_id*: Option[string]
+      ## Deprecated. External identifier of the directory node.
     id*: Option[JsonNode]
     is_email_regex*: Option[bool]
+      ## Whether `email` is a regular expression instead of a literal address.
     last_modified*: Option[JsonNode]
       ## Deprecated, use `modified_at` instead. End of life: November 1, 2026.
     modified_at*: Option[JsonNode]
     name*: Option[string]
+      ## Display name of the protected identity.
     provenance*: Option[string]
+      ## Source the entry was created from.
 
   EmailSecurityUpdateSendingDomainRestriction* = ref object of RootObj
     ## Update a sending domain restriction.
@@ -16981,6 +17509,7 @@ type
       ## Select to prevent recently registered domains from triggering a Suspicious or
       ## Malicious disposition.
     is_regex*: Option[bool]
+      ## Whether `pattern` is a regular expression instead of a literal domain.
     is_similarity*: Option[bool]
       ## Select for partner or other approved domains that have similar spelling to your
       ## connected domains. Prevents listed domains from triggering a Spoof disposition.
@@ -16988,6 +17517,7 @@ type
       ## Deprecated, use `modified_at` instead. End of life: November 1, 2026.
     modified_at*: Option[JsonNode]
     pattern*: Option[string]
+      ## The domain pattern to trust, e.g. `example.com`.
 
   EmailSecurityUpdateUrlIgnorePattern* = ref object of RootObj
     ## Updates a URL rewrite ignore pattern; modifies only the provided fields.
@@ -18465,15 +18995,19 @@ type
 
   FlagshipEvaluationResult* = ref object of RootObj
     flag_key*: string
+      ## Key of the evaluated flag.
     reason*: string
+      ## Reason the evaluator selected this variation.
     value*: Option[FlagshipJsonValue]
     variant*: string
+      ## Name of the variation that supplied the resolved value.
 
   FlagshipFlag* = ref object of RootObj
     default_variation*: string
       ## Variation the API serves when the flag is off, or when it's on but no rule
       ## matches the context. Must be a key in `variations`.
     description*: Option[string]
+      ## Optional operator-facing description. It does not affect flag evaluation.
     enabled*: bool
       ## When false, the flag bypasses all rules and always serves `default_variation`.
     key*: string
@@ -18943,8 +19477,8 @@ type
       ## Unix timestamp, in seconds, at which the signature was issued. The integration
       ## partner uses it to verify the signature and reject stale authorizations.
 
-  HyperdriveHyperdriveIntegration* = enum
-    ## The database integration used by this operation.
+  HyperdriveHyperdriveIntegrationProvider* = enum
+    ## The database integration provider used by this operation.
     planetscale = "planetscale"
 
   HyperdriveHyperdriveMtls* = ref object of RootObj
@@ -18977,9 +19511,9 @@ type
       ## The name of the PlanetScale database branch.
     database_name*: string
       ## The name of the PlanetScale database.
-    integration*: HyperdriveHyperdriveIntegration
     organization_name*: string
       ## The name of the PlanetScale organization.
+    provider*: HyperdriveHyperdriveIntegrationProvider
     scheme*: HyperdriveHyperdriveScheme
 
   HyperdriveHyperdriveScheme* = enum
@@ -19250,6 +19784,8 @@ type
       ## Name of the User group.
     policies*: Option[seq[IamUserGroupPolicyWriteBody]]
       ## Policies attached to the User group
+
+  IamCreatorEmailAtCreation* = string
 
   IamDnsVerificationCode* = string
 
@@ -19643,6 +20179,10 @@ type
     resources*: IamResources
 
   IamPropertiesName* = string
+
+  IamProvisionerId* = string
+
+  IamProvisionerType* = string
 
   IamRequestCreateResourceGroup* = ref object of RootObj
     name*: string
@@ -20331,6 +20871,7 @@ type
 
   IamTokenBase* = ref object of RootObj
     condition*: Option[IamCondition]
+    creator_email_at_creation*: Option[IamCreatorEmailAtCreation]
     expires_on*: Option[IamExpiresOn]
     id*: Option[IamTokenIdentifier]
     issued_on*: Option[IamIssuedOn]
@@ -20339,10 +20880,13 @@ type
     name*: Option[IamName]
     not_before*: Option[IamNotBefore]
     policies*: Option[IamTokenPolicies]
+    provisioner_id*: Option[IamProvisionerId]
+    provisioner_type*: Option[IamProvisionerType]
     status*: Option[IamTokenStatus]
 
   IamTokenBody* = ref object of RootObj
     condition*: Option[IamCondition]
+    creator_email_at_creation*: Option[IamCreatorEmailAtCreation]
     expires_on*: Option[IamExpiresOn]
     id*: Option[IamTokenIdentifier]
     issued_on*: Option[IamIssuedOn]
@@ -20351,6 +20895,8 @@ type
     name*: IamName
     not_before*: Option[IamNotBefore]
     policies*: IamTokenPolicies
+    provisioner_id*: Option[IamProvisionerId]
+    provisioner_type*: Option[IamProvisionerType]
     status*: Option[IamTokenStatus]
 
   IamTokenIdentifier* = string
@@ -20372,6 +20918,7 @@ type
 
   IamTokenWithValue* = ref object of RootObj
     condition*: Option[IamCondition]
+    creator_email_at_creation*: Option[IamCreatorEmailAtCreation]
     expires_on*: Option[IamExpiresOn]
     id*: Option[IamTokenIdentifier]
     issued_on*: Option[IamIssuedOn]
@@ -20380,6 +20927,8 @@ type
     name*: Option[IamName]
     not_before*: Option[IamNotBefore]
     policies*: Option[IamTokenPolicies]
+    provisioner_id*: Option[IamProvisionerId]
+    provisioner_type*: Option[IamProvisionerType]
     status*: Option[IamTokenStatus]
     value*: Option[IamValue]
 
@@ -21232,6 +21781,16 @@ type
       ## Whether the API call was successful.
     result*: Option[IntelAsn]
 
+  IntelAsnCountry* = string
+
+  IntelAsnDescription* = string
+
+  IntelAsnType* = enum
+    ## Infrastructure type of this ASN.
+    hostingProvider = "hosting_provider"
+    isp = "isp"
+    organization = "organization"
+
   IntelCategoriesWithSuperCategoryIdsExampleEmpty* = seq[IntelCategoryWithSuperCategoryId]
 
   IntelCategoryWithSuperCategoryId* = ref object of RootObj
@@ -21338,6 +21897,46 @@ type
 
   IntelPerPage* = float64
 
+  IntelPhishingUrlInfo* = ref object of RootObj
+    categorizations*: Option[seq[JsonNode]]
+      ## List of categorizations applied to this submission.
+    model_results*: Option[seq[JsonNode]]
+      ## List of model results for completed scans.
+    rule_matches*: Option[seq[JsonNode]]
+      ## List of signatures that matched against site content found when crawling the
+      ## URL.
+    scan_status*: Option[JsonNode]
+      ## Status of the most recent scan found.
+    screenshot_download_signature*: Option[string]
+      ## For internal use.
+    screenshot_path*: Option[string]
+      ## For internal use.
+    url*: Option[string]
+      ## URL that was submitted.
+
+  IntelPhishingUrlInfoComponentsSchemasSingleResponse* = ref object of RootObj
+    errors*: IntelSchemasMessages
+    messages*: IntelSchemasMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[IntelPhishingUrlInfo]
+
+  IntelPhishingUrlSubmit* = ref object of RootObj
+    excluded_urls*: Option[seq[JsonNode]]
+      ## URLs that were excluded from scanning because their domain is in our no-scan
+      ## list.
+    skipped_urls*: Option[seq[JsonNode]]
+      ## URLs that were skipped because the same URL is currently being scanned.
+    submitted_urls*: Option[seq[JsonNode]]
+      ## URLs that were successfully submitted for scanning.
+
+  IntelPhishingUrlSubmitComponentsSchemasSingleResponse* = ref object of RootObj
+    errors*: IntelSchemasMessages
+    messages*: IntelSchemasMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[IntelPhishingUrlSubmit]
+
   IntelPopularityRank* = int64
 
   IntelResolvesToRef* = ref object of RootObj
@@ -21382,6 +21981,14 @@ type
     success*: bool
       ## Whether the API call was successful.
 
+  IntelSchemasAsn* = ref object of RootObj
+    asn*: Option[IntelAsn]
+    country*: Option[IntelAsnCountry]
+    description*: Option[IntelAsnDescription]
+    domain_count*: Option[int64]
+    top_domains*: Option[seq[string]]
+    `type`*: Option[IntelAsnType]
+
   IntelSchemasIp* = ref object of RootObj
     belongs_to_ref*: Option[JsonNode]
       ## Specifies a reference to the autonomous systems (AS) that the IP address belongs
@@ -21409,6 +22016,13 @@ type
     total_count*: Option[float64]
       ## Total results available without any search parameters.
 
+  IntelSchemasSingleResponse* = ref object of RootObj
+    errors*: IntelSchemasMessages
+    messages*: IntelSchemasMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[IntelWhois]
+
   IntelSingleResponse* = ref object of RootObj
     errors*: IntelSchemasMessages
     messages*: IntelSchemasMessages
@@ -21423,6 +22037,8 @@ type
       ## Defaults to 30 days before the end parameter value.
 
   IntelStixIdentifier* = string
+
+  IntelUrl* = string
 
   IntelUrlIntelligence* = ref object of RootObj
     content_categories*: seq[IntelUrlIntelligenceCategoryWithSource]
@@ -21448,6 +22064,20 @@ type
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IntelUrlIntelligence]
+
+  IntelUrlParam* = ref object of RootObj
+    url*: Option[IntelUrl]
+
+  IntelWhois* = ref object of RootObj
+    created_date*: Option[string]
+    domain*: Option[IntelDomainName]
+    nameservers*: Option[seq[string]]
+    registrant*: Option[string]
+    registrant_country*: Option[string]
+    registrant_email*: Option[string]
+    registrant_org*: Option[string]
+    registrar*: Option[string]
+    updated_date*: Option[string]
 
   KaminoEnvironment* = ref object of RootObj
     expression*: string
@@ -21510,9 +22140,13 @@ type
       ##
     filter*: Option[string]
       ## Optional Logpush filter predicate to restrict which events are ingested.
-      ## If provided, replaces the dataset's default filter entirely.
       ## See [Logpush filters](https://developers.cloudflare.com/logs/reference/filters/)
       ## for syntax and examples.
+      ##
+    filter_attack_traffic*: Option[bool]
+      ## Whether to filter attack traffic from the Logpush job. Defaults to
+      ## `true` for supported datasets when omitted. Supported datasets are
+      ## `http_requests`, `firewall_events`, and `network_analytics_logs`.
       ##
 
   LexDatasetDetailResponse* = ref object of RootObj
@@ -21544,6 +22178,10 @@ type
     filter*: Option[string]
       ## The Logpush filter predicate applied to this dataset. Omitted
       ## when no filter is set.
+      ##
+    filter_attack_traffic*: Option[bool]
+      ## Whether the Logpush job filters attack traffic. Omitted for
+      ## datasets that do not support this option.
       ##
 
   LexDatasetSummary* = ref object of RootObj
@@ -21615,6 +22253,11 @@ type
       ## replaces the dataset's filter entirely.
       ## See [Logpush filters](https://developers.cloudflare.com/logs/reference/filters/)
       ## for syntax and examples.
+      ##
+    filter_attack_traffic*: Option[bool]
+      ## Whether to filter attack traffic from the Logpush job. If omitted,
+      ## the existing setting is left unchanged. Supported datasets are
+      ## `http_requests`, `firewall_events`, and `network_analytics_logs`.
       ##
 
   LexV4Error* = ref object of RootObj
@@ -22985,7 +23628,8 @@ type
       ## you are interested in.
     merge_subrequests*: Option[bool]
       ## If set to true, subrequests will be merged into the parent request. Only
-      ## supported for the `http_requests` dataset.
+      ## supported for the `http_requests` dataset. Not supported for account-scoped
+      ## jobs.
     output_type*: Option[string]
       ## Specifies the output type, such as `ndjson` or `csv`. This sets default values
       ## for the rest of the settings, depending on the chosen output type. Some
@@ -24593,6 +25237,9 @@ type
 
   MagicLanUpdateRequest* = ref object of RootObj
     bond_id*: Option[MagicBondId]
+    ha_link*: Option[bool]
+      ## mark true to use this LAN for HA probing. only works for site with HA turned on.
+      ## only one LAN can be set as the ha_link.
     is_breakout*: Option[bool]
       ## mark true to use this LAN for source-based breakout traffic
     is_prioritized*: Option[bool]
@@ -24980,6 +25627,9 @@ type
   MagicSiteUpdateRequest* = ref object of RootObj
     connector_id*: Option[MagicConnectorId]
     description*: Option[string]
+    ha_mode*: Option[bool]
+      ## Site high availability mode. If set to true, the site can have two connectors
+      ## and runs in high availability mode.
     location*: Option[MagicSiteLocation]
     name*: Option[MagicSiteName]
     secondary_connector_id*: Option[MagicSecondaryConnectorId]
@@ -25090,6 +25740,7 @@ type
       ## Magic WAN health check rate for tunnels created on this link. The default value
       ## is `mid`.
     id*: Option[MagicIdentifier]
+    load_balance_inner_flows*: Option[bool]
     name*: Option[string]
     physport*: Option[MagicPort]
     priority*: Option[int64]
@@ -25127,6 +25778,9 @@ type
     secondary_address*: Option[MagicCidr]
 
   MagicWanUpdateRequest* = ref object of RootObj
+    health_check_rate*: Option[string]
+      ## Magic WAN health check rate for tunnels created on this link.
+    load_balance_inner_flows*: Option[bool]
     name*: Option[string]
     physport*: Option[MagicPort]
     priority*: Option[int64]
@@ -25134,6 +25788,10 @@ type
     vlan_tag*: Option[MagicVlanTag]
 
   MagicWansAddSingleRequest* = ref object of RootObj
+    health_check_rate*: Option[string]
+      ## Magic WAN health check rate for tunnels created on this link. The default value
+      ## is `mid`.
+    load_balance_inner_flows*: Option[bool]
     name*: Option[string]
     physport*: MagicPort
     priority*: Option[int64]
@@ -26986,6 +27644,160 @@ type
 
   MconnUuid* = string
 
+  MonetizationAccountIdentifier* = string
+
+  MonetizationApiResponseCommon* = ref object of RootObj
+    errors*: seq[MonetizationResponseInfo]
+    messages*: seq[MonetizationResponseInfo]
+    success*: bool
+
+  MonetizationApiResponseCommonFailure* = ref object of RootObj
+    errors*: seq[MonetizationResponseInfo]
+    messages*: seq[MonetizationResponseInfo]
+    result*: Option[JsonNode]
+    success*: bool
+
+  MonetizationIdentifier* = string
+
+  MonetizationMonetizationAccountEligibilityCheckInput* = ref object of RootObj
+    accepted_terms_of_service*: bool
+      ## Confirms acceptance of the Monetization Gateway terms of service.
+
+  MonetizationMonetizationAccountEligibilityCheckResponse* = ref object of RootObj
+    errors*: seq[MonetizationResponseInfo]
+    messages*: seq[MonetizationResponseInfo]
+    success*: bool
+    result*: MonetizationMonetizationEligibilityResult
+
+  MonetizationMonetizationEligibilityResponse* = ref object of RootObj
+    errors*: seq[MonetizationResponseInfo]
+    messages*: seq[MonetizationResponseInfo]
+    success*: bool
+    result*: MonetizationMonetizationEligibilityResult
+
+  MonetizationMonetizationEligibilityResult* = ref object of RootObj
+    reasons*: Option[seq[string]]
+      ## Public, human-readable reasons for a rejected decision, when available.
+    status*: string
+      ## Current monetization eligibility decision.
+
+  MonetizationMonetizationPrice* = string
+
+  MonetizationMonetizationRule* = ref object of RootObj
+    id*: JsonNode
+      ## The server-assigned unique ID of the payment rule. Stable across full-ruleset
+      ## replacements.
+
+  MonetizationMonetizationRuleCollection* = ref object of RootObj
+    ## The zone's payment rules. Mirrors the shape of the ruleset submitted to the
+    ## deploy endpoint, so the response can be read back as the desired state.
+    rules*: seq[MonetizationMonetizationRule]
+      ## The zone's payment rules, in the order they are evaluated. Empty when the zone
+      ## has no payment rules.
+
+  MonetizationMonetizationRuleCollectionResponse* = ref object of RootObj
+    errors*: seq[MonetizationResponseInfo]
+    messages*: seq[MonetizationResponseInfo]
+    success*: bool
+    result*: MonetizationMonetizationRuleCollection
+
+  MonetizationMonetizationRuleInput* = ref object of RootObj
+
+  MonetizationMonetizationRuleInputFixedPrice* = ref object of RootObj
+    ## Payment rule with a fixed price set at configuration time.
+    address*: string
+      ## 0x-prefixed 20-byte hexadecimal Ethereum address. Mixed-case addresses must
+      ## carry a valid EIP-55 checksum; all-lowercase or all-uppercase addresses are also
+      ## accepted. The address must pass wallet screening whenever its rule is deployed
+      ## or patched.
+    description*: Option[string]
+    enabled*: Option[bool]
+    expression*: string
+      ## Wirefilter expression identifying the requests that require payment. Forwarded
+      ## verbatim to the Rulesets API, which validates its syntax.
+    id*: Option[JsonNode]
+      ## Optional on input. Include the ID of an existing payment rule to update it in
+      ## place, preserving its stable identity across the full-ruleset replacement; omit
+      ## it to create a new rule. An ID that does not match an existing payment rule in
+      ## the zone is rejected. Rules omitted from the request are deleted.
+    price*: MonetizationMonetizationPrice
+    scheme*: string
+      ## X402 payment scheme. "exact" requires the specified payment amount; "upto"
+      ## permits a payment up to the specified amount. Both fixed-price schemes require
+      ## the price field.
+
+  MonetizationMonetizationRuleInputOriginControlled* = ref object of RootObj
+    ## Payment rule whose price the origin server sets dynamically. The rule carries no
+    ## price and the price field must be omitted — any provided value, including "0",
+    ## is rejected because it would not be enforced.
+    address*: string
+      ## 0x-prefixed 20-byte hexadecimal Ethereum address. Mixed-case addresses must
+      ## carry a valid EIP-55 checksum; all-lowercase or all-uppercase addresses are also
+      ## accepted. The address must pass wallet screening whenever its rule is deployed
+      ## or patched.
+    description*: Option[string]
+    enabled*: Option[bool]
+    expression*: string
+      ## Wirefilter expression identifying the requests that require payment. Forwarded
+      ## verbatim to the Rulesets API, which validates its syntax.
+    id*: Option[JsonNode]
+      ## Optional on input. Include the ID of an existing payment rule to update it in
+      ## place, preserving its stable identity across the full-ruleset replacement; omit
+      ## it to create a new rule. An ID that does not match an existing payment rule in
+      ## the zone is rejected. Rules omitted from the request are deleted.
+    scheme*: string
+      ## X402 payment scheme. "origin_controlled" lets the origin server set pricing
+      ## dynamically; the rule carries no price and the price field must be omitted.
+
+  MonetizationMonetizationRulePatch* = ref object of RootObj
+    ## Partial update to a single payment rule. Only the fields present are modified;
+    ## omitted fields keep their existing values.
+    address*: Option[string]
+      ## 0x-prefixed 20-byte hexadecimal Ethereum address. Mixed-case addresses must
+      ## carry a valid EIP-55 checksum; all-lowercase or all-uppercase addresses are also
+      ## accepted. The effective address must pass wallet screening whenever the rule is
+      ## patched.
+    description*: Option[string]
+    enabled*: Option[bool]
+    expression*: Option[string]
+      ## Wirefilter expression identifying the requests that require payment. Forwarded
+      ## verbatim to the Rulesets API, which validates its syntax.
+    price*: Option[MonetizationMonetizationPrice]
+    scheme*: Option[MonetizationMonetizationScheme]
+
+  MonetizationMonetizationRuleResponse* = ref object of RootObj
+    errors*: seq[MonetizationResponseInfo]
+    messages*: seq[MonetizationResponseInfo]
+    success*: bool
+    result*: MonetizationMonetizationRule
+
+  MonetizationMonetizationRulesetInput* = ref object of RootObj
+    rules*: seq[MonetizationMonetizationRuleInput]
+      ## Full desired Payment Required ruleset. An empty array clears all payment rules.
+      ## The ruleset may contain at most 40 unique wallet addresses; address comparison
+      ## is case-insensitive. Every address must pass wallet screening before deployment.
+
+  MonetizationMonetizationScheme* = enum
+    ## X402 payment scheme. "exact" requires the specified payment amount; "upto"
+    ## permits a payment up to the specified amount; "origin_controlled" lets the
+    ## origin server set pricing dynamically, in which case the rule carries no price
+    ## and the price field must be omitted.
+    exact = "exact"
+    upto = "upto"
+    originControlled = "origin_controlled"
+
+  MonetizationMonetizationZoneEligibilityCheckResponse* = ref object of RootObj
+    errors*: seq[MonetizationResponseInfo]
+    messages*: seq[MonetizationResponseInfo]
+    success*: bool
+    result*: JsonNode
+
+  MonetizationResponseInfo* = ref object of RootObj
+    code*: Option[int64]
+    message*: Option[string]
+
+  MonetizationZoneIdentifier* = string
+
   MonolithHealthResponse* = ref object of RootObj
     errors*: seq[MonolithMessage]
     messages*: seq[MonolithMessage]
@@ -27422,13 +28234,9 @@ type
 
   NscBgpMode* = enum
     ## The BGP mode for a CNI.
-    ##
-    ## Controls the customer-facing data path:
-    ## * `DynamicRouteExchange` — Full BGP: routes flow through to conduit via CRE /
-    ## bgp-bridge /
-    ## bgp-bridge-receiver.
-    ## * `AdvertiseOnly` — static advertisement via taserver, no routes exchanged with
-    ## Conduit
+    ## One of the following:
+    ## * `dynamic_route_exchange`
+    ## * `advertise_only`
     dynamicRouteExchange = "dynamic_route_exchange"
     advertiseOnly = "advertise_only"
 
@@ -28424,7 +29232,7 @@ type
     id*: string
       ## Id of the deployment.
     is_skipped*: bool
-      ## If the deployment has been skipped.
+      ## Whether the deployment was skipped.
     latest_stage*: PagesStage
     modified_on*: string
       ## When the deployment was last modified.
@@ -28534,6 +29342,8 @@ type
     wrangler_config_hash*: Option[string]
       ## Hash of the Wrangler configuration used for the deployment.
 
+  PagesDeploymentId* = string
+
   PagesDeploymentLog* = ref object of RootObj
     data*: seq[JsonNode]
     includes_container_logs*: bool
@@ -28631,9 +29441,56 @@ type
 
   PagesSource* = ref object of RootObj
     ## Configs for the project source control.
+    config*: PagesSourceConfig
+    `type`*: PagesSourceType
+
+  PagesSourceConfig* = ref object of RootObj
+    deployments_enabled*: bool
+      ## Whether to enable automatic deployments when pushing to the source repository.
+      ## When disabled, no deployments (production or preview) will be triggered
+      ## automatically.
+      ##
+    owner*: string
+      ## The owner of the repository.
+    owner_id*: string
+      ## The owner ID of the repository.
+    path_excludes*: seq[string]
+      ## A list of paths that should be excluded from triggering a preview deployment.
+      ## Wildcard syntax (`*`) is supported.
+    path_includes*: seq[string]
+      ## A list of paths that should be watched to trigger a preview deployment. Wildcard
+      ## syntax (`*`) is supported.
+    pr_comments_enabled*: bool
+      ## Whether to enable PR comments.
+    preview_branch_excludes*: seq[string]
+      ## A list of branches that should not trigger a preview deployment. Wildcard syntax
+      ## (`*`) is supported. Must be used with `preview_deployment_setting` set to
+      ## `custom`.
+    preview_branch_includes*: seq[string]
+      ## A list of branches that should trigger a preview deployment. Wildcard syntax
+      ## (`*`) is supported. Must be used with `preview_deployment_setting` set to
+      ## `custom`.
+    preview_deployment_setting*: string
+      ## Controls whether commits to preview branches trigger a preview deployment.
+    production_branch*: string
+      ## The production branch of the repository.
+    production_deployments_enabled*: bool
+      ## Whether to trigger a production deployment on commits to the production branch.
+    repo_id*: string
+      ## The ID of the repository.
+    repo_name*: string
+      ## The name of the repository.
+
+  PagesSourceConnectRequest* = ref object of RootObj
+    ## Repository and deployment settings for connecting a Git repository to a Pages
+    ## project.
     config*: JsonNode
-    `type`*: string
-      ## The source control management provider.
+    `type`*: PagesSourceType
+
+  PagesSourceType* = enum
+    ## The source control management provider.
+    github = "github"
+    gitlab = "gitlab"
 
   PagesStage* = ref object of RootObj
     ## The status of the deployment.
@@ -30384,7 +31241,7 @@ type
   R2DataCatalogBucketName* = string
 
   R2DataCatalogCatalog* = ref object of RootObj
-    ## Contains R2 Data Catalog information.
+    ## Contains catalog information.
     bucket*: string
       ## Specifies the associated R2 bucket name.
     credential_status*: Option[string]
@@ -30454,10 +31311,14 @@ type
 
   R2DataCatalogCompactionUpdateParams* = ref object of RootObj
     ## Updates compaction configuration (all fields optional).
-    state*: Option[JsonNode]
-      ## Updates the state optionally.
-    target_size_mb*: Option[JsonNode]
-      ## Updates the target file size optionally.
+    state*: Option[R2DataCatalogCatalogMaintenanceState]
+    target_size_mb*: Option[R2DataCatalogCatalogTargetFileSize]
+
+  R2DataCatalogCredentialProbeStatus* = enum
+    ## Shows the verified credential status probed against the catalog.
+    valid = "valid"
+    invalid = "invalid"
+    absent = "absent"
 
   R2DataCatalogCredentialStatus* = enum
     ## Shows the credential configuration status.
@@ -30576,8 +31437,7 @@ type
       ## Updates the maximum age for snapshots optionally.
     min_snapshots_to_keep*: Option[int64]
       ## Updates the minimum number of snapshots to retain optionally.
-    state*: Option[JsonNode]
-      ## Updates the state optionally.
+    state*: Option[R2DataCatalogCatalogMaintenanceState]
 
   R2DataCatalogTableCompactionConfig* = ref object of RootObj
     ## Configures compaction settings for table optimization.
@@ -31032,26 +31892,14 @@ type
     LifecycleDeletion = "LifecycleDeletion"
 
   R2R2BucketJob* = ref object of RootObj
-    ## Descriptor of a bucket background job. Returned when the delete-objects endpoint
-    ## is
-    ## invoked with a `prefix` query parameter, and by the Get Bucket Job and List
-    ## Bucket Jobs
-    ## endpoints. An empty prefix indicates an Empty Bucket job. A small operation can
-    ## already
-    ## be `COMPLETED` when it is returned.
+    ## Descriptor of a bucket background job, discriminated by `jobType`. Returned when
+    ## the
+    ## delete-objects endpoint is invoked with a `prefix` query parameter, and by the
+    ## Get Bucket
+    ## Job and List Bucket Jobs endpoints. A small operation can already be `COMPLETED`
+    ## when it
+    ## is returned.
     ##
-    end_time*: Option[string]
-      ## When the job finished. Absent while the job is still `ENQUEUED` or `RUNNING`.
-      ##
-    id*: string
-      ## Unique identifier used to poll the job.
-    job_type*: string
-      ## The job kind. Always `prefixDelete` for this endpoint.
-    prefix_delete*: JsonNode
-      ## Details specific to the prefix-delete job.
-    start_time*: string
-      ## When the job was created.
-    status*: R2R2BucketJobStatus
 
   R2R2BucketJobStatus* = enum
     ## Lifecycle status of a bucket background job.
@@ -31126,6 +31974,24 @@ type
     content_type*: Option[string]
       ## The MIME type of the object.
 
+  R2R2PrefixDeleteJob* = ref object of RootObj
+    ## Descriptor of a prefix-delete job. An empty prefix indicates a job that empties
+    ## the
+    ## whole bucket.
+    ##
+    end_time*: Option[string]
+      ## When the job finished. Absent while the job is still `ENQUEUED` or `RUNNING`.
+      ##
+    id*: string
+      ## Unique identifier used to poll the job.
+    job_type*: string
+      ## The job kind.
+    prefix_delete*: JsonNode
+      ## Details specific to the prefix-delete job.
+    start_time*: string
+      ## When the job was created.
+    status*: R2R2BucketJobStatus
+
   R2R2PutObjectResult* = ref object of RootObj
     ## Result of a successful object upload.
     etag*: Option[string]
@@ -31153,12 +32019,6 @@ type
       ## When the job was created.
     status*: R2R2BucketJobStatus
     storage_class_migration*: JsonNode
-
-  R2R2StorageClassMigrationJobsResult* = ref object of RootObj
-    jobs*: seq[R2R2StorageClassMigrationJob]
-      ## Storage-class migration jobs in the current page.
-    next_continuation_token*: Option[string]
-      ## Token to pass as `continuationToken` to retrieve the next page.
 
   R2RemoveCustomDomainResponse* = ref object of RootObj
     domain*: string
@@ -31200,13 +32060,14 @@ type
     objects*: Option[seq[string]]
       ## Optional object paths to scope the credentials to.
     parent_access_key_id*: string
-      ## The parent access key id to use for signing.
+      ## Access key ID of the parent R2 API token. The temporary credentials cannot
+      ## exceed this token's permissions.
     permission*: string
       ## Permissions allowed on the credentials.
     prefixes*: Option[seq[string]]
       ## Optional prefix paths to scope the credentials to.
     ttl_seconds*: float64
-      ## How long the credentials will live for in seconds.
+      ## Lifetime of the temporary credentials in seconds, up to 604800 seconds (7 days).
 
   R2TempAccessCredsResponse* = ref object of RootObj
     access_key_id*: Option[string]
@@ -32010,18 +32871,6 @@ type
 
   RealtimekitSuccess* = bool
 
-  RegistrarApiSandboxAddress* = string
-
-  RegistrarApiSandboxAddress2* = string
-
-  RegistrarApiSandboxApiResponseCollection* = ref object of RootObj
-    errors*: RegistrarApiSandboxMessages
-    messages*: RegistrarApiSandboxMessages
-    result*: Option[seq[JsonNode]]
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[RegistrarApiSandboxResultInfo]
-
   RegistrarApiSandboxApiResponseCommon* = ref object of RootObj
     errors*: RegistrarApiSandboxMessages
     messages*: RegistrarApiSandboxMessages
@@ -32035,59 +32884,6 @@ type
     result*: Option[JsonNode]
     success*: bool
       ## Whether the API call was successful.
-
-  RegistrarApiSandboxApiResponseSingle* = ref object of RootObj
-    errors*: RegistrarApiSandboxMessages
-    messages*: RegistrarApiSandboxMessages
-    result*: Option[JsonNode]
-    success*: bool
-      ## Whether the API call was successful.
-
-  RegistrarApiSandboxAutoRenew* = bool
-
-  RegistrarApiSandboxAvailable* = bool
-
-  RegistrarApiSandboxCanRegister* = bool
-
-  RegistrarApiSandboxCity* = string
-
-  RegistrarApiSandboxContactIdentifier* = string
-
-  RegistrarApiSandboxContactProperties* = ref object of RootObj
-    address*: RegistrarApiSandboxAddress
-    address2*: Option[RegistrarApiSandboxAddress2]
-    city*: RegistrarApiSandboxCity
-    country*: Option[RegistrarApiSandboxCountry]
-    email*: Option[RegistrarApiSandboxEmail]
-    fax*: Option[RegistrarApiSandboxFax]
-    first_name*: Option[RegistrarApiSandboxFirstName]
-    id*: Option[RegistrarApiSandboxContactIdentifier]
-    last_name*: Option[RegistrarApiSandboxLastName]
-    organization*: RegistrarApiSandboxOrganization
-    phone*: Option[RegistrarApiSandboxTelephone]
-    state*: RegistrarApiSandboxState
-    zip*: Option[RegistrarApiSandboxZipcode]
-
-  RegistrarApiSandboxContacts* = ref object of RootObj
-    address*: RegistrarApiSandboxAddress
-    address2*: Option[RegistrarApiSandboxAddress2]
-    city*: RegistrarApiSandboxCity
-    country*: Option[RegistrarApiSandboxCountry]
-    email*: Option[RegistrarApiSandboxEmail]
-    fax*: Option[RegistrarApiSandboxFax]
-    first_name*: Option[RegistrarApiSandboxFirstName]
-    id*: Option[RegistrarApiSandboxContactIdentifier]
-    last_name*: Option[RegistrarApiSandboxLastName]
-    organization*: RegistrarApiSandboxOrganization
-    phone*: Option[RegistrarApiSandboxTelephone]
-    state*: RegistrarApiSandboxState
-    zip*: Option[RegistrarApiSandboxZipcode]
-
-  RegistrarApiSandboxCountry* = string
-
-  RegistrarApiSandboxCreatedAt* = string
-
-  RegistrarApiSandboxCurrentRegistrar* = string
 
   RegistrarApiSandboxCursorResultInfo* = ref object of RootObj
     ## Provides cursor-based pagination metadata. List endpoints use this
@@ -32163,38 +32959,7 @@ type
       ## - `standard`: Standard registry pricing.
       ## - `premium`: Premium domain with higher pricing from the registry.
 
-  RegistrarApiSandboxDomainIdentifier* = string
-
   RegistrarApiSandboxDomainName* = string
-
-  RegistrarApiSandboxDomainProperties* = ref object of RootObj
-    available*: Option[RegistrarApiSandboxAvailable]
-    can_register*: Option[RegistrarApiSandboxCanRegister]
-    created_at*: Option[RegistrarApiSandboxCreatedAt]
-    current_registrar*: Option[RegistrarApiSandboxCurrentRegistrar]
-    expires_at*: Option[RegistrarApiSandboxExpiresAt]
-    id*: Option[RegistrarApiSandboxDomainIdentifier]
-    locked*: Option[RegistrarApiSandboxLocked]
-    registrant_contact*: Option[RegistrarApiSandboxRegistrantContact]
-    registry_statuses*: Option[RegistrarApiSandboxRegistryStatuses]
-    supported_tld*: Option[RegistrarApiSandboxSupportedTld]
-    transfer_in*: Option[RegistrarApiSandboxTransferIn]
-    updated_at*: Option[RegistrarApiSandboxUpdatedAt]
-
-  RegistrarApiSandboxDomainResponseCollection* = ref object of RootObj
-    errors*: RegistrarApiSandboxMessages
-    messages*: RegistrarApiSandboxMessages
-    result*: seq[RegistrarApiSandboxDomains]
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[RegistrarApiSandboxResultInfo]
-
-  RegistrarApiSandboxDomainResponseSingle* = ref object of RootObj
-    errors*: RegistrarApiSandboxMessages
-    messages*: RegistrarApiSandboxMessages
-    result*: JsonNode
-    success*: bool
-      ## Whether the API call was successful.
 
   RegistrarApiSandboxDomainSearchResponse* = ref object of RootObj
     errors*: RegistrarApiSandboxMessages
@@ -32241,102 +33006,6 @@ type
       ## - `premium`: Premium domain with higher pricing from the registry.
       ##
 
-  RegistrarApiSandboxDomainTransferCheckReason* = enum
-    ## Transfer eligibility reason code.
-    ## - `extension_not_supported_via_api`: This API excludes the extension; dashboard
-    ## flows support it.
-    ## - `extension_not_supported`: Cloudflare Registrar excludes the extension.
-    ## - `domain_premium`: This API currently excludes premium transfers.
-    ## - `extension_disallows_transfer`: Extension currently blocks transfer
-    ## operations.
-    ## - `domain_not_exists`: No registration record exists for the domain.
-    ## - `domain_on_cloudflare`: Cloudflare already serves as the domain's registrar.
-    ## - `domain_locked`: Losing registrar reports transfer-prohibited lock status.
-    ## - `registry_status`: Registry status currently blocks transfer (for example,
-    ## pending transfer or deletion state).
-    ## - `domain_outside_transfer_window`: Domain is within a transfer wait window (for
-    ## example, recently registered).
-    ## - `domain_max_term`: Completing transfer would exceed the registry maximum term.
-    ## - `invalid_auth_code`: The provided auth code is incorrect.
-    ## - `invalid_auth_code_format`: Auth code fails Base64 validation.
-    ## - `dnssec_enabled`: DNSSEC is enabled. It must be disabled before transfer.
-    ## - `zone_not_found`: The target account lacks a Cloudflare zone for the domain.
-    ## - `zone_status_invalid`: The Cloudflare zone cannot transfer in its current
-    ## state.
-    ## - `invalid_zone_plan`: The zone plan fails transfer requirements.
-    ## - `domain_unsupported`: This endpoint rejects the domain name format.
-    ##
-    extensionNotSupportedViaApi = "extension_not_supported_via_api"
-    extensionNotSupported = "extension_not_supported"
-    domainPremium = "domain_premium"
-    extensionDisallowsTransfer = "extension_disallows_transfer"
-    domainNotExists = "domain_not_exists"
-    domainOnCloudflare = "domain_on_cloudflare"
-    domainLocked = "domain_locked"
-    registryStatus = "registry_status"
-    domainOutsideTransferWindow = "domain_outside_transfer_window"
-    domainMaxTerm = "domain_max_term"
-    invalidAuthCode = "invalid_auth_code"
-    invalidAuthCodeFormat = "invalid_auth_code_format"
-    dnssecEnabled = "dnssec_enabled"
-    zoneNotFound = "zone_not_found"
-    zoneStatusInvalid = "zone_status_invalid"
-    invalidZonePlan = "invalid_zone_plan"
-    domainUnsupported = "domain_unsupported"
-
-  RegistrarApiSandboxDomainTransferCheckRequest* = ref object of RootObj
-    ## Request body for checking domain transfer eligibility.
-    domains*: seq[JsonNode]
-      ## List of domain objects to evaluate for transfer eligibility.
-
-  RegistrarApiSandboxDomainTransferCheckResponse* = ref object of RootObj
-    errors*: RegistrarApiSandboxMessages
-    messages*: RegistrarApiSandboxMessages
-    result*: JsonNode
-      ## Contains the transfer eligibility results.
-    success*: bool
-      ## Whether the API call was successful.
-
-  RegistrarApiSandboxDomainTransferCheckResult* = ref object of RootObj
-    ## Transfer eligibility for a single domain.
-    ## `reasons` is always present:
-    ## - Empty when `transferable` is `true`.
-    ## - One or more reason objects when `transferable` is `false`.
-    ##
-    name*: string
-      ## The check evaluates this domain name.
-    pricing*: Option[RegistrarApiSandboxPricingTransfer]
-    reasons*: seq[JsonNode]
-      ## Machine-readable transfer eligibility reasons.
-    transferable*: bool
-      ## Indicates whether this API can currently transfer the domain.
-      ## - `true`: Transfer prerequisites pass.
-      ## - `false`: One or more prerequisites fail. See `reasons`.
-      ##
-
-  RegistrarApiSandboxDomainUpdateProperties* = ref object of RootObj
-    auto_renew*: Option[RegistrarApiSandboxAutoRenew]
-    locked*: Option[RegistrarApiSandboxLocked]
-    privacy*: Option[RegistrarApiSandboxPrivacy]
-
-  RegistrarApiSandboxDomains* = ref object of RootObj
-    available*: Option[RegistrarApiSandboxAvailable]
-    can_register*: Option[RegistrarApiSandboxCanRegister]
-    created_at*: Option[RegistrarApiSandboxCreatedAt]
-    current_registrar*: Option[RegistrarApiSandboxCurrentRegistrar]
-    expires_at*: Option[RegistrarApiSandboxExpiresAt]
-    id*: Option[RegistrarApiSandboxDomainIdentifier]
-    locked*: Option[RegistrarApiSandboxLocked]
-    registrant_contact*: Option[RegistrarApiSandboxRegistrantContact]
-    registry_statuses*: Option[RegistrarApiSandboxRegistryStatuses]
-    supported_tld*: Option[RegistrarApiSandboxSupportedTld]
-    transfer_in*: Option[RegistrarApiSandboxTransferIn]
-    updated_at*: Option[RegistrarApiSandboxUpdatedAt]
-
-  RegistrarApiSandboxEmail* = string
-
-  RegistrarApiSandboxExpiresAt* = string
-
   RegistrarApiSandboxExtensionItem* = ref object of RootObj
     ## Extension entry with metadata and JSON Schema documents for registration and
     ## transfer operations.
@@ -32365,19 +33034,9 @@ type
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiSandboxFax* = string
-
-  RegistrarApiSandboxFirstName* = string
-
   RegistrarApiSandboxIdentifier* = string
 
-  RegistrarApiSandboxLastName* = string
-
-  RegistrarApiSandboxLocked* = bool
-
   RegistrarApiSandboxMessages* = seq[JsonNode]
-
-  RegistrarApiSandboxOrganization* = string
 
   RegistrarApiSandboxPricingBase* = ref object of RootObj
     ## Provides annual pricing information for a given domain.
@@ -32414,37 +33073,6 @@ type
       ##
     registration_cost*: string
       ## The first-year cost to register this domain.
-
-  RegistrarApiSandboxPricingTransfer* = ref object of RootObj
-    currency*: string
-      ## ISO-4217 currency code for the prices (e.g., "USD", "EUR", "GBP").
-    renewal_cost*: string
-      ## Per-year renewal cost for this domain. Applied to each year beyond
-      ## the first year of a multi-year registration, and to each annual
-      ## auto-renewal thereafter. May differ from `registration_cost`,
-      ## especially for premium domains where initial registration often
-      ## costs more than renewals.
-      ##
-    transfer_cost*: string
-      ## The first-year cost to transfer this domain.
-
-  RegistrarApiSandboxPrivacy* = bool
-
-  RegistrarApiSandboxRegistrantContact* = ref object of RootObj
-    ## Shows contact information for domain registrant.
-    address*: RegistrarApiSandboxAddress
-    address2*: Option[RegistrarApiSandboxAddress2]
-    city*: RegistrarApiSandboxCity
-    country*: Option[RegistrarApiSandboxCountry]
-    email*: Option[RegistrarApiSandboxEmail]
-    fax*: Option[RegistrarApiSandboxFax]
-    first_name*: Option[RegistrarApiSandboxFirstName]
-    id*: Option[RegistrarApiSandboxContactIdentifier]
-    last_name*: Option[RegistrarApiSandboxLastName]
-    organization*: RegistrarApiSandboxOrganization
-    phone*: Option[RegistrarApiSandboxTelephone]
-    state*: RegistrarApiSandboxState
-    zip*: Option[RegistrarApiSandboxZipcode]
 
   RegistrarApiSandboxRegistration* = ref object of RootObj
     ## A domain registration resource representing the current state of a registered
@@ -32635,41 +33263,6 @@ type
       ## time based on registry pricing.
       ##
 
-  RegistrarApiSandboxRegistryStatuses* = string
-
-  RegistrarApiSandboxResultInfo* = ref object of RootObj
-    count*: Option[float64]
-      ## Total number of results for the requested service.
-    page*: Option[float64]
-      ## Current page within paginated list of results.
-    per_page*: Option[float64]
-      ## Number of results per page of results.
-    total_count*: Option[float64]
-      ## Total results available without any search parameters.
-
-  RegistrarApiSandboxState* = string
-
-  RegistrarApiSandboxSupportedTld* = bool
-
-  RegistrarApiSandboxTelephone* = string
-
-  RegistrarApiSandboxTransferIn* = ref object of RootObj
-    ## Statuses for domain transfers into Cloudflare Registrar.
-    accept_foa*: Option[string]
-      ## Status of the registrant authorization step.
-    approve_transfer*: Option[string]
-      ## Status of the registry transfer-approval step.
-    can_cancel_transfer*: Option[bool]
-      ## Indicates if cancellation is still possible.
-    disable_privacy*: Option[string]
-      ## Status of the privacy-guard disabling step at the foreign registrar.
-    enter_auth_code*: Option[string]
-      ## Status of the auth-code entry and verification step.
-    unlock_domain*: Option[string]
-      ## Status of the domain-unlock step at the foreign registrar.
-
-  RegistrarApiSandboxUpdatedAt* = string
-
   RegistrarApiSandboxWorkflowStatusResponseSingle* = ref object of RootObj
     errors*: RegistrarApiSandboxMessages
     messages*: RegistrarApiSandboxMessages
@@ -32729,8 +33322,6 @@ type
       ## user review before retrying.
       ##
     updated_at*: string
-
-  RegistrarApiSandboxZipcode* = string
 
   RegistrarApiAddress* = string
 
@@ -33935,6 +34526,7 @@ type
     cwsPolicySet = "cws_policy_set"
     cwsWorkload = "cws_workload"
     d1Database = "d1_database"
+    device = "device"
     durableObjectNamespace = "durable_object_namespace"
     gatewayList = "gateway_list"
     gatewayRule = "gateway_rule"
@@ -33969,6 +34561,7 @@ type
     cwsPolicySet = "cws_policy_set"
     cwsWorkload = "cws_workload"
     d1Database = "d1_database"
+    device = "device"
     durableObjectNamespace = "durable_object_namespace"
     gatewayList = "gateway_list"
     gatewayRule = "gateway_rule"
@@ -34030,9 +34623,9 @@ type
 
   ResourceTaggingDeleteTagsRequestZoneLevelAccessApplicationPolicy* = ref object of RootObj
     ## Request body schema for deleting tags from access_application_policy resources.
+    access_application_id*: ResourceTaggingAccessApplicationId
     resource_id*: ResourceTaggingResourceId
     resource_type*: ResourceTaggingZoneResourceTypeAccessApplicationPolicyEnum
-    access_application_id*: ResourceTaggingAccessApplicationId
 
   ResourceTaggingDeleteTagsRequestZoneLevelBase* = ref object of RootObj
     ## Request body schema for deleting tags from zone-level resources. Zone ID comes
@@ -34069,6 +34662,7 @@ type
     cwsPolicySet = "cws_policy_set"
     cwsWorkload = "cws_workload"
     d1Database = "d1_database"
+    device = "device"
     dnsRecord = "dns_record"
     durableObjectNamespace = "durable_object_namespace"
     gatewayList = "gateway_list"
@@ -34116,9 +34710,9 @@ type
 
   ResourceTaggingSetTagsRequestZoneLevelAccessApplicationPolicy* = ref object of RootObj
     ## Request body schema for setting tags on access_application_policy resources.
+    access_application_id*: ResourceTaggingAccessApplicationId
     resource_id*: ResourceTaggingResourceId
     resource_type*: ResourceTaggingZoneResourceTypeAccessApplicationPolicyEnum
-    access_application_id*: ResourceTaggingAccessApplicationId
     tags*: Option[ResourceTaggingTags]
 
   ResourceTaggingSetTagsRequestZoneLevelBase* = ref object of RootObj
@@ -34331,6 +34925,15 @@ type
 
   ResourceTaggingTaggedResourceObjectD1Database* = ref object of RootObj
     ## Response for d1_database resources
+    `type`*: string
+    etag*: ResourceTaggingEtag
+    id*: ResourceTaggingResourceId
+    name*: ResourceTaggingResourceName
+    tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
+
+  ResourceTaggingTaggedResourceObjectDevice* = ref object of RootObj
+    ## Response for device resources
     `type`*: string
     etag*: ResourceTaggingEtag
     id*: ResourceTaggingResourceId
@@ -36310,12 +36913,28 @@ type
 
   SecurityCenterPage* = int64
 
+  SecurityCenterPartnerEntitlement* = enum
+    ## The account's feature level for the partner integration.
+    baseline = "baseline"
+    premium = "premium"
+
   SecurityCenterPartnerInsightCountResponse* = ref object of RootObj
     errors*: SecurityCenterMessages
     messages*: SecurityCenterMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[JsonNode]
+
+  SecurityCenterPartnerSettings* = ref object of RootObj
+    enabled*: bool
+      ## Whether the partner integration is enabled for the account.
+
+  SecurityCenterPartnerSettingsResponse* = ref object of RootObj
+    errors*: SecurityCenterMessages
+    messages*: SecurityCenterMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[SecurityCenterPartnerSettings]
 
   SecurityCenterPerPage* = int64
 
@@ -36355,6 +36974,40 @@ type
 
   SecurityCenterSeverityQueryParam* = seq[string]
 
+  SecurityCenterShadowHost* = ref object of RootObj
+    criticality*: string
+      ## The partner-provided criticality, or `unknown` when unavailable or unrecognized.
+    discovered_at*: string
+      ## When the partner first discovered the host.
+    hosting_provider*: string
+      ## The observed hosting provider, or `unknown` when unavailable.
+    hostname*: string
+    ip_address*: string
+      ## The IP address observed for the host.
+
+  SecurityCenterShadowHostsResponse* = ref object of RootObj
+    errors*: SecurityCenterMessages
+    messages*: SecurityCenterMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[JsonNode]
+
+  SecurityCenterShadowZone* = ref object of RootObj
+    discovered_at*: string
+      ## When the partner first discovered the domain.
+    domain*: string
+      ## A partner-discovered domain that is not in the account.
+    shadow_host_count*: int64
+      ## Number of partner-discovered hosts beneath the domain that are not in the
+      ## account.
+
+  SecurityCenterShadowZonesResponse* = ref object of RootObj
+    errors*: SecurityCenterMessages
+    messages*: SecurityCenterMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[JsonNode]
+
   SecurityCenterSources* = seq[string]
 
   SecurityCenterSubject* = string
@@ -36384,7 +37037,7 @@ type
     messages*: SecurityCenterMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[JsonNode]
+    result*: Option[seq[JsonNode]]
 
   SecurityCenterZoneId* = SecurityCenterIdentifier
 
@@ -39294,7 +39947,7 @@ type
       ## When the Keyless SSL was created.
     enabled*: TlsCertificatesAndHostnamesEnabled
     host*: TlsCertificatesAndHostnamesHost
-    id*: TlsCertificatesAndHostnamesIdentifier2
+    id*: TlsCertificatesAndHostnamesKeylessCertificateIdentifier
     modified_on*: string
       ## When the Keyless SSL was last modified.
     name*: TlsCertificatesAndHostnamesName
@@ -39339,7 +39992,7 @@ type
   TlsCertificatesAndHostnamesCertificateObject* = ref object of RootObj
     certificate*: Option[TlsCertificatesAndHostnamesCertificate5]
     expires_on*: Option[TlsCertificatesAndHostnamesExpiresOn4]
-    id*: Option[TlsCertificatesAndHostnamesIdentifier]
+    id*: Option[TlsCertificatesAndHostnamesZoneAopCertificateIdentifier]
     issuer*: Option[TlsCertificatesAndHostnamesIssuer]
     signature*: Option[TlsCertificatesAndHostnamesSignature]
     status*: Option[TlsCertificatesAndHostnamesStatus8]
@@ -39348,7 +40001,7 @@ type
   TlsCertificatesAndHostnamesCertificateObject2* = ref object of RootObj
     certificate*: Option[TlsCertificatesAndHostnamesCertificate6]
     expires_on*: Option[TlsCertificatesAndHostnamesExpiresOn5]
-    id*: Option[TlsCertificatesAndHostnamesIdentifier]
+    id*: Option[TlsCertificatesAndHostnamesHostnameAopCertificateIdentifier]
     issuer*: Option[TlsCertificatesAndHostnamesIssuer]
     serial_number*: Option[TlsCertificatesAndHostnamesSerialNumber]
     signature*: Option[TlsCertificatesAndHostnamesSignature]
@@ -39359,7 +40012,7 @@ type
     ca*: Option[TlsCertificatesAndHostnamesCa]
     certificates*: Option[TlsCertificatesAndHostnamesCertificates2]
     expires_on*: Option[TlsCertificatesAndHostnamesExpiresOn2]
-    id*: Option[TlsCertificatesAndHostnamesIdentifier]
+    id*: Option[TlsCertificatesAndHostnamesMtlsCertificateIdentifier]
     issuer*: Option[TlsCertificatesAndHostnamesIssuer2]
     name*: Option[TlsCertificatesAndHostnamesName2]
     serial_number*: Option[TlsCertificatesAndHostnamesSerialNumber2]
@@ -39371,7 +40024,7 @@ type
     ca*: Option[TlsCertificatesAndHostnamesCa]
     certificates*: Option[TlsCertificatesAndHostnamesCertificates2]
     expires_on*: Option[TlsCertificatesAndHostnamesExpiresOn2]
-    id*: Option[TlsCertificatesAndHostnamesIdentifier]
+    id*: Option[TlsCertificatesAndHostnamesMtlsCertificateIdentifier]
     issuer*: Option[TlsCertificatesAndHostnamesIssuer2]
     name*: Option[TlsCertificatesAndHostnamesName2]
     serial_number*: Option[TlsCertificatesAndHostnamesSerialNumber2]
@@ -39423,7 +40076,7 @@ type
     dcv_delegation_records*: Option[seq[TlsCertificatesAndHostnamesValidationRecord]]
       ## DCV Delegation records for domain validation.
     hosts*: TlsCertificatesAndHostnamesHosts2
-    id*: TlsCertificatesAndHostnamesIdentifier
+    id*: TlsCertificatesAndHostnamesCertificatePackIdentifier
     primary_certificate*: Option[TlsCertificatesAndHostnamesPrimary]
     status*: TlsCertificatesAndHostnamesStatus5
     `type`*: TlsCertificatesAndHostnamesType2
@@ -39460,6 +40113,8 @@ type
     uploaded_on*: Option[string]
       ## When the certificate was uploaded to Cloudflare.
     zone_id*: Option[TlsCertificatesAndHostnamesIdentifier]
+
+  TlsCertificatesAndHostnamesCertificatePackIdentifier* = string
 
   TlsCertificatesAndHostnamesCertificatePackQuotaResponse* = ref object of RootObj
     errors*: TlsCertificatesAndHostnamesMessages
@@ -39590,7 +40245,7 @@ type
     csr*: TlsCertificatesAndHostnamesCsr
     expires_on*: Option[TlsCertificatesAndHostnamesExpiresOn3]
     hostnames*: TlsCertificatesAndHostnamesHostnames
-    id*: Option[TlsCertificatesAndHostnamesIdentifier]
+    id*: Option[TlsCertificatesAndHostnamesOriginCaCertificateIdentifier]
     request_type*: TlsCertificatesAndHostnamesRequestType
     requested_validity*: TlsCertificatesAndHostnamesRequestedValidity
 
@@ -39604,7 +40259,7 @@ type
     csr*: Option[TlsCertificatesAndHostnamesCsr2]
     expires_on*: Option[TlsCertificatesAndHostnamesExpiredOn]
     fingerprint_sha256*: Option[TlsCertificatesAndHostnamesFingerprintSha256]
-    id*: Option[TlsCertificatesAndHostnamesIdentifier]
+    id*: Option[TlsCertificatesAndHostnamesClientCertificateIdentifier]
     issued_on*: Option[TlsCertificatesAndHostnamesIssuedOn]
     location*: Option[TlsCertificatesAndHostnamesLocation]
     organization*: Option[TlsCertificatesAndHostnamesOrganization]
@@ -39615,6 +40270,8 @@ type
     state*: Option[TlsCertificatesAndHostnamesState]
     status*: Option[TlsCertificatesAndHostnamesStatus11]
     validity_days*: Option[TlsCertificatesAndHostnamesValidityDays2]
+
+  TlsCertificatesAndHostnamesClientCertificateIdentifier* = string
 
   TlsCertificatesAndHostnamesClientCertificateResponseCollection* = ref object of RootObj
     errors*: TlsCertificatesAndHostnamesMessages
@@ -39678,7 +40335,7 @@ type
     expires_on*: Option[TlsCertificatesAndHostnamesExpiresOn]
     geo_restrictions*: Option[TlsCertificatesAndHostnamesGeoRestrictions]
     hosts*: Option[TlsCertificatesAndHostnamesHosts]
-    id*: TlsCertificatesAndHostnamesIdentifier
+    id*: TlsCertificatesAndHostnamesCustomCertificateIdentifier
     issuer*: Option[TlsCertificatesAndHostnamesIssuer]
     keyless_server*: Option[TlsCertificatesAndHostnamesKeylessCertificate]
     modified_on*: Option[TlsCertificatesAndHostnamesModifiedOn]
@@ -39691,7 +40348,7 @@ type
 
   TlsCertificatesAndHostnamesCustomHostname* = ref object of RootObj
     hostname*: TlsCertificatesAndHostnamesHostname
-    id*: TlsCertificatesAndHostnamesIdentifier
+    id*: TlsCertificatesAndHostnamesCustomHostnameIdentifier
     ssl*: Option[TlsCertificatesAndHostnamesSsl]
     created_at*: Option[TlsCertificatesAndHostnamesCreatedAt]
     custom_metadata*: Option[TlsCertificatesAndHostnamesCustomMetadata]
@@ -39705,7 +40362,7 @@ type
   TlsCertificatesAndHostnamesCustomTrustStore* = ref object of RootObj
     certificate*: TlsCertificatesAndHostnamesCertificate3
     expires_on*: TlsCertificatesAndHostnamesExpiresOn2
-    id*: TlsCertificatesAndHostnamesIdentifier
+    id*: TlsCertificatesAndHostnamesCustomTrustStoreIdentifier
     issuer*: TlsCertificatesAndHostnamesIssuer
     signature*: TlsCertificatesAndHostnamesSignature
     status*: TlsCertificatesAndHostnamesStatus7
@@ -39719,6 +40376,8 @@ type
       ## The key for a custom uploaded certificate.
 
   TlsCertificatesAndHostnamesCustomCertBundle* = seq[TlsCertificatesAndHostnamesCustomCertAndKey]
+
+  TlsCertificatesAndHostnamesCustomCertificateIdentifier* = string
 
   TlsCertificatesAndHostnamesCustomCsr* = ref object of RootObj
     ## A custom Certificate Signing Request (CSR).
@@ -39871,6 +40530,8 @@ type
     success*: bool
       ## Whether the API call was successful.
 
+  TlsCertificatesAndHostnamesCustomHostnameIdentifier* = string
+
   TlsCertificatesAndHostnamesCustomHostnameQuota* = ref object of RootObj
     allocated*: int64
       ## The allocated custom hostname quota.
@@ -39914,6 +40575,8 @@ type
 
   TlsCertificatesAndHostnamesCustomOriginSni* = string
 
+  TlsCertificatesAndHostnamesCustomTrustStoreIdentifier* = string
+
   TlsCertificatesAndHostnamesCustomTrustStoreResponseCollection* = ref object of RootObj
     errors*: TlsCertificatesAndHostnamesMessages
     messages*: TlsCertificatesAndHostnamesMessages
@@ -39942,7 +40605,7 @@ type
     custom_origin_server*: Option[TlsCertificatesAndHostnamesCustomOriginServer]
     custom_origin_sni*: Option[TlsCertificatesAndHostnamesCustomOriginSni]
     hostname*: Option[TlsCertificatesAndHostnamesHostname]
-    id*: Option[TlsCertificatesAndHostnamesIdentifier]
+    id*: Option[TlsCertificatesAndHostnamesCustomHostnameIdentifier]
     ownership_verification*: Option[TlsCertificatesAndHostnamesOwnershipVerification]
     ownership_verification_http*: Option[TlsCertificatesAndHostnamesOwnershipVerificationHttp]
     ssl*: Option[TlsCertificatesAndHostnamesSsl]
@@ -40036,11 +40699,11 @@ type
   TlsCertificatesAndHostnamesHostname3* = string
 
   TlsCertificatesAndHostnamesHostnameAuthenticatedOriginPull* = ref object of RootObj
-    cert_id*: Option[TlsCertificatesAndHostnamesIdentifier]
+    cert_id*: Option[TlsCertificatesAndHostnamesHostnameAopCertificateIdentifier]
     certificate*: Option[TlsCertificatesAndHostnamesCertificate6]
     enabled*: Option[TlsCertificatesAndHostnamesEnabled5]
     hostname*: Option[TlsCertificatesAndHostnamesHostname2]
-    id*: Option[TlsCertificatesAndHostnamesIdentifier]
+    id*: Option[TlsCertificatesAndHostnamesHostnameAopCertificateIdentifier]
     private_key*: Option[TlsCertificatesAndHostnamesPrivateKey3]
     cert_status*: Option[TlsCertificatesAndHostnamesStatus9]
     cert_updated_at*: Option[TlsCertificatesAndHostnamesUpdatedAt3]
@@ -40052,6 +40715,8 @@ type
     signature*: Option[TlsCertificatesAndHostnamesSignature]
     status*: Option[TlsCertificatesAndHostnamesStatus9]
     updated_at*: Option[TlsCertificatesAndHostnamesUpdatedAt3]
+
+  TlsCertificatesAndHostnamesHostnameAopCertificateIdentifier* = string
 
   TlsCertificatesAndHostnamesHostnameAopResponseCollection* = ref object of RootObj
     errors*: TlsCertificatesAndHostnamesMessages
@@ -40104,7 +40769,7 @@ type
     hostname*: Option[TlsCertificatesAndHostnamesHostname2]
 
   TlsCertificatesAndHostnamesHostnameCertidObject* = ref object of RootObj
-    cert_id*: Option[TlsCertificatesAndHostnamesIdentifier]
+    cert_id*: Option[TlsCertificatesAndHostnamesHostnameAopCertificateIdentifier]
     cert_status*: Option[TlsCertificatesAndHostnamesStatus9]
     cert_updated_at*: Option[TlsCertificatesAndHostnamesUpdatedAt3]
     cert_uploaded_on*: Option[TlsCertificatesAndHostnamesUploadedOn3]
@@ -40131,8 +40796,6 @@ type
 
   TlsCertificatesAndHostnamesIdentifier* = string
 
-  TlsCertificatesAndHostnamesIdentifier2* = string
-
   TlsCertificatesAndHostnamesIssuedOn* = string
 
   TlsCertificatesAndHostnamesIssuer* = string
@@ -40144,7 +40807,7 @@ type
       ## When the Keyless SSL was created.
     enabled*: TlsCertificatesAndHostnamesEnabled
     host*: TlsCertificatesAndHostnamesHost
-    id*: TlsCertificatesAndHostnamesIdentifier2
+    id*: TlsCertificatesAndHostnamesKeylessCertificateIdentifier
     modified_on*: string
       ## When the Keyless SSL was last modified.
     name*: TlsCertificatesAndHostnamesName
@@ -40154,6 +40817,8 @@ type
     port*: TlsCertificatesAndHostnamesPort
     status*: TlsCertificatesAndHostnamesStatus2
     tunnel*: Option[TlsCertificatesAndHostnamesKeylessTunnel]
+
+  TlsCertificatesAndHostnamesKeylessCertificateIdentifier* = string
 
   TlsCertificatesAndHostnamesKeylessPrivateIp* = string
 
@@ -40192,6 +40857,8 @@ type
 
   TlsCertificatesAndHostnamesModifiedOn* = string
 
+  TlsCertificatesAndHostnamesMtlsCertificateIdentifier* = string
+
   TlsCertificatesAndHostnamesName* = string
 
   TlsCertificatesAndHostnamesName2* = string
@@ -40203,6 +40870,8 @@ type
   TlsCertificatesAndHostnamesOrganizationalUnit* = string
 
   TlsCertificatesAndHostnamesOrigin* = string
+
+  TlsCertificatesAndHostnamesOriginCaCertificateIdentifier* = string
 
   TlsCertificatesAndHostnamesOwnershipVerification* = ref object of RootObj
     ## This is a record which can be placed to activate a hostname.
@@ -40619,13 +41288,15 @@ type
   TlsCertificatesAndHostnamesZoneAuthenticatedOriginPull* = ref object of RootObj
     certificate*: Option[TlsCertificatesAndHostnamesCertificate5]
     enabled*: Option[TlsCertificatesAndHostnamesEnabled4]
-    id*: Option[TlsCertificatesAndHostnamesIdentifier]
+    id*: Option[TlsCertificatesAndHostnamesZoneAopCertificateIdentifier]
     private_key*: Option[TlsCertificatesAndHostnamesPrivateKey2]
     expires_on*: Option[TlsCertificatesAndHostnamesExpiresOn4]
     issuer*: Option[TlsCertificatesAndHostnamesIssuer]
     signature*: Option[TlsCertificatesAndHostnamesSignature]
     status*: Option[TlsCertificatesAndHostnamesStatus8]
     uploaded_on*: Option[TlsCertificatesAndHostnamesUploadedOn2]
+
+  TlsCertificatesAndHostnamesZoneAopCertificateIdentifier* = string
 
   TunnelAccountId* = string
 
@@ -40786,7 +41457,7 @@ type
   TunnelFeatures* = seq[string]
 
   TunnelHaStatus* = enum
-    ## The HA status of a WARP Connector client.
+    ## The HA status of a Mesh node connector.
     offline = "offline"
     passive = "passive"
     active = "active"
@@ -40887,10 +41558,10 @@ type
     result*: Option[TunnelMeshConfigurationResponse]
 
   TunnelMeshHaMode* = enum
-    ## High-availability mode for the WARP Connector tunnel. `none` means HA is enabled
-    ## but no provider is configured yet (newly created tunnels default to this).
-    ## `disabled` means HA is explicitly turned off. `aws` uses AWS ENI move for
-    ## failover. `local` uses virtual IPs (VIPs) on the local interface.
+    ## High-availability mode for the Mesh node. `none` means HA is enabled but no
+    ## provider is configured yet (newly created nodes default to this). `disabled`
+    ## means HA is explicitly turned off. `aws` uses AWS ENI move for failover. `local`
+    ## uses virtual IPs (VIPs) on the local interface.
     none = "none"
     disabled = "disabled"
     aws = "aws"
@@ -41019,7 +41690,7 @@ type
     opened_at*: Option[string]
       ## Timestamp of when the connection was established.
     origin_ip*: Option[JsonNode]
-      ## The public IP address of the host running WARP Connector.
+      ## The public IP address of the host running the Mesh node connector.
 
   TunnelStatus* = enum
     ## The status of the tunnel. Valid values are `inactive` (tunnel has never been
@@ -41188,7 +41859,7 @@ type
   TunnelTunnelTypes* = seq[TunnelTunnelType]
 
   TunnelTunnelWarpConnectorClient* = ref object of RootObj
-    ## A WARP Connector client that maintains a connection to a Cloudflare data center.
+    ## A Mesh node connector that maintains a connection to a Cloudflare data center.
     arch*: Option[TunnelArch]
     conns*: Option[TunnelWarpConnectorConnections]
     features*: Option[TunnelFeatures]
@@ -41265,7 +41936,7 @@ type
   TunnelWarpConnectorConnections* = seq[TunnelSchemasWarpConnectorConnection]
 
   TunnelWarpConnectorTunnel* = ref object of RootObj
-    ## A Warp Connector Tunnel that connects your origin to Cloudflare's edge.
+    ## A Mesh node that connects your origin to Cloudflare's edge.
     account_tag*: Option[TunnelAccountId]
     connections*: Option[TunnelConnectionsDeprecated]
     conns_active_at*: Option[TunnelConnsActiveAt]
@@ -41524,7 +42195,7 @@ type
     name*: VectorizeIndexName
 
   VectorizeCreateIndexResponse* = ref object of RootObj
-    config*: Option[VectorizeIndexDimensionConfiguration]
+    config*: Option[JsonNode]
     created_on*: Option[string]
       ## Specifies the timestamp the resource was created as an ISO8601 string.
     description*: Option[VectorizeIndexDescription]
@@ -43149,9 +43820,10 @@ type
 
   WorkersKvBulkResult* = ref object of RootObj
     successful_key_count*: Option[float64]
-      ## Number of keys successfully updated.
+      ## Number of keys successfully written or deleted by the bulk operation.
     unsuccessful_keys*: Option[seq[string]]
-      ## Name of the keys that failed to be fully updated. They should be retried.
+      ## Names of keys that failed to be written or deleted. Retry the operation for
+      ## these keys.
 
   WorkersKvBulkDelete* = seq[WorkersKvKeyNameBulk]
 
@@ -43886,6 +44558,16 @@ type
     dataset*: string
       ## The name of the dataset to bind to.
     name*: WorkersBindingName
+    `type`*: string
+      ## The kind of resource that the binding provides.
+
+  WorkersBindingKindArtifacts* = ref object of RootObj
+    name*: WorkersBindingName
+    namespace*: string
+      ## The Artifacts namespace exposed to the Worker in the Worker's account. Must be
+      ## 2-63 characters, start with an ASCII alphanumeric character, contain only ASCII
+      ## alphanumeric characters, dots, underscores, and hyphens, and must not end with a
+      ## hyphen. The namespace does not need to be created before binding it.
     `type`*: string
       ## The kind of resource that the binding provides.
 
@@ -44805,7 +45487,8 @@ type
     ## A target to run your Worker near.
 
   WorkersQuery* = ref object of RootObj
-    params*: Option[seq[JsonNode]]
+    params*: Option[seq[WorkersQueryParam]]
+      ## Values bound to the `?` placeholders in `sql`, in order.
     sql*: string
 
   WorkersQueryById* = ref object of RootObj
@@ -44816,6 +45499,17 @@ type
     durable_object_name*: string
     jurisdiction*: string
     queries*: seq[WorkersQuery]
+
+  WorkersQueryParam* = ref object of RootObj
+
+  WorkersQueryResult* = ref object of RootObj
+    error*: Option[string]
+      ## The error that stopped the queries. Omitted when every query succeeds.
+    results*: seq[JsonNode]
+      ## One entry per query, in request order.
+
+  WorkersQueryValue* = ref object of RootObj
+    ## A SQLite value. Blobs are returned as arrays of byte values.
 
   WorkersRoute* = ref object of RootObj
     id*: JsonNode
@@ -45045,7 +45739,25 @@ type
 
   WorkersTag* = string
 
+  WorkersTagPatch* = ref object of RootObj
+    ## The value to assign to the tag key. An empty string is valid. The complete UTF-8
+    ## encoded tag (the key plus `=` and the value when the value is non-empty) must
+    ## not exceed 1024 bytes.
+    value*: string
+
   WorkersTags* = seq[WorkersTag]
+
+  WorkersTagsKvResponse* = ref object of RootObj
+    errors*: WorkersMessages
+    messages*: WorkersMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: WorkersTagsKv
+
+  WorkersTagsKv* = ref object of RootObj
+    ## Tags associated with the Worker, as a key/value object. Each complete UTF-8
+    ## encoded tag (the key plus `=` and the value when the value is non-empty) must
+    ## not exceed 1024 bytes.
 
   WorkersTail* = ref object of RootObj
     expires_at*: string
@@ -45064,6 +45776,8 @@ type
       ## Name of Worker that is to be the consumer.
 
   WorkersTrustedWorkers* = bool
+
+  WorkersTypedTagKey* = string
 
   WorkersUploadAssetsResponse* = ref object of RootObj
     errors*: WorkersMessages

@@ -40,7 +40,8 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdDatasets*(client: CloudflareC
                                                              name: string = default(string),
                                                              enable: bool = default(bool),
                                                              search: string = default(string)): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdDatasetsResponse] {.async.} =
-  ## Lists all AI Gateway evaluator types configured for the account.
+  ## Lists the datasets defined for an AI Gateway. Evaluations and datasets are
+  ## deprecated and unavailable to new accounts.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -60,7 +61,9 @@ proc postAccountsAccountIdAiGatewayGatewaysGatewayIdDatasets*(client: Cloudflare
                                                               gatewayId: string,
                                                               accountId: string,
                                                               body: PostAccountsAccountIdAiGatewayGatewaysGatewayIdDatasetsRequest): Future[PostAccountsAccountIdAiGatewayGatewaysGatewayIdDatasetsResponse] {.async.} =
-  ## Creates a new AI Gateway.
+  ## Creates a dataset that selects gateway logs matching the specified filters for
+  ## use in evaluations. Evaluations and datasets are deprecated and unavailable to
+  ## new accounts.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/datasets", body)
   let body = await res.body
@@ -74,7 +77,8 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdDatasetsId*(client: Cloudflar
                                                                accountId: string,
                                                                gatewayId: string,
                                                                id: string): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdDatasetsIdResponse] {.async.} =
-  ## Retrieves details for a specific AI Gateway dataset.
+  ## Retrieves a dataset and its log filters. Evaluations and datasets are deprecated
+  ## and unavailable to new accounts.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/datasets/{id}")
   let body = await res.body
@@ -89,7 +93,8 @@ proc putAccountsAccountIdAiGatewayGatewaysGatewayIdDatasetsId*(client: Cloudflar
                                                                gatewayId: string,
                                                                id: string,
                                                                body: PutAccountsAccountIdAiGatewayGatewaysGatewayIdDatasetsIdRequest): Future[PutAccountsAccountIdAiGatewayGatewaysGatewayIdDatasetsIdResponse] {.async.} =
-  ## Updates an existing AI Gateway dataset.
+  ## Replaces the name, log filters, and enabled state of a dataset. Evaluations and
+  ## datasets are deprecated and unavailable to new accounts.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/datasets/{id}", body)
   let body = await res.body
@@ -103,7 +108,8 @@ proc deleteAccountsAccountIdAiGatewayGatewaysGatewayIdDatasetsId*(client: Cloudf
                                                                   accountId: string,
                                                                   gatewayId: string,
                                                                   id: string): Future[DeleteAccountsAccountIdAiGatewayGatewaysGatewayIdDatasetsIdResponse] {.async.} =
-  ## Deletes an AI Gateway dataset.
+  ## Deletes a dataset. Evaluations and datasets are deprecated and unavailable to
+  ## new accounts.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/datasets/{id}")
   let body = await res.body

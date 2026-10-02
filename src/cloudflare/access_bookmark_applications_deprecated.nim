@@ -10,53 +10,53 @@ import ./private/types
 
 
 proc getAccountsAccountIdAccessBookmarks*(client: CloudflareClient,
-                                          accountId: types.AccessIdentifier3): Future[types.AccessResponseCollection14] {.async.} =
+                                          accountId: types.AccessIdentifier3): Future[types.AccessResponseCollection15] {.async.} =
   ## Lists Bookmark applications.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/bookmarks")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection14)
+    result = fromJson(body, types.AccessResponseCollection15)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdAccessBookmarksBookmarkId*(client: CloudflareClient,
                                                     bookmarkId: types.AccessUuid,
-                                                    accountId: types.AccessIdentifier3): Future[types.AccessSingleResponse13] {.async.} =
+                                                    accountId: types.AccessIdentifier3): Future[types.AccessSingleResponse14] {.async.} =
   ## Fetches a single Bookmark application.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/bookmarks/{bookmarkId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse13)
+    result = fromJson(body, types.AccessSingleResponse14)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdAccessBookmarksBookmarkId*(client: CloudflareClient,
                                                      bookmarkId: types.AccessUuid,
-                                                     accountId: types.AccessIdentifier3): Future[types.AccessSingleResponse13] {.async.} =
+                                                     accountId: types.AccessIdentifier3): Future[types.AccessSingleResponse14] {.async.} =
   ## Create a new Bookmark application.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/access/bookmarks/{bookmarkId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse13)
+    result = fromJson(body, types.AccessSingleResponse14)
   else:
     raise newException(CloudflareClientError, body)
 
 proc putAccountsAccountIdAccessBookmarksBookmarkId*(client: CloudflareClient,
                                                     bookmarkId: types.AccessUuid,
-                                                    accountId: types.AccessIdentifier3): Future[types.AccessSingleResponse13] {.async.} =
+                                                    accountId: types.AccessIdentifier3): Future[types.AccessSingleResponse14] {.async.} =
   ## Updates a configured Bookmark application.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/access/bookmarks/{bookmarkId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse13)
+    result = fromJson(body, types.AccessSingleResponse14)
   else:
     raise newException(CloudflareClientError, body)
 

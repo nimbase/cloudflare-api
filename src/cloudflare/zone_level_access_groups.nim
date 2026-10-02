@@ -21,54 +21,54 @@ type
     require: Option[types.AccessRequire]
 
 proc getZonesZoneIdAccessGroups*(client: CloudflareClient,
-                                 zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection18] {.async.} =
+                                 zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection19] {.async.} =
   ## Lists all Access groups.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/access/groups")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection18)
+    result = fromJson(body, types.AccessResponseCollection19)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postZonesZoneIdAccessGroups*(client: CloudflareClient,
                                   zoneId: types.AccessIdentifier,
-                                  body: PostZonesZoneIdAccessGroupsRequest): Future[types.AccessSingleResponse17] {.async.} =
+                                  body: PostZonesZoneIdAccessGroupsRequest): Future[types.AccessSingleResponse18] {.async.} =
   ## Creates a new Access group.
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/access/groups", body)
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, types.AccessSingleResponse17)
+    result = fromJson(body, types.AccessSingleResponse18)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdAccessGroupsGroupId*(client: CloudflareClient,
                                         groupId: types.AccessUuid,
-                                        zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse17] {.async.} =
+                                        zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse18] {.async.} =
   ## Fetches a single Access group.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/access/groups/{groupId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse17)
+    result = fromJson(body, types.AccessSingleResponse18)
   else:
     raise newException(CloudflareClientError, body)
 
 proc putZonesZoneIdAccessGroupsGroupId*(client: CloudflareClient,
                                         groupId: types.AccessUuid,
                                         zoneId: types.AccessIdentifier,
-                                        body: PutZonesZoneIdAccessGroupsGroupIdRequest): Future[types.AccessSingleResponse17] {.async.} =
+                                        body: PutZonesZoneIdAccessGroupsGroupIdRequest): Future[types.AccessSingleResponse18] {.async.} =
   ## Updates a configured Access group.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/access/groups/{groupId}", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse17)
+    result = fromJson(body, types.AccessSingleResponse18)
   else:
     raise newException(CloudflareClientError, body)
 

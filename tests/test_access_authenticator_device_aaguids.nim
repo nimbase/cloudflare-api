@@ -15,9 +15,9 @@ suite "access_authenticator_device_aaguids serialization":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips AccessResponseCollection16":
-    let obj = newAccessResponseCollection16()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection16)) == openjson.toJson(obj)
+  test "round-trips AccessResponseCollection17":
+    let obj = newAccessResponseCollection17()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection17)) == openjson.toJson(obj)
 
 suite "access_authenticator_device_aaguids endpoints":
   test "GET /accounts/{account_id}/access/authenticator_device_aaguids":

@@ -126,8 +126,11 @@ proc deleteAccountsAccountId*(client: CloudflareClient, accountId: string): Futu
 
 proc postAccountsAccountIdMove*(client: CloudflareClient, accountId: string,
                                 body: PostAccountsAccountIdMoveRequest): Future[PostAccountsAccountIdMoveResponse] {.async.} =
-  ## Move an account within an organization hierarchy or an account outside an
-  ## organization. (Currently in Public Beta - see
+  ## Move an account into a destination organization, either assigning a standalone
+  ## account
+  ## to an organization or moving it between organizations in the same hierarchy.
+  ## Availability
+  ## depends on the organization's capabilities. (Currently in Public Beta - see
   ## https://developers.cloudflare.com/fundamentals/organizations/)
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/move", body)
@@ -156,9 +159,10 @@ proc getAccountsAccountIdOrganizations*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdProfile*(client: CloudflareClient, accountId: string): Future[GetAccountsAccountIdProfileResponse] {.async.} =
-  ## Retrieves the profile information for a specific Cloudflare account, including
-  ## organization details, settings, and metadata. This endpoint is commonly used to
-  ## verify account access and retrieve account-level configuration.
+  ## Retrieves the business profile (name, email, phone, address, and external
+  ## metadata) associated with this account's parent organization customer record.
+  ## Profiles can be shared across accounts and organizations. Only available to
+  ## members of an organization that contains the account.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/profile")
   let body = await res.body
@@ -170,9 +174,11 @@ proc getAccountsAccountIdProfile*(client: CloudflareClient, accountId: string): 
 
 proc putAccountsAccountIdProfile*(client: CloudflareClient, accountId: string,
                                   body: types.OrganizationsApiProfile): Future[AsyncResponse] {.async.} =
-  ## Updates the profile information for a Cloudflare account. Allows modification of
-  ## account-level settings and organizational details. Requires Account Settings
-  ## Write permission.
+  ## Updates the business profile (name, email, phone, address, and external
+  ## metadata) associated with this account's parent organization customer record.
+  ## Changes apply to every account and organization sharing that profile. Omitted or
+  ## empty fields are left unchanged. Only available to members of an organization
+  ## that contains the account. Requires Account Settings Write permission.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/profile", body)
   return res

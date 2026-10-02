@@ -12,10 +12,12 @@ type
   PostAccountsAccountIdEmailSecurityInvestigateMoveRequest = object
     destination: types.EmailSecurityMailboxDestination
     expected_disposition: Option[string]
-    ids: Option[seq[types.EmailSecurityInvestigateId]]
+    ids: seq[types.EmailSecurityInvestigateId]
     postfix_ids: Option[seq[types.EmailSecurityPostfixId]]
   PostAccountsAccountIdEmailSecurityInvestigatePreviewRequest = object
-    postfix_id: types.EmailSecurityPostfixId
+    id: types.EmailSecurityInvestigateId
+  PostAccountsAccountIdEmailSecurityInvestigateReleaseRequest = object
+    ids: seq[types.EmailSecurityInvestigateId]
   PostAccountsAccountIdEmailSecurityInvestigateInvestigateIdMoveRequest = object
     destination: types.EmailSecurityMailboxDestination
     expected_disposition: Option[string]
@@ -35,15 +37,6 @@ type
   EmailSecurityActionTypeOption* = enum
     actionTypeMOVE = "MOVE"
     actionTypeRELEASE = "RELEASE"
-
-  EmailSecurityStatusOption* = enum
-    statusPENDING = "PENDING"
-    statusDISCOVERING = "DISCOVERING"
-    statusPROCESSING = "PROCESSING"
-    statusCOMPLETED = "COMPLETED"
-    statusFAILED = "FAILED"
-    statusCANCELLED = "CANCELLED"
-    statusSKIPPED = "SKIPPED"
 
   EmailSecurityTypeOption* = enum
     typeTEAM = "TEAM"
@@ -81,7 +74,7 @@ proc getAccountsAccountIdEmailSecurityInvestigate*(client: CloudflareClient,
                                                    cursor: string = default(string),
                                                    perPage: int64 = 20,
                                                    page: int64 = 1): Future[JsonNode] {.async.} =
-  ## Returns information for each email that matches the search parameter(s).
+  ## Returns information for each email that matches the provided search parameters.
 
   var q = initOrderedTable[string, string]()
   q["start"] = $start
@@ -114,7 +107,7 @@ proc getAccountsAccountIdEmailSecurityInvestigateBulk*(client: CloudflareClient,
                                                        page: int64 = 1,
                                                        perPage: int64 = 20,
                                                        actionType: EmailSecurityActionTypeOption = actionTypeMOVE,
-                                                       status: EmailSecurityStatusOption = statusPENDING): Future[JsonNode] {.async.} =
+                                                       status: types.EmailSecurityBulkJobStatus = default(types.EmailSecurityBulkJobStatus)): Future[JsonNode] {.async.} =
   ## Returns a paginated list of bulk action jobs for the account.
 
   var q = initOrderedTable[string, string]()
@@ -133,7 +126,8 @@ proc getAccountsAccountIdEmailSecurityInvestigateBulk*(client: CloudflareClient,
 proc postAccountsAccountIdEmailSecurityInvestigateBulk*(client: CloudflareClient,
                                                         body: types.EmailSecurityBulkActionRequest): Future[JsonNode] {.async.} =
   ## Creates a new bulk action job to move or release messages that match the
-  ## provided search parameters.
+  ## provided search parameters. To move or release an explicit list of known
+  ## messages instead of a search, use the move or release endpoints.
 
   let res = await client.httpPOST("/accounts/{account_id}/email-security/investigate/bulk", body)
   let body = await res.body
@@ -156,9 +150,8 @@ proc getAccountsAccountIdEmailSecurityInvestigateBulkJobId*(client: CloudflareCl
 
 proc deleteAccountsAccountIdEmailSecurityInvestigateBulkJobId*(client: CloudflareClient): Future[JsonNode] {.async.} =
   ## Deletes the job, removing it from all list and detail endpoints. Only jobs in a
-  ## terminal state (`COMPLETED`, `CANCELLED`, `FAILED`, or `SKIPPED`) can be
-  ## deleted. To stop an in-progress job without removing it, use the cancel endpoint
-  ## instead.
+  ## terminal state (`COMPLETED`, `CANCELLED`, or `FAILED`) can be deleted. To stop
+  ## an in-progress job without removing it, use the cancel endpoint instead.
 
   let res = await client.httpDELETE("/accounts/{account_id}/email-security/investigate/bulk/{job_id}")
   let body = await res.body
@@ -183,7 +176,7 @@ proc postAccountsAccountIdEmailSecurityInvestigateBulkJobIdCancel*(client: Cloud
 proc getAccountsAccountIdEmailSecurityInvestigateBulkJobIdMessages*(client: CloudflareClient,
                                                                     page: int64 = 1,
                                                                     perPage: int64 = 20,
-                                                                    status: EmailSecurityStatusOption = statusPENDING): Future[JsonNode] {.async.} =
+                                                                    status: types.EmailSecurityBulkActionMessageStatus = default(types.EmailSecurityBulkActionMessageStatus)): Future[JsonNode] {.async.} =
   ## Returns the individual messages associated with a bulk action job, including
   ## their processing status.
 
@@ -201,9 +194,10 @@ proc getAccountsAccountIdEmailSecurityInvestigateBulkJobIdMessages*(client: Clou
 
 proc postAccountsAccountIdEmailSecurityInvestigateMove*(client: CloudflareClient,
                                                         body: PostAccountsAccountIdEmailSecurityInvestigateMoveRequest): Future[JsonNode] {.async.} =
-  ## Moves multiple messages to a specified mailbox folder (Inbox, JunkEmail,
+  ## Moves one or more messages to a specified mailbox folder (Inbox, JunkEmail,
   ## DeletedItems, RecoverableItemsDeletions, or RecoverableItemsPurges). Requires
-  ## active integration.
+  ## active integration. Operates on an explicit list of messages; to move all
+  ## messages matching a search, create a bulk action job instead.
 
   let res = await client.httpPOST("/accounts/{account_id}/email-security/investigate/move", body)
   let body = await res.body
@@ -215,9 +209,11 @@ proc postAccountsAccountIdEmailSecurityInvestigateMove*(client: CloudflareClient
 
 proc postAccountsAccountIdEmailSecurityInvestigatePreview*(client: CloudflareClient,
                                                            body: PostAccountsAccountIdEmailSecurityInvestigatePreviewRequest): Future[JsonNode] {.async.} =
-  ## Generates a preview image for a message that was not flagged as a detection.
-  ## Useful for investigating benign messages. Returns a base64-encoded PNG
-  ## screenshot of the email body.
+  ## Generates a preview image for a message that was not flagged as a detection. The
+  ## message is rendered from the copy in the recipient's mailbox, so this requires
+  ## an active integration and only works while the message is still in the
+  ## recipient's inbox. Returns a base64-encoded PNG screenshot of the email body.
+  ## For messages with a detection, use the detection preview endpoint instead.
 
   let res = await client.httpPOST("/accounts/{account_id}/email-security/investigate/preview", body)
   let body = await res.body
@@ -227,10 +223,12 @@ proc postAccountsAccountIdEmailSecurityInvestigatePreview*(client: CloudflareCli
   else:
     raise newException(CloudflareClientError, body)
 
-proc postAccountsAccountIdEmailSecurityInvestigateRelease*(client: CloudflareClient): Future[JsonNode] {.async.} =
+proc postAccountsAccountIdEmailSecurityInvestigateRelease*(client: CloudflareClient,
+                                                           body: PostAccountsAccountIdEmailSecurityInvestigateReleaseRequest): Future[JsonNode] {.async.} =
   ## Delivers one or more quarantined messages to their intended recipients, for
-  ## cases where a message was incorrectly quarantined. The response includes
-  ## delivery status for each recipient.
+  ## cases where a message was incorrectly quarantined. Operates on an explicit list
+  ## of messages; to release all messages matching a search, create a bulk action job
+  ## instead. The response includes delivery status for each recipient.
 
   let res = await client.httpPOST("/accounts/{account_id}/email-security/investigate/release", body)
   let body = await res.body
@@ -253,11 +251,16 @@ proc getAccountsAccountIdEmailSecurityInvestigateInvestigateId*(client: Cloudfla
   else:
     raise newException(CloudflareClientError, body)
 
-proc getAccountsAccountIdEmailSecurityInvestigateInvestigateIdActionLog*(client: CloudflareClient): Future[JsonNode] {.async.} =
+proc getAccountsAccountIdEmailSecurityInvestigateInvestigateIdActionLog*(client: CloudflareClient,
+                                                                         page: int64 = 1,
+                                                                         perPage: int64 = 20): Future[JsonNode] {.async.} =
   ## Returns the list of post-delivery actions (moves, quarantine releases, previews,
   ## etc.) that have been applied to a specific email message.
 
-  let res = await client.httpGET("/accounts/{account_id}/email-security/investigate/{investigate_id}/action_log")
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET("/accounts/{account_id}/email-security/investigate/{investigate_id}/action_log", q)
   let body = await res.body
   case res.code
   of Http200:
@@ -267,7 +270,7 @@ proc getAccountsAccountIdEmailSecurityInvestigateInvestigateIdActionLog*(client:
 
 proc getAccountsAccountIdEmailSecurityInvestigateInvestigateIdDetections*(client: CloudflareClient): Future[JsonNode] {.async.} =
   ## Returns detection details such as threat categories and sender information for
-  ## non-benign messages.
+  ## messages with a detection.
 
   let res = await client.httpGET("/accounts/{account_id}/email-security/investigate/{investigate_id}/detections")
   let body = await res.body
@@ -292,8 +295,9 @@ proc postAccountsAccountIdEmailSecurityInvestigateInvestigateIdMove*(client: Clo
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdEmailSecurityInvestigateInvestigateIdPreview*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Returns a preview of the message body as a base64 encoded PNG image for
-  ## non-benign messages.
+  ## Returns a preview of the message body as a base64-encoded PNG image for any
+  ## message with a detection. For messages without a detection, use the
+  ## non-detection preview endpoint instead.
 
   let res = await client.httpGET("/accounts/{account_id}/email-security/investigate/{investigate_id}/preview")
   let body = await res.body
@@ -304,7 +308,7 @@ proc getAccountsAccountIdEmailSecurityInvestigateInvestigateIdPreview*(client: C
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdEmailSecurityInvestigateInvestigateIdRaw*(client: CloudflareClient): Future[JsonNode] {.async.} =
-  ## Returns the raw eml of any non-benign message.
+  ## Returns the raw EML content of any message with a detection.
 
   let res = await client.httpGET("/accounts/{account_id}/email-security/investigate/{investigate_id}/raw")
   let body = await res.body
@@ -318,7 +322,8 @@ proc postAccountsAccountIdEmailSecurityInvestigateInvestigateIdReclassify*(clien
                                                                            body: types.EmailSecurityReclassifyRequest): Future[JsonNode] {.async.} =
   ## Submits a request to reclassify an email's disposition. Use for reporting false
   ## positives or false negatives. Optionally provide the raw EML content for
-  ## reanalysis. The reclassification is processed asynchronously.
+  ## reanalysis. The reclassification is processed asynchronously. Deprecated; use
+  ## the create submissions endpoint instead.
 
   let res = await client.httpPOST("/accounts/{account_id}/email-security/investigate/{investigate_id}/reclassify", body)
   let body = await res.body
@@ -345,7 +350,9 @@ proc getAccountsAccountIdEmailSecurityPhishguardReports*(client: CloudflareClien
                                                          start: string = default(string),
                                                          `end`: string = default(string),
                                                          fromDate: string = default(string),
-                                                         toDate: string = default(string)): Future[JsonNode] {.async.} =
+                                                         toDate: string = default(string),
+                                                         page: int64 = 1,
+                                                         perPage: int64 = 20): Future[JsonNode] {.async.} =
   ## Retrieves PhishGuard security alert reports for a specified date range. Reports
   ## include detected threats, dispositions, and contextual information. Use for
   ## security monitoring and threat analysis.
@@ -355,6 +362,8 @@ proc getAccountsAccountIdEmailSecurityPhishguardReports*(client: CloudflareClien
   q["end"] = $`end`
   q["from_date"] = $fromDate
   q["to_date"] = $toDate
+  q["page"] = $page
+  q["per_page"] = $perPage
   let res = await client.httpGET("/accounts/{account_id}/email-security/phishguard/reports", q)
   let body = await res.body
   case res.code
@@ -401,6 +410,17 @@ proc getAccountsAccountIdEmailSecuritySubmissions*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdEmailSecuritySubmissions*(client: CloudflareClient): Future[JsonNode] {.async.} =
+  ## Submits messages for reclassification or to report missed detections.
+
+  let res = await client.httpPOST("/accounts/{account_id}/email-security/submissions", body)
+  let body = await res.body
+  case res.code
+  of Http202:
     result = fromJson(body, JsonNode)
   else:
     raise newException(CloudflareClientError, body)

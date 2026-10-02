@@ -16,14 +16,14 @@ type
     hostname: types.TlsCertificatesAndHostnamesHostnamePost
     ssl: Option[types.TlsCertificatesAndHostnamesSslpost]
   DeleteZonesZoneIdCustomHostnamesCustomHostnameIdResponse* = object
-    id: types.TlsCertificatesAndHostnamesIdentifier
+    id: types.TlsCertificatesAndHostnamesCustomHostnameIdentifier
   PatchZonesZoneIdCustomHostnamesCustomHostnameIdRequest = object
     custom_metadata: Option[types.TlsCertificatesAndHostnamesCustomMetadata]
     custom_origin_server: Option[types.TlsCertificatesAndHostnamesCustomOriginServer]
     custom_origin_sni: Option[types.TlsCertificatesAndHostnamesCustomOriginSni]
     ssl: Option[types.TlsCertificatesAndHostnamesSslpost]
   DeleteZonesZoneIdCustomHostnamesCustomHostnameIdCertificatePackCertificatePackIdCertificatesCertificateIdResponse* = object
-    id: types.TlsCertificatesAndHostnamesIdentifier
+    id: types.TlsCertificatesAndHostnamesCustomHostnameIdentifier
   CustomHostnameForAZoneOrderOption* = enum
     orderSsl = "ssl"
     orderSslStatus = "ssl_status"
@@ -165,7 +165,7 @@ proc getZonesZoneIdCustomHostnamesQuota*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdCustomHostnamesCustomHostnameId*(client: CloudflareClient,
-                                                    customHostnameId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                    customHostnameId: types.TlsCertificatesAndHostnamesCustomHostnameIdentifier,
                                                     zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCustomHostnameResponseSingle] {.async.} =
   ## Retrieves detailed information about a specific custom hostname, including SSL
   ## certificate status, ownership verification, and origin configuration.
@@ -179,7 +179,7 @@ proc getZonesZoneIdCustomHostnamesCustomHostnameId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdCustomHostnamesCustomHostnameId*(client: CloudflareClient,
-                                                       customHostnameId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                       customHostnameId: types.TlsCertificatesAndHostnamesCustomHostnameIdentifier,
                                                        zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[DeleteZonesZoneIdCustomHostnamesCustomHostnameIdResponse] {.async.} =
   ## Permanently deletes a custom hostname and revokes any SSL certificates that were
   ## issued for it. This action cannot be undone.
@@ -193,7 +193,7 @@ proc deleteZonesZoneIdCustomHostnamesCustomHostnameId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc patchZonesZoneIdCustomHostnamesCustomHostnameId*(client: CloudflareClient,
-                                                      customHostnameId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                      customHostnameId: types.TlsCertificatesAndHostnamesCustomHostnameIdentifier,
                                                       zoneId: types.TlsCertificatesAndHostnamesIdentifier,
                                                       body: PatchZonesZoneIdCustomHostnamesCustomHostnameIdRequest): Future[types.TlsCertificatesAndHostnamesCustomHostnameResponseSingle] {.async.} =
   ## Modify SSL configuration for a custom hostname. When sent with SSL config that
@@ -213,9 +213,9 @@ proc patchZonesZoneIdCustomHostnamesCustomHostnameId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc putZonesZoneIdCustomHostnamesCustomHostnameIdCertificatePackCertificatePackIdCertificatesCertificateId*(client: CloudflareClient,
-                                                                                                             customHostnameId: types.TlsCertificatesAndHostnamesIdentifier,
-                                                                                                             certificatePackId: types.TlsCertificatesAndHostnamesIdentifier,
-                                                                                                             certificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                                                                             customHostnameId: types.TlsCertificatesAndHostnamesCustomHostnameIdentifier,
+                                                                                                             certificatePackId: types.TlsCertificatesAndHostnamesCustomHostnameIdentifier,
+                                                                                                             certificateId: types.TlsCertificatesAndHostnamesCustomHostnameIdentifier,
                                                                                                              zoneId: types.TlsCertificatesAndHostnamesIdentifier,
                                                                                                              body: types.TlsCertificatesAndHostnamesCustomCertAndKey): Future[types.TlsCertificatesAndHostnamesCustomHostnameResponseSingle] {.async.} =
   ## Replace a single custom certificate within a certificate pack that contains two
@@ -232,9 +232,9 @@ proc putZonesZoneIdCustomHostnamesCustomHostnameIdCertificatePackCertificatePack
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdCustomHostnamesCustomHostnameIdCertificatePackCertificatePackIdCertificatesCertificateId*(client: CloudflareClient,
-                                                                                                                customHostnameId: types.TlsCertificatesAndHostnamesIdentifier,
-                                                                                                                certificatePackId: types.TlsCertificatesAndHostnamesIdentifier,
-                                                                                                                certificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                                                                                customHostnameId: types.TlsCertificatesAndHostnamesCustomHostnameIdentifier,
+                                                                                                                certificatePackId: types.TlsCertificatesAndHostnamesCustomHostnameIdentifier,
+                                                                                                                certificateId: types.TlsCertificatesAndHostnamesCustomHostnameIdentifier,
                                                                                                                 zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[DeleteZonesZoneIdCustomHostnamesCustomHostnameIdCertificatePackCertificatePackIdCertificatesCertificateIdResponse] {.async.} =
   ## Delete a single custom certificate from a certificate pack that contains two
   ## bundled certificates. Deletion is subject to the following constraints. You

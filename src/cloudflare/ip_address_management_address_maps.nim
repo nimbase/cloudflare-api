@@ -141,13 +141,13 @@ proc deleteAccountsAccountIdAddressingAddressMapsAddressMapIdIpsIpAddress*(clien
   else:
     raise newException(CloudflareClientError, body)
 
-proc putAccountsAccountIdAddressingAddressMapsAddressMapIdZonesZoneId*(client: CloudflareClient,
-                                                                       zoneId: types.AddressingZoneIdentifier,
-                                                                       addressMapId: types.AddressingAddressMapIdentifier,
-                                                                       accountId: types.AddressingAccountIdentifier): Future[types.AddressingApiResponseCollection] {.async.} =
+proc putAccountsAccountIdAddressingAddressMapsAddressMapIdZonesMemberZoneId*(client: CloudflareClient,
+                                                                             memberZoneId: types.AddressingZoneIdentifier,
+                                                                             addressMapId: types.AddressingAddressMapIdentifier,
+                                                                             accountId: types.AddressingAccountIdentifier): Future[types.AddressingApiResponseCollection] {.async.} =
   ## Add a zone as a member of a particular address map.
 
-  let res = await client.httpPUT(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/zones/{zoneId}")
+  let res = await client.httpPUT(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/zones/{memberZoneId}")
   let body = await res.body
   case res.code
   of Http200:
@@ -155,13 +155,13 @@ proc putAccountsAccountIdAddressingAddressMapsAddressMapIdZonesZoneId*(client: C
   else:
     raise newException(CloudflareClientError, body)
 
-proc deleteAccountsAccountIdAddressingAddressMapsAddressMapIdZonesZoneId*(client: CloudflareClient,
-                                                                          zoneId: types.AddressingZoneIdentifier,
-                                                                          addressMapId: types.AddressingAddressMapIdentifier,
-                                                                          accountId: types.AddressingAccountIdentifier): Future[types.AddressingApiResponseCollection] {.async.} =
+proc deleteAccountsAccountIdAddressingAddressMapsAddressMapIdZonesMemberZoneId*(client: CloudflareClient,
+                                                                                memberZoneId: types.AddressingZoneIdentifier,
+                                                                                addressMapId: types.AddressingAddressMapIdentifier,
+                                                                                accountId: types.AddressingAccountIdentifier): Future[types.AddressingApiResponseCollection] {.async.} =
   ## Remove a zone as a member of a particular address map.
 
-  let res = await client.httpDELETE(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/zones/{zoneId}")
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/zones/{memberZoneId}")
   let body = await res.body
   case res.code
   of Http200:

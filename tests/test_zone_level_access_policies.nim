@@ -11,14 +11,6 @@ import cloudflare
 import ./common
 
 suite "zone_level_access_policies serialization":
-  test "round-trips AccessResponseCollection23":
-    let obj = newAccessResponseCollection23()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection23)) == openjson.toJson(obj)
-
-  test "round-trips AccessSingleResponse22":
-    let obj = newAccessSingleResponse22()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse22)) == openjson.toJson(obj)
-
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
@@ -26,6 +18,14 @@ suite "zone_level_access_policies serialization":
   test "round-trips AccessIdResponse":
     let obj = newAccessIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips AccessResponseCollection24":
+    let obj = newAccessResponseCollection24()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection24)) == openjson.toJson(obj)
+
+  test "round-trips AccessSingleResponse23":
+    let obj = newAccessSingleResponse23()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse23)) == openjson.toJson(obj)
 
 suite "zone_level_access_policies endpoints":
   test "GET /zones/{zone_id}/access/apps/{app_id}/policies":

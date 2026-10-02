@@ -11,17 +11,17 @@ import cloudflare
 import ./common
 
 suite "access_bookmark_applications_deprecated serialization":
-  test "round-trips AccessResponseCollection14":
-    let obj = newAccessResponseCollection14()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection14)) == openjson.toJson(obj)
+  test "round-trips AccessResponseCollection15":
+    let obj = newAccessResponseCollection15()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection15)) == openjson.toJson(obj)
 
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips AccessSingleResponse13":
-    let obj = newAccessSingleResponse13()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse13)) == openjson.toJson(obj)
+  test "round-trips AccessSingleResponse14":
+    let obj = newAccessSingleResponse14()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse14)) == openjson.toJson(obj)
 
   test "round-trips AccessIdResponse":
     let obj = newAccessIdResponse()

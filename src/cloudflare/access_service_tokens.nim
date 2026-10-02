@@ -29,7 +29,7 @@ proc getAccountsAccountIdAccessServiceTokens*(client: CloudflareClient,
                                               name: string = default(string),
                                               search: string = default(string),
                                               page: int64 = 1,
-                                              perPage: int64 = 1000): Future[types.AccessResponseCollection3] {.async.} =
+                                              perPage: int64 = 1000): Future[types.AccessResponseCollection4] {.async.} =
   ## Lists all service tokens.
 
   var q = initOrderedTable[string, string]()
@@ -41,7 +41,7 @@ proc getAccountsAccountIdAccessServiceTokens*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection3)
+    result = fromJson(body, types.AccessResponseCollection4)
   else:
     raise newException(CloudflareClientError, body)
 

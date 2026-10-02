@@ -10,14 +10,14 @@ import ./private/types
 
 
 proc getZonesZoneIdAccessApps*(client: CloudflareClient,
-                               zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection22] {.async.} =
+                               zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection23] {.async.} =
   ## List all Access Applications in a zone.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/access/apps")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection22)
+    result = fromJson(body, types.AccessResponseCollection23)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -36,14 +36,14 @@ proc postZonesZoneIdAccessApps*(client: CloudflareClient,
 
 proc getZonesZoneIdAccessAppsAppId*(client: CloudflareClient,
                                     appId: types.AccessAppId,
-                                    zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse21] {.async.} =
+                                    zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse22] {.async.} =
   ## Fetches information about an Access application.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/access/apps/{appId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse21)
+    result = fromJson(body, types.AccessSingleResponse22)
   else:
     raise newException(CloudflareClientError, body)
 

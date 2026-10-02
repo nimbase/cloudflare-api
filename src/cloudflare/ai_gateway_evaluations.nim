@@ -6,6 +6,7 @@
 # License: MIT
 import std/[strformat, json]
 import ./private/metaclient
+import ./private/types
 
 type
   GetAccountsAccountIdAiGatewayEvaluationTypesResponse* = object
@@ -39,7 +40,8 @@ proc getAccountsAccountIdAiGatewayEvaluationTypes*(client: CloudflareClient,
                                                    perPage: int64 = 20,
                                                    orderBy: string = "mandatory",
                                                    orderByDirection: AiGatewayEvaluationOrderByDirectionOption = orderByDirectionDesc): Future[GetAccountsAccountIdAiGatewayEvaluationTypesResponse] {.async.} =
-  ## Lists all available evaluator types for scoring AI gateway responses.
+  ## Lists the evaluator types that evaluations can use to score AI Gateway
+  ## responses. Evaluations are deprecated and unavailable to new accounts.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -62,7 +64,8 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdEvaluations*(client: Cloudfla
                                                                 name: string = default(string),
                                                                 processed: bool = default(bool),
                                                                 search: string = default(string)): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdEvaluationsResponse] {.async.} =
-  ## Lists all AI Gateway evaluator types configured for the account.
+  ## Lists the evaluations run on an AI Gateway. Evaluations and datasets are
+  ## deprecated and unavailable to new accounts.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -82,7 +85,9 @@ proc postAccountsAccountIdAiGatewayGatewaysGatewayIdEvaluations*(client: Cloudfl
                                                                  gatewayId: string,
                                                                  accountId: string,
                                                                  body: PostAccountsAccountIdAiGatewayGatewaysGatewayIdEvaluationsRequest): Future[PostAccountsAccountIdAiGatewayGatewaysGatewayIdEvaluationsResponse] {.async.} =
-  ## Creates a new AI Gateway.
+  ## Creates an evaluation that scores the logs in a dataset with the specified
+  ## evaluator types. Evaluations and datasets are deprecated and unavailable to new
+  ## accounts.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/evaluations", body)
   let body = await res.body
@@ -96,7 +101,8 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdEvaluationsId*(client: Cloudf
                                                                   accountId: string,
                                                                   gatewayId: string,
                                                                   id: string): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdEvaluationsIdResponse] {.async.} =
-  ## Retrieves details for a specific AI Gateway dataset.
+  ## Retrieves an evaluation and its results. Evaluations and datasets are deprecated
+  ## and unavailable to new accounts.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/evaluations/{id}")
   let body = await res.body
@@ -110,7 +116,8 @@ proc deleteAccountsAccountIdAiGatewayGatewaysGatewayIdEvaluationsId*(client: Clo
                                                                      accountId: string,
                                                                      gatewayId: string,
                                                                      id: string): Future[DeleteAccountsAccountIdAiGatewayGatewaysGatewayIdEvaluationsIdResponse] {.async.} =
-  ## Deletes an AI Gateway dataset.
+  ## Deletes an evaluation and its results. Evaluations and datasets are deprecated
+  ## and unavailable to new accounts.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/evaluations/{id}")
   let body = await res.body

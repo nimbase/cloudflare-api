@@ -50,7 +50,7 @@ proc postAccountsAccountIdMtlsCertificates*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdMtlsCertificatesMtlsCertificateId*(client: CloudflareClient,
-                                                            mtlsCertificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                            mtlsCertificateId: types.TlsCertificatesAndHostnamesMtlsCertificateIdentifier,
                                                             accountId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateResponseSingle5] {.async.} =
   ## Fetches a single mTLS certificate uploaded to your account. To get a certificate
   ## issued by the Cloudflare managed CA, use the [Client Certificate Details
@@ -65,7 +65,7 @@ proc getAccountsAccountIdMtlsCertificatesMtlsCertificateId*(client: CloudflareCl
     raise newException(CloudflareClientError, body)
 
 proc deleteAccountsAccountIdMtlsCertificatesMtlsCertificateId*(client: CloudflareClient,
-                                                               mtlsCertificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                               mtlsCertificateId: types.TlsCertificatesAndHostnamesMtlsCertificateIdentifier,
                                                                accountId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateResponseSingle5] {.async.} =
   ## Deletes the mTLS certificate unless the certificate is in use by one or more
   ## Cloudflare services.
@@ -79,7 +79,7 @@ proc deleteAccountsAccountIdMtlsCertificatesMtlsCertificateId*(client: Cloudflar
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdMtlsCertificatesMtlsCertificateIdAssociations*(client: CloudflareClient,
-                                                                        mtlsCertificateId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                                        mtlsCertificateId: types.TlsCertificatesAndHostnamesMtlsCertificateIdentifier,
                                                                         accountId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesAssociationResponseCollection] {.async.} =
   ## Lists all active associations between the certificate and Cloudflare services.
 

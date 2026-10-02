@@ -19,13 +19,13 @@ suite "zone_level_zero_trust_organization serialization":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips AccessSingleResponse15":
-    let obj = newAccessSingleResponse15()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse15)) == openjson.toJson(obj)
-
   test "round-trips AccessEmptyResponse":
     let obj = newAccessEmptyResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessEmptyResponse)) == openjson.toJson(obj)
+
+  test "round-trips AccessSingleResponse16":
+    let obj = newAccessSingleResponse16()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse16)) == openjson.toJson(obj)
 
   test "round-trips AccessLoginDesign":
     let obj = newAccessLoginDesign()

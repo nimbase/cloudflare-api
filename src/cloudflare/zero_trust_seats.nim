@@ -11,7 +11,7 @@ import ./private/types
 
 proc patchAccountsAccountIdAccessSeats*(client: CloudflareClient,
                                         accountId: types.AccessIdentifier2,
-                                        body: types.AccessSeatsDefinition): Future[types.AccessResponseCollection13] {.async.} =
+                                        body: types.AccessSeatsDefinition): Future[types.AccessResponseCollection14] {.async.} =
   ## Removes a user from a Zero Trust seat when both `access_seat` and `gateway_seat`
   ## are set to false.
 
@@ -19,6 +19,6 @@ proc patchAccountsAccountIdAccessSeats*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection13)
+    result = fromJson(body, types.AccessResponseCollection14)
   else:
     raise newException(CloudflareClientError, body)

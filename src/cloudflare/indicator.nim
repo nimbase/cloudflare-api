@@ -27,6 +27,13 @@ type
       ## The dataset ID this indicator belongs to. Included in list responses.
     indicator_type: string
     related_events: seq[JsonNode]
+      ## Related events, capped by `relatedEventsLimit` (default 2). Check
+      ## `relatedEventsHasMore` to detect a capped list; pass `relatedEventsLimit=-1` to
+      ## retrieve all of them.
+    related_events_has_more: bool
+      ## True when this indicator appears in more events than `relatedEvents` contains
+      ## because `relatedEventsLimit` capped the list. Pass `relatedEventsLimit=-1` to
+      ## retrieve every related event.
     tags: seq[JsonNode]
     tlp: string
       ## Traffic Light Protocol designation. UPPERCASE. Possible values: CLEAR, GREEN,
@@ -40,6 +47,13 @@ type
       ## The dataset ID this indicator belongs to. Included in list responses.
     indicator_type: string
     related_events: seq[JsonNode]
+      ## Related events, capped by `relatedEventsLimit` (default 2). Check
+      ## `relatedEventsHasMore` to detect a capped list; pass `relatedEventsLimit=-1` to
+      ## retrieve all of them.
+    related_events_has_more: bool
+      ## True when this indicator appears in more events than `relatedEvents` contains
+      ## because `relatedEventsLimit` capped the list. Pass `relatedEventsLimit=-1` to
+      ## retrieve every related event.
     tags: seq[JsonNode]
     tlp: string
       ## Traffic Light Protocol designation. UPPERCASE. Possible values: CLEAR, GREEN,
@@ -62,6 +76,13 @@ type
       ## The dataset ID this indicator belongs to. Included in list responses.
     indicator_type: string
     related_events: seq[JsonNode]
+      ## Related events, capped by `relatedEventsLimit` (default 2). Check
+      ## `relatedEventsHasMore` to detect a capped list; pass `relatedEventsLimit=-1` to
+      ## retrieve all of them.
+    related_events_has_more: bool
+      ## True when this indicator appears in more events than `relatedEvents` contains
+      ## because `relatedEventsLimit` capped the list. Pass `relatedEventsLimit=-1` to
+      ## retrieve every related event.
     tags: seq[JsonNode]
     tlp: string
       ## Traffic Light Protocol designation. UPPERCASE. Possible values: CLEAR, GREEN,

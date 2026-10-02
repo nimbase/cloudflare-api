@@ -22,7 +22,7 @@ type
 proc getAccountsAccountIdAccessCertificates*(client: CloudflareClient,
                                              accountId: types.AccessIdentifier,
                                              page: int64 = 1,
-                                             perPage: int64 = 50): Future[types.AccessResponseCollection5] {.async.} =
+                                             perPage: int64 = 50): Future[types.AccessResponseCollection6] {.async.} =
   ## Lists all mTLS root certificates.
 
   var q = initOrderedTable[string, string]()
@@ -32,20 +32,20 @@ proc getAccountsAccountIdAccessCertificates*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection5)
+    result = fromJson(body, types.AccessResponseCollection6)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdAccessCertificates*(client: CloudflareClient,
                                               accountId: types.AccessIdentifier,
-                                              body: PostAccountsAccountIdAccessCertificatesRequest): Future[types.AccessSingleResponse6] {.async.} =
+                                              body: PostAccountsAccountIdAccessCertificatesRequest): Future[types.AccessSingleResponse7] {.async.} =
   ## Adds a new mTLS root certificate to Access.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/access/certificates", body)
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, types.AccessSingleResponse6)
+    result = fromJson(body, types.AccessSingleResponse7)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -76,28 +76,28 @@ proc putAccountsAccountIdAccessCertificatesSettings*(client: CloudflareClient,
 
 proc getAccountsAccountIdAccessCertificatesCertificateId*(client: CloudflareClient,
                                                           certificateId: types.AccessUuid,
-                                                          accountId: types.AccessIdentifier): Future[types.AccessSingleResponse6] {.async.} =
+                                                          accountId: types.AccessIdentifier): Future[types.AccessSingleResponse7] {.async.} =
   ## Fetches a single mTLS certificate.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/certificates/{certificateId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse6)
+    result = fromJson(body, types.AccessSingleResponse7)
   else:
     raise newException(CloudflareClientError, body)
 
 proc putAccountsAccountIdAccessCertificatesCertificateId*(client: CloudflareClient,
                                                           certificateId: types.AccessUuid,
                                                           accountId: types.AccessIdentifier,
-                                                          body: PutAccountsAccountIdAccessCertificatesCertificateIdRequest): Future[types.AccessSingleResponse6] {.async.} =
+                                                          body: PutAccountsAccountIdAccessCertificatesCertificateIdRequest): Future[types.AccessSingleResponse7] {.async.} =
   ## Updates a configured mTLS certificate.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/access/certificates/{certificateId}", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse6)
+    result = fromJson(body, types.AccessSingleResponse7)
   else:
     raise newException(CloudflareClientError, body)
 

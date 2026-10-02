@@ -11,7 +11,7 @@ import ./private/types
 
 proc getAccountsAccountIdAccessCustomPages*(client: CloudflareClient,
                                             accountId: types.AccessIdentifier,
-                                            page: int64 = 1, perPage: int64 = 50): Future[types.AccessResponseCollection10] {.async.} =
+                                            page: int64 = 1, perPage: int64 = 50): Future[types.AccessResponseCollection11] {.async.} =
   ## List custom pages
 
   var q = initOrderedTable[string, string]()
@@ -21,7 +21,7 @@ proc getAccountsAccountIdAccessCustomPages*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection10)
+    result = fromJson(body, types.AccessResponseCollection11)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -54,14 +54,14 @@ proc postAccountsAccountIdAccessCustomPagesValidate*(client: CloudflareClient,
 
 proc getAccountsAccountIdAccessCustomPagesCustomPageId*(client: CloudflareClient,
                                                         customPageId: types.AccessUuid,
-                                                        accountId: types.AccessIdentifier): Future[types.AccessSingleResponse11] {.async.} =
+                                                        accountId: types.AccessIdentifier): Future[types.AccessSingleResponse12] {.async.} =
   ## Fetches a custom page and also returns its HTML.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/custom_pages/{customPageId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse11)
+    result = fromJson(body, types.AccessSingleResponse12)
   else:
     raise newException(CloudflareClientError, body)
 

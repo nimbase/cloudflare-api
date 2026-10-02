@@ -31,7 +31,8 @@ proc getAccountsAccountIdTags*(client: CloudflareClient,
 proc putAccountsAccountIdTags*(client: CloudflareClient,
                                accountId: types.ResourceTaggingAccountId,
                                body: types.ResourceTaggingSetTagsRequestAccountLevel): Future[types.ResourceTaggingTaggedResourceResponseSingle] {.async.} =
-  ## Creates or updates tags for a specific account-level resource.
+  ## Creates or updates tags for a specific account-level resource. Replaces all
+  ## existing tags for the resource.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/tags", body)
   let body = await res.body

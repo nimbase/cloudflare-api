@@ -10,54 +10,54 @@ import ./private/types
 
 
 proc getZonesZoneIdAccessIdentityProviders*(client: CloudflareClient,
-                                            zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection17] {.async.} =
+                                            zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection18] {.async.} =
   ## Lists all configured identity providers.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/access/identity_providers")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessResponseCollection17)
+    result = fromJson(body, types.AccessResponseCollection18)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postZonesZoneIdAccessIdentityProviders*(client: CloudflareClient,
                                              zoneId: types.AccessIdentifier,
-                                             body: types.AccessIdentityProviders2): Future[types.AccessSingleResponse16] {.async.} =
+                                             body: types.AccessIdentityProviders2): Future[types.AccessSingleResponse17] {.async.} =
   ## Adds a new identity provider to Access.
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/access/identity_providers", body)
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, types.AccessSingleResponse16)
+    result = fromJson(body, types.AccessSingleResponse17)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdAccessIdentityProvidersIdentityProviderId*(client: CloudflareClient,
                                                               identityProviderId: types.AccessUuid,
-                                                              zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse16] {.async.} =
+                                                              zoneId: types.AccessIdentifier): Future[types.AccessSingleResponse17] {.async.} =
   ## Fetches a configured identity provider.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/access/identity_providers/{identityProviderId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse16)
+    result = fromJson(body, types.AccessSingleResponse17)
   else:
     raise newException(CloudflareClientError, body)
 
 proc putZonesZoneIdAccessIdentityProvidersIdentityProviderId*(client: CloudflareClient,
                                                               identityProviderId: types.AccessUuid,
                                                               zoneId: types.AccessIdentifier,
-                                                              body: types.AccessIdentityProviders2): Future[types.AccessSingleResponse16] {.async.} =
+                                                              body: types.AccessIdentityProviders2): Future[types.AccessSingleResponse17] {.async.} =
   ## Updates a configured identity provider.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/access/identity_providers/{identityProviderId}", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AccessSingleResponse16)
+    result = fromJson(body, types.AccessSingleResponse17)
   else:
     raise newException(CloudflareClientError, body)
 

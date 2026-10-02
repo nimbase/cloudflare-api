@@ -15,9 +15,9 @@ suite "access_key_configuration serialization":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips AccessSingleResponse12":
-    let obj = newAccessSingleResponse12()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse12)) == openjson.toJson(obj)
+  test "round-trips AccessSingleResponse13":
+    let obj = newAccessSingleResponse13()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse13)) == openjson.toJson(obj)
 
 suite "access_key_configuration endpoints":
   test "GET /accounts/{account_id}/access/keys":

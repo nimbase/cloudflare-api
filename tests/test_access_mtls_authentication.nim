@@ -15,21 +15,21 @@ suite "access_mtls_authentication serialization":
     let obj = newAccessIdResponse3()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessIdResponse3)) == openjson.toJson(obj)
 
+  test "round-trips AccessSingleResponse7":
+    let obj = newAccessSingleResponse7()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse7)) == openjson.toJson(obj)
+
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips AccessResponseCollection5":
-    let obj = newAccessResponseCollection5()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection5)) == openjson.toJson(obj)
-
-  test "round-trips AccessSingleResponse6":
-    let obj = newAccessSingleResponse6()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse6)) == openjson.toJson(obj)
-
   test "round-trips AccessResponseCollectionHostnames":
     let obj = newAccessResponseCollectionHostnames()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollectionHostnames)) == openjson.toJson(obj)
+
+  test "round-trips AccessResponseCollection6":
+    let obj = newAccessResponseCollection6()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection6)) == openjson.toJson(obj)
 
   test "round-trips AccessSettings":
     let obj = newAccessSettings()

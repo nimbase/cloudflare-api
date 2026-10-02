@@ -11,21 +11,21 @@ import cloudflare
 import ./common
 
 suite "access_tags serialization":
-  test "round-trips AccessResponseCollection15":
-    let obj = newAccessResponseCollection15()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection15)) == openjson.toJson(obj)
-
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
 
+  test "round-trips AccessResponseCollection16":
+    let obj = newAccessResponseCollection16()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection16)) == openjson.toJson(obj)
+
+  test "round-trips AccessSingleResponse15":
+    let obj = newAccessSingleResponse15()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse15)) == openjson.toJson(obj)
+
   test "round-trips AccessTagWithoutAppCount":
     let obj = newAccessTagWithoutAppCount()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessTagWithoutAppCount)) == openjson.toJson(obj)
-
-  test "round-trips AccessSingleResponse14":
-    let obj = newAccessSingleResponse14()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse14)) == openjson.toJson(obj)
 
   test "round-trips AccessNameResponse":
     let obj = newAccessNameResponse()

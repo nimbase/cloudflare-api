@@ -43,7 +43,7 @@ proc putAccountsAccountIdCfdTunnelTunnelIdConfigurations*(client: CloudflareClie
 proc getAccountsAccountIdWarpConnectorTunnelIdConfigurations*(client: CloudflareClient,
                                                               accountId: types.TunnelIdentifier,
                                                               tunnelId: types.TunnelTunnelId2): Future[types.TunnelMeshConfigurationResponseSingle] {.async.} =
-  ## Gets the high-availability configuration for a WARP Connector tunnel.
+  ## Gets the high-availability configuration for a Mesh node.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/warp_connector/{tunnelId}/configurations")
   let body = await res.body
@@ -57,7 +57,7 @@ proc putAccountsAccountIdWarpConnectorTunnelIdConfigurations*(client: Cloudflare
                                                               accountId: types.TunnelIdentifier,
                                                               tunnelId: types.TunnelTunnelId2,
                                                               body: types.TunnelMeshConfigurationRequestBody): Future[types.TunnelMeshConfigurationResponseSingle] {.async.} =
-  ## Adds or updates the high-availability configuration for a WARP Connector tunnel.
+  ## Adds or updates the high-availability configuration for a Mesh node.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/warp_connector/{tunnelId}/configurations", body)
   let body = await res.body

@@ -57,8 +57,8 @@ type
 
 proc getAccountsAccountIdFlagshipApps*(client: CloudflareClient,
                                        accountId: string): Future[GetAccountsAccountIdFlagshipAppsResponse] {.async.} =
-  ## Lists all apps in the account. Returns identity and audit fields only — flag
-  ## definitions are not included.
+  ## Lists all Flagship apps in the account. Returns identity and audit fields only;
+  ## flag definitions are not included.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/flagship/apps")
   let body = await res.body
