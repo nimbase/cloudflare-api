@@ -372,15 +372,64 @@ proc getAccountsAccountIdR2BucketsBucketNameJobs*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc postAccountsAccountIdR2BucketsBucketNameJobs*(client: CloudflareClient,
+                                                   accountId: types.R2AccountIdentifier,
+                                                   bucketName: types.R2BucketName): Future[JsonNode] {.async.} =
+  ## Creates a background job for an R2 bucket. The `jobType` field selects the job:
+  ##
+  ## - **`prefixDelete`**: deletes every object whose key begins with `prefix`. A
+  ## non-empty
+  ## prefix must end in `/`. An empty prefix (`""`) empties the entire bucket.
+  ## - **`storageClassMigration`**: migrates every object in the bucket between
+  ## storage
+  ## classes. `sourceStorageClass` and `destinationStorageClass` must be provided
+  ## together
+  ## and must differ; omitting both migrates from `InfrequentAccess` to `Standard`.
+  ##
+  ## Poll the returned `id` with the Get Bucket Job endpoint. Small prefix-delete
+  ## jobs can
+  ## finish synchronously and return `COMPLETED`. Objects uploaded after a background
+  ## job
+  ## starts are not affected by that job.
+  ##
+  ## For prefix-delete jobs: abort active multipart uploads before submitting the
+  ## request,
+  ## since a synchronously completed job does not abort them, and avoid writing
+  ## objects or
+  ## starting multipart uploads while a bucket-emptying job is in progress. Each
+  ## request
+  ## creates a distinct job, and the number of active prefix-delete jobs is limited
+  ## per
+  ## bucket; wait for an existing job to finish before retrying a request rejected
+  ## with
+  ## HTTP 429. A bucket cannot be emptied while event notifications are configured
+  ## (HTTP 409
+  ## / error code 10083). To protect a bucket with R2 Data Catalog enabled, send the
+  ## `cf-r2-data-catalog-check` header; a conflict is returned with HTTP 409 / error
+  ## code
+  ## 10081.
+  ##
+  ## Prefix-delete jobs require permission to delete objects; storage-class migration
+  ## jobs
+  ## require permission to write to the bucket.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/jobs", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdR2BucketsBucketNameJobsJobId*(client: CloudflareClient,
                                                        accountId: types.R2AccountIdentifier,
                                                        bucketName: types.R2BucketName,
                                                        jobId: string): Future[JsonNode] {.async.} =
   ## Gets the current status of a background job of any type for an R2 bucket. Poll
   ## this
-  ## endpoint with the job identifier returned when the operation was submitted until
-  ## the
-  ## status is `COMPLETED`, `FAILED`, or `CANCELLED`.
+  ## endpoint with the job identifier returned by Create Bucket Job until the status
+  ## is
+  ## `COMPLETED`, `FAILED`, or `CANCELLED`.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/jobs/{jobId}")
   let body = await res.body

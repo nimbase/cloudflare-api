@@ -33,7 +33,7 @@ suite "analytics_sql endpoints":
   test "GET /accounts/{account_tag}/analytics/sql/introspection":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountTagAnalyticsSqlIntrospection("test", true, true, true, true, "test")
+    discard waitFor client.getAccountsAccountTagAnalyticsSqlIntrospection("test", true, true, true, true, true, "test")
 
   test "GET /analytics/sql":
     let client = initCloudflareClient("test-key")
@@ -48,5 +48,5 @@ suite "analytics_sql endpoints":
   test "GET /analytics/sql/introspection":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAnalyticsSqlIntrospection("test", true, true, true, true, "test")
+    discard waitFor client.getAnalyticsSqlIntrospection("test", true, true, true, true, true, "test")
 

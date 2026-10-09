@@ -53,6 +53,7 @@ proc getAccountsAccountIdAbuseReports*(client: CloudflareClient,
                                        page: int64 = default(int64),
                                        perPage: int64 = default(int64),
                                        sort: string = default(string),
+                                       search: string = default(string),
                                        domain: string = default(string),
                                        createdBefore: string = default(string),
                                        createdAfter: string = default(string),
@@ -67,6 +68,7 @@ proc getAccountsAccountIdAbuseReports*(client: CloudflareClient,
   q["page"] = $page
   q["per_page"] = $perPage
   q["sort"] = $sort
+  q["search"] = $search
   q["domain"] = $domain
   q["created_before"] = $createdBefore
   q["created_after"] = $createdAfter

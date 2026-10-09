@@ -11,7 +11,7 @@ import ./private/types
 type
   PostAccountsAccountIdAccessOrganizationsRequest = object
     allow_authenticate_via_warp: Option[types.AccessAllowAuthenticateViaWarp]
-    auth_domain: types.AccessAuthDomain
+    auth_domain: Option[types.AccessAuthDomain]
     auto_redirect_to_identity: Option[types.AccessAutoRedirectToIdentity]
     deny_unmatched_requests: Option[types.AccessDenyUnmatchedRequests]
     deny_unmatched_requests_exempted_zone_names: Option[types.AccessDenyUnmatchedRequestsExemptedZoneNames]
@@ -20,7 +20,7 @@ type
     mfa_config: Option[types.AccessOrgMfaConfig]
     mfa_piv_key_requirements: Option[types.AccessMfaPivKeyRequirements]
     mfa_required_for_all_apps: Option[types.AccessMfaRequiredForAllApps]
-    name: types.AccessName
+    name: Option[types.AccessName]
     service_token_inactivity: Option[types.AccessServiceTokenInactivity]
     session_duration: Option[types.AccessSessionDuration]
     strict_service_token_auth: Option[types.AccessStrictServiceTokenAuth]

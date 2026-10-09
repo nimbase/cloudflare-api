@@ -54,11 +54,6 @@ suite "policies endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdDataSecurityPosturePolicies("test", newPostureApiCreatePolicyRequest())
 
-  test "GET /accounts/{account_id}/data-security/posture/policies/logs":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdDataSecurityPosturePoliciesLogs("test", "test", "test", "test", "test", 1, 1)
-
   test "GET /accounts/{account_id}/data-security/posture/policies/{policy_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -73,4 +68,9 @@ suite "policies endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdDataSecurityPosturePoliciesPolicyId("test", "test")
+
+  test "GET /accounts/{account_id}/data-security/posture/policy_logs":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdDataSecurityPosturePolicyLogs("test", "test", "test", "test", "test", 1, 1)
 

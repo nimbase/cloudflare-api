@@ -198,6 +198,7 @@ proc getAccountsAccountIdResourceLibraryApplications*(client: CloudflareClient,
                                                       offset: int64 = 0,
                                                       orderBy: string = default(string),
                                                       search: string = default(string),
+                                                      lookup: string = default(string),
                                                       fields: string = default(string)): Future[types.AlexandriaGetApplicationsResponse] {.async.} =
   ## List the applications available to an account, both the applications Cloudflare
   ## curates and the custom applications the account has defined.
@@ -205,6 +206,10 @@ proc getAccountsAccountIdResourceLibraryApplications*(client: CloudflareClient,
   ## Results are paginated. Use `filter` and `search` to narrow the list, `order_by`
   ## to
   ## sort it, and `fields` to reduce each result to only the properties you need.
+  ## Use `lookup` to find complete application names mentioned in a rule sentence,
+  ## ignoring case. Lookup does not correct misspellings. It ranks matches by
+  ## relevance and uses the same filters, fields, and pagination as listing.
+  ## `lookup` cannot be combined with `search`.
   ##
   ## The authenticated principal must have access to the account identified by
   ## `account_id`.
@@ -215,6 +220,7 @@ proc getAccountsAccountIdResourceLibraryApplications*(client: CloudflareClient,
   q["offset"] = $offset
   q["order_by"] = $orderBy
   q["search"] = $search
+  q["lookup"] = $lookup
   q["fields"] = $fields
   let res = await client.httpGET(fmt"/accounts/{accountId}/resource-library/applications", q)
   let body = await res.body
@@ -227,7 +233,8 @@ proc getAccountsAccountIdResourceLibraryApplications*(client: CloudflareClient,
 proc postAccountsAccountIdResourceLibraryApplications*(client: CloudflareClient,
                                                        accountId: string,
                                                        body: types.AlexandriaCreateApplicationRequest): Future[types.AlexandriaGetApplicationResponse] {.async.} =
-  ## Create a custom application for an account.
+  ## Create a custom application for an account from a name, category, and optional
+  ## network matchers.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/resource-library/applications", body)
   let body = await res.body
@@ -240,7 +247,7 @@ proc postAccountsAccountIdResourceLibraryApplications*(client: CloudflareClient,
 proc getAccountsAccountIdResourceLibraryApplicationsId*(client: CloudflareClient,
                                                         accountId: string,
                                                         id: types.AlexandriaApplicationId): Future[types.AlexandriaGetApplicationResponse] {.async.} =
-  ## Get application by ID.
+  ## Retrieve an application available to the account by its numeric application ID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/resource-library/applications/{id}")
   let body = await res.body
@@ -268,7 +275,9 @@ proc patchAccountsAccountIdResourceLibraryApplicationsId*(client: CloudflareClie
                                                           accountId: string,
                                                           id: types.AlexandriaApplicationId,
                                                           body: types.AlexandriaUpdateApplicationRequest): Future[types.AlexandriaGetApplicationResponse] {.async.} =
-  ## Replace the network matchers for a custom application and create a new version.
+  ## Replace the supplied network matchers for a custom application and create a new
+  ## version. Omitted matcher lists remain unchanged; send an empty list to clear a
+  ## matcher type.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/resource-library/applications/{id}", body)
   let body = await res.body

@@ -23,6 +23,10 @@ suite "browser_extension_config serialization":
     let obj = newBrexUpdateConfigRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BrexUpdateConfigRequest)) == openjson.toJson(obj)
 
+  test "round-trips BrexExtensionEventsTimeseriesRequest":
+    let obj = newBrexExtensionEventsTimeseriesRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BrexExtensionEventsTimeseriesRequest)) == openjson.toJson(obj)
+
   test "round-trips BrexDeleteResponse":
     let obj = newBrexDeleteResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BrexDeleteResponse)) == openjson.toJson(obj)
@@ -38,6 +42,10 @@ suite "browser_extension_config serialization":
   test "round-trips BrexErrorResponse":
     let obj = newBrexErrorResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BrexErrorResponse)) == openjson.toJson(obj)
+
+  test "round-trips BrexExtensionEventsTimeseriesResponse":
+    let obj = newBrexExtensionEventsTimeseriesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BrexExtensionEventsTimeseriesResponse)) == openjson.toJson(obj)
 
 suite "browser_extension_config endpoints":
   test "GET /accounts/{account_id}/browser-extension/config":
@@ -64,4 +72,9 @@ suite "browser_extension_config endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdBrowserExtensionConfigLogsExtensionEventsSearch(newBrexExtensionEventsSearchRequest())
+
+  test "POST /accounts/{account_id}/browser-extension/config/logs/extension-events/timeseries":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdBrowserExtensionConfigLogsExtensionEventsTimeseries(newBrexExtensionEventsTimeseriesRequest())
 

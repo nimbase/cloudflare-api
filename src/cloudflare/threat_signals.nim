@@ -30,6 +30,11 @@ type
     errors: seq[JsonNode]
     result: JsonNode
     success: bool
+  GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    success: bool
   GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkillIdOutputResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
@@ -142,7 +147,7 @@ type
     name: string
     output_schema: string
     prompt: string
-    `type`: string
+    `type`: Option[string]
   PostAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
@@ -294,6 +299,21 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdContent*(c
   q["format"] = $format
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/{articleId}/content", q)
   return res
+
+proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkills*(client: CloudflareClient,
+                                                                              accountId: string,
+                                                                              articleId: string): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsResponse] {.async.} =
+  ## Lists active custom skills currently assigned to the article's feed and whether
+  ## each has a stored output. Output content and skill configuration are retrieved
+  ## separately.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/{articleId}/skills")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkillIdOutput*(client: CloudflareClient,
                                                                                            accountId: string,

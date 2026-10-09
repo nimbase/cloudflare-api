@@ -88,3 +88,8 @@ suite "zero_trust_users endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdAccessUsersUserIdMfaAuthenticatorsAuthenticatorId("test", "test", "test")
 
+  test "DELETE /accounts/{account_id}/access/users/{user_id}/passkeys/{authenticator_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdAccessUsersUserIdPasskeysAuthenticatorId("test", "test", "test")
+

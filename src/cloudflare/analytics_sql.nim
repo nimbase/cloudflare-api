@@ -12,11 +12,11 @@ import ./private/types
 proc getAccountsAccountTagAnalyticsSql*(client: CloudflareClient,
                                         accountTag: string, query: string): Future[JsonNode] {.async.} =
   ## Executes a SQL query scoped to the account in the request path. API Gateway
-  ## forwards the path account in its signed JWT to the existing SQL API handler, so
-  ## an accountTag predicate or JSON scope is not required. Explicit account scope
-  ## must match the path account. Any zone restrictions must belong to that account.
-  ## Query parameters, time ranges, output formats, authorization, and responses
-  ## follow the legacy query endpoint.
+  ## preserves the account path, and SQL API requires it to match the signed JWT
+  ## account, so an accountTag predicate or JSON scope is not required. Explicit
+  ## account scope must match the path account. Any zone restrictions must belong to
+  ## that account. Query parameters, time ranges, output formats, authorization, and
+  ## responses follow the legacy query endpoint.
 
   var q = initOrderedTable[string, string]()
   q["query"] = $query
@@ -32,11 +32,11 @@ proc postAccountsAccountTagAnalyticsSql*(client: CloudflareClient,
                                          accountTag: string,
                                          body: types.AnalyticsSqlSqlQueryRequest): Future[JsonNode] {.async.} =
   ## Executes a SQL query scoped to the account in the request path. API Gateway
-  ## forwards the path account in its signed JWT to the existing SQL API handler, so
-  ## an accountTag predicate or JSON scope is not required. Explicit account scope
-  ## must match the path account. Any zone restrictions must belong to that account.
-  ## Query parameters, time ranges, output formats, authorization, and responses
-  ## follow the legacy query endpoint.
+  ## preserves the account path, and SQL API requires it to match the signed JWT
+  ## account, so an accountTag predicate or JSON scope is not required. Explicit
+  ## account scope must match the path account. Any zone restrictions must belong to
+  ## that account. Query parameters, time ranges, output formats, authorization, and
+  ## responses follow the legacy query endpoint.
 
   let res = await client.httpPOST(fmt"/accounts/{accountTag}/analytics/sql", body)
   let body = await res.body
@@ -50,18 +50,20 @@ proc getAccountsAccountTagAnalyticsSqlIntrospection*(client: CloudflareClient,
                                                      accountTag: string,
                                                      includeColumns: bool = false,
                                                      includeCustomAttributes: bool = false,
+                                                     includeAttributes: bool = false,
                                                      includeWae: bool = true,
                                                      includeLex: bool = true,
                                                      datasetName: string = default(string)): Future[types.AnalyticsSqlIntrospectionResponse] {.async.} =
   ## Returns the dataset catalogue for the account in the request path. API Gateway
-  ## forwards the path account in its signed JWT to the existing introspection
-  ## handler; account_tag is not required as a query parameter. If supplied, it must
+  ## preserves the account path, and SQL API requires it to match the signed JWT
+  ## account; account_tag is not required as a query parameter. If supplied, it must
   ## match the path account. Dataset and column discovery options are identical to
   ## the legacy introspection endpoint.
 
   var q = initOrderedTable[string, string]()
   q["include_columns"] = $includeColumns
   q["include_custom_attributes"] = $includeCustomAttributes
+  q["include_attributes"] = $includeAttributes
   q["include_wae"] = $includeWae
   q["include_lex"] = $includeLex
   q["dataset_name"] = $datasetName
@@ -112,6 +114,7 @@ proc postAnalyticsSql*(client: CloudflareClient,
 proc getAnalyticsSqlIntrospection*(client: CloudflareClient, accountTag: string,
                                    includeColumns: bool = false,
                                    includeCustomAttributes: bool = false,
+                                   includeAttributes: bool = false,
                                    includeWae: bool = true,
                                    includeLex: bool = true,
                                    datasetName: string = default(string)): Future[types.AnalyticsSqlIntrospectionResponse] {.async.} =
@@ -121,11 +124,13 @@ proc getAnalyticsSqlIntrospection*(client: CloudflareClient, accountTag: string,
   ## types, and hidden flags. The caller must have Account Analytics Read permission
   ## on the account identified by `account_tag`. Dataset names, descriptions, and
   ## columns are the same for every authorized account. When
-  ## `include_custom_attributes` is set, the response also includes custom attribute
-  ## names and types discovered from that account's own data, which legitimately
-  ## differs per caller. `hidden` marks catalogue entries a client should
-  ## de-emphasise. It has no effect on access: hidden datasets and columns are
-  ## returned here and remain fully queryable.
+  ## `include_custom_attributes` or `include_attributes` is set, the response also
+  ## includes attribute names and types discovered from that account's own data,
+  ## which legitimately differs per caller. `attributes` is a replacement for
+  ## `custom_attributes` that will eventually be removed; until then, set either flag
+  ## independently to receive the corresponding field. `hidden` marks catalogue
+  ## entries a client should de-emphasise. It has no effect on access: hidden
+  ## datasets and columns are returned here and remain fully queryable.
   ##
   ## The catalogue lists the datasets this deployment is able to describe, which is
   ## not a fixed list. Some datasets are described by the service that owns them and
@@ -151,6 +156,7 @@ proc getAnalyticsSqlIntrospection*(client: CloudflareClient, accountTag: string,
   q["account_tag"] = $accountTag
   q["include_columns"] = $includeColumns
   q["include_custom_attributes"] = $includeCustomAttributes
+  q["include_attributes"] = $includeAttributes
   q["include_wae"] = $includeWae
   q["include_lex"] = $includeLex
   q["dataset_name"] = $datasetName

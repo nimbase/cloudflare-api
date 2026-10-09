@@ -4,7 +4,7 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[strformat, options]
+import std/[strformat, options, json]
 import ./private/metaclient
 
 type
@@ -13,6 +13,13 @@ type
     priority: Option[int64]
     requirement: string
     tlp: Option[string]
+  PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateRequest = object
+    requirement: string
+  PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    success: bool
   PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceInterestsRequest = object
     dimension: string
     enabled: Option[bool]
@@ -78,6 +85,21 @@ proc getAccountsAccountIdCloudforceOneV2PriorityIntelligenceConstants*(client: C
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/constants")
   return res
+
+proc postAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerate*(client: CloudflareClient,
+                                                                              accountId: string,
+                                                                              body: PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateRequest): Future[PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateResponse] {.async.} =
+  ## Translates a natural-language Priority Intelligence Requirement into Threat
+  ## Events `searchBranches` with Workers AI. Terms that cannot be expressed as event
+  ## filters are returned in `unresolved_terms`. Nothing is stored or executed.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/filters/generate", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateResponse)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdCloudforceOneV2PriorityIntelligenceInterests*(client: CloudflareClient,
                                                                        accountId: string,

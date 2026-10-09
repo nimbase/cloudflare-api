@@ -15,13 +15,15 @@ type
     success: bool
 
 proc getAccountsAccountIdWorkersObservabilityUsage*(client: CloudflareClient,
-                                                    `from`: string, to: string): Future[GetAccountsAccountIdWorkersObservabilityUsageResponse] {.async.} =
-  ## Event counts broken down by dataset and service, bucketed by day, for up to 90
-  ## days. The top-level events field is the sum of all breakdown counts.
+                                                    `from`: string, to: string,
+                                                    tz: string = default(string)): Future[GetAccountsAccountIdWorkersObservabilityUsageResponse] {.async.} =
+  ## Event counts and sizes broken down by dataset and service, bucketed by day, for
+  ## up to 90 days. The top-level events field is the sum of all breakdown counts.
 
   var q = initOrderedTable[string, string]()
   q["from"] = $`from`
   q["to"] = $to
+  q["tz"] = $tz
   let res = await client.httpGET("/accounts/{account_id}/workers/observability/usage", q)
   let body = await res.body
   case res.code

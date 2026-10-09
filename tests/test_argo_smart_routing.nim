@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "argo_smart_routing serialization":
+  test "round-trips ArgoConfigCountZonesResponse":
+    let obj = newArgoConfigCountZonesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ArgoConfigCountZonesResponse)) == openjson.toJson(obj)
+
   test "round-trips ArgoConfigApiResponseCommonFailure":
     let obj = newArgoConfigApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ArgoConfigApiResponseCommonFailure)) == openjson.toJson(obj)
@@ -24,6 +28,16 @@ suite "argo_smart_routing serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ArgoConfigPatch)) == openjson.toJson(obj)
 
 suite "argo_smart_routing endpoints":
+  test "GET /accounts/{account_id}/argo/count_zones_enabled":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdArgoCountZonesEnabled("test")
+
+  test "GET /user/argo/count_zones_enabled":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getUserArgoCountZonesEnabled()
+
   test "GET /zones/{zone_id}/argo/smart_routing":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

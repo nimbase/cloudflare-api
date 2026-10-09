@@ -14,7 +14,7 @@ type
     clearance_level: Option[types.TurnstileClearanceLevel]
     domains: types.TurnstileDomains
     ephemeral_id: Option[types.TurnstileEphemeralId]
-    mode: types.TurnstileWidgetMode
+    mode: JsonNode
     name: types.TurnstileName
     offlabel: Option[types.TurnstileOfflabel]
     region: Option[types.TurnstileRegion]
@@ -23,7 +23,7 @@ type
     clearance_level: Option[types.TurnstileClearanceLevel]
     domains: types.TurnstileDomains
     ephemeral_id: Option[types.TurnstileEphemeralId]
-    mode: types.TurnstileWidgetMode
+    mode: JsonNode
     name: types.TurnstileName
     offlabel: Option[types.TurnstileOfflabel]
     region: Option[types.TurnstileRegion]

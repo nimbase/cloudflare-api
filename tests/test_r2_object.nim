@@ -39,10 +39,6 @@ suite "r2_object serialization":
     let obj = cloudflare.GetAccountsAccountIdR2BucketsBucketNameObjectsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdR2BucketsBucketNameObjectsResponse)) == openjson.toJson(obj)
 
-  test "round-trips DeleteAccountsAccountIdR2BucketsBucketNameObjectsResponse":
-    let obj = cloudflare.DeleteAccountsAccountIdR2BucketsBucketNameObjectsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdR2BucketsBucketNameObjectsResponse)) == openjson.toJson(obj)
-
 suite "r2_object endpoints":
   test "GET /accounts/{account_id}/r2/buckets/{bucket_name}/objects":
     let client = initCloudflareClient("test-key")

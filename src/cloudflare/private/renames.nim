@@ -435,10 +435,10 @@ proc renameHook*(v: types.BillableUsageApiV2AccountBillableMetric, fieldName: va
     fieldName = "ProductFamily"
 
 proc renameHook*(v: types.BillableUsageApiV2FilterBy, fieldName: var string) {.inline.} =
-  if fieldName == "MetricIds":
-    fieldName = "metric_ids"
-  elif fieldName == "metric_ids":
-    fieldName = "MetricIds"
+  if fieldName == "BillableMetricIds":
+    fieldName = "billable_metric_ids"
+  elif fieldName == "billable_metric_ids":
+    fieldName = "BillableMetricIds"
   elif fieldName == "ProductFamilyIds":
     fieldName = "product_family_ids"
   elif fieldName == "product_family_ids":
@@ -507,6 +507,10 @@ proc renameHook*(v: types.BillableUsageApiV2UsageQuery, fieldName: var string) {
     fieldName = "group_by"
   elif fieldName == "group_by":
     fieldName = "GroupBy"
+  elif fieldName == "Metric":
+    fieldName = "metric"
+  elif fieldName == "metric":
+    fieldName = "Metric"
   elif fieldName == "TimePeriod":
     fieldName = "time_period"
   elif fieldName == "time_period":
@@ -517,6 +521,10 @@ proc renameHook*(v: types.BrexExtensionEventLogRow, fieldName: var string) {.inl
     fieldName = "duration_ms"
   elif fieldName == "duration_ms":
     fieldName = "durationMs"
+  elif fieldName == "eventId":
+    fieldName = "event_id"
+  elif fieldName == "event_id":
+    fieldName = "eventId"
   elif fieldName == "eventName":
     fieldName = "event_name"
   elif fieldName == "event_name":
@@ -555,6 +563,22 @@ proc renameHook*(v: types.BrexExtensionEventsSearchRequest, fieldName: var strin
     fieldName = "include_total"
   elif fieldName == "include_total":
     fieldName = "includeTotal"
+
+proc renameHook*(v: types.BrexExtensionEventsTimeseriesRequest, fieldName: var string) {.inline.} =
+  if fieldName == "groupBy":
+    fieldName = "group_by"
+  elif fieldName == "group_by":
+    fieldName = "groupBy"
+
+proc renameHook*(v: types.BrexExtensionEventsTimeseriesSlot, fieldName: var string) {.inline.} =
+  if fieldName == "eventName":
+    fieldName = "event_name"
+  elif fieldName == "event_name":
+    fieldName = "eventName"
+  elif fieldName == "eventsTotal":
+    fieldName = "events_total"
+  elif fieldName == "events_total":
+    fieldName = "eventsTotal"
 
 proc renameHook*(v: types.BrexInstalledExtension, fieldName: var string) {.inline.} =
   if fieldName == "hostPermissions":
@@ -1648,6 +1672,26 @@ proc renameHook*(v: types.R2CorsRule, fieldName: var string) {.inline.} =
   elif fieldName == "max_age_seconds":
     fieldName = "maxAgeSeconds"
 
+proc renameHook*(v: types.R2CreatePrefixDeleteJobRequest, fieldName: var string) {.inline.} =
+  if fieldName == "jobType":
+    fieldName = "job_type"
+  elif fieldName == "job_type":
+    fieldName = "jobType"
+
+proc renameHook*(v: types.R2CreateStorageClassMigrationJobRequest, fieldName: var string) {.inline.} =
+  if fieldName == "destinationStorageClass":
+    fieldName = "destination_storage_class"
+  elif fieldName == "destination_storage_class":
+    fieldName = "destinationStorageClass"
+  elif fieldName == "jobType":
+    fieldName = "job_type"
+  elif fieldName == "job_type":
+    fieldName = "jobType"
+  elif fieldName == "sourceStorageClass":
+    fieldName = "source_storage_class"
+  elif fieldName == "source_storage_class":
+    fieldName = "sourceStorageClass"
+
 proc renameHook*(v: types.R2EditCustomDomainRequest, fieldName: var string) {.inline.} =
   if fieldName == "minTLS":
     fieldName = "min_t_l_s"
@@ -1722,6 +1766,24 @@ proc renameHook*(v: types.R2ObjectSizeMetrics, fieldName: var string) {.inline.}
   elif fieldName == "payload_size":
     fieldName = "payloadSize"
 
+proc renameHook*(v: types.R2PrefixDeleteJob, fieldName: var string) {.inline.} =
+  if fieldName == "endTime":
+    fieldName = "end_time"
+  elif fieldName == "end_time":
+    fieldName = "endTime"
+  elif fieldName == "jobType":
+    fieldName = "job_type"
+  elif fieldName == "job_type":
+    fieldName = "jobType"
+  elif fieldName == "prefixDelete":
+    fieldName = "prefix_delete"
+  elif fieldName == "prefix_delete":
+    fieldName = "prefixDelete"
+  elif fieldName == "startTime":
+    fieldName = "start_time"
+  elif fieldName == "start_time":
+    fieldName = "startTime"
+
 proc renameHook*(v: types.R2QueuesConfig, fieldName: var string) {.inline.} =
   if fieldName == "queueId":
     fieldName = "queue_id"
@@ -1764,25 +1826,7 @@ proc renameHook*(v: types.R2R2ObjectHttpMetadata, fieldName: var string) {.inlin
   elif fieldName == "content_type":
     fieldName = "contentType"
 
-proc renameHook*(v: types.R2R2PrefixDeleteJob, fieldName: var string) {.inline.} =
-  if fieldName == "endTime":
-    fieldName = "end_time"
-  elif fieldName == "end_time":
-    fieldName = "endTime"
-  elif fieldName == "jobType":
-    fieldName = "job_type"
-  elif fieldName == "job_type":
-    fieldName = "jobType"
-  elif fieldName == "prefixDelete":
-    fieldName = "prefix_delete"
-  elif fieldName == "prefix_delete":
-    fieldName = "prefixDelete"
-  elif fieldName == "startTime":
-    fieldName = "start_time"
-  elif fieldName == "start_time":
-    fieldName = "startTime"
-
-proc renameHook*(v: types.R2R2StorageClassMigrationJob, fieldName: var string) {.inline.} =
+proc renameHook*(v: types.R2StorageClassMigrationJob, fieldName: var string) {.inline.} =
   if fieldName == "endTime":
     fieldName = "end_time"
   elif fieldName == "end_time":
@@ -2461,6 +2505,90 @@ proc renameHook*(v: types.VectorizeListMetadataIndexResponse, fieldName: var str
     fieldName = "metadata_indexes"
   elif fieldName == "metadata_indexes":
     fieldName = "metadataIndexes"
+
+proc renameHook*(v: types.WorkersObservabilityAgentSession, fieldName: var string) {.inline.} =
+  if fieldName == "agentId":
+    fieldName = "agent_id"
+  elif fieldName == "agent_id":
+    fieldName = "agentId"
+  elif fieldName == "agentName":
+    fieldName = "agent_name"
+  elif fieldName == "agent_name":
+    fieldName = "agentName"
+  elif fieldName == "conversationId":
+    fieldName = "conversation_id"
+  elif fieldName == "conversation_id":
+    fieldName = "conversationId"
+  elif fieldName == "inputTokens":
+    fieldName = "input_tokens"
+  elif fieldName == "input_tokens":
+    fieldName = "inputTokens"
+  elif fieldName == "lastActiveMs":
+    fieldName = "last_active_ms"
+  elif fieldName == "last_active_ms":
+    fieldName = "lastActiveMs"
+  elif fieldName == "outputTokens":
+    fieldName = "output_tokens"
+  elif fieldName == "output_tokens":
+    fieldName = "outputTokens"
+  elif fieldName == "serviceName":
+    fieldName = "service_name"
+  elif fieldName == "service_name":
+    fieldName = "serviceName"
+  elif fieldName == "sessionDurationMs":
+    fieldName = "session_duration_ms"
+  elif fieldName == "session_duration_ms":
+    fieldName = "sessionDurationMs"
+  elif fieldName == "sessionStartMs":
+    fieldName = "session_start_ms"
+  elif fieldName == "session_start_ms":
+    fieldName = "sessionStartMs"
+  elif fieldName == "spanCount":
+    fieldName = "span_count"
+  elif fieldName == "span_count":
+    fieldName = "spanCount"
+  elif fieldName == "traceCount":
+    fieldName = "trace_count"
+  elif fieldName == "trace_count":
+    fieldName = "traceCount"
+
+proc renameHook*(v: types.WorkersObservabilityAgentSessionRun, fieldName: var string) {.inline.} =
+  if fieldName == "agentId":
+    fieldName = "agent_id"
+  elif fieldName == "agent_id":
+    fieldName = "agentId"
+  elif fieldName == "agentName":
+    fieldName = "agent_name"
+  elif fieldName == "agent_name":
+    fieldName = "agentName"
+  elif fieldName == "conversationId":
+    fieldName = "conversation_id"
+  elif fieldName == "conversation_id":
+    fieldName = "conversationId"
+  elif fieldName == "inputTokens":
+    fieldName = "input_tokens"
+  elif fieldName == "input_tokens":
+    fieldName = "inputTokens"
+  elif fieldName == "outputTokens":
+    fieldName = "output_tokens"
+  elif fieldName == "output_tokens":
+    fieldName = "outputTokens"
+  elif fieldName == "traceDurationMs":
+    fieldName = "trace_duration_ms"
+  elif fieldName == "trace_duration_ms":
+    fieldName = "traceDurationMs"
+  elif fieldName == "traceEndMs":
+    fieldName = "trace_end_ms"
+  elif fieldName == "trace_end_ms":
+    fieldName = "traceEndMs"
+  elif fieldName == "traceId":
+    fieldName = "trace_id"
+  elif fieldName == "trace_id":
+    fieldName = "traceId"
+  elif fieldName == "traceStartMs":
+    fieldName = "trace_start_ms"
+  elif fieldName == "trace_start_ms":
+    fieldName = "traceStartMs"
 
 proc renameHook*(v: types.WorkersObservabilityDistributionResult, fieldName: var string) {.inline.} =
   if fieldName == "bucketBoundaries":

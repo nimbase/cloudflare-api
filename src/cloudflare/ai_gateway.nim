@@ -221,7 +221,8 @@ proc getAccountsAccountIdAiGatewayBillingUsageHistory*(client: CloudflareClient,
                                                        valueGroupingWindow: AiGatewayValueGroupingWindowOption,
                                                        startTime: float64 = default(float64),
                                                        endTime: float64 = default(float64)): Future[types.AigBillingGetUsageHistoryResponse] {.async.} =
-  ## Retrieve aggregated usage meter event summaries for the given time range.
+  ## Retrieve AI Gateway usage cost, in US dollars, aggregated by hour or day for the
+  ## given time range.
 
   var q = initOrderedTable[string, string]()
   q["value_grouping_window"] = $valueGroupingWindow

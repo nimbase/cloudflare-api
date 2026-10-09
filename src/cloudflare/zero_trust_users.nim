@@ -150,11 +150,27 @@ proc deleteAccountsAccountIdAccessUsersUserIdMfaAuthenticatorsAuthenticatorId*(c
                                                                                userId: types.AccessUuid,
                                                                                accountId: types.AccessIdentifier,
                                                                                authenticatorId: types.AccessAuthenticatorId): Future[types.AccessDeleteAuthenticatorResponse] {.async.} =
-  ## Deletes a specific MFA device, including a PIV key or FIDO2 key enrollment, for
-  ## a user. This action is only available if MFA is turned on for the organization.
+  ## Deletes a specific MFA device or passkey, including a PIV key or FIDO2 key
+  ## enrollment, for a user. Admin deletion remains available when MFA is disabled.
   ## Successful deletion revokes the enrollment and returns a null result.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/access/users/{userId}/mfa_authenticators/{authenticatorId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessDeleteAuthenticatorResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdAccessUsersUserIdPasskeysAuthenticatorId*(client: CloudflareClient,
+                                                                      userId: types.AccessUuid,
+                                                                      accountId: types.AccessIdentifier,
+                                                                      authenticatorId: types.AccessAuthenticatorId): Future[types.AccessDeleteAuthenticatorResponse] {.async.} =
+  ## Alias of the authenticator deletion endpoint for passkey management. The
+  ## identifier is the passkey's authenticator ID from the last-seen identity
+  ## response. Successful deletion revokes the enrollment and returns a null result.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/access/users/{userId}/passkeys/{authenticatorId}")
   let body = await res.body
   case res.code
   of Http200:

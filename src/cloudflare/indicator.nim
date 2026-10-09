@@ -340,10 +340,10 @@ proc getAccountsAccountIdCloudforceOneEventsIndicators*(client: CloudflareClient
                                                         cache: IndicatorCacheOption = cacheFromGraph,
                                                         cursor: string = default(string)): Future[GetAccountsAccountIdCloudforceOneEventsIndicatorsResponse] {.async.} =
   ## Retrieves indicators across specified datasets, ordered by createdAt descending
-  ## then UUID, dataset ID, and shard ID ascending. Use the standalone datasetIds
-  ## value 'all'/'*' for legacy all-datasets behavior, 'analytics' for
-  ## isAnalytics=true datasets, or 'operational' for isAnalytics=false datasets. If
-  ## no datasetIds are provided, uses the default dataset.
+  ## then UUID, dataset ID, and shard ID ascending. Use one standalone datasetIds
+  ## scope value: 'all'/'*' or 'operational' for readable intelligence datasets
+  ## (isAnalytics=false), or 'analytics' for readable analytics datasets
+  ## (isAnalytics=true). If no datasetIds are provided, uses the default dataset.
 
   var q = initOrderedTable[string, string]()
   for v in datasetIds: q["datasetIds"] = $v

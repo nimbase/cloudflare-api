@@ -118,8 +118,7 @@ proc patchAccountsAccountIdAiSearchNamespacesNameInstancesId*(client: Cloudflare
   ## Use 'default' with --destination-namespace to move the instance back to the
   ## default namespace. Fails with 400 if the target namespace already has an
   ## instance with the same id (ids must be unique within a namespace — the same id
-  ## can exist in different namespaces). Search for Agents instances cannot move to
-  ## another namespace.
+  ## can exist in different namespaces).
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances/{id}", body)
   let body = await res.body

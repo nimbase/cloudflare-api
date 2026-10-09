@@ -40,8 +40,12 @@ proc getOrganizationsOrganizationIdMembers*(client: CloudflareClient,
                                             userEmailEndsWith: string = default(string),
                                             pageToken: string = default(string),
                                             pageSize: int64 = default(int64)): Future[GetOrganizationsOrganizationIdMembersResponse] {.async.} =
-  ## List memberships for an Organization. (Currently in Public Beta - see
-  ## https://developers.cloudflare.com/fundamentals/organizations/)
+  ## List memberships for an Organization.
+  ##
+  ## Authentication: A Global API key for a user with
+  ## `com.cloudflare.api.tenant.unit.member.list` is required. User API Tokens are
+  ## not currently
+  ## supported.
 
   var q = initOrderedTable[string, string]()
   q["status"] = $status
@@ -62,8 +66,12 @@ proc getOrganizationsOrganizationIdMembers*(client: CloudflareClient,
 proc postOrganizationsOrganizationIdMembers*(client: CloudflareClient,
                                              organizationId: types.OrganizationsApiOrganizationID,
                                              body: types.OrganizationsApiCreateMemberRequest): Future[PostOrganizationsOrganizationIdMembersResponse] {.async.} =
-  ## Create a membership that grants access to a specific Organization. (Currently in
-  ## Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+  ## Create a membership that grants access to a specific Organization.
+  ##
+  ## Authentication: A Global API key for a user with
+  ## `com.cloudflare.api.tenant.unit.member.create` is required. User API Tokens are
+  ## not
+  ## currently supported.
 
   let res = await client.httpPOST(fmt"/organizations/{organizationId}/members", body)
   let body = await res.body
@@ -76,8 +84,12 @@ proc postOrganizationsOrganizationIdMembers*(client: CloudflareClient,
 proc getOrganizationsOrganizationIdMembersMemberId*(client: CloudflareClient,
                                                     organizationId: types.OrganizationsApiOrganizationID,
                                                     memberId: types.OrganizationsApiMemberID): Future[GetOrganizationsOrganizationIdMembersMemberIdResponse] {.async.} =
-  ## Retrieve a single membership from an Organization. (Currently in Public Beta -
-  ## see https://developers.cloudflare.com/fundamentals/organizations/)
+  ## Retrieve a single membership from an Organization.
+  ##
+  ## Authentication: A Global API key for a user with
+  ## `com.cloudflare.api.tenant.unit.member.read` is required. User API Tokens are
+  ## not currently
+  ## supported.
 
   let res = await client.httpGET(fmt"/organizations/{organizationId}/members/{memberId}")
   let body = await res.body
@@ -90,8 +102,12 @@ proc getOrganizationsOrganizationIdMembersMemberId*(client: CloudflareClient,
 proc deleteOrganizationsOrganizationIdMembersMemberId*(client: CloudflareClient,
                                                        organizationId: types.OrganizationsApiOrganizationID,
                                                        memberId: types.OrganizationsApiMemberID): Future[AsyncResponse] {.async.} =
-  ## Delete a membership to a particular Organization. (Currently in Public Beta -
-  ## see https://developers.cloudflare.com/fundamentals/organizations/)
+  ## Delete a membership to a particular Organization.
+  ##
+  ## Authentication: A Global API key for a user with
+  ## `com.cloudflare.api.tenant.unit.member.delete` is required. User API Tokens are
+  ## not
+  ## currently supported.
 
   let res = await client.httpDELETE(fmt"/organizations/{organizationId}/members/{memberId}")
   return res
@@ -100,6 +116,11 @@ proc postOrganizationsOrganizationIdMembersBatchCreate*(client: CloudflareClient
                                                         organizationId: types.OrganizationsApiOrganizationID,
                                                         body: types.OrganizationsApiBatchCreateMembersRequest): Future[PostOrganizationsOrganizationIdMembersBatchCreateResponse] {.async.} =
   ## Batch create multiple memberships that grant access to a specific Organization.
+  ##
+  ## Authentication: A Global API key for a user with
+  ## `com.cloudflare.api.tenant.unit.member.create` is required. User API Tokens are
+  ## not
+  ## currently supported.
 
   let res = await client.httpPOST(fmt"/organizations/{organizationId}/members:batchCreate", body)
   let body = await res.body

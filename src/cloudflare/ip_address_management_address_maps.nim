@@ -18,6 +18,14 @@ type
     default_sni: Option[types.AddressingDefaultSni]
     description: Option[types.AddressingDescription2]
     enabled: Option[types.AddressingEnabled]
+  PostAccountsAccountIdAddressingAddressMapsAddressMapIdIpsRequest = object
+    ips: seq[types.AddressingIpAddress]
+  DeleteAccountsAccountIdAddressingAddressMapsAddressMapIdIpsRequest = object
+    ips: seq[types.AddressingIpAddress]
+  PostAccountsAccountIdAddressingAddressMapsAddressMapIdZonesRequest = object
+    zones: seq[types.AddressingZoneIdentifier]
+  DeleteAccountsAccountIdAddressingAddressMapsAddressMapIdZonesRequest = object
+    zones: seq[types.AddressingZoneIdentifier]
 
 proc getAccountsAccountIdAddressingAddressMaps*(client: CloudflareClient,
                                                 accountId: types.AddressingAccountIdentifier): Future[types.AddressingResponseCollection3] {.async.} =
@@ -39,7 +47,7 @@ proc postAccountsAccountIdAddressingAddressMaps*(client: CloudflareClient,
   let res = await client.httpPOST(fmt"/accounts/{accountId}/addressing/address_maps", body)
   let body = await res.body
   case res.code
-  of Http200:
+  of Http201:
     result = fromJson(body, types.AddressingFullResponse)
   else:
     raise newException(CloudflareClientError, body)
@@ -94,7 +102,7 @@ proc putAccountsAccountIdAddressingAddressMapsAddressMapIdAccountsMemberAccountI
   let res = await client.httpPUT(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/accounts/{memberAccountId}")
   let body = await res.body
   case res.code
-  of Http200:
+  of Http201:
     result = fromJson(body, types.AddressingApiResponseCollection)
   else:
     raise newException(CloudflareClientError, body)
@@ -113,6 +121,34 @@ proc deleteAccountsAccountIdAddressingAddressMapsAddressMapIdAccountsMemberAccou
   else:
     raise newException(CloudflareClientError, body)
 
+proc postAccountsAccountIdAddressingAddressMapsAddressMapIdIps*(client: CloudflareClient,
+                                                                addressMapId: types.AddressingAddressMapIdentifier,
+                                                                accountId: types.AddressingAccountIdentifier,
+                                                                body: PostAccountsAccountIdAddressingAddressMapsAddressMapIdIpsRequest): Future[types.AddressingApiResponseCollection] {.async.} =
+  ## Add multiple IPs to a particular address map.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/ips", body)
+  let body = await res.body
+  case res.code
+  of Http201:
+    result = fromJson(body, types.AddressingApiResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdAddressingAddressMapsAddressMapIdIps*(client: CloudflareClient,
+                                                                  addressMapId: types.AddressingAddressMapIdentifier,
+                                                                  accountId: types.AddressingAccountIdentifier,
+                                                                  body: DeleteAccountsAccountIdAddressingAddressMapsAddressMapIdIpsRequest): Future[types.AddressingApiResponseCollection] {.async.} =
+  ## Remove multiple IPs from a particular address map.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/ips", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AddressingApiResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc putAccountsAccountIdAddressingAddressMapsAddressMapIdIpsIpAddress*(client: CloudflareClient,
                                                                         ipAddress: types.AddressingIpAddress,
                                                                         addressMapId: types.AddressingAddressMapIdentifier,
@@ -122,7 +158,7 @@ proc putAccountsAccountIdAddressingAddressMapsAddressMapIdIpsIpAddress*(client: 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/ips/{ipAddress}")
   let body = await res.body
   case res.code
-  of Http200:
+  of Http201:
     result = fromJson(body, types.AddressingApiResponseCollection)
   else:
     raise newException(CloudflareClientError, body)
@@ -141,6 +177,34 @@ proc deleteAccountsAccountIdAddressingAddressMapsAddressMapIdIpsIpAddress*(clien
   else:
     raise newException(CloudflareClientError, body)
 
+proc postAccountsAccountIdAddressingAddressMapsAddressMapIdZones*(client: CloudflareClient,
+                                                                  addressMapId: types.AddressingAddressMapIdentifier,
+                                                                  accountId: types.AddressingAccountIdentifier,
+                                                                  body: PostAccountsAccountIdAddressingAddressMapsAddressMapIdZonesRequest): Future[types.AddressingApiResponseCollection] {.async.} =
+  ## Add multiple zones as members of a particular address map.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/zones", body)
+  let body = await res.body
+  case res.code
+  of Http201:
+    result = fromJson(body, types.AddressingApiResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdAddressingAddressMapsAddressMapIdZones*(client: CloudflareClient,
+                                                                    addressMapId: types.AddressingAddressMapIdentifier,
+                                                                    accountId: types.AddressingAccountIdentifier,
+                                                                    body: DeleteAccountsAccountIdAddressingAddressMapsAddressMapIdZonesRequest): Future[types.AddressingApiResponseCollection] {.async.} =
+  ## Remove multiple zones as members of a particular address map.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/zones", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AddressingApiResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc putAccountsAccountIdAddressingAddressMapsAddressMapIdZonesMemberZoneId*(client: CloudflareClient,
                                                                              memberZoneId: types.AddressingZoneIdentifier,
                                                                              addressMapId: types.AddressingAddressMapIdentifier,
@@ -150,7 +214,7 @@ proc putAccountsAccountIdAddressingAddressMapsAddressMapIdZonesMemberZoneId*(cli
   let res = await client.httpPUT(fmt"/accounts/{accountId}/addressing/address_maps/{addressMapId}/zones/{memberZoneId}")
   let body = await res.body
   case res.code
-  of Http200:
+  of Http201:
     result = fromJson(body, types.AddressingApiResponseCollection)
   else:
     raise newException(CloudflareClientError, body)

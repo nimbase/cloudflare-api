@@ -18,6 +18,18 @@ type
   PatchAccountsAccountIdAddressingPrefixesPrefixIdRequest = object
     description: types.AddressingDescription
 
+proc getAccountsAccountIdAddressingLoaDocuments*(client: CloudflareClient,
+                                                 accountId: types.AddressingAccountIdentifier): Future[types.AddressingLoaDocumentCollection] {.async.} =
+  ## List all LOA documents uploaded under the account.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/addressing/loa_documents")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AddressingLoaDocumentCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc postAccountsAccountIdAddressingLoaDocuments*(client: CloudflareClient,
                                                   accountId: types.AddressingAccountIdentifier): Future[types.AddressingLoaUploadResponse] {.async.} =
   ## Submit LOA document (pdf format) under the account.

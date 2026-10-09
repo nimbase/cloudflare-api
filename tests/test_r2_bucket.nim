@@ -200,6 +200,11 @@ suite "r2_bucket endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.putAccountsAccountIdR2BucketsBucketNameDomainsManaged("test", "test", newR2EditManagedDomainRequest())
 
+  test "POST /accounts/{account_id}/r2/buckets/{bucket_name}/jobs":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdR2BucketsBucketNameJobs("test", "test")
+
   test "GET /accounts/{account_id}/r2/buckets/{bucket_name}/jobs/{job_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

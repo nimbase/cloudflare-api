@@ -68,3 +68,21 @@ proc postAccountsAccountIdBrowserExtensionConfigLogsExtensionEventsSearch*(clien
     result = fromJson(body, types.BrexExtensionEventsSearchResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdBrowserExtensionConfigLogsExtensionEventsTimeseries*(client: CloudflareClient,
+                                                                               body: types.BrexExtensionEventsTimeseriesRequest): Future[types.BrexExtensionEventsTimeseriesResponse] {.async.} =
+  ## Returns browser extension event counts grouped by time bucket and the requested
+  ## `groupBy` fields. Accepts the same filters as event log search. When
+  ## `resolution` is
+  ## omitted, ranges shorter than 10 days use `1 hours` buckets and ranges of 10 days
+  ## or
+  ## more use `1 days`. Empty buckets are omitted. Results over 10000 slots return
+  ## 400.
+
+  let res = await client.httpPOST("/accounts/{account_id}/browser-extension/config/logs/extension-events/timeseries", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.BrexExtensionEventsTimeseriesResponse)
+  else:
+    raise newException(CloudflareClientError, body)

@@ -38,6 +38,41 @@ type
     result: seq[JsonNode]
     result_info: JsonNode
     success: bool
+  GetAccountsAccountIdWorkflowsConcurrencyResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: seq[JsonNode]
+    result_info: JsonNode
+    success: bool
+  PostAccountsAccountIdWorkflowsConcurrencyRequest = object
+    limit: int64
+    name: string
+  PostAccountsAccountIdWorkflowsConcurrencyResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
+  GetAccountsAccountIdWorkflowsConcurrencyKeyIdResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
+  DeleteAccountsAccountIdWorkflowsConcurrencyKeyIdResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
+  PatchAccountsAccountIdWorkflowsConcurrencyKeyIdRequest = object
+    limit: int64
+  PatchAccountsAccountIdWorkflowsConcurrencyKeyIdResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    result_info: JsonNode
+    success: bool
   GetAccountsAccountIdWorkflowsSettingsResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
@@ -277,6 +312,82 @@ proc getAccountsAccountIdWorkflows*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, GetAccountsAccountIdWorkflowsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdWorkflowsConcurrency*(client: CloudflareClient,
+                                               perPage: float64 = default(float64),
+                                               page: float64 = default(float64),
+                                               accountId: string): Future[GetAccountsAccountIdWorkflowsConcurrencyResponse] {.async.} =
+  ## Lists the account-scoped concurrency keys.
+
+  var q = initOrderedTable[string, string]()
+  q["per_page"] = $perPage
+  q["page"] = $page
+  let res = await client.httpGET(fmt"/accounts/{accountId}/workflows/concurrency", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdWorkflowsConcurrencyResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdWorkflowsConcurrency*(client: CloudflareClient,
+                                                accountId: string,
+                                                body: PostAccountsAccountIdWorkflowsConcurrencyRequest): Future[PostAccountsAccountIdWorkflowsConcurrencyResponse] {.async.} =
+  ## Creates an account-scoped concurrency key. Limits count steps still in flight
+  ## from a previously deleted key of the same name.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/workflows/concurrency", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdWorkflowsConcurrencyResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdWorkflowsConcurrencyKeyId*(client: CloudflareClient,
+                                                    keyId: string,
+                                                    accountId: string): Future[GetAccountsAccountIdWorkflowsConcurrencyKeyIdResponse] {.async.} =
+  ## Retrieves a concurrency key and the workflows whose latest version references
+  ## it.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/workflows/concurrency/{keyId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdWorkflowsConcurrencyKeyIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdWorkflowsConcurrencyKeyId*(client: CloudflareClient,
+                                                       keyId: string,
+                                                       accountId: string): Future[DeleteAccountsAccountIdWorkflowsConcurrencyKeyIdResponse] {.async.} =
+  ## Deletes a concurrency key. Fails while any workflow’s latest version references
+  ## the key. The key disappears immediately, but steps already holding it keep their
+  ## slots until they finish and still count against a key re-created with the same
+  ## name.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/workflows/concurrency/{keyId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, DeleteAccountsAccountIdWorkflowsConcurrencyKeyIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdWorkflowsConcurrencyKeyId*(client: CloudflareClient,
+                                                      keyId: string,
+                                                      accountId: string,
+                                                      body: PatchAccountsAccountIdWorkflowsConcurrencyKeyIdRequest): Future[PatchAccountsAccountIdWorkflowsConcurrencyKeyIdResponse] {.async.} =
+  ## Updates the limit of a concurrency key. Applies to instances that start after
+  ## the change.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/workflows/concurrency/{keyId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PatchAccountsAccountIdWorkflowsConcurrencyKeyIdResponse)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -533,20 +644,6 @@ proc getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdStep*(client: C
     result = fromJson(body, GetAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdStepResponse)
   else:
     raise newException(CloudflareClientError, body)
-
-proc getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribe*(client: CloudflareClient,
-                                                                            workflowName: string,
-                                                                            instanceId: string,
-                                                                            cursor: int64 = default(int64),
-                                                                            filter: seq[string] = default(seq[string]),
-                                                                            accountId: string): Future[AsyncResponse] {.async.} =
-  ## Opens a WebSocket that streams workflow instance events.
-
-  var q = initOrderedTable[string, string]()
-  q["cursor"] = $cursor
-  q["filter"] = $filter
-  let res = await client.httpGET(fmt"/accounts/{accountId}/workflows/{workflowName}/instances/{instanceId}/subscribe", q)
-  return res
 
 proc getAccountsAccountIdWorkflowsWorkflowNameInstancesInstanceIdSubscribeToken*(client: CloudflareClient,
                                                                                  workflowName: string,

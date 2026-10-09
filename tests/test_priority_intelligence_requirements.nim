@@ -11,8 +11,9 @@ import cloudflare
 import ./common
 
 suite "priority_intelligence_requirements serialization":
-  test "module imports cleanly":
-    check true
+  test "round-trips PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateResponse":
+    let obj = cloudflare.PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateResponse)) == openjson.toJson(obj)
 
 suite "priority_intelligence_requirements endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/v2/priority-intelligence":

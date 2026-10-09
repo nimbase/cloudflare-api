@@ -19,5 +19,5 @@ suite "usage endpoints":
   test "GET /accounts/{account_id}/workers/observability/usage":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersObservabilityUsage("test", "test")
+    discard waitFor client.getAccountsAccountIdWorkersObservabilityUsage("test", "test", "test")
 

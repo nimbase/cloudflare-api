@@ -19,6 +19,10 @@ suite "ip_address_management_prefixes serialization":
     let obj = newAddressingResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingResponseCollection)) == openjson.toJson(obj)
 
+  test "round-trips AddressingLoaDocumentCollection":
+    let obj = newAddressingLoaDocumentCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingLoaDocumentCollection)) == openjson.toJson(obj)
+
   test "round-trips AddressingApiResponseCommonFailure":
     let obj = newAddressingApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingApiResponseCommonFailure)) == openjson.toJson(obj)
@@ -36,6 +40,11 @@ suite "ip_address_management_prefixes serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AddressingApiResponseCollection)) == openjson.toJson(obj)
 
 suite "ip_address_management_prefixes endpoints":
+  test "GET /accounts/{account_id}/addressing/loa_documents":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdAddressingLoaDocuments("test")
+
   test "POST /accounts/{account_id}/addressing/loa_documents":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

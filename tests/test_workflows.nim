@@ -31,6 +31,26 @@ suite "workflows serialization":
     let obj = cloudflare.GetAccountsAccountIdWorkflowsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkflowsResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdWorkflowsConcurrencyResponse":
+    let obj = cloudflare.GetAccountsAccountIdWorkflowsConcurrencyResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkflowsConcurrencyResponse)) == openjson.toJson(obj)
+
+  test "round-trips PostAccountsAccountIdWorkflowsConcurrencyResponse":
+    let obj = cloudflare.PostAccountsAccountIdWorkflowsConcurrencyResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdWorkflowsConcurrencyResponse)) == openjson.toJson(obj)
+
+  test "round-trips GetAccountsAccountIdWorkflowsConcurrencyKeyIdResponse":
+    let obj = cloudflare.GetAccountsAccountIdWorkflowsConcurrencyKeyIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkflowsConcurrencyKeyIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips DeleteAccountsAccountIdWorkflowsConcurrencyKeyIdResponse":
+    let obj = cloudflare.DeleteAccountsAccountIdWorkflowsConcurrencyKeyIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdWorkflowsConcurrencyKeyIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips PatchAccountsAccountIdWorkflowsConcurrencyKeyIdResponse":
+    let obj = cloudflare.PatchAccountsAccountIdWorkflowsConcurrencyKeyIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdWorkflowsConcurrencyKeyIdResponse)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdWorkflowsSettingsResponse":
     let obj = cloudflare.GetAccountsAccountIdWorkflowsSettingsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkflowsSettingsResponse)) == openjson.toJson(obj)
@@ -140,6 +160,21 @@ suite "workflows endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdWorkflows(1.0, 1.0, "test", "test")
+
+  test "GET /accounts/{account_id}/workflows/concurrency":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdWorkflowsConcurrency(1.0, 1.0, "test")
+
+  test "GET /accounts/{account_id}/workflows/concurrency/{key_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdWorkflowsConcurrencyKeyId("test", "test")
+
+  test "DELETE /accounts/{account_id}/workflows/concurrency/{key_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdWorkflowsConcurrencyKeyId("test", "test")
 
   test "GET /accounts/{account_id}/workflows/settings":
     let client = initCloudflareClient("test-key")

@@ -15,6 +15,10 @@ suite "url_normalization serialization":
     let obj = newRulesetsUrlNormalization()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RulesetsUrlNormalization)) == openjson.toJson(obj)
 
+  test "round-trips RulesetsMessage":
+    let obj = newRulesetsMessage()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RulesetsMessage)) == openjson.toJson(obj)
+
   test "round-trips RulesetsResponse":
     let obj = newRulesetsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RulesetsResponse)) == openjson.toJson(obj)

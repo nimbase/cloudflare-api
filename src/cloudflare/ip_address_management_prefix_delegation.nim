@@ -35,7 +35,7 @@ proc postAccountsAccountIdAddressingPrefixesPrefixIdDelegations*(client: Cloudfl
   let res = await client.httpPOST(fmt"/accounts/{accountId}/addressing/prefixes/{prefixId}/delegations", body)
   let body = await res.body
   case res.code
-  of Http200:
+  of Http201:
     result = fromJson(body, types.AddressingSingleResponse2)
   else:
     raise newException(CloudflareClientError, body)

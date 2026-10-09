@@ -60,7 +60,9 @@ proc putAccountsAccountIdHyperdriveConfigsHyperdriveId*(client: CloudflareClient
   ## Replaces and returns the specified Hyperdrive configuration. The request must
   ## include the name and complete origin connection details. Omitted caching
   ## settings are reset to their defaults, while omitted mTLS settings and origin
-  ## connection limits are preserved. Use the update operation to modify only
+  ## connection limits are preserved. The integration association is set only during
+  ## creation and cannot be changed; omit the integration field even when replacing
+  ## an integration-backed configuration. Use the update operation to modify only
   ## selected fields.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/hyperdrive/configs/{hyperdriveId}", body)
@@ -89,7 +91,9 @@ proc patchAccountsAccountIdHyperdriveConfigsHyperdriveId*(client: CloudflareClie
                                                           hyperdriveId: types.HyperdriveIdentifier,
                                                           body: types.HyperdriveHyperdriveConfigPatch): Future[JsonNode] {.async.} =
   ## Updates and returns the specified fields of the Hyperdrive configuration. Custom
-  ## caching settings are not kept if caching is disabled.
+  ## caching settings are not kept if caching is disabled. For an integration-backed
+  ## configuration, the integration association is preserved but cannot be changed;
+  ## omit the integration field.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/hyperdrive/configs/{hyperdriveId}", body)
   let body = await res.body

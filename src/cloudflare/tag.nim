@@ -400,9 +400,9 @@ proc getAccountsAccountIdCloudforceOneEventsTagsTagUuidIndicators*(client: Cloud
                                                                    relatedEvent: seq[string] = @[],
                                                                    search: seq[string] = @[]): Future[GetAccountsAccountIdCloudforceOneEventsTagsTagUuidIndicatorsResponse] {.async.} =
   ## Returns indicators associated with the provided tag UUID, with pagination. By
-  ## default fans out across every indicator dataset the account can read; pass
-  ## datasetIds to scope to UUIDs, analytics datasets, or operational datasets.
-  ## Analytics datasets do not expose tag associations, so the analytics scope
+  ## default fans out across every intelligence (isAnalytics=false) indicator dataset
+  ## the account can read; pass datasetIds to scope to dataset UUIDs or a scope
+  ## value. Analytics datasets do not expose tag associations, so the analytics scope
   ## returns an empty result.
 
   var q = initOrderedTable[string, string]()
@@ -429,9 +429,9 @@ proc getAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationships*(client: Cl
                                                                       cursor: string = default(string),
                                                                       pageSize: int64 = 25): Future[GetAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse] {.async.} =
   ## Returns sparse relationship edges. Optionally hydrate related entities via
-  ## `expand`. Fans out across all accessible indicator dataset shards. Analytics
-  ## datasets do not expose tag associations, so the analytics scope returns an empty
-  ## result.
+  ## `expand`. Fans out across accessible intelligence (isAnalytics=false) indicator
+  ## dataset shards; `all` and `operational` are equivalent. Analytics datasets do
+  ## not expose tag associations, so the analytics scope returns an empty result.
 
   var q = initOrderedTable[string, string]()
   for v in datasets: q["datasets"] = $v

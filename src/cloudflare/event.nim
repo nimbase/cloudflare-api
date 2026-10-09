@@ -535,14 +535,13 @@ proc getAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
                                               forceRefresh: bool = default(bool),
                                               format: EventFormatOption = formatJson,
                                               cache: EventCacheOption = cacheFromGraph): Future[seq[JsonNode]] {.async.} =
-  ## Use `datasetId=all` or `datasetId=*` for the legacy all-datasets scope,
-  ## `datasetId=analytics` for datasets with `isAnalytics=true`, or
-  ## `datasetId=operational` for datasets with `isAnalytics=false` (limited to 50).
-  ## Scope values must be used alone. When `datasetId` is unspecified, events are
-  ## listed from the default Cloudforce One Threat Events dataset. To list existing
-  ## datasets, use the [`ListDatasets`](https://developers.cloudflare.com/api/resour
-  ## ces/cloudforce_one/subresources/threat_events/subresources/datasets/methods/list
-  ## /) endpoint.
+  ## Use one standalone `datasetId` scope value: 'all'/'*' or 'operational' for
+  ## readable intelligence datasets (isAnalytics=false), or 'analytics' for readable
+  ## analytics datasets (isAnalytics=true). Scope values query at most 50 datasets
+  ## and must be used alone. When `datasetId` is unspecified, events are listed from
+  ## the default Cloudforce One Threat Events dataset. To list existing datasets, use
+  ## the [`ListDatasets`](https://developers.cloudflare.com/api/resources/cloudforce
+  ## _one/subresources/threat_events/subresources/datasets/methods/list/) endpoint.
 
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor
@@ -570,14 +569,13 @@ proc postAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
                                                format: EventFormatOption = formatJson,
                                                cache: EventCacheOption = cacheFromGraph,
                                                body: PostAccountsAccountIdCloudforceOneEventsRequest): Future[seq[JsonNode]] {.async.} =
-  ## Use `datasetId: ["all"]` or `datasetId: ["*"]` for the legacy all-datasets
-  ## scope, `datasetId: ["analytics"]` for datasets with `isAnalytics=true`, or
-  ## `datasetId: ["operational"]` for datasets with `isAnalytics=false` (limited to
-  ## 50). Scope values must be used alone. When `datasetId` is unspecified, events
-  ## are listed from the default Cloudforce One Threat Events dataset. To list
-  ## existing datasets, use the [`ListDatasets`](https://developers.cloudflare.com/a
-  ## pi/resources/cloudforce_one/subresources/threat_events/subresources/datasets/met
-  ## hods/list/) endpoint.
+  ## Use one standalone `datasetId` scope value: 'all'/'*' or 'operational' for
+  ## readable intelligence datasets (isAnalytics=false), or 'analytics' for readable
+  ## analytics datasets (isAnalytics=true). Scope values query at most 50 datasets
+  ## and must be used alone. When `datasetId` is unspecified, events are listed from
+  ## the default Cloudforce One Threat Events dataset. To list existing datasets, use
+  ## the [`ListDatasets`](https://developers.cloudflare.com/api/resources/cloudforce
+  ## _one/subresources/threat_events/subresources/datasets/methods/list/) endpoint.
 
   var q = initOrderedTable[string, string]()
   q["forceRefresh"] = $forceRefresh

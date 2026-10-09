@@ -252,7 +252,8 @@ proc getAccountsAccountIdResourceLibraryCategories*(client: CloudflareClient,
                                                     accountId: string,
                                                     limit: int64 = 25,
                                                     offset: int64 = 0): Future[types.AlexandriaGetCategoriesResponse] {.async.} =
-  ## List application categories.
+  ## List the categories available for classifying applications. Results are
+  ## paginated.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
@@ -268,7 +269,7 @@ proc getAccountsAccountIdResourceLibraryCategories*(client: CloudflareClient,
 proc getAccountsAccountIdResourceLibraryCategoriesId*(client: CloudflareClient,
                                                       accountId: string,
                                                       id: types.AlexandriaCategoryId): Future[types.AlexandriaGetCategoryResponse] {.async.} =
-  ## Get application category by ID.
+  ## Retrieve an application category by its numeric ID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/resource-library/categories/{id}")
   let body = await res.body

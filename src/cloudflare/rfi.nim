@@ -39,6 +39,9 @@ type
       ## Total message tokens
     priority: string
       ## Request priority
+    priority_id: int64
+      ## Raw stored Threat Intelligence priority. Values 64, 128, and 192 are
+      ## authoritative; clients display null, 32, 255, and unsupported values as Unknown.
     readable_id: string
       ## Human-readable ID
     release_entitlements: string
@@ -75,6 +78,9 @@ type
       ## Total message tokens
     priority: string
       ## Request priority
+    priority_id: int64
+      ## Raw stored Threat Intelligence priority. Values 64, 128, and 192 are
+      ## authoritative; clients display null, 32, 255, and unsupported values as Unknown.
     readable_id: string
       ## Human-readable ID
     release_entitlements: string
@@ -120,6 +126,9 @@ type
       ## Total message tokens
     priority: string
       ## Request priority
+    priority_id: int64
+      ## Raw stored Threat Intelligence priority. Values 64, 128, and 192 are
+      ## authoritative; clients display null, 32, 255, and unsupported values as Unknown.
     readable_id: string
       ## Human-readable ID
     release_entitlements: string
