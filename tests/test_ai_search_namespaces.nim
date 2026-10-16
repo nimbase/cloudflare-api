@@ -19,6 +19,10 @@ suite "ai_search_namespaces serialization":
     let obj = cloudflare.PostAccountsAccountIdAiSearchNamespacesResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdAiSearchNamespacesResponse)) == openjson.toJson(obj)
 
+  test "round-trips PatchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse":
+    let obj = cloudflare.PatchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdAiSearchNamespacesNameResponse":
     let obj = cloudflare.GetAccountsAccountIdAiSearchNamespacesNameResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdAiSearchNamespacesNameResponse)) == openjson.toJson(obj)
@@ -30,10 +34,6 @@ suite "ai_search_namespaces serialization":
   test "round-trips DeleteAccountsAccountIdAiSearchNamespacesNameResponse":
     let obj = cloudflare.DeleteAccountsAccountIdAiSearchNamespacesNameResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdAiSearchNamespacesNameResponse)) == openjson.toJson(obj)
-
-  test "round-trips PatchAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse":
-    let obj = cloudflare.PatchAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse)) == openjson.toJson(obj)
 
 suite "ai_search_namespaces endpoints":
   test "GET /accounts/{account_id}/ai-search/namespaces":

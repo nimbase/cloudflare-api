@@ -11,12 +11,12 @@ import ./private/types
 type
   PostZonesZoneIdFirewallAccessRulesRulesRequest = object
     configuration: types.FirewallConfiguration
-    mode: types.FirewallSchemasMode
+    mode: JsonNode
     notes: Option[JsonNode]
   DeleteZonesZoneIdFirewallAccessRulesRulesRuleIdRequest = object
     cascade: Option[string]
   PatchZonesZoneIdFirewallAccessRulesRulesRuleIdRequest = object
-    mode: Option[types.FirewallSchemasMode]
+    mode: Option[JsonNode]
     notes: Option[types.FirewallNotes]
   IpAccessRulesForAZoneConfigurationTargetOption* = enum
     configurationTargetIp = "ip"

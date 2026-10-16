@@ -126,7 +126,8 @@ proc postAccountsAccountIdAiGatewayBillingTopup*(client: CloudflareClient,
                                                  accountId: string,
                                                  body: PostAccountsAccountIdAiGatewayBillingTopupRequest): Future[types.AigBillingCreateTopupResponse] {.async.} =
   ## Create a credit top-up for the given account, charged to the account's default
-  ## payment method.
+  ## payment method. Requires a dashboard session; API token, OAuth, and service
+  ## credentials receive 403.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/billing/topup", body)
   let body = await res.body

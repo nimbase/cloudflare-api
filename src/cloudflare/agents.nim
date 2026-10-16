@@ -29,10 +29,12 @@ proc getAccountsAccountIdWorkersObservabilityAgentsSessions*(client: CloudflareC
                                                              to: int64,
                                                              cursor: string = default(string),
                                                              perPage: int64 = default(int64)): Future[GetAccountsAccountIdWorkersObservabilityAgentsSessionsResponse] {.async.} =
-  ## List the Sessions of one Agent in one Worker service observed in the window,
-  ## most recently active first. A Session groups the Traces containing an invocation
-  ## of the Agent with the same gen_ai.conversation.id. Results describe observed
-  ## activity in the window, not complete history.
+  ## Lists sessions in which the specified agent participated, ordered by most recent
+  ## activity. A session is identified by gen_ai.conversation.id and includes
+  ## authorized activity from every agent in that conversation during the requested
+  ## time range. Agent invocation and chat spans without a conversation ID are
+  ## attributed only when their trace is associated with exactly one observed
+  ## conversation.
 
   var q = initOrderedTable[string, string]()
   q["service"] = $service
@@ -57,9 +59,10 @@ proc getAccountsAccountIdWorkersObservabilityAgentsSessionsConversationIdRuns*(c
                                                                                to: int64,
                                                                                cursor: string = default(string),
                                                                                perPage: int64 = default(int64)): Future[GetAccountsAccountIdWorkersObservabilityAgentsSessionsConversationIdRunsResponse] {.async.} =
-  ## List the Trace-level runs of one Session, newest invocation first. A run is a
-  ## Trace containing an invocation of the Agent in the Conversation; the Agent need
-  ## not own the Trace.
+  ## Lists the traces associated with a session, ordered by most recent activity. The
+  ## service and agent parameters must identify an agent that participated in the
+  ## conversation. Results include every authorized trace containing an agent
+  ## invocation in that conversation during the requested time range.
 
   var q = initOrderedTable[string, string]()
   q["service"] = $service

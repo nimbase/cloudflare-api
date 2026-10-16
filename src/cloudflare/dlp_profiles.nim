@@ -89,6 +89,43 @@ proc deleteAccountsAccountIdDlpProfilesCustomProfileId*(client: CloudflareClient
   else:
     raise newException(CloudflareClientError, body)
 
+proc deleteAccountsAccountIdDlpProfilesIntegrationProfileId*(client: CloudflareClient,
+                                                             recursive: int32 = default(int32),
+                                                             accountId: string,
+                                                             profileId: string): Future[JsonNode] {.async.} =
+  ## Deletes a DLP integration profile whose integration no longer exists. If the
+  ## profile owns
+  ## entries, `recursive=1` is required. This also deletes the entries and removes
+  ## all references to
+  ## them, as listed by the references endpoint.
+
+  var q = initOrderedTable[string, string]()
+  q["recursive"] = $recursive
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/dlp/profiles/integration/{profileId}", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdDlpProfilesIntegrationProfileIdReferences*(client: CloudflareClient,
+                                                                    accountId: string,
+                                                                    profileId: string): Future[JsonNode] {.async.} =
+  ## Lists the profiles and data classes that reference the entries of a DLP
+  ## integration profile,
+  ## shows how each data class would change if the profile is deleted with
+  ## `recursive=1`, and
+  ## reports whether the integration that manages the profile still exists.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/dlp/profiles/integration/{profileId}/references")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc postAccountsAccountIdDlpProfilesPredefined*(client: CloudflareClient,
                                                  accountId: string,
                                                  body: types.DlpNewPredefinedProfile): Future[JsonNode] {.async.} =

@@ -4,13 +4,13 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[strformat, options]
+import std/[strformat, options, json]
 import ./private/metaclient
 import ./private/types
 
 type
   PutAccountsAccountIdCfdTunnelTunnelIdConfigurationsRequest = object
-    config: Option[types.TunnelConfig]
+    config: Option[JsonNode]
 
 proc getAccountsAccountIdCfdTunnelTunnelIdConfigurations*(client: CloudflareClient,
                                                           accountId: types.TunnelIdentifier,

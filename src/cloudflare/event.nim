@@ -187,23 +187,23 @@ type
     data: JsonNode
     errors: seq[JsonNode]
   PostAccountsAccountIdCloudforceOneEventsQueriesCreateRequest = object
-    alert_enabled: bool
-    alert_rollup_enabled: bool
+    alert_enabled: Option[bool]
+    alert_rollup_enabled: Option[bool]
     name: string
     query_json: string
-    rule_enabled: bool
+    rule_enabled: Option[bool]
     rule_scope: Option[string]
   PostAccountsAccountIdCloudforceOneEventsQueriesCreateResponse* = object
     account_id: int64
       ## Account ID
     alert_enabled: bool
-      ## Whether alerts are enabled
+      ## Deprecated: saved-query alerting and rules were removed. Always false.
     alert_rollup_enabled: bool
-      ## Whether alert rollup is enabled
+      ## Deprecated: saved-query alerting and rules were removed. Always false.
     created_at: string
       ## Creation timestamp
     custom_threat_feed_id: int64
-      ## Intel Indicator Feed ID (numeric)
+      ## Deprecated: saved-query alerting and rules were removed. Always null.
     id: int64
       ## Unique identifier for the saved query
     name: string
@@ -211,11 +211,11 @@ type
     query_json: string
       ## JSON string containing the query parameters
     rule_enabled: bool
-      ## Whether rule is enabled
+      ## Deprecated: saved-query alerting and rules were removed. Always false.
     rule_list_id: string
-      ## WAF rules list ID for blocking
+      ## Deprecated: saved-query alerting and rules were removed. Always null.
     rule_scope: string
-      ## Scope for the rule
+      ## Deprecated: saved-query alerting and rules were removed. Always null.
     updated_at: string
       ## Last update timestamp
     user_email: string
@@ -224,13 +224,13 @@ type
     account_id: int64
       ## Account ID
     alert_enabled: bool
-      ## Whether alerts are enabled
+      ## Deprecated: saved-query alerting and rules were removed. Always false.
     alert_rollup_enabled: bool
-      ## Whether alert rollup is enabled
+      ## Deprecated: saved-query alerting and rules were removed. Always false.
     created_at: string
       ## Creation timestamp
     custom_threat_feed_id: int64
-      ## Intel Indicator Feed ID (numeric)
+      ## Deprecated: saved-query alerting and rules were removed. Always null.
     id: int64
       ## Unique identifier for the saved query
     name: string
@@ -238,11 +238,11 @@ type
     query_json: string
       ## JSON string containing the query parameters
     rule_enabled: bool
-      ## Whether rule is enabled
+      ## Deprecated: saved-query alerting and rules were removed. Always false.
     rule_list_id: string
-      ## WAF rules list ID for blocking
+      ## Deprecated: saved-query alerting and rules were removed. Always null.
     rule_scope: string
-      ## Scope for the rule
+      ## Deprecated: saved-query alerting and rules were removed. Always null.
     updated_at: string
       ## Last update timestamp
     user_email: string
@@ -258,13 +258,13 @@ type
     account_id: int64
       ## Account ID
     alert_enabled: bool
-      ## Whether alerts are enabled
+      ## Deprecated: saved-query alerting and rules were removed. Always false.
     alert_rollup_enabled: bool
-      ## Whether alert rollup is enabled
+      ## Deprecated: saved-query alerting and rules were removed. Always false.
     created_at: string
       ## Creation timestamp
     custom_threat_feed_id: int64
-      ## Intel Indicator Feed ID (numeric)
+      ## Deprecated: saved-query alerting and rules were removed. Always null.
     id: int64
       ## Unique identifier for the saved query
     name: string
@@ -272,11 +272,11 @@ type
     query_json: string
       ## JSON string containing the query parameters
     rule_enabled: bool
-      ## Whether rule is enabled
+      ## Deprecated: saved-query alerting and rules were removed. Always false.
     rule_list_id: string
-      ## WAF rules list ID for blocking
+      ## Deprecated: saved-query alerting and rules were removed. Always null.
     rule_scope: string
-      ## Scope for the rule
+      ## Deprecated: saved-query alerting and rules were removed. Always null.
     updated_at: string
       ## Last update timestamp
     user_email: string
@@ -292,13 +292,13 @@ type
     account_id: int64
       ## Account ID
     alert_enabled: bool
-      ## Whether alerts are enabled
+      ## Deprecated: saved-query alerting and rules were removed. Always false.
     alert_rollup_enabled: bool
-      ## Whether alert rollup is enabled
+      ## Deprecated: saved-query alerting and rules were removed. Always false.
     created_at: string
       ## Creation timestamp
     custom_threat_feed_id: int64
-      ## Intel Indicator Feed ID (numeric)
+      ## Deprecated: saved-query alerting and rules were removed. Always null.
     id: int64
       ## Unique identifier for the saved query
     name: string
@@ -306,11 +306,11 @@ type
     query_json: string
       ## JSON string containing the query parameters
     rule_enabled: bool
-      ## Whether rule is enabled
+      ## Deprecated: saved-query alerting and rules were removed. Always false.
     rule_list_id: string
-      ## WAF rules list ID for blocking
+      ## Deprecated: saved-query alerting and rules were removed. Always null.
     rule_scope: string
-      ## Scope for the rule
+      ## Deprecated: saved-query alerting and rules were removed. Always null.
     updated_at: string
       ## Last update timestamp
     user_email: string

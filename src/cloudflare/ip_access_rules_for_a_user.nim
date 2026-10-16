@@ -11,10 +11,10 @@ import ./private/types
 type
   PostUserFirewallAccessRulesRulesRequest = object
     configuration: types.FirewallConfiguration
-    mode: types.FirewallSchemasMode
+    mode: JsonNode
     notes: Option[JsonNode]
   PatchUserFirewallAccessRulesRulesRuleIdRequest = object
-    mode: Option[types.FirewallSchemasMode]
+    mode: Option[JsonNode]
     notes: Option[types.FirewallNotes]
   IpAccessRulesForAUserConfigurationTargetOption* = enum
     configurationTargetIp = "ip"

@@ -55,6 +55,10 @@ suite "applications serialization":
     let obj = newAlexandriaApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AlexandriaApiResponseCommonFailure)) == openjson.toJson(obj)
 
+  test "round-trips AlexandriaLookupApplicationsRequest":
+    let obj = newAlexandriaLookupApplicationsRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AlexandriaLookupApplicationsRequest)) == openjson.toJson(obj)
+
   test "round-trips CcV4BaseResponse":
     let obj = newCcV4BaseResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CcV4BaseResponse)) == openjson.toJson(obj)
@@ -126,12 +130,17 @@ suite "applications endpoints":
   test "GET /accounts/{account_id}/resource-library/applications":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdResourceLibraryApplications("test", "test", 1, 1, "test", "test", "test", "test")
+    discard waitFor client.getAccountsAccountIdResourceLibraryApplications("test", "test", 1, 1, "test", "test", "test", "test", "test")
 
   test "POST /accounts/{account_id}/resource-library/applications":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdResourceLibraryApplications("test", newAlexandriaCreateApplicationRequest())
+
+  test "POST /accounts/{account_id}/resource-library/applications/lookup":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdResourceLibraryApplicationsLookup("test", "test", 1, "test", newAlexandriaLookupApplicationsRequest())
 
   test "GET /accounts/{account_id}/resource-library/applications/{id}":
     let client = initCloudflareClient("test-key")

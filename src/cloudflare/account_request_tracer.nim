@@ -20,7 +20,7 @@ type
     url: string
 
 proc postAccountsAccountIdRequestTracerTrace*(client: CloudflareClient,
-                                              accountId: types.RequestTracerIdentifier,
+                                              accountId: types.RequestTracerAccountIdentifier,
                                               body: PostAccountsAccountIdRequestTracerTraceRequest): Future[JsonNode] {.async.} =
   ## Traces a simulated HTTP request through Cloudflare's edge to analyze how rules,
   ## settings, and configurations would process the request. Useful for debugging

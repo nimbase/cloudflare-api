@@ -9,9 +9,18 @@ import ./private/metaclient
 
 type
   PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceRequest = object
+    dataset_scope: Option[JsonNode]
+    digest_interval_hours: Option[int64]
+    intent: Option[JsonNode]
     labels: Option[seq[string]]
+    model: Option[string]
+    notification_mode: Option[string]
     priority: Option[int64]
+    query: Option[JsonNode]
+    query_source: Option[string]
     requirement: string
+    status: Option[string]
+    title: Option[string]
     tlp: Option[string]
   PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateRequest = object
     requirement: string
@@ -47,13 +56,31 @@ type
     enabled: Option[bool]
     value: Option[string]
   PutAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdRequest = object
+    confirm_query: Option[bool]
+    dataset_scope: Option[JsonNode]
+    digest_interval_hours: Option[int64]
+    intent: Option[JsonNode]
     labels: Option[seq[string]]
+    model: Option[string]
+    notification_mode: Option[string]
     priority: Option[int64]
+    query: Option[JsonNode]
+    query_source: Option[string]
     requirement: Option[string]
+    status: Option[string]
+    title: Option[string]
     tlp: Option[string]
+  PatchAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesRequest = object
+    matches: seq[JsonNode]
+    triage_state: string
   PriorityIntelligenceRequirementEnabledOption* = enum
     enabledTrue = "true"
     enabledFalse = "false"
+
+  PriorityIntelligenceRequirementTriageStateOption* = enum
+    triageStateNew = "new"
+    triageStateRelevant = "relevant"
+    triageStateNotRelevant = "not_relevant"
 
 
 proc getAccountsAccountIdCloudforceOneV2PriorityIntelligence*(client: CloudflareClient,
@@ -72,8 +99,10 @@ proc getAccountsAccountIdCloudforceOneV2PriorityIntelligence*(client: Cloudflare
 proc postAccountsAccountIdCloudforceOneV2PriorityIntelligence*(client: CloudflareClient,
                                                                accountId: string,
                                                                body: PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceRequest): Future[AsyncResponse] {.async.} =
-  ## Creates a new PIR for the account. Subject to the account's annual PIR quota
-  ## from the cfone.priority_intelligence_requirement_limit entitlement.
+  ## Creates a new PIR for the account. The
+  ## cfone.priority_intelligence_requirement_limit entitlement sets how many PIRs can
+  ## be active; drafts do not count, but the account can hold at most five times that
+  ## many PIRs in total. An active PIR requires a query.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence", body)
   return res
@@ -186,8 +215,10 @@ proc patchAccountsAccountIdCloudforceOneV2PriorityIntelligenceInterestsInterestI
 
 proc postAccountsAccountIdCloudforceOneV2PriorityIntelligenceQuota*(client: CloudflareClient,
                                                                     accountId: string): Future[AsyncResponse] {.async.} =
-  ## Returns the account's annual PIR quota including total allowed, remaining, and
-  ## anniversary dates.
+  ## Returns the account's PIR quota. `quota` and `remaining` count active PIRs
+  ## against the entitlement limit; moving a PIR to draft or deleting it frees its
+  ## slot. `total_quota` and `total_remaining` count every PIR, drafts included,
+  ## against five times the limit. Anniversary dates are informational.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/quota")
   return res
@@ -205,8 +236,11 @@ proc putAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityId*(client: 
                                                                         accountId: string,
                                                                         priorityId: string,
                                                                         body: PutAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdRequest): Future[AsyncResponse] {.async.} =
-  ## Updates a free-form Priority Intelligence Requirement for the authenticated
-  ## account.
+  ## Updates a Priority Intelligence Requirement for the authenticated account.
+  ## Changing the query increments its version; editing the requirement without
+  ## saving a query marks the query stale. Activating a draft needs a free slot in
+  ## the active PIR quota; setting `active` on a PIR the matcher paused resumes it
+  ## without one.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/{priorityId}", body)
   return res
@@ -217,4 +251,38 @@ proc deleteAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityId*(clien
   ## Soft-deletes a PIR. The PIR will no longer count against quota.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/{priorityId}")
+  return res
+
+proc getAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatches*(client: CloudflareClient,
+                                                                               accountId: string,
+                                                                               priorityId: string,
+                                                                               cursor: string = default(string),
+                                                                               perPage: int64 = 50,
+                                                                               triageState: PriorityIntelligenceRequirementTriageStateOption = triageStateNew): Future[AsyncResponse] {.async.} =
+  ## Returns the events matched by the PIR's query, newest match first. Each item has
+  ## the Event List event fields plus the match fields. Only datasets the account can
+  ## read now are included, and deleted events are left out, so a page can hold fewer
+  ## items than `per_page` while `result_info.cursor` is still set. `backfill`
+  ## matches came from the 30 days before the PIR was activated or its query changed
+  ## and are never notified. `delivered` matches were included in a digest that the
+  ## notification service accepted; who receives it depends on the account's
+  ## notification policies for the PIR. Requires the Threat Events entitlement.
+
+  var q = initOrderedTable[string, string]()
+  q["cursor"] = $cursor
+  q["per_page"] = $perPage
+  q["triage_state"] = $triageState
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/{priorityId}/matches", q)
+  return res
+
+proc patchAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatches*(client: CloudflareClient,
+                                                                                 accountId: string,
+                                                                                 priorityId: string,
+                                                                                 body: PatchAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesRequest): Future[AsyncResponse] {.async.} =
+  ## Sets `triage_state` (`new`, `relevant`, or `not_relevant`) on up to 100 matches.
+  ## Matches that do not exist, or are in datasets the account can no longer read,
+  ## are returned in `not_found`. Setting `new` clears `triaged_at` and `triaged_by`.
+  ## Requires the Threat Events entitlement.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/{priorityId}/matches", body)
   return res

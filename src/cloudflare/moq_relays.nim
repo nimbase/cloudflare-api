@@ -12,7 +12,7 @@ type
   PostAccountsAccountIdMoqRelaysRequest = object
     name: string
   PutAccountsAccountIdMoqRelaysRelayIdRequest = object
-    config: Option[types.MoqRelayConfig]
+    config: Option[JsonNode]
     name: Option[string]
   PostAccountsAccountIdMoqRelaysRelayIdTokensRequest = object
     expires: Option[string]

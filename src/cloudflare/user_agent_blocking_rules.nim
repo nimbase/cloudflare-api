@@ -12,13 +12,13 @@ type
   PostZonesZoneIdFirewallUaRulesRequest = object
     configuration: types.FirewallUaConfiguration
     description: Option[types.FirewallDescription]
-    mode: types.FirewallSchemasMode
+    mode: JsonNode
     paused: Option[types.FirewallSchemasPaused]
   PutZonesZoneIdFirewallUaRulesUaRuleIdRequest = object
     configuration: types.FirewallConfiguration
     description: Option[types.FirewallDescription]
     id: types.FirewallComponentsSchemasIdentifier
-    mode: types.FirewallSchemasMode
+    mode: JsonNode
     paused: Option[types.FirewallSchemasPaused]
 
 proc getZonesZoneIdFirewallUaRules*(client: CloudflareClient,

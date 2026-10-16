@@ -39,7 +39,8 @@ proc getAccountsAccountIdAiSearchTokens*(client: CloudflareClient,
                                          accountId: string, page: int64 = 1,
                                          perPage: int64 = 20,
                                          search: string = default(string)): Future[GetAccountsAccountIdAiSearchTokensResponse] {.async.} =
-  ## List stored AI Search credentials in the account without exposing their secrets.
+  ## Lists stored AI Search credentials in the account without exposing their
+  ## secrets.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -95,7 +96,7 @@ proc putAccountsAccountIdAiSearchTokensId*(client: CloudflareClient,
 
 proc deleteAccountsAccountIdAiSearchTokensId*(client: CloudflareClient,
                                               accountId: string, id: string): Future[DeleteAccountsAccountIdAiSearchTokensIdResponse] {.async.} =
-  ## Permanently delete a stored AI Search credential. Credentials in use by an
+  ## Deletes a stored AI Search credential permanently. Credentials in use by an
   ## instance cannot be deleted.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai-search/tokens/{id}")

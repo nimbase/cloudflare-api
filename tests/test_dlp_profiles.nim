@@ -15,6 +15,10 @@ suite "dlp_profiles serialization":
     let obj = newDlpPredefinedProfileUpdate()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpPredefinedProfileUpdate)) == openjson.toJson(obj)
 
+  test "round-trips DlpIntegrationProfileReferences":
+    let obj = newDlpIntegrationProfileReferences()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpIntegrationProfileReferences)) == openjson.toJson(obj)
+
   test "round-trips DlpApiResponseSingle":
     let obj = newDlpApiResponseSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DlpApiResponseSingle)) == openjson.toJson(obj)
@@ -81,6 +85,16 @@ suite "dlp_profiles endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdDlpProfilesCustomProfileId("test", "test")
+
+  test "DELETE /accounts/{account_id}/dlp/profiles/integration/{profile_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdDlpProfilesIntegrationProfileId(1, "test", "test")
+
+  test "GET /accounts/{account_id}/dlp/profiles/integration/{profile_id}/references":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdDlpProfilesIntegrationProfileIdReferences("test", "test")
 
   test "POST /accounts/{account_id}/dlp/profiles/predefined":
     let client = initCloudflareClient("test-key")

@@ -71,6 +71,10 @@ suite "workers_k2_other serialization":
     let obj = newCloudflareK2K2ProduceRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudflareK2K2ProduceRequest)) == openjson.toJson(obj)
 
+  test "round-trips CloudflareK2K2SubscriptionListResponse":
+    let obj = newCloudflareK2K2SubscriptionListResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudflareK2K2SubscriptionListResponse)) == openjson.toJson(obj)
+
   test "round-trips CloudflareK2K2ProduceError":
     let obj = newCloudflareK2K2ProduceError()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudflareK2K2ProduceError)) == openjson.toJson(obj)
@@ -118,6 +122,11 @@ suite "workers_k2_other endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postProduce(newCloudflareK2K2ProduceRequest())
+
+  test "GET /subscriptions":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getSubscriptions("test")
 
   test "POST /subscriptions":
     let client = initCloudflareClient("test-key")

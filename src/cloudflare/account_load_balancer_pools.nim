@@ -23,6 +23,8 @@ type
     notification_filter: Option[types.LoadBalancingNotificationFilter]
     origin_steering: Option[types.LoadBalancingOriginSteering]
     origins: types.LoadBalancingOrigins
+  PatchAccountsAccountIdLoadBalancersPoolsRequest = object
+    notification_email: Option[types.LoadBalancingPatchPoolsNotificationEmail]
   PutAccountsAccountIdLoadBalancersPoolsPoolIdRequest = object
     check_regions: Option[types.LoadBalancingCheckRegions]
     description: Option[types.LoadBalancingSchemasDescription]
@@ -87,7 +89,8 @@ proc postAccountsAccountIdLoadBalancersPools*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc patchAccountsAccountIdLoadBalancersPools*(client: CloudflareClient,
-                                               accountId: types.LoadBalancingComponentsSchemasIdentifier): Future[types.LoadBalancingSchemasResponseCollection] {.async.} =
+                                               accountId: types.LoadBalancingComponentsSchemasIdentifier,
+                                               body: PatchAccountsAccountIdLoadBalancersPoolsRequest): Future[types.LoadBalancingSchemasResponseCollection] {.async.} =
   ## Apply changes to a number of existing pools, overwriting the supplied
   ## properties. Pools are ordered by ascending `name`. Returns the list of affected
   ## pools. Supports the standard pagination query parameters, either

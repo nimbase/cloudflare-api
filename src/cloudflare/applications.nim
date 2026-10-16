@@ -196,6 +196,7 @@ proc getAccountsAccountIdResourceLibraryApplications*(client: CloudflareClient,
                                                       filter: string = default(string),
                                                       limit: int64 = 25,
                                                       offset: int64 = 0,
+                                                      cursor: string = default(string),
                                                       orderBy: string = default(string),
                                                       search: string = default(string),
                                                       lookup: string = default(string),
@@ -203,13 +204,20 @@ proc getAccountsAccountIdResourceLibraryApplications*(client: CloudflareClient,
   ## List the applications available to an account, both the applications Cloudflare
   ## curates and the custom applications the account has defined.
   ##
-  ## Results are paginated. Use `filter` and `search` to narrow the list, `order_by`
-  ## to
-  ## sort it, and `fields` to reduce each result to only the properties you need.
+  ## Results are paginated. Page with `cursor` so that applications added or removed
+  ## between requests do not make other results repeat or go missing; `offset` paging
+  ## can
+  ## repeat or miss results when the list changes between requests. Use `filter` and
+  ## `search` to narrow the list, `order_by` to sort it, and `fields` to reduce each
+  ## result
+  ## to only the properties you need.
   ## Use `lookup` to find complete application names mentioned in a rule sentence,
   ## ignoring case. Lookup does not correct misspellings. It ranks matches by
   ## relevance and uses the same filters, fields, and pagination as listing.
   ## `lookup` cannot be combined with `search`.
+  ##
+  ## Invalid UTF-8 or a NUL character (U+0000) in any query parameter name or value
+  ## returns `400`.
   ##
   ## The authenticated principal must have access to the account identified by
   ## `account_id`.
@@ -218,6 +226,7 @@ proc getAccountsAccountIdResourceLibraryApplications*(client: CloudflareClient,
   q["filter"] = $filter
   q["limit"] = $limit
   q["offset"] = $offset
+  q["cursor"] = $cursor
   q["order_by"] = $orderBy
   q["search"] = $search
   q["lookup"] = $lookup
@@ -241,6 +250,43 @@ proc postAccountsAccountIdResourceLibraryApplications*(client: CloudflareClient,
   case res.code
   of Http201:
     result = fromJson(body, types.AlexandriaGetApplicationResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdResourceLibraryApplicationsLookup*(client: CloudflareClient,
+                                                             accountId: string,
+                                                             filter: string = default(string),
+                                                             limit: int64 = 25,
+                                                             fields: string = default(string),
+                                                             body: types.AlexandriaLookupApplicationsRequest): Future[types.AlexandriaGetApplicationsResponse] {.async.} =
+  ## Find complete application names mentioned in a rule sentence, ignoring case.
+  ## Lookup does not correct misspellings. Matches are ranked by relevance.
+  ##
+  ## This endpoint takes the rule sentence in the request body, so the text stays out
+  ## of URLs and request logs. Use it instead of the `lookup` query parameter on the
+  ## list endpoint when the text may contain sensitive content.
+  ##
+  ## `fields`, `limit`, and `filter` work the same way as on the list endpoint and
+  ## are
+  ## passed as query parameters. Results are not paged: `offset`, `cursor`,
+  ## `order_by`,
+  ## `search`, and `lookup` query parameters return `400`. Unknown request body
+  ## properties also
+  ## return `400`. Invalid UTF-8 or a NUL character (U+0000) in any query parameter
+  ## name or value returns `400`.
+  ##
+  ## The authenticated principal must have access to the account identified by
+  ## `account_id`.
+
+  var q = initOrderedTable[string, string]()
+  q["filter"] = $filter
+  q["limit"] = $limit
+  q["fields"] = $fields
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/resource-library/applications/lookup", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AlexandriaGetApplicationsResponse)
   else:
     raise newException(CloudflareClientError, body)
 

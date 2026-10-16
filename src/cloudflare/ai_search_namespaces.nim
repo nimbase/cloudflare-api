@@ -19,6 +19,11 @@ type
   PostAccountsAccountIdAiSearchNamespacesResponse* = object
     result: JsonNode
     success: bool
+  PatchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdRequest = object
+    new_namespace: string
+  PatchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse* = object
+    result: JsonNode
+    success: bool
   GetAccountsAccountIdAiSearchNamespacesNameResponse* = object
     result: JsonNode
     success: bool
@@ -31,17 +36,13 @@ type
   DeleteAccountsAccountIdAiSearchNamespacesNameResponse* = object
     result: JsonNode
     success: bool
-  PatchAccountsAccountIdAiSearchNamespacesNameInstancesIdRequest = object
-    new_namespace: string
-  PatchAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse* = object
-    result: JsonNode
-    success: bool
 
 proc getAccountsAccountIdAiSearchNamespaces*(client: CloudflareClient,
                                              accountId: string, page: int64 = 1,
                                              perPage: int64 = 20,
                                              search: string = default(string)): Future[GetAccountsAccountIdAiSearchNamespacesResponse] {.async.} =
-  ## List namespaces in the account, including their descriptions and creation times.
+  ## Lists namespaces in the account, including their descriptions and creation
+  ## times.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -68,6 +69,25 @@ proc postAccountsAccountIdAiSearchNamespaces*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc patchAccountsAccountIdAiSearchNamespacesNamespaceInstancesId*(client: CloudflareClient,
+                                                                   accountId: string,
+                                                                   namespace: string,
+                                                                   id: string,
+                                                                   body: PatchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdRequest): Future[PatchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse] {.async.} =
+  ## Moves an instance from its current namespace to the specified target namespace.
+  ## Use 'default' with --destination-namespace to move the instance back to the
+  ## default namespace. Fails with 400 if the target namespace already has an
+  ## instance with the same id (ids must be unique within a namespace — the same id
+  ## can exist in different namespaces).
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/ai-search/namespaces/{namespace}/instances/{id}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PatchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdAiSearchNamespacesName*(client: CloudflareClient,
                                                  accountId: string, name: string): Future[GetAccountsAccountIdAiSearchNamespacesNameResponse] {.async.} =
   ## Retrieve a namespace and its description.
@@ -83,7 +103,7 @@ proc getAccountsAccountIdAiSearchNamespacesName*(client: CloudflareClient,
 proc putAccountsAccountIdAiSearchNamespacesName*(client: CloudflareClient,
                                                  accountId: string, name: string,
                                                  body: PutAccountsAccountIdAiSearchNamespacesNameRequest): Future[PutAccountsAccountIdAiSearchNamespacesNameResponse] {.async.} =
-  ## Update the description and/or the public endpoint configuration of an existing
+  ## Updates the description and/or the public endpoint configuration of an existing
   ## namespace. The default namespace's description cannot be modified, but its
   ## public endpoint can.
 
@@ -98,32 +118,14 @@ proc putAccountsAccountIdAiSearchNamespacesName*(client: CloudflareClient,
 proc deleteAccountsAccountIdAiSearchNamespacesName*(client: CloudflareClient,
                                                     accountId: string,
                                                     name: string): Future[DeleteAccountsAccountIdAiSearchNamespacesNameResponse] {.async.} =
-  ## Permanently delete a namespace. The namespace must be empty (no instances), and
-  ## the default namespace cannot be deleted.
+  ## Deletes a namespace permanently. The namespace must not contain any instances
+  ## (instances whose deletion is still in progress do not count), and the default
+  ## namespace cannot be deleted.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai-search/namespaces/{name}")
   let body = await res.body
   case res.code
   of Http200:
     result = fromJson(body, DeleteAccountsAccountIdAiSearchNamespacesNameResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc patchAccountsAccountIdAiSearchNamespacesNameInstancesId*(client: CloudflareClient,
-                                                              accountId: string,
-                                                              name: string,
-                                                              id: string,
-                                                              body: PatchAccountsAccountIdAiSearchNamespacesNameInstancesIdRequest): Future[PatchAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse] {.async.} =
-  ## Moves an instance from its current namespace to the specified target namespace.
-  ## Use 'default' with --destination-namespace to move the instance back to the
-  ## default namespace. Fails with 400 if the target namespace already has an
-  ## instance with the same id (ids must be unique within a namespace — the same id
-  ## can exist in different namespaces).
-
-  let res = await client.httpPATCH(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances/{id}", body)
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, PatchAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse)
   else:
     raise newException(CloudflareClientError, body)

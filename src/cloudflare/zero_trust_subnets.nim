@@ -72,6 +72,20 @@ proc getAccountsAccountIdZerotrustSubnets*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc getAccountsAccountIdZerotrustSubnetsCloudflareSourceAddressFamily*(client: CloudflareClient,
+                                                                        accountId: types.TunnelAccountId,
+                                                                        addressFamily: types.TunnelAddressFamily): Future[types.TunnelSubnetResponseSingle] {.async.} =
+  ## Returns the account's default Cloudflare Source subnet for the given address
+  ## family.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/zerotrust/subnets/cloudflare_source/{addressFamily}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.TunnelSubnetResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc patchAccountsAccountIdZerotrustSubnetsCloudflareSourceAddressFamily*(client: CloudflareClient,
                                                                           accountId: types.TunnelAccountId,
                                                                           addressFamily: types.TunnelAddressFamily,

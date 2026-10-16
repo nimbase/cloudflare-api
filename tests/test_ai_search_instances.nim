@@ -43,41 +43,41 @@ suite "ai_search_instances serialization":
     let obj = cloudflare.GetAccountsAccountIdAiSearchInstancesIdStatsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdAiSearchInstancesIdStatsResponse)) == openjson.toJson(obj)
 
-  test "round-trips GetAccountsAccountIdAiSearchNamespacesNameInstancesResponse":
-    let obj = cloudflare.GetAccountsAccountIdAiSearchNamespacesNameInstancesResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdAiSearchNamespacesNameInstancesResponse)) == openjson.toJson(obj)
+  test "round-trips GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesResponse":
+    let obj = cloudflare.GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesResponse)) == openjson.toJson(obj)
 
-  test "round-trips PostAccountsAccountIdAiSearchNamespacesNameInstancesResponse":
-    let obj = cloudflare.PostAccountsAccountIdAiSearchNamespacesNameInstancesResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdAiSearchNamespacesNameInstancesResponse)) == openjson.toJson(obj)
+  test "round-trips PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesResponse":
+    let obj = cloudflare.PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesResponse)) == openjson.toJson(obj)
 
-  test "round-trips GetAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse":
-    let obj = cloudflare.GetAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse)) == openjson.toJson(obj)
+  test "round-trips GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse":
+    let obj = cloudflare.GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse)) == openjson.toJson(obj)
 
-  test "round-trips PutAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse":
-    let obj = cloudflare.PutAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PutAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse)) == openjson.toJson(obj)
+  test "round-trips PutAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse":
+    let obj = cloudflare.PutAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PutAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse)) == openjson.toJson(obj)
 
-  test "round-trips DeleteAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse":
-    let obj = cloudflare.DeleteAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdAiSearchNamespacesNameInstancesIdResponse)) == openjson.toJson(obj)
+  test "round-trips DeleteAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse":
+    let obj = cloudflare.DeleteAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdResponse)) == openjson.toJson(obj)
 
-  test "round-trips PostAccountsAccountIdAiSearchNamespacesNameInstancesIdChatCompletionsResponse":
-    let obj = cloudflare.PostAccountsAccountIdAiSearchNamespacesNameInstancesIdChatCompletionsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdAiSearchNamespacesNameInstancesIdChatCompletionsResponse)) == openjson.toJson(obj)
+  test "round-trips PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdChatCompletionsResponse":
+    let obj = cloudflare.PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdChatCompletionsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdChatCompletionsResponse)) == openjson.toJson(obj)
 
-  test "round-trips PostAccountsAccountIdAiSearchNamespacesNameInstancesIdPurgeCacheResponse":
-    let obj = cloudflare.PostAccountsAccountIdAiSearchNamespacesNameInstancesIdPurgeCacheResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdAiSearchNamespacesNameInstancesIdPurgeCacheResponse)) == openjson.toJson(obj)
+  test "round-trips PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdPurgeCacheResponse":
+    let obj = cloudflare.PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdPurgeCacheResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdPurgeCacheResponse)) == openjson.toJson(obj)
 
-  test "round-trips PostAccountsAccountIdAiSearchNamespacesNameInstancesIdSearchResponse":
-    let obj = cloudflare.PostAccountsAccountIdAiSearchNamespacesNameInstancesIdSearchResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdAiSearchNamespacesNameInstancesIdSearchResponse)) == openjson.toJson(obj)
+  test "round-trips PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdSearchResponse":
+    let obj = cloudflare.PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdSearchResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdSearchResponse)) == openjson.toJson(obj)
 
-  test "round-trips GetAccountsAccountIdAiSearchNamespacesNameInstancesIdStatsResponse":
-    let obj = cloudflare.GetAccountsAccountIdAiSearchNamespacesNameInstancesIdStatsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdAiSearchNamespacesNameInstancesIdStatsResponse)) == openjson.toJson(obj)
+  test "round-trips GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdStatsResponse":
+    let obj = cloudflare.GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdStatsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdStatsResponse)) == openjson.toJson(obj)
 
 suite "ai_search_instances endpoints":
   test "GET /accounts/{account_id}/ai-search/instances":
@@ -100,28 +100,28 @@ suite "ai_search_instances endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdAiSearchInstancesIdStats("test", "test")
 
-  test "GET /accounts/{account_id}/ai-search/namespaces/{name}/instances":
+  test "GET /accounts/{account_id}/ai-search/namespaces/{namespace}/instances":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiSearchNamespacesNameInstances("test", 1, 1, "test", "test", orderByCreatedAt, orderByDirectionAsc, "test")
+    discard waitFor client.getAccountsAccountIdAiSearchNamespacesNamespaceInstances("test", "test", 1, 1, "test", "test", orderByCreatedAt, orderByDirectionAsc)
 
-  test "GET /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}":
+  test "GET /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiSearchNamespacesNameInstancesId("test", "test", "test")
+    discard waitFor client.getAccountsAccountIdAiSearchNamespacesNamespaceInstancesId("test", "test", "test")
 
-  test "DELETE /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}":
+  test "DELETE /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdAiSearchNamespacesNameInstancesId("test", "test", "test")
+    discard waitFor client.deleteAccountsAccountIdAiSearchNamespacesNamespaceInstancesId("test", "test", "test")
 
-  test "POST /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/purge_cache":
+  test "POST /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/purge_cache":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdAiSearchNamespacesNameInstancesIdPurgeCache("test", "test", "test")
+    discard waitFor client.postAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdPurgeCache("test", "test", "test")
 
-  test "GET /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}/stats":
+  test "GET /accounts/{account_id}/ai-search/namespaces/{namespace}/instances/{id}/stats":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiSearchNamespacesNameInstancesIdStats("test", "test", "test")
+    discard waitFor client.getAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdStats("test", "test", "test")
 

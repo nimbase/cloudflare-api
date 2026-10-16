@@ -11,6 +11,7 @@ import ./private/types
 type
   PostAccountsAccountIdGatewayLocationsRequest = object
     client_default: Option[types.ZeroTrustGatewayClientDefault]
+    dns64_enabled: Option[types.ZeroTrustGatewayDns64Enabled]
     dns_destination_ips_id: Option[types.ZeroTrustGatewayDnsDestinationIpsIdWrite]
     ecs_support: Option[types.ZeroTrustGatewayEcsSupport]
     endpoints: Option[types.ZeroTrustGatewayEndpoints]
@@ -19,6 +20,7 @@ type
     networks: Option[types.ZeroTrustGatewayIpv4Networks]
   PutAccountsAccountIdGatewayLocationsLocationIdRequest = object
     client_default: Option[types.ZeroTrustGatewayClientDefault]
+    dns64_enabled: Option[types.ZeroTrustGatewayDns64Enabled]
     dns_destination_ips_id: Option[types.ZeroTrustGatewayDnsDestinationIpsIdWrite]
     ecs_support: Option[types.ZeroTrustGatewayEcsSupport]
     endpoints: Option[types.ZeroTrustGatewayEndpoints]

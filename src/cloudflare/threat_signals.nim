@@ -66,18 +66,6 @@ type
     errors: seq[JsonNode]
     result: JsonNode
     success: bool
-  GetAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeedsResponse* = object
-    errors: seq[JsonNode]
-    messages: seq[JsonNode]
-    result: JsonNode
-    success: bool
-  PatchAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeedsOptOutRequest = object
-    opted_out: bool
-  PatchAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeedsOptOutResponse* = object
-    errors: seq[JsonNode]
-    messages: seq[JsonNode]
-    result: JsonNode
-    success: bool
   GetAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
@@ -128,8 +116,6 @@ type
     messages: seq[JsonNode]
     result: JsonNode
     success: bool
-  GetAccountsAccountIdCloudforceOneV2ThreatSignalsHealthResponse* = object
-    status: string
   GetAccountsAccountIdCloudforceOneV2ThreatSignalsIndicatorsResponse* = object
     errors: seq[JsonNode]
     result: JsonNode
@@ -398,36 +384,6 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsCategories*(client: Cloudfl
   else:
     raise newException(CloudflareClientError, body)
 
-proc getAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeeds*(client: CloudflareClient,
-                                                                   accountId: string,
-                                                                   category: string = default(string),
-                                                                   includeInactive: bool = false): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeedsResponse] {.async.} =
-  ## Lists the curated feeds the account can subscribe to.
-
-  var q = initOrderedTable[string, string]()
-  q["category"] = $category
-  q["include_inactive"] = $includeInactive
-  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/curated-feeds", q)
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, GetAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeedsResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc patchAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeedsOptOut*(client: CloudflareClient,
-                                                                           accountId: string,
-                                                                           body: PatchAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeedsOptOutRequest): Future[PatchAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeedsOptOutResponse] {.async.} =
-  ## Opts the account out of, or back into, the curated feed catalog.
-
-  let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/curated-feeds/opt-out", body)
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, PatchAccountsAccountIdCloudforceOneV2ThreatSignalsCuratedFeedsOptOutResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
 proc getAccountsAccountIdCloudforceOneV2ThreatSignalsFeeds*(client: CloudflareClient,
                                                             accountId: string,
                                                             page: int64 = 1,
@@ -547,18 +503,6 @@ proc putAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdSkills*(client: 
   case res.code
   of Http200:
     result = fromJson(body, PutAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdSkillsResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc getAccountsAccountIdCloudforceOneV2ThreatSignalsHealth*(client: CloudflareClient,
-                                                             accountId: string): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsHealthResponse] {.async.} =
-  ## Checks that the Threat Signals API is reachable.
-
-  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/health")
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, GetAccountsAccountIdCloudforceOneV2ThreatSignalsHealthResponse)
   else:
     raise newException(CloudflareClientError, body)
 

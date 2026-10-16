@@ -26,6 +26,8 @@ type
     notification_filter: Option[types.LoadBalancingNotificationFilter]
     origin_steering: Option[types.LoadBalancingOriginSteering]
     origins: types.LoadBalancingOrigins
+  PatchUserLoadBalancersPoolsRequest = object
+    notification_email: Option[types.LoadBalancingPatchPoolsNotificationEmail]
   PutUserLoadBalancersPoolsPoolIdRequest = object
     check_regions: Option[types.LoadBalancingCheckRegions]
     description: Option[types.LoadBalancingSchemasDescription]
@@ -88,7 +90,8 @@ proc postUserLoadBalancersPools*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc patchUserLoadBalancersPools*(client: CloudflareClient): Future[types.LoadBalancingSchemasResponseCollection] {.async.} =
+proc patchUserLoadBalancersPools*(client: CloudflareClient,
+                                  body: PatchUserLoadBalancersPoolsRequest): Future[types.LoadBalancingSchemasResponseCollection] {.async.} =
   ## Apply changes to a number of existing pools, overwriting the supplied
   ## properties. Pools are ordered by ascending `name`. Returns the list of affected
   ## pools. Supports the standard pagination query parameters, either

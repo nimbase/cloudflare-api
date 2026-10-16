@@ -74,7 +74,7 @@ suite "resource_tagging endpoints":
   test "GET /accounts/{account_id}/tags/resources":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdTagsResources(newResourceTaggingAccountId(), @["test"], "test", @["test"], true, @["test"], "test")
+    discard waitFor client.getAccountsAccountIdTagsResources(true, newResourceTaggingAccountId(), @["test"], "test", @["test"], true, @["test"], "test")
 
   test "GET /accounts/{account_id}/tags/summary":
     let client = initCloudflareClient("test-key")

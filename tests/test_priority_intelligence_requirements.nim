@@ -61,3 +61,8 @@ suite "priority_intelligence_requirements endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityId("test", "test")
 
+  test "GET /accounts/{account_id}/cloudforce-one/v2/priority-intelligence/{priority_id}/matches":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatches("test", "test", "test", 1, triageStateNew)
+

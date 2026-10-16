@@ -66,6 +66,7 @@ proc getAccountsAccountIdTagsKeys*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdTagsResources*(client: CloudflareClient,
+                                        includeNavigation: bool = false,
                                         accountId: types.ResourceTaggingAccountId,
                                         `type`: seq[string] = @[],
                                         name: string = default(string),
@@ -76,6 +77,7 @@ proc getAccountsAccountIdTagsResources*(client: CloudflareClient,
   ## Lists all tagged resources for an account.
 
   var q = initOrderedTable[string, string]()
+  q["include_navigation"] = $includeNavigation
   for v in `type`: q["type"] = $v
   q["name"] = $name
   for v in id: q["id"] = $v

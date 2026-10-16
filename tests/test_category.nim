@@ -93,7 +93,7 @@ suite "category endpoints":
   test "GET /accounts/{account_id}/resource-library/categories":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdResourceLibraryCategories("test", 1, 1)
+    discard waitFor client.getAccountsAccountIdResourceLibraryCategories("test", 1, 1, "test")
 
   test "GET /accounts/{account_id}/resource-library/categories/{id}":
     let client = initCloudflareClient("test-key")

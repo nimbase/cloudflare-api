@@ -131,10 +131,6 @@ proc postAccountsAccountIdMove*(client: CloudflareClient, accountId: string,
   ## to an organization or moving it between organizations in the same hierarchy.
   ## Availability
   ## depends on the organization's capabilities.
-  ##
-  ## Authentication: A Global API key is required. User API Tokens do not include the
-  ## required
-  ## `com.cloudflare.api.account.move` permission.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/move", body)
   let body = await res.body
@@ -152,11 +148,6 @@ proc getAccountsAccountIdOrganizations*(client: CloudflareClient,
   ## The returned list will be in order from "root" to "leaf", where the "leaf"
   ## will be the organization that _immediately_ contains the specified
   ## account.
-  ##
-  ## Authentication: Use a Global API key, or a user-owned API Token scoped to the
-  ## account with
-  ## the `Account Settings Read` permission, which grants
-  ## `com.cloudflare.api.account.read`.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/organizations")
   let body = await res.body
@@ -174,11 +165,6 @@ proc getAccountsAccountIdProfile*(client: CloudflareClient, accountId: string): 
   ## across accounts and organizations. Only available to members of an organization
   ## that
   ## contains the account.
-  ##
-  ## Authentication: Use a Global API key, or a user-owned API Token scoped to the
-  ## account with
-  ## the `Account Settings Read` permission, which grants
-  ## `com.cloudflare.api.account.read`.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/profile")
   let body = await res.body
@@ -197,11 +183,6 @@ proc putAccountsAccountIdProfile*(client: CloudflareClient, accountId: string,
   ## organization sharing that profile. Omitted or empty fields are left unchanged.
   ## Only
   ## available to members of an organization that contains the account.
-  ##
-  ## Authentication: Use a Global API key, or a user-owned API Token scoped to the
-  ## account with
-  ## the `Account Settings Write` permission, which grants
-  ## `com.cloudflare.api.account.update`.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/profile", body)
   return res

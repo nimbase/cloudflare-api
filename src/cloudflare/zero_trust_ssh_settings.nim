@@ -14,8 +14,7 @@ type
 
 proc getAccountsAccountIdGatewayAuditSshSettings*(client: CloudflareClient,
                                                   accountId: types.ZeroTrustGatewayIdentifier2): Future[types.ZeroTrustGatewaySingleResponse6] {.async.} =
-  ## Retrieve all Zero Trust Audit SSH and SSH with Access for Infrastructure
-  ## settings for an account.
+  ## Retrieve SSH with Access for Infrastructure settings for an account.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/gateway/audit_ssh_settings")
   let body = await res.body
@@ -28,8 +27,7 @@ proc getAccountsAccountIdGatewayAuditSshSettings*(client: CloudflareClient,
 proc putAccountsAccountIdGatewayAuditSshSettings*(client: CloudflareClient,
                                                   accountId: types.ZeroTrustGatewayIdentifier2,
                                                   body: PutAccountsAccountIdGatewayAuditSshSettingsRequest): Future[types.ZeroTrustGatewaySingleResponse6] {.async.} =
-  ## Update Zero Trust Audit SSH and SSH with Access for Infrastructure settings for
-  ## an account.
+  ## Update SSH with Access for Infrastructure settings for an account.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/gateway/audit_ssh_settings", body)
   let body = await res.body

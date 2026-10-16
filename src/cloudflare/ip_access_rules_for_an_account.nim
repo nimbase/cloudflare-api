@@ -11,7 +11,7 @@ import ./private/types
 type
   PostAccountsAccountIdFirewallAccessRulesRulesRequest = object
     configuration: types.FirewallConfiguration
-    mode: types.FirewallSchemasMode
+    mode: JsonNode
     notes: Option[JsonNode]
   IpAccessRulesForAnAccountConfigurationTargetOption* = enum
     configurationTargetIp = "ip"

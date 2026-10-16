@@ -15,7 +15,9 @@ proc getAccountsAccountIdWorkersDomains*(client: CloudflareClient,
                                          zoneName: string = default(string),
                                          service: string = default(string),
                                          hostname: string = default(string),
-                                         environment: string = default(string)): Future[JsonNode] {.async.} =
+                                         environment: string = default(string),
+                                         previewsEnabled: bool = default(bool),
+                                         enabled: bool = default(bool)): Future[JsonNode] {.async.} =
   ## Lists all Worker domains for an account.
 
   var q = initOrderedTable[string, string]()
@@ -24,6 +26,8 @@ proc getAccountsAccountIdWorkersDomains*(client: CloudflareClient,
   q["service"] = $service
   q["hostname"] = $hostname
   q["environment"] = $environment
+  q["previews_enabled"] = $previewsEnabled
+  q["enabled"] = $enabled
   let res = await client.httpGET(fmt"/accounts/{accountId}/workers/domains", q)
   let body = await res.body
   case res.code

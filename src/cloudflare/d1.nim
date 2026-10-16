@@ -18,6 +18,8 @@ type
     current_bookmark: Option[string]
     dump_options: Option[JsonNode]
     output_format: string
+  PostAccountsAccountIdD1DatabaseDatabaseIdUndeleteRequest = object
+    new_name: Option[JsonNode]
 
 proc getAccountsAccountIdD1Database*(client: CloudflareClient,
                                      accountId: types.D1AccountIdentifier,
@@ -203,6 +205,30 @@ proc postAccountsAccountIdD1DatabaseDatabaseIdTimeTravelRestore*(client: Cloudfl
   q["bookmark"] = $bookmark
   q["timestamp"] = $timestamp
   let res = await client.httpPOST(fmt"/accounts/{accountId}/d1/database/{databaseId}/time_travel/restore", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdD1DatabaseDatabaseIdUndelete*(client: CloudflareClient,
+                                                        accountId: types.D1AccountIdentifier,
+                                                        databaseId: types.D1DatabaseIdentifier,
+                                                        body: PostAccountsAccountIdD1DatabaseDatabaseIdUndeleteRequest): Future[JsonNode] {.async.} =
+  ## Restore a deleted D1 database. The database is restored with the name it had
+  ## when it was deleted,
+  ## unless `new_name` is provided. The restored database counts against the
+  ## account's limits.
+  ## Undeleting a database that is not deleted succeeds without changes, unless
+  ## `new_name` differs from its current name which errors.
+  ##
+  ## Once a database is undeleted, Time Travel (point-in-time recovery) cannot
+  ## restore it to a bookmark or
+  ## timestamp at or before the undeletion. Only states after the undeletion can be
+  ## restored.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/d1/database/{databaseId}/undelete", body)
   let body = await res.body
   case res.code
   of Http200:

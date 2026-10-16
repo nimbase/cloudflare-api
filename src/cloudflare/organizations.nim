@@ -66,10 +66,6 @@ proc getOrganizations*(client: CloudflareClient, id: seq[string] = @[],
                        pageToken: string = default(string),
                        pageSize: int64 = default(int64)): Future[GetOrganizationsResponse] {.async.} =
   ## Retrieve a list of organizations a particular user has access to.
-  ##
-  ## Authentication: Use a Global API key, or a User API Token with the `User Details
-  ## Read` or
-  ## `User Details Write` permission.
 
   var q = initOrderedTable[string, string]()
   for v in id: q["id"] = $v
@@ -96,10 +92,6 @@ proc postOrganizations*(client: CloudflareClient,
   ## Create a new organization for a user. Sub-organization creation availability
   ## depends on
   ## the organization's capabilities.
-  ##
-  ## Authentication: Use a Global API key, or a User API Token with the `User Details
-  ## Write`
-  ## permission.
 
   let res = await client.httpPOST("/organizations", body)
   let body = await res.body
@@ -112,11 +104,6 @@ proc postOrganizations*(client: CloudflareClient,
 proc getOrganizationsOrganizationId*(client: CloudflareClient,
                                      organizationId: types.OrganizationsApiOrganizationID): Future[GetOrganizationsOrganizationIdResponse] {.async.} =
   ## Retrieve the details of a certain organization.
-  ##
-  ## Authentication: A Global API key for a user with
-  ## `com.cloudflare.api.tenant.unit.read` is required. User API Tokens are not
-  ## currently
-  ## supported and return HTTP `403` with error code `10000`.
 
   let res = await client.httpGET(fmt"/organizations/{organizationId}")
   let body = await res.body
@@ -130,11 +117,6 @@ proc putOrganizationsOrganizationId*(client: CloudflareClient,
                                      organizationId: types.OrganizationsApiOrganizationID,
                                      body: types.OrganizationsApiOrganization): Future[PutOrganizationsOrganizationIdResponse] {.async.} =
   ## Update an organization's name.
-  ##
-  ## Authentication: A Global API key for a user with
-  ## `com.cloudflare.api.tenant.unit.update` is required. User API Tokens are not
-  ## currently
-  ## supported.
 
   let res = await client.httpPUT(fmt"/organizations/{organizationId}", body)
   let body = await res.body
@@ -152,11 +134,6 @@ proc deleteOrganizationsOrganizationId*(client: CloudflareClient,
   ## deletion availability depends on the organization's capabilities.
   ##
   ## **Access Control:** Restricted to enterprise organizations.
-  ##
-  ## Authentication: A Global API key for a user with
-  ## `com.cloudflare.api.tenant.unit.update` is required. User API Tokens are not
-  ## currently
-  ## supported.
 
   let res = await client.httpDELETE(fmt"/organizations/{organizationId}")
   let body = await res.body
@@ -184,11 +161,6 @@ proc getOrganizationsOrganizationIdAccounts*(client: CloudflareClient,
                                              pageSize: int64 = default(int64)): Future[GetOrganizationsOrganizationIdAccountsResponse] {.async.} =
   ## Retrieve the accounts immediately attached to a specific organization. Accounts
   ## attached to sub-organizations are not included.
-  ##
-  ## Authentication: A Global API key for a user with
-  ## `com.cloudflare.api.tenant.unit.read` is required. User API Tokens are not
-  ## currently
-  ## supported.
 
   var q = initOrderedTable[string, string]()
   q["account_pubname"] = $accountPubname
@@ -219,11 +191,9 @@ proc putOrganizationsOrganizationIdInvitesMemberCode*(client: CloudflareClient,
                                                       body: types.OrganizationsApiHandleOrganizationInviteRequest): Future[PutOrganizationsOrganizationIdInvitesMemberCodeResponse] {.async.} =
   ## Accept or reject an invitation to a specific organization.
   ##
-  ## Authentication: A Global API key for the invited user is required. User API
-  ## Tokens are not
-  ## currently supported. No additional permission is required; the invitation must
-  ## belong to
-  ## the authenticated user.
+  ## The credential must belong to the invited user. No additional API token
+  ## permission is
+  ## required.
 
   let res = await client.httpPUT(fmt"/organizations/{organizationId}/invites/{memberCode}", body)
   let body = await res.body
@@ -236,11 +206,6 @@ proc putOrganizationsOrganizationIdInvitesMemberCode*(client: CloudflareClient,
 proc getOrganizationsOrganizationIdProfile*(client: CloudflareClient,
                                             organizationId: types.OrganizationsApiOrganizationID): Future[types.OrganizationsApiProfileResponse] {.async.} =
   ## Get an organizations profile if it exists.
-  ##
-  ## Authentication: A Global API key for a user with
-  ## `com.cloudflare.api.tenant.unit.read` is required. User API Tokens are not
-  ## currently
-  ## supported.
 
   let res = await client.httpGET(fmt"/organizations/{organizationId}/profile")
   let body = await res.body
@@ -254,11 +219,6 @@ proc putOrganizationsOrganizationIdProfile*(client: CloudflareClient,
                                             organizationId: types.OrganizationsApiOrganizationID,
                                             body: types.OrganizationsApiModifyOrganizationProfileRequest): Future[AsyncResponse] {.async.} =
   ## Modify organization profile.
-  ##
-  ## Authentication: A Global API key for a user with
-  ## `com.cloudflare.api.tenant.unit.update` is required. User API Tokens are not
-  ## currently
-  ## supported.
 
   let res = await client.httpPUT(fmt"/organizations/{organizationId}/profile", body)
   return res

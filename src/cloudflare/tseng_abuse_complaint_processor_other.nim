@@ -264,6 +264,16 @@ proc postAccountsAccountIdAbuseReportsReportParam*(client: CloudflareClient,
   ## API token with the `Trust and Safety Write` permission. If the account
   ## is not entitled, the request is rejected with an HTTP `401` response
   ## (see below).
+  ##
+  ## Delegated reports: In limited circumstances, Cloudflare works with
+  ## select customers who have established abuse-handling programs. For
+  ## these customers, Cloudflare may forward abuse reports directly and in
+  ## full—including reporter contact information, comments, and supporting
+  ## evidence—without redaction or preprocessing by Cloudflare. This allows
+  ## the customer to investigate and respond using their own policies and
+  ## processes. For delegated reports, the report—including contact
+  ## information and comments—will be forwarded to the customer in full
+  ## regardless of the `host_notification` and `owner_notification` values.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/abuse-reports/{reportParam}", body)
   let body = await res.body

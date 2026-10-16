@@ -61,11 +61,6 @@ suite "load_balancer_pools endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getUserLoadBalancersPools("test")
 
-  test "PATCH /user/load_balancers/pools":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchUserLoadBalancersPools()
-
   test "GET /user/load_balancers/pools/{pool_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

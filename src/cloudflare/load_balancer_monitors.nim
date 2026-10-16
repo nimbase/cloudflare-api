@@ -33,7 +33,7 @@ proc postUserLoadBalancersMonitors*(client: CloudflareClient): Future[types.Load
 
 proc getUserLoadBalancersMonitorsMonitorId*(client: CloudflareClient,
                                             monitorId: types.LoadBalancingIdentifier): Future[types.LoadBalancingMonitorResponseSingle] {.async.} =
-  ## List a single configured monitor for a user.
+  ## Fetch a single configured monitor for a user.
 
   let res = await client.httpGET(fmt"/user/load_balancers/monitors/{monitorId}")
   let body = await res.body

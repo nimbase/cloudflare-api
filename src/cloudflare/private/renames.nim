@@ -54,6 +54,76 @@ proc renameHook*(v: types.AccessMeta, fieldName: var string) {.inline.} =
   elif fieldName == "last_modified":
     fieldName = "lastModified"
 
+proc renameHook*(v: types.AccessScimMeta, fieldName: var string) {.inline.} =
+  if fieldName == "lastModified":
+    fieldName = "last_modified"
+  elif fieldName == "last_modified":
+    fieldName = "lastModified"
+  elif fieldName == "resourceType":
+    fieldName = "resource_type"
+  elif fieldName == "resource_type":
+    fieldName = "resourceType"
+
+proc renameHook*(v: types.AccessScimName, fieldName: var string) {.inline.} =
+  if fieldName == "familyName":
+    fieldName = "family_name"
+  elif fieldName == "family_name":
+    fieldName = "familyName"
+  elif fieldName == "givenName":
+    fieldName = "given_name"
+  elif fieldName == "given_name":
+    fieldName = "givenName"
+  elif fieldName == "honorificPrefix":
+    fieldName = "honorific_prefix"
+  elif fieldName == "honorific_prefix":
+    fieldName = "honorificPrefix"
+  elif fieldName == "honorificSuffix":
+    fieldName = "honorific_suffix"
+  elif fieldName == "honorific_suffix":
+    fieldName = "honorificSuffix"
+  elif fieldName == "middleName":
+    fieldName = "middle_name"
+  elif fieldName == "middle_name":
+    fieldName = "middleName"
+
+proc renameHook*(v: types.AccessScimPatchRequest, fieldName: var string) {.inline.} =
+  if fieldName == "Operations":
+    fieldName = "operations"
+  elif fieldName == "operations":
+    fieldName = "Operations"
+
+proc renameHook*(v: types.AccessScimUser, fieldName: var string) {.inline.} =
+  if fieldName == "displayName":
+    fieldName = "display_name"
+  elif fieldName == "display_name":
+    fieldName = "displayName"
+  elif fieldName == "externalId":
+    fieldName = "external_id"
+  elif fieldName == "external_id":
+    fieldName = "externalId"
+  elif fieldName == "userName":
+    fieldName = "user_name"
+  elif fieldName == "user_name":
+    fieldName = "userName"
+
+proc renameHook*(v: types.AccessScimUserListResponse, fieldName: var string) {.inline.} =
+  if fieldName == "Resources":
+    fieldName = "resources"
+  elif fieldName == "resources":
+    fieldName = "Resources"
+  elif fieldName == "itemsPerPage":
+    fieldName = "items_per_page"
+  elif fieldName == "items_per_page":
+    fieldName = "itemsPerPage"
+  elif fieldName == "startIndex":
+    fieldName = "start_index"
+  elif fieldName == "start_index":
+    fieldName = "startIndex"
+  elif fieldName == "totalResults":
+    fieldName = "total_results"
+  elif fieldName == "total_results":
+    fieldName = "totalResults"
+
 proc renameHook*(v: types.AccessUsers, fieldName: var string) {.inline.} =
   if fieldName == "displayName":
     fieldName = "display_name"
@@ -2507,15 +2577,7 @@ proc renameHook*(v: types.VectorizeListMetadataIndexResponse, fieldName: var str
     fieldName = "metadataIndexes"
 
 proc renameHook*(v: types.WorkersObservabilityAgentSession, fieldName: var string) {.inline.} =
-  if fieldName == "agentId":
-    fieldName = "agent_id"
-  elif fieldName == "agent_id":
-    fieldName = "agentId"
-  elif fieldName == "agentName":
-    fieldName = "agent_name"
-  elif fieldName == "agent_name":
-    fieldName = "agentName"
-  elif fieldName == "conversationId":
+  if fieldName == "conversationId":
     fieldName = "conversation_id"
   elif fieldName == "conversation_id":
     fieldName = "conversationId"
@@ -2531,10 +2593,6 @@ proc renameHook*(v: types.WorkersObservabilityAgentSession, fieldName: var strin
     fieldName = "output_tokens"
   elif fieldName == "output_tokens":
     fieldName = "outputTokens"
-  elif fieldName == "serviceName":
-    fieldName = "service_name"
-  elif fieldName == "service_name":
-    fieldName = "serviceName"
   elif fieldName == "sessionDurationMs":
     fieldName = "session_duration_ms"
   elif fieldName == "session_duration_ms":
@@ -2543,25 +2601,13 @@ proc renameHook*(v: types.WorkersObservabilityAgentSession, fieldName: var strin
     fieldName = "session_start_ms"
   elif fieldName == "session_start_ms":
     fieldName = "sessionStartMs"
-  elif fieldName == "spanCount":
-    fieldName = "span_count"
-  elif fieldName == "span_count":
-    fieldName = "spanCount"
   elif fieldName == "traceCount":
     fieldName = "trace_count"
   elif fieldName == "trace_count":
     fieldName = "traceCount"
 
 proc renameHook*(v: types.WorkersObservabilityAgentSessionRun, fieldName: var string) {.inline.} =
-  if fieldName == "agentId":
-    fieldName = "agent_id"
-  elif fieldName == "agent_id":
-    fieldName = "agentId"
-  elif fieldName == "agentName":
-    fieldName = "agent_name"
-  elif fieldName == "agent_name":
-    fieldName = "agentName"
-  elif fieldName == "conversationId":
+  if fieldName == "conversationId":
     fieldName = "conversation_id"
   elif fieldName == "conversation_id":
     fieldName = "conversationId"

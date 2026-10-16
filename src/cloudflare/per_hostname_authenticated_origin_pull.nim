@@ -4,13 +4,13 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[strformat]
+import std/[strformat, json]
 import ./private/metaclient
 import ./private/types
 
 type
   PutZonesZoneIdOriginTlsClientAuthHostnamesRequest = object
-    config: types.TlsCertificatesAndHostnamesConfig
+    config: JsonNode
   PostZonesZoneIdOriginTlsClientAuthHostnamesCertificatesRequest = object
     certificate: types.TlsCertificatesAndHostnamesCertificate6
     private_key: types.TlsCertificatesAndHostnamesPrivateKey3

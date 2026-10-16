@@ -10,14 +10,14 @@ import ./private/types
 
 
 proc getAccountsAccountIdDiagnosticsEndpointHealthchecks*(client: CloudflareClient,
-                                                          accountId: types.MagicTransitIdentifier): Future[types.MagicTransitEndpointHealthCheckResponseSingle] {.async.} =
+                                                          accountId: types.MagicTransitIdentifier): Future[types.MagicTransitEndpointHealthCheckResponseCollection] {.async.} =
   ## List Endpoint Health Checks.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/diagnostics/endpoint-healthchecks")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.MagicTransitEndpointHealthCheckResponseSingle)
+    result = fromJson(body, types.MagicTransitEndpointHealthCheckResponseCollection)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -51,7 +51,7 @@ proc putAccountsAccountIdDiagnosticsEndpointHealthchecksId*(client: CloudflareCl
                                                             accountId: types.MagicTransitIdentifier,
                                                             id: types.MagicTransitUuid,
                                                             body: types.MagicTransitEndpointHealthCheck): Future[types.MagicTransitEndpointHealthCheckResponseSingle] {.async.} =
-  ## Update a Endpoint Health Check.
+  ## Update an Endpoint Health Check.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/diagnostics/endpoint-healthchecks/{id}", body)
   let body = await res.body

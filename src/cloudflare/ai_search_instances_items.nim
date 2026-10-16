@@ -8,37 +8,37 @@ import std/[strformat, options, json]
 import ./private/metaclient
 
 type
-  GetAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsResponse* = object
+  GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsResponse* = object
     result: seq[JsonNode]
     result_info: JsonNode
     success: bool
-  PostAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsResponse* = object
+  PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsResponse* = object
     result: JsonNode
     success: bool
-  PutAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsRequest = object
+  PutAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsRequest = object
     key: string
     next_action: string
     wait_for_completion: Option[bool]
-  PutAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsResponse* = object
+  PutAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsResponse* = object
     result: JsonNode
     success: bool
-  GetAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdResponse* = object
+  GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdResponse* = object
     result: JsonNode
     success: bool
-  DeleteAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdResponse* = object
+  DeleteAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdResponse* = object
     result: JsonNode
     success: bool
-  PatchAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdRequest = object
+  PatchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdRequest = object
     next_action: string
     wait_for_completion: Option[bool]
-  PatchAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdResponse* = object
+  PatchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdResponse* = object
     result: JsonNode
     success: bool
-  GetAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdChunksResponse* = object
+  GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdChunksResponse* = object
     result: seq[JsonNode]
     result_info: JsonNode
     success: bool
-  GetAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdLogsResponse* = object
+  GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdLogsResponse* = object
     result: seq[JsonNode]
     result_info: JsonNode
     success: bool
@@ -55,19 +55,19 @@ type
     statusOutdated = "outdated"
 
 
-proc getAccountsAccountIdAiSearchNamespacesNameInstancesIdItems*(client: CloudflareClient,
-                                                                 id: string,
-                                                                 accountId: string,
-                                                                 page: int64 = 1,
-                                                                 perPage: int64 = 20,
-                                                                 search: string = default(string),
-                                                                 sortBy: AiSearchInstancesItemSortByOption = sortByStatus,
-                                                                 status: AiSearchInstancesItemStatusOption = statusQueued,
-                                                                 source: string = default(string),
-                                                                 metadataFilter: string = default(string),
-                                                                 itemId: string = default(string),
-                                                                 key: string = default(string),
-                                                                 name: string): Future[GetAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsResponse] {.async.} =
+proc getAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItems*(client: CloudflareClient,
+                                                                      id: string,
+                                                                      accountId: string,
+                                                                      namespace: string,
+                                                                      page: int64 = 1,
+                                                                      perPage: int64 = 20,
+                                                                      search: string = default(string),
+                                                                      sortBy: AiSearchInstancesItemSortByOption = sortByStatus,
+                                                                      status: AiSearchInstancesItemStatusOption = statusQueued,
+                                                                      source: string = default(string),
+                                                                      metadataFilter: string = default(string),
+                                                                      itemId: string = default(string),
+                                                                      key: string = default(string)): Future[GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsResponse] {.async.} =
   ## Lists indexed items in an AI Search instance.
 
   var q = initOrderedTable[string, string]()
@@ -80,137 +80,137 @@ proc getAccountsAccountIdAiSearchNamespacesNameInstancesIdItems*(client: Cloudfl
   q["metadata_filter"] = $metadataFilter
   q["item_id"] = $itemId
   q["key"] = $key
-  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances/{id}/items", q)
+  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/namespaces/{namespace}/instances/{id}/items", q)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, GetAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsResponse)
+    result = fromJson(body, GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsResponse)
   else:
     raise newException(CloudflareClientError, body)
 
-proc postAccountsAccountIdAiSearchNamespacesNameInstancesIdItems*(client: CloudflareClient,
-                                                                  id: string,
-                                                                  accountId: string,
-                                                                  name: string): Future[PostAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsResponse] {.async.} =
+proc postAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItems*(client: CloudflareClient,
+                                                                       id: string,
+                                                                       accountId: string,
+                                                                       namespace: string): Future[PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsResponse] {.async.} =
   ## Uploads a file to a managed AI Search instance via multipart/form-data.
 
-  let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances/{id}/items")
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-search/namespaces/{namespace}/instances/{id}/items")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, PostAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsResponse)
+    result = fromJson(body, PostAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsResponse)
   else:
     raise newException(CloudflareClientError, body)
 
-proc putAccountsAccountIdAiSearchNamespacesNameInstancesIdItems*(client: CloudflareClient,
-                                                                 id: string,
-                                                                 accountId: string,
-                                                                 name: string,
-                                                                 body: PutAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsRequest): Future[PutAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsResponse] {.async.} =
+proc putAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItems*(client: CloudflareClient,
+                                                                      id: string,
+                                                                      accountId: string,
+                                                                      namespace: string,
+                                                                      body: PutAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsRequest): Future[PutAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsResponse] {.async.} =
   ## Creates or updates an indexed item in an AI Search instance.
 
-  let res = await client.httpPUT(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances/{id}/items", body)
+  let res = await client.httpPUT(fmt"/accounts/{accountId}/ai-search/namespaces/{namespace}/instances/{id}/items", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, PutAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsResponse)
+    result = fromJson(body, PutAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsResponse)
   else:
     raise newException(CloudflareClientError, body)
 
-proc getAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemId*(client: CloudflareClient,
-                                                                       id: string,
-                                                                       itemId: string,
-                                                                       accountId: string,
-                                                                       name: string): Future[GetAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdResponse] {.async.} =
+proc getAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemId*(client: CloudflareClient,
+                                                                            id: string,
+                                                                            itemId: string,
+                                                                            accountId: string,
+                                                                            namespace: string): Future[GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdResponse] {.async.} =
   ## Retrieves a specific indexed item from an AI Search instance.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances/{id}/items/{itemId}")
+  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/namespaces/{namespace}/instances/{id}/items/{itemId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, GetAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdResponse)
+    result = fromJson(body, GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdResponse)
   else:
     raise newException(CloudflareClientError, body)
 
-proc deleteAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemId*(client: CloudflareClient,
-                                                                          id: string,
-                                                                          itemId: string,
-                                                                          accountId: string,
-                                                                          name: string): Future[DeleteAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdResponse] {.async.} =
+proc deleteAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemId*(client: CloudflareClient,
+                                                                               id: string,
+                                                                               itemId: string,
+                                                                               accountId: string,
+                                                                               namespace: string): Future[DeleteAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdResponse] {.async.} =
   ## Deletes a file from a managed AI Search instance and removes its indexed data.
 
-  let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances/{id}/items/{itemId}")
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/ai-search/namespaces/{namespace}/instances/{id}/items/{itemId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, DeleteAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdResponse)
+    result = fromJson(body, DeleteAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdResponse)
   else:
     raise newException(CloudflareClientError, body)
 
-proc patchAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemId*(client: CloudflareClient,
-                                                                         id: string,
-                                                                         itemId: string,
-                                                                         accountId: string,
-                                                                         name: string,
-                                                                         body: PatchAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdRequest): Future[PatchAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdResponse] {.async.} =
-  ## Syncs an item to an AI Search instance index.
+proc patchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemId*(client: CloudflareClient,
+                                                                              id: string,
+                                                                              itemId: string,
+                                                                              accountId: string,
+                                                                              namespace: string,
+                                                                              body: PatchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdRequest): Future[PatchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdResponse] {.async.} =
+  ## Synchronizes an item to an AI Search instance index.
 
-  let res = await client.httpPATCH(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances/{id}/items/{itemId}", body)
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/ai-search/namespaces/{namespace}/instances/{id}/items/{itemId}", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, PatchAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdResponse)
+    result = fromJson(body, PatchAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdResponse)
   else:
     raise newException(CloudflareClientError, body)
 
-proc getAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdChunks*(client: CloudflareClient,
-                                                                             id: string,
-                                                                             itemId: string,
-                                                                             accountId: string,
-                                                                             limit: int64 = 20,
-                                                                             offset: int64 = 0,
-                                                                             name: string): Future[GetAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdChunksResponse] {.async.} =
+proc getAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdChunks*(client: CloudflareClient,
+                                                                                  id: string,
+                                                                                  itemId: string,
+                                                                                  accountId: string,
+                                                                                  namespace: string,
+                                                                                  limit: int64 = 20,
+                                                                                  offset: int64 = 0): Future[GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdChunksResponse] {.async.} =
   ## Lists chunks for a specific item in an AI Search instance, including their text
   ## content.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
   q["offset"] = $offset
-  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances/{id}/items/{itemId}/chunks", q)
+  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/namespaces/{namespace}/instances/{id}/items/{itemId}/chunks", q)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, GetAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdChunksResponse)
+    result = fromJson(body, GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdChunksResponse)
   else:
     raise newException(CloudflareClientError, body)
 
-proc getAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdDownload*(client: CloudflareClient,
-                                                                               id: string,
-                                                                               itemId: string,
-                                                                               accountId: string,
-                                                                               name: string): Future[AsyncResponse] {.async.} =
+proc getAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdDownload*(client: CloudflareClient,
+                                                                                    id: string,
+                                                                                    itemId: string,
+                                                                                    accountId: string,
+                                                                                    namespace: string): Future[AsyncResponse] {.async.} =
   ## Downloads the raw file content for a specific item from the managed AI Search
   ## instance storage.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances/{id}/items/{itemId}/download")
+  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/namespaces/{namespace}/instances/{id}/items/{itemId}/download")
   return res
 
-proc getAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdLogs*(client: CloudflareClient,
-                                                                           id: string,
-                                                                           itemId: string,
-                                                                           accountId: string,
-                                                                           limit: int64 = 50,
-                                                                           cursor: string = default(string),
-                                                                           name: string): Future[GetAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdLogsResponse] {.async.} =
+proc getAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdLogs*(client: CloudflareClient,
+                                                                                id: string,
+                                                                                itemId: string,
+                                                                                accountId: string,
+                                                                                namespace: string,
+                                                                                limit: int64 = 50,
+                                                                                cursor: string = default(string)): Future[GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdLogsResponse] {.async.} =
   ## Lists processing logs for a specific item in an AI Search instance.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
   q["cursor"] = $cursor
-  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/namespaces/{name}/instances/{id}/items/{itemId}/logs", q)
+  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-search/namespaces/{namespace}/instances/{id}/items/{itemId}/logs", q)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, GetAccountsAccountIdAiSearchNamespacesNameInstancesIdItemsItemIdLogsResponse)
+    result = fromJson(body, GetAccountsAccountIdAiSearchNamespacesNamespaceInstancesIdItemsItemIdLogsResponse)
   else:
     raise newException(CloudflareClientError, body)

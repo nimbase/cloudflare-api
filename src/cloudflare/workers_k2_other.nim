@@ -108,6 +108,7 @@ proc getAccountsAccountIdK2StreamsStreamIdSubscriptions*(client: CloudflareClien
 
 proc postProduce*(client: CloudflareClient,
                   body: types.CloudflareK2K2ProduceRequest): Future[types.CloudflareK2K2ProduceResponse] {.async.} =
+  ## Send to the stream's `endpoint`, `https://<stream_id>.k2.cloudflarestorage.com`.
   ## Appends a batch of records to the stream. The batch is written atomically, so
   ## either every record is stored or none are. Requests are limited to 5 MB,
   ## compressed and decompressed, and each record to 1 MB. Gzip bodies are accepted
@@ -123,8 +124,25 @@ proc postProduce*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc getSubscriptions*(client: CloudflareClient, name: string = default(string)): Future[types.CloudflareK2K2SubscriptionListResponse] {.async.} =
+  ## Send to the stream's `endpoint`, `https://<stream_id>.k2.cloudflarestorage.com`.
+  ## List the subscriptions on the stream, oldest first. Requires an API token with
+  ## K2 consume permission. To also see each subscription's consumer lag, use List
+  ## subscriptions with consumer lag.
+
+  var q = initOrderedTable[string, string]()
+  q["name"] = $name
+  let res = await client.httpGET("/subscriptions", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.CloudflareK2K2SubscriptionListResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc postSubscriptions*(client: CloudflareClient,
                         body: types.CloudflareK2CreateK2SubscriptionRequest): Future[types.CloudflareK2K2SubscriptionIdResponse] {.async.} =
+  ## Send to the stream's `endpoint`, `https://<stream_id>.k2.cloudflarestorage.com`.
   ## Create a subscription, which reads the stream from its own position. Creating a
   ## subscription with an existing name returns the existing subscription. A stream
   ## can have up to 100 subscriptions. Requires an API token with K2 consume
@@ -140,6 +158,7 @@ proc postSubscriptions*(client: CloudflareClient,
 
 proc getSubscriptionsSubscriptionId*(client: CloudflareClient,
                                      subscriptionId: types.CloudflareK2WorkersK2SubscriptionId): Future[types.CloudflareK2K2SubscriptionResponse] {.async.} =
+  ## Send to the stream's `endpoint`, `https://<stream_id>.k2.cloudflarestorage.com`.
   ## Get a subscription. Requires an API token with K2 consume permission.
 
   let res = await client.httpGET(fmt"/subscriptions/{subscriptionId}")
@@ -152,6 +171,7 @@ proc getSubscriptionsSubscriptionId*(client: CloudflareClient,
 
 proc deleteSubscriptionsSubscriptionId*(client: CloudflareClient,
                                         subscriptionId: types.CloudflareK2WorkersK2SubscriptionId): Future[types.CloudflareK2K2SubscriptionIdResponse] {.async.} =
+  ## Send to the stream's `endpoint`, `https://<stream_id>.k2.cloudflarestorage.com`.
   ## Delete a subscription and its position in the stream. Requires an API token with
   ## K2 consume permission.
 
@@ -167,6 +187,7 @@ proc postSubscriptionsSubscriptionIdBatchesBatchIdAck*(client: CloudflareClient,
                                                        subscriptionId: types.CloudflareK2WorkersK2SubscriptionId,
                                                        batchId: types.CloudflareK2WorkersK2BatchId,
                                                        body: types.CloudflareK2K2BatchRequest): Future[types.CloudflareK2K2EmptyResponse] {.async.} =
+  ## Send to the stream's `endpoint`, `https://<stream_id>.k2.cloudflarestorage.com`.
   ## Confirm that the worker processed a batch, so K2 does not deliver it again.
   ## Acknowledging an unknown, already acknowledged, or reassigned batch also
   ## succeeds. Requires an API token with K2 consume permission.
@@ -183,6 +204,7 @@ proc postSubscriptionsSubscriptionIdBatchesBatchIdExtend*(client: CloudflareClie
                                                           subscriptionId: types.CloudflareK2WorkersK2SubscriptionId,
                                                           batchId: types.CloudflareK2WorkersK2BatchId,
                                                           body: types.CloudflareK2K2BatchRequest): Future[types.CloudflareK2K2ExtendResponse] {.async.} =
+  ## Send to the stream's `endpoint`, `https://<stream_id>.k2.cloudflarestorage.com`.
   ## Extend the lease on a batch the worker still holds to 5 minutes from now.
   ## Returns 409 with code 10218 when the worker no longer holds the lease; stop
   ## processing the batch and call Consume again. Requires an API token with K2
@@ -200,6 +222,7 @@ proc postSubscriptionsSubscriptionIdBatchesBatchIdNack*(client: CloudflareClient
                                                         subscriptionId: types.CloudflareK2WorkersK2SubscriptionId,
                                                         batchId: types.CloudflareK2WorkersK2BatchId,
                                                         body: types.CloudflareK2K2BatchRequest): Future[types.CloudflareK2K2EmptyResponse] {.async.} =
+  ## Send to the stream's `endpoint`, `https://<stream_id>.k2.cloudflarestorage.com`.
   ## Returns a batch to the subscription for redelivery. The next Consume request
   ## from any worker receives them under a new `batch_id`. Releasing an unknown or
   ## already settled batch also succeeds. Requires an API token with K2 consume
@@ -216,6 +239,7 @@ proc postSubscriptionsSubscriptionIdBatchesBatchIdNack*(client: CloudflareClient
 proc postSubscriptionsSubscriptionIdConsume*(client: CloudflareClient,
                                              subscriptionId: types.CloudflareK2WorkersK2SubscriptionId,
                                              body: types.CloudflareK2K2ConsumeRequest): Future[types.CloudflareK2K2ConsumeResponse] {.async.} =
+  ## Send to the stream's `endpoint`, `https://<stream_id>.k2.cloudflarestorage.com`.
   ## Returns the next batch of records and leases it to the worker for 5 minutes. ACK
   ## the batch after processing it, NACK it to have it redelivered, or extend the
   ## lease if processing takes longer. When no records are available, the response

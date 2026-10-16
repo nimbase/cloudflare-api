@@ -25,6 +25,12 @@ type
     aggregateTrue = "true"
     aggregateFalse = "false"
 
+  McpPortalAnalyticResponseStatusOption* = enum
+    responseStatusSuccess = "success"
+    responseStatusError = "error"
+    responseStatusCached = "cached"
+    responseStatusAll = "all"
+
 
 proc getAccountsAccountIdAccessAiControlsMcpAnalyticsPortalsPortalIdToolCallsTimeseries*(client: CloudflareClient,
                                                                                          accountId: string,
@@ -32,7 +38,8 @@ proc getAccountsAccountIdAccessAiControlsMcpAnalyticsPortalsPortalIdToolCallsTim
                                                                                          granularity: McpPortalAnalyticGranularityOption = granularityDaily,
                                                                                          aggregate: McpPortalAnalyticAggregateOption = aggregateFalse,
                                                                                          tz: string = "utc",
-                                                                                         days: int64 = default(int64)): Future[GetAccountsAccountIdAccessAiControlsMcpAnalyticsPortalsPortalIdToolCallsTimeseriesResponse] {.async.} =
+                                                                                         days: int64 = default(int64),
+                                                                                         responseStatus: McpPortalAnalyticResponseStatusOption = responseStatusSuccess): Future[GetAccountsAccountIdAccessAiControlsMcpAnalyticsPortalsPortalIdToolCallsTimeseriesResponse] {.async.} =
   ## Returns daily or monthly tool-call counts for a portal.
 
   var q = initOrderedTable[string, string]()
@@ -40,6 +47,7 @@ proc getAccountsAccountIdAccessAiControlsMcpAnalyticsPortalsPortalIdToolCallsTim
   q["aggregate"] = $aggregate
   q["tz"] = $tz
   q["days"] = $days
+  q["response_status"] = $responseStatus
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/ai-controls/mcp/analytics/portals/{portalId}/tool-calls/timeseries", q)
   let body = await res.body
   case res.code
@@ -54,7 +62,8 @@ proc getAccountsAccountIdAccessAiControlsMcpAnalyticsServersServerIdToolCallsTim
                                                                                          granularity: McpPortalAnalyticGranularityOption = granularityDaily,
                                                                                          aggregate: McpPortalAnalyticAggregateOption = aggregateFalse,
                                                                                          tz: string = "utc",
-                                                                                         days: int64 = default(int64)): Future[GetAccountsAccountIdAccessAiControlsMcpAnalyticsServersServerIdToolCallsTimeseriesResponse] {.async.} =
+                                                                                         days: int64 = default(int64),
+                                                                                         responseStatus: McpPortalAnalyticResponseStatusOption = responseStatusSuccess): Future[GetAccountsAccountIdAccessAiControlsMcpAnalyticsServersServerIdToolCallsTimeseriesResponse] {.async.} =
   ## Returns daily or monthly tool-call counts for a server.
 
   var q = initOrderedTable[string, string]()
@@ -62,6 +71,7 @@ proc getAccountsAccountIdAccessAiControlsMcpAnalyticsServersServerIdToolCallsTim
   q["aggregate"] = $aggregate
   q["tz"] = $tz
   q["days"] = $days
+  q["response_status"] = $responseStatus
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/ai-controls/mcp/analytics/servers/{serverId}/tool-calls/timeseries", q)
   let body = await res.body
   case res.code
@@ -75,7 +85,8 @@ proc getAccountsAccountIdAccessAiControlsMcpAnalyticsToolCallsTimeseries*(client
                                                                           granularity: McpPortalAnalyticGranularityOption = granularityDaily,
                                                                           aggregate: McpPortalAnalyticAggregateOption = aggregateFalse,
                                                                           tz: string = "utc",
-                                                                          days: int64 = default(int64)): Future[GetAccountsAccountIdAccessAiControlsMcpAnalyticsToolCallsTimeseriesResponse] {.async.} =
+                                                                          days: int64 = default(int64),
+                                                                          responseStatus: McpPortalAnalyticResponseStatusOption = responseStatusSuccess): Future[GetAccountsAccountIdAccessAiControlsMcpAnalyticsToolCallsTimeseriesResponse] {.async.} =
   ## Returns daily or monthly tool-call counts across the account.
 
   var q = initOrderedTable[string, string]()
@@ -83,6 +94,7 @@ proc getAccountsAccountIdAccessAiControlsMcpAnalyticsToolCallsTimeseries*(client
   q["aggregate"] = $aggregate
   q["tz"] = $tz
   q["days"] = $days
+  q["response_status"] = $responseStatus
   let res = await client.httpGET(fmt"/accounts/{accountId}/access/ai-controls/mcp/analytics/tool-calls/timeseries", q)
   let body = await res.body
   case res.code

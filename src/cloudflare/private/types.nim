@@ -788,7 +788,10 @@ type
   AbuseReportsBaseReportFields* = ref object of RootObj
     act*: AbuseReportsSubmissionReportType
     comments*: Option[string]
-      ## Any additional comments about the infringement not exceeding 2000 characters
+      ## Any additional comments about the infringement not exceeding 2000 characters.
+      ## Comments are kept internal to Cloudflare and not shared with the host or
+      ## customer as part of regular processing. For delegated reports, comments may be
+      ## shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -818,7 +821,10 @@ type
   AbuseReportsCSAMReport* = ref object of RootObj
     act*: string
     comments*: Option[string]
-      ## Any additional comments about the infringement not exceeding 2000 characters
+      ## Any additional comments about the infringement not exceeding 2000 characters.
+      ## Comments are kept internal to Cloudflare and not shared with the host or
+      ## customer as part of regular processing. For delegated reports, comments may be
+      ## shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -849,7 +855,9 @@ type
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
       ##
     host_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
     justification*: string
@@ -862,7 +870,9 @@ type
       ## reports cannot be anonymous.
       ##
     owner_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
 
@@ -903,7 +913,10 @@ type
   AbuseReportsDMCAReport* = ref object of RootObj
     act*: string
     comments*: Option[string]
-      ## Any additional comments about the infringement not exceeding 2000 characters
+      ## Any additional comments about the infringement not exceeding 2000 characters.
+      ## Comments are kept internal to Cloudflare and not shared with the host or
+      ## customer as part of regular processing. For delegated reports, comments may be
+      ## shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -946,7 +959,9 @@ type
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
       ##
     host_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
     original_work*: string
@@ -954,7 +969,9 @@ type
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
       ##
     owner_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
     signature*: string
@@ -1001,7 +1018,10 @@ type
   AbuseReportsGeneralReport* = ref object of RootObj
     act*: string
     comments*: Option[string]
-      ## Any additional comments about the infringement not exceeding 2000 characters
+      ## Any additional comments about the infringement not exceeding 2000 characters.
+      ## Comments are kept internal to Cloudflare and not shared with the host or
+      ## customer as part of regular processing. For delegated reports, comments may be
+      ## shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -1032,7 +1052,9 @@ type
       ## destination IPs should not exceed 30 IP addresses. Each one of the IP addresses
       ## ought to be unique.
     host_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
     justification*: string
@@ -1041,7 +1063,9 @@ type
       ## characters.
       ##
     owner_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
     ports_protocols*: Option[string]
@@ -1130,7 +1154,10 @@ type
   AbuseReportsNCSEIReport* = ref object of RootObj
     act*: string
     comments*: Option[string]
-      ## Any additional comments about the infringement not exceeding 2000 characters
+      ## Any additional comments about the infringement not exceeding 2000 characters.
+      ## Comments are kept internal to Cloudflare and not shared with the host or
+      ## customer as part of regular processing. For delegated reports, comments may be
+      ## shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -1161,13 +1188,17 @@ type
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
       ##
     host_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
     ncsei_subject_representation*: bool
       ## If the submitter is the target of NCSEI in the URLs of the abuse report.
     owner_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
 
@@ -1180,7 +1211,10 @@ type
   AbuseReportsPhishingReport* = ref object of RootObj
     act*: string
     comments*: Option[string]
-      ## Any additional comments about the infringement not exceeding 2000 characters
+      ## Any additional comments about the infringement not exceeding 2000 characters.
+      ## Comments are kept internal to Cloudflare and not shared with the host or
+      ## customer as part of regular processing. For delegated reports, comments may be
+      ## shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -1207,7 +1241,9 @@ type
       ## URL should be unique. This field may be released by Cloudflare to third parties
       ## such as the Lumen Database (https://lumendatabase.org/).
     host_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
     justification*: string
@@ -1220,7 +1256,9 @@ type
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
       ##
     owner_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
 
@@ -1248,7 +1286,10 @@ type
   AbuseReportsRegistrarWhoisReport* = ref object of RootObj
     act*: string
     comments*: Option[string]
-      ## Any additional comments about the infringement not exceeding 2000 characters
+      ## Any additional comments about the infringement not exceeding 2000 characters.
+      ## Comments are kept internal to Cloudflare and not shared with the host or
+      ## customer as part of regular processing. For delegated reports, comments may be
+      ## shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -1275,7 +1316,9 @@ type
       ## URL should be unique. This field may be released by Cloudflare to third parties
       ## such as the Lumen Database (https://lumendatabase.org/).
     owner_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
     reg_who_request*: Option[AbuseReportsRegistrarWhoIsFields]
@@ -1437,7 +1480,10 @@ type
   AbuseReportsThreatReport* = ref object of RootObj
     act*: string
     comments*: Option[string]
-      ## Any additional comments about the infringement not exceeding 2000 characters
+      ## Any additional comments about the infringement not exceeding 2000 characters.
+      ## Comments are kept internal to Cloudflare and not shared with the host or
+      ## customer as part of regular processing. For delegated reports, comments may be
+      ## shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -1464,7 +1510,9 @@ type
       ## URL should be unique. This field may be released by Cloudflare to third parties
       ## such as the Lumen Database (https://lumendatabase.org/).
     host_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
     justification*: string
@@ -1473,14 +1521,19 @@ type
       ## characters.
       ##
     owner_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
 
   AbuseReportsTrademarkReport* = ref object of RootObj
     act*: string
     comments*: Option[string]
-      ## Any additional comments about the infringement not exceeding 2000 characters
+      ## Any additional comments about the infringement not exceeding 2000 characters.
+      ## Comments are kept internal to Cloudflare and not shared with the host or
+      ## customer as part of regular processing. For delegated reports, comments may be
+      ## shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -1507,7 +1560,9 @@ type
       ## URL should be unique. This field may be released by Cloudflare to third parties
       ## such as the Lumen Database (https://lumendatabase.org/).
     host_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
     justification*: string
@@ -1516,7 +1571,9 @@ type
       ## characters.
       ##
     owner_notification*: string
-      ## Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark
+      ## Notification type based on the abuse type. For delegated reports, the
+      ## report—including contact information and comments—will be forwarded to the
+      ## customer in full regardless of this value. NOTE: Copyright (DMCA) and Trademark
       ## reports cannot be anonymous.
       ##
     trademark_number*: string
@@ -1674,7 +1731,7 @@ type
     auto_redirect_to_identity*: Option[AccessAutoRedirectToIdentity2]
     domain*: Option[string]
     name*: Option[string]
-    session_duration*: Option[AccessSessionDuration4]
+    session_duration*: Option[AccessSessionDuration2]
     `type`*: string
       ## The application type.
 
@@ -1910,7 +1967,7 @@ type
     auto_redirect_to_identity*: Option[AccessAutoRedirectToIdentity2]
     domain*: Option[string]
     name*: Option[string]
-    session_duration*: Option[AccessSessionDuration4]
+    session_duration*: Option[AccessSessionDuration2]
     `type`*: string
       ## The application type.
 
@@ -2271,6 +2328,8 @@ type
     desc = "desc"
     asc = "asc"
 
+  AccessDisableEndUserAppCreation* = bool
+
   AccessDohJwtDuration* = string
 
   AccessDomain* = string
@@ -2282,6 +2341,40 @@ type
   AccessDomainRule* = ref object of RootObj
     ## Match an entire email domain.
     email_domain*: JsonNode
+
+  AccessDuo* = ref object of RootObj
+    config*: JsonNode
+    id*: Option[AccessUuid]
+    name*: AccessName3
+    read_only*: Option[bool]
+      ## Indicates that the identity provider is immutable and cannot be updated or
+      ## deleted via the API.
+      ##
+    saml_certificate_set*: Option[JsonNode]
+      ## The SAML encryption certificate set details, including current and previous
+      ## certificates.
+      ## Only present for SAML identity providers with a certificate set assigned.
+      ##
+    saml_certificate_set_id*: Option[string]
+      ## The UID of the SAML encryption certificate set assigned to this Identity
+      ## Provider.
+      ## Only present for SAML identity providers with encryption configured.
+      ## Create a certificate set via POST to
+      ## `/identity_providers/{id}/saml_certificate`.
+      ##
+    scim_config*: Option[JsonNode]
+      ## The configuration settings for enabling a System for Cross-Domain Identity
+      ## Management (SCIM) with the identity provider.
+    `type`*: string
+
+  AccessDuo2* = ref object of RootObj
+    config*: JsonNode
+    id*: Option[AccessUuid]
+    name*: AccessName3
+    scim_config*: Option[JsonNode]
+      ## The configuration settings for enabling a System for Cross-Domain Identity
+      ## Management (SCIM) with the identity provider.
+    `type`*: string
 
   AccessDuration* = string
 
@@ -2448,7 +2541,7 @@ type
     auto_redirect_to_identity*: Option[AccessAutoRedirectToIdentity2]
     domain*: Option[AccessDomain3]
     name*: Option[AccessName8]
-    session_duration*: Option[AccessSessionDuration4]
+    session_duration*: Option[AccessSessionDuration2]
     `type`*: AccessType3
 
   AccessFingerprint* = string
@@ -2874,6 +2967,10 @@ type
   AccessInfraProps* = ref object of RootObj
     mfa_config*: Option[AccessInfraMfaConfig]
     name*: Option[AccessName8]
+    session_duration*: Option[string]
+      ## The maximum duration of a connection to this application's targets. Connections
+      ## are terminated once it elapses. Must be in the format `30m` or `2h45m`, in whole
+      ## seconds. Valid time units are: s, m, h.
     `type`*: JsonNode
     target_criteria*: seq[AccessTargetCriteriaInfraApp]
 
@@ -2982,6 +3079,12 @@ type
     result*: Option[JsonNode]
 
   AccessLastSuccessfulLogin* = string
+
+  AccessLeakReportUrl* = string
+
+  AccessLeakReportedAt* = string
+
+  AccessLeakReporter* = string
 
   AccessLimit* = int64
 
@@ -3459,6 +3562,7 @@ type
     custom_pages*: Option[AccessCustomPages]
     deny_unmatched_requests*: Option[AccessDenyUnmatchedRequests]
     deny_unmatched_requests_exempted_zone_names*: Option[AccessDenyUnmatchedRequestsExemptedZoneNames]
+    disable_end_user_app_creation*: Option[AccessDisableEndUserAppCreation]
     is_ui_read_only*: Option[AccessIsUiReadOnly]
     login_design*: Option[AccessLoginDesign]
     mfa_config*: Option[AccessOrgMfaConfig]
@@ -4339,6 +4443,11 @@ type
 
   AccessScimConfigSingleAuthentication2* = ref object of RootObj
 
+  AccessScimEmail* = ref object of RootObj
+    primary*: Option[bool]
+    `type`*: Option[string]
+    value*: Option[string]
+
   AccessScimGroupResponse* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
@@ -4354,6 +4463,25 @@ type
     result_info*: Option[JsonNode]
     result*: Option[seq[AccessGroups]]
 
+  AccessScimMeta* = ref object of RootObj
+    created*: Option[string]
+    last_modified*: Option[string]
+    location*: Option[string]
+    resource_type*: Option[string]
+    version*: Option[string]
+
+  AccessScimName* = ref object of RootObj
+    family_name*: Option[string]
+    formatted*: Option[string]
+    given_name*: Option[string]
+    honorific_prefix*: Option[string]
+    honorific_suffix*: Option[string]
+    middle_name*: Option[string]
+
+  AccessScimPatchRequest* = ref object of RootObj
+    operations*: seq[JsonNode]
+    schemas*: Option[seq[string]]
+
   AccessScimUpdateLogsResponse* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
@@ -4362,12 +4490,46 @@ type
     result_info*: Option[JsonNode]
     result*: Option[seq[AccessResponses]]
 
+  AccessScimUser* = ref object of RootObj
+    ## A SCIM User resource. Additional SCIM extension attributes are supported.
+    active*: Option[bool]
+    display_name*: Option[string]
+    emails*: Option[seq[AccessScimEmail]]
+    external_id*: Option[string]
+    id*: Option[string]
+    meta*: Option[AccessScimMeta]
+    name*: Option[AccessScimName]
+    schemas*: Option[seq[string]]
+      ## The SCIM schemas that apply to this resource.
+    user_name*: Option[string]
+
+  AccessScimUserCollectionResponse* = ref object of RootObj
+    errors*: AccessMessages
+    messages*: AccessMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[AccessScimUserListResponse]
+
+  AccessScimUserListResponse* = ref object of RootObj
+    resources*: seq[AccessScimUser]
+    items_per_page*: int64
+    schemas*: seq[string]
+    start_index*: int64
+    total_results*: int64
+
   AccessScimUserResponse* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[AccessUsers]
+
+  AccessScimUserSingleResponse* = ref object of RootObj
+    errors*: AccessMessages
+    messages*: AccessMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[AccessScimUser]
 
   AccessScimUsersResponse* = ref object of RootObj
     errors*: AccessMessages
@@ -4447,7 +4609,7 @@ type
     options_preflight_bypass*: Option[AccessOptionsPreflightBypass2]
     same_site_cookie_attribute*: Option[AccessSameSiteCookieAttribute]
     service_auth_401_redirect*: Option[AccessServiceAuth401Redirect]
-    session_duration*: Option[AccessSessionDuration4]
+    session_duration*: Option[AccessSessionDuration2]
     skip_interstitial*: Option[AccessSkipInterstitial]
     `type`*: string
       ## The application type.
@@ -4461,6 +4623,9 @@ type
     expires_at*: Option[AccessTimestamp]
     id*: Option[JsonNode]
     last_seen_at*: Option[JsonNode]
+    leak_report_url*: Option[AccessLeakReportUrl]
+    leak_reported_at*: Option[AccessLeakReportedAt]
+    leak_reporter*: Option[AccessLeakReporter]
     name*: Option[AccessName2]
     updated_at*: Option[AccessUpdatedAt]
 
@@ -4472,6 +4637,9 @@ type
     expires_at*: Option[AccessTimestamp]
     id*: Option[JsonNode]
     last_seen_at*: Option[AccessTimestamp]
+    leak_report_url*: Option[AccessLeakReportUrl]
+    leak_reported_at*: Option[AccessLeakReportedAt]
+    leak_reporter*: Option[AccessLeakReporter]
     name*: Option[AccessName17]
     updated_at*: Option[AccessTimestamp]
 
@@ -4499,8 +4667,6 @@ type
   AccessSessionDuration2* = string
 
   AccessSessionDuration3* = string
-
-  AccessSessionDuration4* = string
 
   AccessSettings* = ref object of RootObj
     china_network*: bool
@@ -4762,7 +4928,7 @@ type
     options_preflight_bypass*: Option[AccessOptionsPreflightBypass2]
     same_site_cookie_attribute*: Option[AccessSameSiteCookieAttribute]
     service_auth_401_redirect*: Option[AccessServiceAuth401Redirect]
-    session_duration*: Option[AccessSessionDuration4]
+    session_duration*: Option[AccessSessionDuration2]
     skip_interstitial*: Option[AccessSkipInterstitial]
     `type`*: string
       ## The application type.
@@ -5048,7 +5214,7 @@ type
     options_preflight_bypass*: Option[AccessOptionsPreflightBypass2]
     same_site_cookie_attribute*: Option[AccessSameSiteCookieAttribute]
     service_auth_401_redirect*: Option[AccessServiceAuth401Redirect]
-    session_duration*: Option[AccessSessionDuration4]
+    session_duration*: Option[AccessSessionDuration2]
     skip_interstitial*: Option[AccessSkipInterstitial]
     `type`*: string
       ## The application type.
@@ -5074,7 +5240,7 @@ type
     auto_redirect_to_identity*: Option[AccessAutoRedirectToIdentity2]
     domain*: Option[string]
     name*: Option[string]
-    session_duration*: Option[AccessSessionDuration4]
+    session_duration*: Option[AccessSessionDuration2]
     `type`*: string
       ## The application type.
 
@@ -5853,6 +6019,7 @@ type
   AlexandriaCreateApplicationRequest* = ref object of RootObj
     ## Defines a custom application. At least one hostname or IP subnet is required.
     ## Support domains and port/protocol pairs do not satisfy this requirement.
+    ## A NUL character (U+0000) in any string value returns `400`.
     ##
     category_id*: AlexandriaCategoryId
     hostnames*: Option[AlexandriaApplicationHostnames]
@@ -5895,6 +6062,7 @@ type
     messages*: AlexandriaMessages
     success*: bool
       ## Indicates whether the API call was successful.
+    result_info*: Option[JsonNode]
     result*: Option[AlexandriaCategories]
 
   AlexandriaGetCategoryResponse* = ref object of RootObj
@@ -5903,6 +6071,13 @@ type
     success*: bool
       ## Indicates whether the API call was successful.
     result*: Option[AlexandriaCategory]
+
+  AlexandriaLookupApplicationsRequest* = ref object of RootObj
+    lookup*: string
+      ## Rule sentence to search for complete application names. Leading and trailing
+      ## whitespace is trimmed before the length is checked. Control characters other
+      ## than tab and line breaks return `400`.
+      ##
 
   AlexandriaMessages* = seq[JsonNode]
 
@@ -5913,6 +6088,7 @@ type
     ## contain at least one hostname or IP subnet. Support domains and port/protocol
     ## pairs
     ## do not satisfy this requirement.
+    ## A NUL character (U+0000) in any string value returns `400`.
     ##
     hostnames*: Option[AlexandriaApplicationHostnames]
     ip_subnets*: Option[AlexandriaApplicationIpSubnets]
@@ -11134,6 +11310,12 @@ type
     result*: JsonNode
     success*: CloudflareK2WorkersK2CommonSuccess
 
+  CloudflareK2K2SubscriptionListResponse* = ref object of RootObj
+    errors*: CloudflareK2WorkersK2Messages
+    messages*: CloudflareK2WorkersK2Messages
+    result*: seq[CloudflareK2K2Subscription]
+    success*: CloudflareK2WorkersK2CommonSuccess
+
   CloudflareK2K2SubscriptionResponse* = ref object of RootObj
     errors*: CloudflareK2WorkersK2Messages
     messages*: CloudflareK2WorkersK2Messages
@@ -12665,6 +12847,776 @@ type
 
   CustomPagesUrl* = string
 
+  CwsBasicAuthCredential* = ref object of RootObj
+    created_at*: string
+    id*: string
+      ## Server-assigned UUID
+    updated_at*: string
+    username*: string
+      ## Login presented by the client. Printable ASCII only, excluding space and colon
+      ## (RFC 7617 forbids a colon in the user-id).
+
+  CwsBasicAuthSecretResponse* = ref object of RootObj
+    created_at*: string
+    expires_at*: Option[string]
+      ## Optional RFC 3339 expiration time. Omit for no expiration.
+    id*: string
+      ## Server-assigned UUID
+
+  CwsBatchTenantNodesInputBody* = ref object of RootObj
+    creates*: seq[CwsTenantNodeBody]
+      ## Nodes to create; parents may be created elsewhere in this request
+    deletes*: seq[CwsTenantNodeBatchDelete]
+      ## Nodes to delete; every descendant that will not be reparented must also be
+      ## deleted
+    updates*: seq[CwsTenantNodeBatchUpdate]
+      ## Nodes whose mutable fields should be fully replaced
+
+  CwsBundleCategory* = ref object of RootObj
+    children*: Option[seq[CwsBundleCategory]]
+    definitions*: seq[CwsBundleDefinition]
+    description*: Option[string]
+    id*: string
+    key*: string
+    kind*: string
+    legacy_id*: Option[int64]
+    metadata*: Option[JsonNode]
+    name*: string
+
+  CwsBundleDefinition* = ref object of RootObj
+    id*: string
+    metadata*: Option[JsonNode]
+    name*: Option[string]
+    spec*: JsonNode
+
+  CwsBundleGroup* = ref object of RootObj
+    description*: Option[string]
+    id*: string
+    kind*: string
+    legacy_id*: Option[int64]
+    member_ids*: seq[string]
+    metadata*: Option[JsonNode]
+    name*: string
+    scope*: CwsBundleScope
+
+  CwsBundleScope* = ref object of RootObj
+    id*: string
+    kind*: string
+
+  CwsCategoryApplication* = ref object of RootObj
+    key*: string
+      ## Stable application key used by version routes
+    name*: string
+      ## Application name
+
+  CwsCategoryBundle* = ref object of RootObj
+    format*: string
+    groups*: Option[seq[CwsBundleGroup]]
+    root*: CwsBundleCategory
+
+  CwsCategoryName* = ref object of RootObj
+    ancestors*: seq[CwsCategoryNameAncestor]
+      ## Application and API paths associated with this name
+    name*: string
+      ## API or operation name
+    variants*: Option[seq[CwsCategoryNameVariant]]
+      ## Routing identities represented by this name
+
+  CwsCategoryNameAncestor* = ref object of RootObj
+    kind*: string
+    name*: string
+
+  CwsCategoryNameVariant* = ref object of RootObj
+    id*: string
+    key*: string
+    parent_id*: Option[string]
+
+  CwsCategoryVersion* = ref object of RootObj
+    bundle*: CwsCategoryBundle
+    bundle_format*: string
+    bundle_hash*: string
+    category_count*: int64
+    created_at*: string
+    definition_count*: int64
+    group_count*: int64
+    id*: string
+    metadata*: JsonNode
+    version*: string
+
+  CwsCategoryVersionSummary* = ref object of RootObj
+    bundle_format*: string
+    bundle_hash*: string
+    category_count*: int64
+    created_at*: string
+    definition_count*: int64
+    group_count*: int64
+    id*: string
+    metadata*: JsonNode
+    version*: string
+
+  CwsCreateBasicAuthCredentialInputBody* = ref object of RootObj
+    username*: string
+      ## Login presented by the client. Printable ASCII only, excluding space and colon.
+
+  CwsCreateBasicAuthSecretBody* = ref object of RootObj
+    expires_at*: Option[string]
+      ## Optional deactivation deadline (RFC 3339). Omit or null for no expiry.
+    password*: string
+      ## Password stored only as a one-way hash and never returned. Maximum 72 UTF-8
+      ## bytes.
+
+  CwsCreateDeploymentInputBody* = ref object of RootObj
+    basic_auth_credential_ids*: Option[seq[string]]
+      ## IDs of basic-auth credentials to attach
+    default_mode*: string
+      ## Default traffic mode: ALLOW or BLOCK
+    description*: Option[string]
+      ## Optional free-form description.
+    domain_acl_id*: Option[string]
+      ## ID of the domain ACL to attach (omit or null for none)
+    name*: string
+      ## Name of the deployment
+    on_error_action*: Option[string]
+      ## Action for runtime Rego errors. Omit to use BLOCK.
+    policy_set_ids*: Option[seq[string]]
+      ## IDs of policy sets to attach
+    rego_raise_error*: Option[bool]
+      ## Whether OPA builtin failures are raised as runtime evaluation errors. Omit to
+      ## use the default true value.
+    tags*: Option[JsonNode]
+      ## Tags to attach. Keys are limited to 256 UTF-8 bytes and values to 1024 UTF-8
+      ## bytes.
+
+  CwsCreateDomainACLInputBody* = ref object of RootObj
+    default_action*: string
+      ## Default action when no entry matches
+    entries*: Option[seq[CwsDomainACLEntry]]
+      ## Domain entries for this ACL. Each domain must appear at most once.
+    name*: string
+      ## Name of the domain ACL
+
+  CwsCreatePolicyInputBody* = ref object of RootObj
+    description*: Option[string]
+      ## Optional free-form description.
+    entrypoint*: string
+      ## Non-function rule declared in rego_source. Evaluation uses
+      ## data.<package_path>.<entrypoint>.
+    filter*: Option[string]
+      ## Optional filter expression that determines whether this policy applies. Omit or
+      ## set null to apply the policy to every request. Maximum 4096 UTF-8 bytes.
+    name*: string
+      ## Name of the policy
+    rego_source*: string
+      ## Inline Rego source with a package beginning with "policy." Maximum 16384 UTF-8
+      ## bytes.
+    tags*: Option[JsonNode]
+      ## Tags to attach. Keys are limited to 256 UTF-8 bytes and values to 1024 UTF-8
+      ## bytes.
+
+  CwsCreatePolicySetInputBody* = ref object of RootObj
+    description*: Option[string]
+      ## Optional free-form description.
+    exclude_workload_ids*: Option[seq[string]]
+      ## Workload IDs that exclude matching requests. Exclusions take precedence.
+    include_workload_ids*: Option[seq[string]]
+      ## Workload IDs that include matching requests. Empty or omitted includes all
+      ## requests before exclusions.
+    name*: string
+      ## Name of the policy set
+    policies*: Option[seq[CwsPolicySetPolicyInput]]
+      ## Policies to include with per-membership enforcement mode
+    tags*: Option[JsonNode]
+      ## Tags to attach. Keys are limited to 256 UTF-8 bytes and values to 1024 UTF-8
+      ## bytes.
+
+  CwsCreateRegoModuleInputBody* = ref object of RootObj
+    name*: string
+      ## Name of the Rego module (unique per account)
+    rego_source*: string
+      ## Library Rego source with a package beginning with "lib." Maximum 16384 UTF-8
+      ## bytes.
+
+  CwsCreateTenantStructureInputBody* = ref object of RootObj
+    application*: string
+      ## Platform this structure models. Immutable after creation.
+    import_path*: Option[string]
+      ## Optional unique Rego mount path in the form tenant.<application>.<name>;
+      ## application must match. Omit to leave unmounted.
+    name*: string
+      ## Human-readable name; unique per account
+
+  CwsCreateWorkloadInputBody* = ref object of RootObj
+    description*: Option[string]
+      ## Optional free-form description.
+    filter*: string
+      ## Filter expression selecting the requests this workload matches. Maximum 4096
+      ## UTF-8 bytes.
+    name*: string
+      ## Human-readable handle; unique per account.
+    tags*: Option[JsonNode]
+      ## Tags to attach. Keys are limited to 256 UTF-8 bytes and values to 1024 UTF-8
+      ## bytes.
+
+  CwsDeletedResult* = ref object of RootObj
+    id*: string
+
+  CwsDeployment* = ref object of RootObj
+    basic_auth_credential_ids*: Option[seq[string]]
+      ## IDs of basic-auth credentials attached to this deployment
+    created_at*: string
+    default_mode*: string
+      ## Default traffic decision when no policy set matches
+    description*: Option[string]
+      ## Optional free-form description.
+    domain_acl_id*: Option[string]
+      ## ID of the attached domain ACL. Omitted when none.
+    id*: string
+      ## Server-assigned UUID
+    name*: string
+      ## Human-readable name; unique per account
+    on_error_action*: string
+      ## Action applied when an enforcing policy has a runtime Rego error
+    policy_set_ids*: Option[seq[string]]
+      ## IDs of policy sets attached to this deployment
+    rego_raise_error*: bool
+      ## Whether OPA builtin failures are raised as runtime evaluation errors
+    tags*: JsonNode
+      ## Tags attached to this deployment
+    updated_at*: string
+
+  CwsDomainACL* = ref object of RootObj
+    created_at*: string
+    default_action*: string
+      ## Action applied when no entry matches the request domain
+    entries*: Option[seq[CwsDomainACLEntry]]
+      ## Per-domain action overrides. Each domain appears at most once.
+    id*: string
+      ## Server-assigned UUID
+    name*: string
+      ## Human-readable name; unique per account
+    updated_at*: string
+
+  CwsDomainACLEntry* = ref object of RootObj
+    action*: string
+      ## Per-domain decision overriding the parent ACL's default_action
+    domain*: string
+      ## Hostname or domain pattern, capped at 255 UTF-8 bytes
+
+  CwsErrorResponse* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[JsonNode]
+    success*: bool
+
+  CwsFilterField* = ref object of RootObj
+    deprecated*: bool
+      ## True when the field is retained for compatibility but should be hidden in new UI
+    false_label*: Option[string]
+      ## Label for the false state of a bool field
+    field_type*: string
+      ## Semantic value type of the field (e.g. text, ip_address, host, uri_path,
+      ## http_method, protocol, int, bool)
+    map*: bool
+      ## True for a string-keyed (map) field, indexed with wf_string["key"]
+    operators*: Option[seq[string]]
+      ## Advisory operator labels for filter builders; some labels are not expression
+      ## tokens
+    splat*: bool
+      ## True for a multi-valued (array) field, membership-tested with any(wf_string[*]
+      ## == ...)
+    true_label*: Option[string]
+      ## Label for the true state of a bool field
+    ui_string*: string
+      ## Short human-readable name suitable for a form label
+    values*: Option[seq[string]]
+      ## Advisory value suggestions for an enum field (a hint for populating a builder
+      ## UI, not a server-enforced set)
+    wf_string*: string
+      ## Identifier used in filter expressions, e.g. "http.request.host"
+
+  CwsFilterSchema* = ref object of RootObj
+    policy_fields*: Option[seq[CwsFilterField]]
+      ## Fields available in policy filter expressions, in display order
+    workload_fields*: Option[seq[CwsFilterField]]
+      ## Fields available in workload filter expressions, in display order
+
+  CwsJSONDocument* = ref object of RootObj
+
+  CwsJSONValue* = ref object of RootObj
+
+  CwsMessageSource* = ref object of RootObj
+    pointer*: string
+
+  CwsPageResponseBasicAuthCredential* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsBasicAuthCredential]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPageResponseBasicAuthSecretResponse* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsBasicAuthSecretResponse]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPageResponseCategoryApplication* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsCategoryApplication]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPageResponseCategoryName* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsCategoryName]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPageResponseCategoryVersionSummary* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsCategoryVersionSummary]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPageResponseDeployment* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsDeployment]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPageResponseDomainACL* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsDomainACL]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPageResponsePolicy* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsPolicy]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPageResponsePolicySet* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsPolicySet]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPageResponseRegoMetadata* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsRegoMetadata]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPageResponseRegoModule* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsRegoModule]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPageResponseTenantStructure* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsTenantStructure]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPageResponseTenantStructureNode* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsTenantStructureNode]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPageResponseWorkload* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: Option[seq[CwsWorkload]]
+    result_info*: CwsResultInfo
+    success*: bool
+
+  CwsPolicy* = ref object of RootObj
+    created_at*: string
+    description*: Option[string]
+      ## Optional free-form description.
+    entrypoint*: string
+      ## Non-function rule declared in rego_source. Evaluation uses
+      ## data.<package_path>.<entrypoint>.
+    filter*: Option[string]
+      ## Optional filter expression that determines whether this policy applies. Null
+      ## means the policy applies to every request. Maximum 4096 UTF-8 bytes.
+    id*: string
+      ## Server-assigned UUID
+    name*: string
+      ## Human-readable name; unique per account
+    package_path*: string
+      ## Dotted path derived from rego_source. Begins with policy. and is unique per
+      ## account.
+    rego_source*: string
+      ## Inline Rego source with a package beginning with "policy." Maximum 16384 UTF-8
+      ## bytes.
+    tags*: JsonNode
+      ## Tags attached to this policy
+    updated_at*: string
+
+  CwsPolicySet* = ref object of RootObj
+    created_at*: string
+    description*: Option[string]
+      ## Optional free-form description.
+    exclude_workload_ids*: Option[seq[string]]
+      ## IDs of workloads that exclude matching requests. Exclusions take precedence.
+    id*: string
+      ## Server-assigned UUID
+    include_workload_ids*: Option[seq[string]]
+      ## IDs of workloads that include matching requests. Empty includes all requests
+      ## before exclusions.
+    name*: string
+      ## Human-readable name; unique per account
+    policies*: Option[seq[CwsPolicySetPolicy]]
+      ## Member policies and their per-membership enforcement mode
+    tags*: JsonNode
+      ## Tags attached to this policy set
+    updated_at*: string
+
+  CwsPolicySetPolicy* = ref object of RootObj
+    enforce*: bool
+      ## Whether this policy should enforce when it matches. False keeps the policy
+      ## attached for non-enforcing evaluation.
+    policy_id*: string
+      ## ID of the member policy
+
+  CwsPolicySetPolicyInput* = ref object of RootObj
+    enforce*: Option[bool]
+      ## Whether this policy should enforce when it matches. Defaults to true; false
+      ## keeps the policy attached for non-enforcing evaluation.
+    policy_id*: string
+      ## ID of the member policy
+
+  CwsRegoMetadata* = ref object of RootObj
+    created_at*: string
+    data*: JsonNode
+      ## Arbitrary non-null JSON document with at most 100 nesting levels. Nested null
+      ## values are supported. PostgreSQL-normalized JSON must not exceed 65536 bytes;
+      ## exponent-form numbers count at expanded decimal size.
+    id*: string
+      ## Server-assigned UUID
+    import_path*: string
+      ## Unique Rego import path in the form metadata.<segment>, with one alphanumeric or
+      ## underscore segment. Reference it as data.<import_path>.
+    name*: string
+      ## Human-readable name; unique per account
+    updated_at*: string
+
+  CwsRegoMetadataBody* = ref object of RootObj
+    data*: JsonNode
+      ## Arbitrary non-null JSON payload with at most 100 nesting levels. Nested null
+      ## values are supported. PostgreSQL-normalized JSON must not exceed 65536 bytes;
+      ## exponent-form numbers count at expanded decimal size.
+    import_path*: string
+      ## Unique Rego import path in the form metadata.<segment>, with one alphanumeric or
+      ## underscore segment. Reference it as data.<import_path>.
+    name*: string
+      ## Name of the rego metadata document (unique per account)
+
+  CwsRegoModule* = ref object of RootObj
+    created_at*: string
+    id*: string
+      ## Server-assigned UUID
+    name*: string
+      ## Human-readable name; unique per account
+    package_path*: string
+      ## Dotted path derived from rego_source. Begins with lib. and is unique per
+      ## account.
+    rego_source*: string
+      ## Library Rego source with a package beginning with "lib." Maximum 16384 UTF-8
+      ## bytes.
+    updated_at*: string
+
+  CwsResponseBasicAuthCredential* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsBasicAuthCredential
+    success*: bool
+
+  CwsResponseBasicAuthSecretResponse* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsBasicAuthSecretResponse
+    success*: bool
+
+  CwsResponseCategoryVersion* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsCategoryVersion
+    success*: bool
+
+  CwsResponseDeletedResult* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsDeletedResult
+    success*: bool
+
+  CwsResponseDeployment* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsDeployment
+    success*: bool
+
+  CwsResponseDomainACL* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsDomainACL
+    success*: bool
+
+  CwsResponseFilterSchema* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsFilterSchema
+    success*: bool
+
+  CwsResponseMessage* = ref object of RootObj
+    code*: int64
+    message*: string
+    source*: Option[CwsMessageSource]
+
+  CwsResponsePolicy* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsPolicy
+    success*: bool
+
+  CwsResponsePolicySet* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsPolicySet
+    success*: bool
+
+  CwsResponseRegoMetadata* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsRegoMetadata
+    success*: bool
+
+  CwsResponseRegoModule* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsRegoModule
+    success*: bool
+
+  CwsResponseTenantNodeBatchResult* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsTenantNodeBatchResult
+    success*: bool
+
+  CwsResponseTenantStructure* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsTenantStructure
+    success*: bool
+
+  CwsResponseTenantStructureNode* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsTenantStructureNode
+    success*: bool
+
+  CwsResponseWorkload* = ref object of RootObj
+    errors*: Option[seq[CwsResponseMessage]]
+    messages*: Option[seq[CwsResponseMessage]]
+    result*: CwsWorkload
+    success*: bool
+
+  CwsResultInfo* = ref object of RootObj
+    count*: int64
+    cursor*: Option[string]
+    per_page*: int64
+    total_count*: int64
+
+  CwsTenantNodeBatchDelete* = ref object of RootObj
+    id*: string
+      ## ID of the node to delete
+
+  CwsTenantNodeBatchResult* = ref object of RootObj
+    created*: seq[CwsTenantStructureNode]
+    deleted*: seq[CwsDeletedResult]
+    updated*: seq[CwsTenantStructureNode]
+
+  CwsTenantNodeBatchUpdate* = ref object of RootObj
+    id*: string
+      ## ID of the node to update
+    name*: Option[string]
+      ## Full replacement display name
+    parent*: Option[string]
+      ## Full replacement parent native ID; omit for the root
+
+  CwsTenantNodeBody* = ref object of RootObj
+    name*: Option[string]
+      ## Display name (e.g. an OU or account name), mutable. Optional; empty by default.
+    native_id*: string
+      ## Cloud-native identifier of this node, unique within the structure; the
+      ## parent-reference target. Shape depends on the structure's application. Immutable
+      ## after create.
+    node_kind*: string
+      ## Position in the tree. Legal values depend on the structure's application (aws:
+      ## root/ou/account; cloudflare: org/account/zone). At most one root per structure.
+      ## Immutable after create.
+    parent*: Option[string]
+      ## Native ID of this node's parent. Required for non-root nodes and omitted for the
+      ## root. The parent must be in the same structure and able to contain this node
+      ## kind.
+
+  CwsTenantStructure* = ref object of RootObj
+    application*: string
+      ## Platform this structure models. Immutable after creation; determines valid node
+      ## kinds and identifier formats.
+    created_at*: string
+    id*: string
+      ## Server-assigned UUID
+    import_path*: Option[string]
+      ## Optional unique Rego mount path in the form tenant.<application>.<name>. The
+      ## application segment must match application; omitted when unmounted.
+    name*: string
+      ## Human-readable name; unique per account
+    updated_at*: string
+
+  CwsTenantStructureNode* = ref object of RootObj
+    created_at*: string
+    id*: string
+      ## Server-assigned UUID
+    name*: Option[string]
+      ## Display name (e.g. an OU or account name), mutable. Optional; empty by default.
+    native_id*: string
+      ## Cloud-native identifier of this node, unique within the structure; the
+      ## parent-reference target. Shape depends on the structure's application. Immutable
+      ## after create.
+    node_kind*: string
+      ## Position in the tree. Legal values depend on the structure's application (aws:
+      ## root/ou/account; cloudflare: org/account/zone). At most one root per structure.
+      ## Immutable after create.
+    parent*: Option[string]
+      ## Native ID of this node's parent. Required for non-root nodes and omitted for the
+      ## root. The parent must be in the same structure and able to contain this node
+      ## kind.
+    updated_at*: string
+
+  CwsUpdateDeploymentInputBody* = ref object of RootObj
+    basic_auth_credential_ids*: Option[seq[string]]
+      ## Replacement set of basic-auth credential IDs
+    default_mode*: string
+      ## Default traffic mode: ALLOW or BLOCK
+    description*: Option[string]
+      ## Optional free-form description.
+    domain_acl_id*: Option[string]
+      ## ID of the domain ACL to attach (omit or null to clear)
+    name*: string
+      ## Name of the deployment
+    on_error_action*: Option[string]
+      ## Action for runtime Rego errors. Omit to reset to BLOCK.
+    policy_set_ids*: Option[seq[string]]
+      ## Replacement set of policy set IDs
+    rego_raise_error*: Option[bool]
+      ## Whether OPA builtin failures are raised as runtime evaluation errors. Omit to
+      ## reset to true.
+    tags*: Option[JsonNode]
+      ## Replacement tag set. Omit or use {} to clear. Keys are limited to 256 UTF-8
+      ## bytes and values to 1024 UTF-8 bytes.
+
+  CwsUpdateDomainACLInputBody* = ref object of RootObj
+    default_action*: string
+      ## Default action when no entry matches
+    entries*: Option[seq[CwsDomainACLEntry]]
+      ## Replacement set of domain entries. Each domain must appear at most once.
+    name*: string
+      ## Name of the domain ACL
+
+  CwsUpdatePolicyInputBody* = ref object of RootObj
+    description*: Option[string]
+      ## Optional free-form description.
+    entrypoint*: string
+      ## Non-function rule declared in rego_source. Evaluation uses
+      ## data.<package_path>.<entrypoint>.
+    filter*: Option[string]
+      ## Optional filter expression that determines whether this policy applies. Omit or
+      ## set null to apply the policy to every request. Maximum 4096 UTF-8 bytes.
+    name*: string
+      ## Name of the policy
+    rego_source*: string
+      ## Inline Rego source with a package beginning with "policy." Maximum 16384 UTF-8
+      ## bytes.
+    tags*: Option[JsonNode]
+      ## Replacement tag set. Omit or use {} to clear. Keys are limited to 256 UTF-8
+      ## bytes and values to 1024 UTF-8 bytes.
+
+  CwsUpdatePolicySetInputBody* = ref object of RootObj
+    description*: Option[string]
+      ## Optional free-form description.
+    exclude_workload_ids*: Option[seq[string]]
+      ## Replacement set of excluded workload IDs. Exclusions take precedence.
+    include_workload_ids*: Option[seq[string]]
+      ## Replacement set of included workload IDs. Empty or omitted includes all requests
+      ## before exclusions.
+    name*: string
+      ## Name of the policy set
+    policies*: Option[seq[CwsPolicySetPolicyInput]]
+      ## Replacement set of policies with per-membership enforcement mode
+    tags*: Option[JsonNode]
+      ## Replacement tag set. Omit or use {} to clear. Keys are limited to 256 UTF-8
+      ## bytes and values to 1024 UTF-8 bytes.
+
+  CwsUpdateRegoModuleInputBody* = ref object of RootObj
+    name*: string
+      ## Name of the Rego module (unique per account)
+    rego_source*: string
+      ## Library Rego source with a package beginning with "lib." Maximum 16384 UTF-8
+      ## bytes.
+
+  CwsUpdateTenantStructureInputBody* = ref object of RootObj
+    application*: string
+      ## Platform this structure models. Must match the existing value.
+    import_path*: Option[string]
+      ## Optional unique Rego mount path in the form tenant.<application>.<name>;
+      ## application must match. Omit to clear.
+    name*: string
+      ## Human-readable name; unique per account
+
+  CwsUpdateWorkloadInputBody* = ref object of RootObj
+    description*: Option[string]
+      ## Optional free-form description.
+    filter*: string
+      ## Filter expression selecting the requests this workload matches. Maximum 4096
+      ## UTF-8 bytes.
+    name*: string
+      ## Human-readable handle; unique per account.
+    tags*: Option[JsonNode]
+      ## Replacement tag set. Omit or use {} to clear. Keys are limited to 256 UTF-8
+      ## bytes and values to 1024 UTF-8 bytes.
+
+  CwsWorkload* = ref object of RootObj
+    created_at*: string
+    description*: Option[string]
+      ## Optional free-form description.
+    filter*: string
+      ## Filter expression selecting the requests this workload matches. Maximum 4096
+      ## UTF-8 bytes.
+    id*: string
+      ## Server-assigned UUID
+    name*: string
+      ## Human-readable handle; unique per account.
+    tags*: JsonNode
+      ## Tags attached to this workload
+    updated_at*: string
+
   D1AccountIdentifier* = string
 
   D1ApiResponseCommon* = ref object of RootObj
@@ -13497,6 +14449,12 @@ type
 
   DlpAddinAuth* = ref object of RootObj
 
+  DlpAttachedEntry* = ref object of RootObj
+    ## A detection entry that uses a validator.
+    id*: string
+    name*: string
+    `type`*: DlpEntryType
+
   DlpBehavior* = ref object of RootObj
     description*: string
     enabled*: bool
@@ -13547,17 +14505,41 @@ type
     pattern*: DlpPattern
     profile_id*: Option[string]
     updated_at*: string
+    validator_ids*: Option[seq[string]]
+      ## Validators this entry references, by id, at most 10. An empty list means the
+      ## entry
+      ## references none.
+      ##
+      ## Returned by the entry endpoints. Not returned on entries embedded in other
+      ## responses, such
+      ## as profiles.
 
   DlpCustomEntryUpdate* = ref object of RootObj
     description*: Option[string]
     name*: string
     pattern*: DlpPattern
+    validator_ids*: Option[seq[string]]
+      ## Validators this entry should reference, by id, at most 10. Replaces the current
+      ## set.
+      ##
+      ## Optional, unlike the rest of this body: omitting it leaves the current
+      ## attachments alone, so a
+      ## client that predates validators cannot detach them by accident. Send `[]` to
+      ## detach.
     enabled*: bool
 
   DlpCustomEntryUpdateType* = ref object of RootObj
     description*: Option[string]
     name*: string
     pattern*: DlpPattern
+    validator_ids*: Option[seq[string]]
+      ## Validators this entry should reference, by id, at most 10. Replaces the current
+      ## set.
+      ##
+      ## Optional, unlike the rest of this body: omitting it leaves the current
+      ## attachments alone, so a
+      ## client that predates validators cannot detach them by accident. Send `[]` to
+      ## detach.
 
   DlpCustomProfile* = ref object of RootObj
     ai_context_enabled*: Option[bool]
@@ -13647,6 +14629,13 @@ type
     updated_at*: string
 
   DlpDataClassArray* = seq[DlpDataClass]
+
+  DlpDataClassRef* = ref object of RootObj
+    ## A data class that references an entry.
+    id*: string
+      ## The ID of the data class.
+    name*: string
+      ## The name of the data class.
 
   DlpDataClassUpdate* = ref object of RootObj
     data_tags*: Option[seq[string]]
@@ -13885,6 +14874,16 @@ type
     id*: string
     name*: string
 
+  DlpEntryType* = enum
+    ## The type of a detection entry.
+    custom = "custom"
+    customPromptTopic = "custom_prompt_topic"
+    predefined = "predefined"
+    integration = "integration"
+    exactData = "exact_data"
+    documentFingerprint = "document_fingerprint"
+    wordList = "word_list"
+
   DlpEntryUpdate* = ref object of RootObj
     enabled*: bool
 
@@ -13929,6 +14928,19 @@ type
     name*: string
     shared_entries*: seq[DlpEntry]
     updated_at*: string
+
+  DlpIntegrationProfileReferences* = ref object of RootObj
+    ## The profiles and data classes that reference the entries of an integration
+    ## profile, and how
+    ## they will change if the profile is deleted with `recursive=1`.
+    data_classes*: seq[DlpReferencingDataClass]
+      ## Data classes that reference entries owned by this profile, sorted by ID.
+    entries*: seq[DlpReferencedIntegrationEntry]
+      ## Entries owned by this profile, sorted by ID.
+    integration_exists*: bool
+      ## Whether the integration that manages this profile still exists in CASB. The
+      ## profile cannot
+      ## be deleted while this is `true`.
 
   DlpLimits* = ref object of RootObj
     max_custom_regex_entries*: int64
@@ -14042,6 +15054,8 @@ type
     name*: string
     pattern*: DlpPattern
     profile_id*: Option[string]
+    validator_ids*: Option[seq[string]]
+      ## Validators the new entry should reference, by id, at most 10.
 
   DlpNewPredefinedEntry* = ref object of RootObj
     ## Used to create a new predefined or integration entry.
@@ -14211,6 +15225,91 @@ type
   DlpPromptTopicType* = enum
     Intent = "Intent"
     Content = "Content"
+
+  DlpProximityWeight* = enum
+    ## How much a word contributes to a match's confidence when it is found nearby.
+    ##
+    ## Separate from a profile's high/medium/low confidence threshold: this describes
+    ## how telling the
+    ## word is, not how confident the resulting match is.
+    strong = "strong"
+    moderate = "moderate"
+    weak = "weak"
+
+  DlpProximityWord* = ref object of RootObj
+    ## A word that raises a match's confidence when it appears near the match.
+    weight*: DlpProximityWeight
+    word*: string
+      ## The word or phrase to look for. Must contain 1–128 characters and is matched
+      ## case-insensitively.
+
+  DlpProximityWordValidator* = ref object of RootObj
+    ## A reusable list of weighted words. Attaching it to a detection entry raises the
+    ## confidence of
+    ## that entry's matches when one of the words appears nearby, and lowers it when
+    ## none do.
+    created_at*: string
+    id*: string
+    name*: string
+      ## A name for this validator, at most 50 characters.
+    referenced_by*: JsonNode
+    updated_at*: string
+    words*: seq[DlpProximityWord]
+      ## The words that raise confidence when found near a match.
+
+  DlpProximityWordValidatorArray* = seq[DlpProximityWordValidator]
+
+  DlpProximityWordValidatorWrite* = ref object of RootObj
+    ## The attributes of a proximity word validator.
+    ##
+    ## A write replaces both fields in full, so `PUT` must send the complete word list,
+    ## not just the
+    ## words that changed. The computed fields a `GET` returns (`id`, `kind`,
+    ## `referenced_by`,
+    ## `created_at`, `updated_at`) are ignored if sent, so a response can be edited and
+    ## submitted back
+    ## as-is.
+    name*: string
+      ## A name for this validator, at most 50 characters.
+    words*: seq[DlpProximityWord]
+      ## The words that raise confidence when found near a match, at most 100 per
+      ## validator. Matching
+      ## ignores case, so the list may not contain the same word twice with different
+      ## capitalisation.
+      ## Words are stored as sent.
+      ##
+      ## For example, a validator for medical record numbers might use
+      ## `[{"word": "patient", "weight": "strong"}, {"word": "diagnosis", "weight":
+      ## "moderate"},
+      ## {"word": "mrn", "weight": "weak"}]`.
+
+  DlpReferencedIntegrationEntry* = ref object of RootObj
+    ## An entry owned by an integration profile, along with the profiles and data
+    ## classes that
+    ## reference it.
+    id*: string
+      ## The ID of the entry.
+    name*: string
+      ## The name of the entry.
+    referenced_by_data_classes*: seq[DlpDataClassRef]
+      ## Data classes that reference this entry, sorted by ID.
+    referenced_by_profiles*: seq[DlpEntryProfile]
+      ## Other profiles that share this entry, sorted by ID.
+
+  DlpReferencingDataClass* = ref object of RootObj
+    ## A data class that references an entry owned by an integration profile.
+    current_expression*: string
+      ## The expression of the data class before the profile is deleted.
+    id*: string
+      ## The ID of the data class.
+    name*: string
+      ## The name of the data class.
+    resulting_expression*: Option[string]
+      ## The expression with every condition on this profile's entries removed, or `null`
+      ## if no
+      ## condition would remain. The profile cannot be deleted until data classes with a
+      ## `null`
+      ## value are updated or deleted.
 
   DlpRegexValidationQuery* = ref object of RootObj
     max_match_bytes*: Option[int32]
@@ -14393,6 +15492,32 @@ type
   DlpValidation* = enum
     luhn = "luhn"
 
+  DlpValidator* = ref object of RootObj
+    ## Reusable logic that a detection entry can attach to in order to refine its
+    ## matches. The `kind`
+    ## field determines the rest of the body.
+
+  DlpValidatorArray* = seq[DlpValidator]
+
+  DlpValidatorKind* = enum
+    ## The type of a validator, and the accepted values of the `kind` filter when
+    ## listing.
+    proximityWords = "proximity_words"
+    worker = "worker"
+
+  DlpValidatorReferences* = ref object of RootObj
+    ## What currently uses a validator. Deleting a validator that is still in use
+    ## returns `409`, so
+    ## check this first.
+    ##
+    ## Read-only. A validator is attached or detached by updating the detection entry
+    ## that uses it, not
+    ## by writing this back.
+    entries*: seq[DlpAttachedEntry]
+      ## The detection entries using this validator, ordered by name.
+    entry_count*: int32
+      ## Number of detection entries this validator is attached to.
+
   DlpWordListEntry* = ref object of RootObj
     created_at*: string
     enabled*: bool
@@ -14401,6 +15526,39 @@ type
     profile_id*: Option[string]
     updated_at*: string
     word_list*: seq[string]
+
+  DlpWorkerDefault* = ref object of RootObj
+
+  DlpWorkerStatus* = enum
+    workerNotFound = "worker_not_found"
+    workerError = "worker_error"
+    configured = "configured"
+    active = "active"
+
+  DlpWorkerValidator* = ref object of RootObj
+    ## A customer Worker registered as a validator.
+    created_at*: string
+    default*: Option[JsonNode]
+    id*: string
+    name*: string
+      ## A name for this validator, at most 50 characters.
+    referenced_by*: JsonNode
+    script_tag*: string
+      ## The public script tag of the customer's Worker that scores matches.
+    updated_at*: string
+
+  DlpWorkerValidatorArray* = seq[DlpWorkerValidator]
+
+  DlpWorkerValidatorStatus* = ref object of RootObj
+    status*: DlpWorkerStatus
+
+  DlpWorkerValidatorWrite* = ref object of RootObj
+    ## The attributes of a worker validator.
+    default*: Option[JsonNode]
+    name*: string
+      ## A name for this validator, at most 50 characters.
+    script_tag*: string
+      ## The public script tag of the customer's Worker that scores matches.
 
   DlpApiResponseCollection* = ref object of RootObj
     errors*: DlpMessages
@@ -18977,7 +20135,7 @@ type
     created_on*: Option[string]
       ## The timestamp of when the rule was created.
     id*: FirewallSchemasIdentifier
-    mode*: FirewallSchemasMode
+    mode*: JsonNode
     modified_on*: Option[string]
       ## The timestamp of when the rule was last modified.
     notes*: Option[FirewallNotes]
@@ -19075,7 +20233,7 @@ type
     created_on*: Option[string]
       ## The timestamp of when the rule was created.
     id*: FirewallSchemasIdentifier
-    mode*: FirewallSchemasMode
+    mode*: JsonNode
     modified_on*: Option[string]
       ## The timestamp of when the rule was last modified.
     notes*: Option[FirewallNotes]
@@ -23730,14 +24888,14 @@ type
     messages*: LogpushMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[seq[LogpushInstantLogsJob]]
+    result*: Option[seq[JsonNode]]
 
   LogpushInstantLogsJobResponseSingle* = ref object of RootObj
     errors*: LogpushMessages
     messages*: LogpushMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[LogpushInstantLogsJob]
+    result*: Option[JsonNode]
 
   LogpushKind* = enum
     ## The kind parameter (optional) is used to differentiate between Logpush and Edge
@@ -23781,14 +24939,14 @@ type
     messages*: LogpushMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[seq[LogpushLogpushJob]]
+    result*: Option[seq[JsonNode]]
 
   LogpushLogpushJobResponseSingle* = ref object of RootObj
     errors*: LogpushMessages
     messages*: LogpushMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[LogpushLogpushJob]
+    result*: Option[JsonNode]
 
   LogpushMaxUploadBytes* = int64
 
@@ -24019,7 +25177,7 @@ type
 
   MagicTransitApiResponseCommonFailure* = ref object of RootObj
     errors*: JsonNode
-    messages*: JsonNode
+    messages*: MagicTransitMessages
     result*: Option[JsonNode]
     success*: bool
       ## Whether the API call was successful.
@@ -25934,6 +27092,10 @@ type
     physport*: Option[MagicPort]
     priority*: Option[int64]
       ## Priority of WAN for traffic loadbalancing.
+    provisioned_download_kbps*: Option[int64]
+      ## Provisioned download rate of the WAN circuit in kilobits per second.
+    provisioned_upload_kbps*: Option[int64]
+      ## Provisioned upload rate of the WAN circuit in kilobits per second.
     site_id*: Option[MagicIdentifier]
     static_addressing*: Option[MagicWanStaticAddressing]
     vlan_tag*: Option[MagicVlanTag]
@@ -25965,6 +27127,27 @@ type
     address*: MagicCidr
     gateway_address*: MagicIpAddress
     secondary_address*: Option[MagicCidr]
+    secondary_gateway_address*: Option[string]
+      ## Gateway address for the secondary connector of a high availability site.
+
+  MagicWanStaticAddressingCreateRequest* = ref object of RootObj
+    ## Static addressing configuration for a WAN. Omit to use DHCP. Submit
+    ## secondary_address when the site is in high availability mode.
+    address*: MagicCidr
+    gateway_address*: MagicIpAddress
+    secondary_address*: Option[MagicCidr]
+    secondary_gateway_address*: Option[string]
+      ## Gateway address for the secondary connector of a high availability site.
+
+  MagicWanStaticAddressingUpdate* = ref object of RootObj
+    ## Static addressing configuration. PATCH updates only the fields provided, and PUT
+    ## replaces the configuration.
+    address*: Option[MagicCidr]
+    gateway_address*: Option[MagicIpAddress]
+    secondary_address*: Option[MagicCidr]
+    secondary_gateway_address*: Option[string]
+      ## Gateway address for the secondary connector of a high availability site. Set to
+      ## null to remove it.
 
   MagicWanUpdateRequest* = ref object of RootObj
     health_check_rate*: Option[string]
@@ -25973,7 +27156,13 @@ type
     name*: Option[string]
     physport*: Option[MagicPort]
     priority*: Option[int64]
-    static_addressing*: Option[MagicWanStaticAddressing]
+    provisioned_download_kbps*: Option[int64]
+      ## Provisioned download rate of the WAN circuit in kilobits per second. Set to null
+      ## to remove it.
+    provisioned_upload_kbps*: Option[int64]
+      ## Provisioned upload rate of the WAN circuit in kilobits per second. Set to null
+      ## to remove it.
+    static_addressing*: Option[MagicWanStaticAddressingUpdate]
     vlan_tag*: Option[MagicVlanTag]
 
   MagicWansAddSingleRequest* = ref object of RootObj
@@ -25984,7 +27173,11 @@ type
     name*: Option[string]
     physport*: MagicPort
     priority*: Option[int64]
-    static_addressing*: Option[MagicWanStaticAddressing]
+    provisioned_download_kbps*: Option[int64]
+      ## Provisioned download rate of the WAN circuit in kilobits per second.
+    provisioned_upload_kbps*: Option[int64]
+      ## Provisioned upload rate of the WAN circuit in kilobits per second.
+    static_addressing*: Option[MagicWanStaticAddressingCreateRequest]
     vlan_tag*: Option[MagicVlanTag]
 
   MagicWansCollectionResponse* = ref object of RootObj
@@ -27670,6 +28863,8 @@ type
     code*: int64
     message*: string
 
+  MconnConnectorInterruptsCreateRequest* = MconnInterrupt
+
   MconnConnectorInterruptsCreateResponse* = ref object of RootObj
     messages*: seq[MconnCodedMessage]
     success*: bool
@@ -28053,6 +29248,9 @@ type
     uid*: string
 
   MoqRelayConfig* = ref object of RootObj
+    ## Relay configuration. All sub-objects use whole-object replacement when
+    ## present; omitted sub-objects preserve the existing value.
+    ##
     upstreams*: Option[MoqUpstreams]
 
   MoqRelayCreateResponse* = ref object of RootObj
@@ -28787,6 +29985,7 @@ type
       ## * `SALESFORCE` - SALESFORCE
       ## * `SERVICENOW` - SERVICENOW
       ## * `SLACK` - SLACK
+      ## * `ZOOM` - ZOOM
     instructions*: Option[string]
       ## Setup instructions for the user.
     logo*: Option[string]
@@ -28834,6 +30033,7 @@ type
       ## * `SALESFORCE` - SALESFORCE
       ## * `SERVICENOW` - SERVICENOW
       ## * `SLACK` - SLACK
+      ## * `ZOOM` - ZOOM
     logo*: Option[string]
       ## Logo path.
     permissions*: seq[OnePermission]
@@ -28892,6 +30092,37 @@ type
     id*: string
       ## Auth method identifier.
 
+  OneCredentialUpdateField* = ref object of RootObj
+    ## An entry in `credential_update_fields`: either a submittable FormField, or an
+    ## instruction-only entry (`type="instruction"`) for flows with nothing to PATCH
+    ## directly (e.g. re-authorize via OAuth, or delete-and-recreate).
+    default_value*: Option[string]
+      ## Backend-computed value to pre-fill the field with.
+    description*: Option[string]
+      ## Risk/behavior callout for a field, or the message for an instruction entry.
+    label*: Option[string]
+      ## Human-readable field label.
+    name*: Option[string]
+      ## Field identifier (maps to credentials key). Omitted for instruction entries.
+    placeholder*: Option[string]
+      ## Placeholder text.
+    readonly*: Option[bool]
+      ## Whether the field is backend-computed and must be rendered disabled.
+    required*: Option[bool]
+      ## Whether field is required.
+    supported_file_types*: Option[seq[string]]
+      ## Allowed file extensions for file_upload type.
+    title*: Option[string]
+      ## Instruction title. Only present for instruction entries.
+    `type`*: string
+      ## Field input type, or 'instruction' for a non-submittable message.
+      ##
+      ## * `text` - text
+      ## * `password` - password
+      ## * `email` - email
+      ## * `file_upload` - file_upload
+      ## * `instruction` - instruction
+
   OneDynamicContent* = ref object of RootObj
     ## Dynamic content for instruction/form_input steps.
     label*: string
@@ -28919,12 +30150,18 @@ type
 
   OneFormField* = ref object of RootObj
     ## A form field within a form_input step.
+    default_value*: Option[string]
+      ## Backend-computed value to pre-fill the field with.
+    description*: Option[string]
+      ## Risk or behavior callout for the field (e.g. consequences of an invalid value).
     label*: string
       ## Human-readable field label.
     name*: string
       ## Field identifier (maps to credentials key).
     placeholder*: Option[string]
       ## Placeholder text.
+    readonly*: Option[bool]
+      ## Whether the field is backend-computed and must be rendered disabled.
     required*: bool
       ## Whether field is required.
     supported_file_types*: Option[seq[string]]
@@ -29012,6 +30249,7 @@ type
       ## * `SALESFORCE` - SALESFORCE
       ## * `SERVICENOW` - SERVICENOW
       ## * `SLACK` - SLACK
+      ## * `ZOOM` - ZOOM
     auth_method*: Option[string]
       ## Authentication method slug (uses default if omitted).
     credentials*: JsonNode
@@ -29022,8 +30260,9 @@ type
       ## Name of the integration.
     permissions*: Option[seq[string]]
       ## List of permission scopes (uses policy defaults if empty).
-    use_cases*: Option[seq[string]]
-      ## List of use case or feature slugs to enroll (e.g., ['casb', 'ces',
+    use_cases*: seq[string]
+      ## List of use case or feature slugs to enroll. At least one use case (casb, ces)
+      ## is required; auto_remediation may be added alongside casb (e.g., ['casb', 'ces',
       ## 'auto_remediation']).
 
   OneIntegrationV2Detail* = ref object of RootObj
@@ -29059,6 +30298,8 @@ type
   OneIntegrationV2ListItem* = ref object of RootObj
     ## Serializer for v2 integration list responses.
     application*: JsonNode
+    auth_method*: Option[JsonNode]
+      ## The integration's authentication method.
     created*: string
       ## When the integration was created.
     id*: string
@@ -29071,6 +30312,8 @@ type
       ## Integration status.
     updated*: string
       ## When the integration was last updated.
+    use_cases*: seq[JsonNode]
+      ## Use cases enabled for the integration.
 
   OnePaginatedApplicationListList* = ref object of RootObj
     errors*: seq[JsonNode]
@@ -29152,6 +30395,11 @@ type
     ## Setup flow for an application auth method.
     auth_config*: Option[JsonNode]
       ## OAuth configuration (present for OAuth-based flows).
+    credential_update_fields*: Option[seq[OneCredentialUpdateField]]
+      ## Credential fields that can be changed later via PATCH on an existing integration
+      ## (e.g. to fix a broken integration or re-key for a new use case). An
+      ## 'instruction' entry (type='instruction') is returned instead when nothing is
+      ## directly submittable (e.g. re-authorize via OAuth, or delete-and-recreate).
     default*: bool
       ## Whether this is the default auth method.
     description*: string
@@ -30236,18 +31484,78 @@ type
     value*: string
       ## The value of the field.
 
+  PostureApiAssetSchemaDetail* = ref object of RootObj
+    asset_class*: string
+      ## Asset class identifier (PascalCase), e.g. AnthropicApiKey.
+    schema*: JsonNode
+      ## Fields and related attributes a custom finding type may reference for this asset
+      ## class, as a JSON Schema. Top-level properties are `asset` and, when related
+      ## resources exist, `associated`.
+
+  PostureApiAssetSchemaListResponse* = ref object of RootObj
+    errors*: PostureApiMessages
+    messages*: PostureApiMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[seq[PostureApiAssetSchemaVendorGroup]]
+      ## Asset classes grouped by vendor, sorted by vendor enum.
+
+  PostureApiAssetSchemaResponse* = ref object of RootObj
+    errors*: PostureApiMessages
+    messages*: PostureApiMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[PostureApiAssetSchemaDetail]
+
+  PostureApiAssetSchemaSummary* = ref object of RootObj
+    asset_class*: string
+      ## Asset class identifier (PascalCase), e.g. AnthropicUser.
+
+  PostureApiAssetSchemaVendorGroup* = ref object of RootObj
+    asset_classes*: seq[PostureApiAssetSchemaSummary]
+      ## Asset classes belonging to this vendor, sorted by asset_class.
+    vendor*: string
+      ## Canonical vendor enum value, e.g. GOOGLE_WORKSPACE.
+
   PostureApiBaseFindingType* = ref object of RootObj
     ## Basic finding type information.
+    applies_to_all_integrations*: Option[bool]
+      ## Whether this finding type applies to every current and future integration of the
+      ## vendor.
+    asset_class*: Option[string]
+      ## Asset class the finding type's policy evaluates.
+    asset_vendor*: Option[string]
     category*: JsonNode
+    created_at*: Option[string]
+      ## Timestamp when the finding type was created.
     description*: Option[string]
       ## Detailed description of the finding.
+    expression*: Option[string]
+      ## Rego expression backing this finding type. For custom finding types, generated
+      ## package and import declarations are omitted. System expressions are returned
+      ## unchanged.
     id*: string
       ## The unique identifier of the finding.
+    integration_ids*: Option[seq[string]]
+      ## Integrations this finding type applies to when applies_to_all_integrations is
+      ## false.
+    match_count*: Option[int64]
+      ## Number of currently active finding instances across the account's integrations.
+      ## Zero when none have been detected.
     name*: string
       ## The name of the finding.
+    origin*: Option[string]
+      ## Whether the finding type is system-managed or customer-created.
+    quarantined*: Option[bool]
+      ## Whether evaluation of this finding type is suspended by an operator. Present
+      ## only when true.
     severity*: string
+    updated_at*: Option[string]
+      ## Timestamp when the finding type was last updated.
     vendor*: string
       ## The SaaS/Cloud vendor of the platform with which the finding is associated.
+    version*: Option[int64]
+      ## Current version of the finding type. Incremented on each update.
 
   PostureApiContentAsset* = ref object of RootObj
     ## Content asset with DLP information.
@@ -30587,17 +31895,95 @@ type
     severity*: PostureApiSeverityEnum
 
   PostureApiFindingType* = ref object of RootObj
+    applies_to_all_integrations*: Option[bool]
+      ## Whether this finding type applies to every current and future integration of the
+      ## vendor.
+    asset_class*: Option[string]
+      ## Asset class the finding type's policy evaluates.
+    asset_vendor*: Option[string]
     category*: JsonNode
+    created_at*: Option[string]
+      ## Timestamp when the finding type was created.
     description*: Option[string]
       ## Detailed description of the finding.
+    expression*: Option[string]
+      ## Rego expression backing this finding type. For custom finding types, generated
+      ## package and import declarations are omitted. System expressions are returned
+      ## unchanged.
     id*: string
       ## The unique identifier of the finding.
+    integration_ids*: Option[seq[string]]
+      ## Integrations this finding type applies to when applies_to_all_integrations is
+      ## false.
+    match_count*: Option[int64]
+      ## Number of currently active finding instances across the account's integrations.
+      ## Zero when none have been detected.
     name*: string
       ## The name of the finding.
+    origin*: Option[string]
+      ## Whether the finding type is system-managed or customer-created.
+    quarantined*: Option[bool]
+      ## Whether evaluation of this finding type is suspended by an operator. Present
+      ## only when true.
     severity*: string
+    updated_at*: Option[string]
+      ## Timestamp when the finding type was last updated.
     vendor*: string
       ## The SaaS/Cloud vendor of the platform with which the finding is associated.
+    version*: Option[int64]
+      ## Current version of the finding type. Incremented on each update.
     remediation*: Option[PostureApiFindingRemediation]
+
+  PostureApiFindingTypeOriginEnum* = enum
+    ## Finding type origins for list filters.
+    custom = "custom"
+    system = "system"
+
+  PostureApiFindingTypeSeverityEnum* = enum
+    ## Finding type severities for list filters.
+    critical = "critical"
+    high = "high"
+    medium = "medium"
+    low = "low"
+
+  PostureApiFindingTypeValidationError* = ref object of RootObj
+    code*: Option[string]
+      ## Machine-readable identifier for the class of problem, when one is
+      ## available. Omitted otherwise.
+    column*: Option[int64]
+      ## 1-based column on `line`. Omitted when the problem could not be located in
+      ## the submitted source.
+    detail*: string
+      ## Description of the problem.
+    field*: Option[string]
+      ## Request field the problem belongs to, matching the property names of
+      ## `ValidateFindingTypeRequest`. Array properties are reported per entry with
+      ## a zero-based index, for example `integration_ids[0]`. Empty when the
+      ## problem cannot be attributed to a single submitted field.
+    line*: Option[int64]
+      ## 1-based line in `expression` where the problem was found. Omitted when
+      ## the problem could not be located in the submitted source.
+    message*: string
+      ## Deprecated: use `detail`.
+
+  PostureApiFindingTypeVendorsEnum* = enum
+    ## Vendors whose assets a finding type can evaluate.
+    ANTHROPIC = "ANTHROPIC"
+    AWS = "AWS"
+    BITBUCKET = "BITBUCKET"
+    BOX = "BOX"
+    CONFLUENCE = "CONFLUENCE"
+    DROPBOX = "DROPBOX"
+    GITHUB = "GITHUB"
+    GOOGLECLOUDPLATFORM = "GOOGLE_CLOUD_PLATFORM"
+    GOOGLEWORKSPACE = "GOOGLE_WORKSPACE"
+    JIRA = "JIRA"
+    MICROSOFT = "MICROSOFT"
+    OPENAI = "OPENAI"
+    SALESFORCE = "SALESFORCE"
+    SERVICENOW = "SERVICENOW"
+    SLACK = "SLACK"
+    ZOOM = "ZOOM"
 
   PostureApiIntegrationPolicy* = ref object of RootObj
     ## Policy configuration for an integration.
@@ -31038,6 +32424,21 @@ type
     status*: string
       ## Status of the webhook configuration.
 
+  PostureApiValidateFindingTypeResponse* = ref object of RootObj
+    errors*: PostureApiMessages
+    messages*: PostureApiMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[PostureApiValidateFindingTypeResult]
+
+  PostureApiValidateFindingTypeResult* = ref object of RootObj
+    errors*: seq[PostureApiFindingTypeValidationError]
+      ## Every problem found with the candidate, so all of them can be surfaced at
+      ## once. Empty when `valid` is true. Problems without a location come
+      ## first, followed by located problems ordered by `line`, then `column`.
+    valid*: bool
+      ## Whether the candidate finding type would be accepted as-is.
+
   PostureApiVendor* = ref object of RootObj
     ## Information about a vendor/service provider.
     description*: Option[string]
@@ -31222,6 +32623,74 @@ type
     success*: bool
       ## Whether the API call was successful.
 
+  PostureApiCreateFindingTypeRequest* = ref object of RootObj
+    applies_to_all_integrations*: bool
+      ## When true, this finding type applies to every current and future integration of
+      ## the vendor.
+    asset_class*: string
+      ## Asset class this finding type applies to (PascalCase, e.g. GoogleWorkspaceFile)
+    asset_vendor*: string
+    description*: string
+      ## Human-readable description of the finding type. Cannot be empty. Maximum 4096
+      ## characters.
+    expression*: string
+      ## Rego expression body for the policy. `package cloudflare.casb.custom` and
+      ## `import rego.v1` are added automatically. Do not include package or import
+      ## declarations. This field cannot be changed after creation. Maximum 4096
+      ## characters.
+    integration_ids*: Option[seq[string]]
+      ## Required and non-empty when applies_to_all_integrations is false; omit when it
+      ## is true.
+    name*: string
+      ## Human-readable name for the finding type. Maximum 256 characters.
+    severity*: string
+
+  PostureApiCustomFindingTypeResponse* = ref object of RootObj
+    applies_to_all_integrations*: bool
+      ## Whether this finding type applies to every current and future integration of the
+      ## vendor.
+    asset_class*: string
+      ## Asset class the finding type's policy evaluates.
+    asset_vendor*: string
+    category*: JsonNode
+    created_at*: string
+      ## Timestamp when the finding type was created.
+    description*: Option[string]
+      ## Detailed description of the finding.
+    expression*: string
+      ## Rego expression backing this finding type. For custom finding types, generated
+      ## package and import declarations are omitted. System expressions are returned
+      ## unchanged.
+    id*: string
+      ## The unique identifier of the finding.
+    integration_ids*: Option[seq[string]]
+      ## Integrations this finding type applies to when applies_to_all_integrations is
+      ## false.
+    match_count*: Option[int64]
+      ## Number of currently active finding instances across the account's integrations.
+      ## Zero when none have been detected.
+    name*: string
+      ## The name of the finding.
+    origin*: string
+      ## Whether the finding type is system-managed or customer-created.
+    quarantined*: Option[bool]
+      ## Whether evaluation of this finding type is suspended by an operator. Present
+      ## only when true.
+    severity*: string
+    updated_at*: string
+      ## Timestamp when the finding type was last updated.
+    vendor*: string
+      ## The SaaS/Cloud vendor of the platform with which the finding is associated.
+    version*: int64
+      ## Current version of the finding type. Incremented on each update.
+
+  PostureApiCustomFindingTypeSingleResponse* = ref object of RootObj
+    errors*: PostureApiMessages
+    messages*: PostureApiMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[PostureApiCustomFindingTypeResponse]
+
   PostureApiErrorResponse* = ref object of RootObj
     ## Standard error response structure.
     errors*: PostureApiMessages
@@ -31303,6 +32772,21 @@ type
     total_count*: Option[int64]
       ## Total results available without any search parameters.
 
+  PostureApiUpdateFindingTypeRequest* = ref object of RootObj
+    applies_to_all_integrations*: bool
+      ## When true, this finding type applies to every current and future integration of
+      ## the vendor.
+    description*: Option[string]
+      ## Optional description of the finding type. Cannot be empty if provided. Maximum
+      ## 4096 characters.
+    integration_ids*: Option[seq[string]]
+      ## Required and non-empty when applies_to_all_integrations is false; omit when it
+      ## is true.
+    name*: Option[string]
+      ## Human-readable name for the finding type. Cannot be empty if provided. Maximum
+      ## 256 characters.
+    severity*: Option[string]
+
   PostureApiWebhookListResponse* = ref object of RootObj
     errors*: PostureApiMessages
     messages*: PostureApiMessages
@@ -31337,15 +32821,32 @@ type
     success*: bool
       ## Whether the API call was successful.
 
-  PrecursorDefaultMode* = enum
-    ## The zone-level Precursor enforcement mode applied to requests that do
-    ## not match a more specific enforcement rule.
+  PrecursorIdentifier* = string
+
+  PrecursorMessages* = seq[JsonNode]
+
+  PrecursorPrecursorConfig* = ref object of RootObj
+    mode*: Option[PrecursorPrecursorMode]
+    rules*: Option[PrecursorPrecursorRules]
+    show_interstitial*: Option[PrecursorShowInterstitial]
+
+  PrecursorPrecursorConfigResponseBody* = ref object of RootObj
+    errors*: PrecursorMessages
+    messages*: PrecursorMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[PrecursorPrecursorConfig]
+
+  PrecursorPrecursorMode* = enum
+    ## Controls Precursor detection for the zone. `off` disables detection,
+    ## `monitor` records detections without affecting bot scores, and `arm`
+    ## allows detections to affect bot scores.
     ##
     off = "off"
-    minFriction = "min-friction"
-    maxSecurity = "max-security"
+    monitor = "monitor"
+    arm = "arm"
 
-  PrecursorEnforcementRule* = ref object of RootObj
+  PrecursorPrecursorRule* = ref object of RootObj
     description*: Option[string]
       ## An informative description of the rule.
     enabled*: Option[bool]
@@ -31354,31 +32855,11 @@ type
       ## The filter expression that determines which requests the rule matches.
     id*: Option[string]
       ## The read-only identifier that Cloudflare assigns to the rule.
-    mode*: PrecursorEnforcementRuleMode
+    show_interstitial*: PrecursorShowInterstitial
 
-  PrecursorEnforcementRuleMode* = enum
-    ## The override mode Precursor applies to requests matching an enforcement
-    ## rule. Unlike `default_mode`, this cannot be `off`.
-    ##
-    minFriction = "min-friction"
-    maxSecurity = "max-security"
+  PrecursorPrecursorRules* = seq[PrecursorPrecursorRule]
 
-  PrecursorEnforcementRules* = seq[PrecursorEnforcementRule]
-
-  PrecursorIdentifier* = string
-
-  PrecursorMessages* = seq[JsonNode]
-
-  PrecursorPrecursorConfig* = ref object of RootObj
-    default_mode*: Option[PrecursorDefaultMode]
-    enforcement_rules*: Option[PrecursorEnforcementRules]
-
-  PrecursorPrecursorConfigResponseBody* = ref object of RootObj
-    errors*: PrecursorMessages
-    messages*: PrecursorMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[PrecursorPrecursorConfig]
+  PrecursorShowInterstitial* = bool
 
   PublicIpApiResponseCommon* = ref object of RootObj
     errors*: PublicIpMessages
@@ -32227,6 +33708,10 @@ type
       ## A continuation token that should be used to fetch the next page of results.
     per_page*: Option[float64]
       ## Maximum number of results on this page.
+    total_count*: int64
+      ## Total number of active buckets in the requested jurisdiction. This count is not
+      ## affected by filtering or pagination and is eventually consistent for accounts
+      ## with elevated bucket limits.
 
   R2Rule* = ref object of RootObj
     actions*: seq[R2R2Action]
@@ -32309,7 +33794,7 @@ type
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful.
-    result_info*: Option[R2ResultInfo]
+    result_info*: R2ResultInfo
 
   RealtimekitAIConfig* = ref object of RootObj
     ## The AI Config allows you to customize the behavior of meeting transcriptions and
@@ -34416,7 +35901,7 @@ type
     result*: Option[seq[JsonNode]]
     success*: bool
 
-  RequestTracerAccountIdentifier* = RequestTracerIdentifier
+  RequestTracerAccountIdentifier* = string
 
   RequestTracerApiResponseCommon* = ref object of RootObj
     errors*: RequestTracerMessages
@@ -34431,8 +35916,6 @@ type
     success*: bool
       ## Whether the API call was successful.
 
-  RequestTracerIdentifier* = string
-
   RequestTracerMessages* = seq[JsonNode]
 
   RequestTracerTrace* = seq[JsonNode]
@@ -34443,14 +35926,15 @@ type
 
   ResourceSharingApiResponseCollection* = ref object of RootObj
     errors*: ResourceSharingV4errors
-    result*: Option[seq[JsonNode]]
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[ResourceSharingResultInfo]
 
+  ResourceSharingApiResponseCollectionInfo* = ref object of RootObj
+    result_info*: Option[ResourceSharingResultInfo]
+
   ResourceSharingApiResponseCommon* = ref object of RootObj
     errors*: ResourceSharingV4errors
-    result*: Option[JsonNode]
     success*: bool
       ## Whether the API call was successful.
 
@@ -34574,16 +36058,22 @@ type
 
   ResourceSharingShareExcludedRecipientResponseCollection* = ref object of RootObj
     errors*: ResourceSharingV4errors
-    result*: Option[seq[ResourceSharingShareExcludedRecipientObject]]
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[ResourceSharingResultInfo]
+    result*: Option[seq[ResourceSharingShareExcludedRecipientObject]]
+
+  ResourceSharingShareExcludedRecipientResponseCollectionResult* = ref object of RootObj
+    result*: Option[seq[ResourceSharingShareExcludedRecipientObject]]
 
   ResourceSharingShareExcludedRecipientResponseSingle* = ref object of RootObj
     errors*: ResourceSharingV4errors
-    result*: Option[ResourceSharingShareExcludedRecipientObject]
     success*: bool
       ## Whether the API call was successful.
+    result*: Option[ResourceSharingShareExcludedRecipientObject]
+
+  ResourceSharingShareExcludedRecipientResponseSingleResult* = ref object of RootObj
+    result*: Option[ResourceSharingShareExcludedRecipientObject]
 
   ResourceSharingShareId* = string
 
@@ -34641,16 +36131,22 @@ type
 
   ResourceSharingShareRecipientResponseCollection* = ref object of RootObj
     errors*: ResourceSharingV4errors
-    result*: Option[seq[ResourceSharingShareRecipientObject]]
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[ResourceSharingResultInfo]
+    result*: Option[seq[ResourceSharingShareRecipientObject]]
+
+  ResourceSharingShareRecipientResponseCollectionResult* = ref object of RootObj
+    result*: Option[seq[ResourceSharingShareRecipientObject]]
 
   ResourceSharingShareRecipientResponseSingle* = ref object of RootObj
     errors*: ResourceSharingV4errors
-    result*: Option[ResourceSharingShareRecipientObject]
     success*: bool
       ## Whether the API call was successful.
+    result*: Option[ResourceSharingShareRecipientObject]
+
+  ResourceSharingShareRecipientResponseSingleResult* = ref object of RootObj
+    result*: Option[ResourceSharingShareRecipientObject]
 
   ResourceSharingShareResourceObject* = ref object of RootObj
     created*: ResourceSharingCreated
@@ -34665,29 +36161,41 @@ type
 
   ResourceSharingShareResourceResponseCollection* = ref object of RootObj
     errors*: ResourceSharingV4errors
-    result*: Option[seq[ResourceSharingShareResourceObject]]
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[ResourceSharingResultInfo]
+    result*: Option[seq[ResourceSharingShareResourceObject]]
+
+  ResourceSharingShareResourceResponseCollectionResult* = ref object of RootObj
+    result*: Option[seq[ResourceSharingShareResourceObject]]
 
   ResourceSharingShareResourceResponseSingle* = ref object of RootObj
     errors*: ResourceSharingV4errors
-    result*: Option[ResourceSharingShareResourceObject]
     success*: bool
       ## Whether the API call was successful.
+    result*: Option[ResourceSharingShareResourceObject]
+
+  ResourceSharingShareResourceResponseSingleResult* = ref object of RootObj
+    result*: Option[ResourceSharingShareResourceObject]
 
   ResourceSharingShareResponseCollection* = ref object of RootObj
     errors*: ResourceSharingV4errors
-    result*: Option[seq[ResourceSharingShareObject]]
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[ResourceSharingResultInfo]
+    result*: Option[seq[ResourceSharingShareObject]]
+
+  ResourceSharingShareResponseCollectionResult* = ref object of RootObj
+    result*: Option[seq[ResourceSharingShareObject]]
 
   ResourceSharingShareResponseSingle* = ref object of RootObj
     errors*: ResourceSharingV4errors
-    result*: Option[ResourceSharingShareObject]
     success*: bool
       ## Whether the API call was successful.
+    result*: Option[ResourceSharingShareObject]
+
+  ResourceSharingShareResponseSingleResult* = ref object of RootObj
+    result*: Option[ResourceSharingShareObject]
 
   ResourceSharingShareStatus* = enum
     active = "active"
@@ -34735,10 +36243,10 @@ type
     alertingPolicy = "alerting_policy"
     alertingWebhook = "alerting_webhook"
     cloudflaredTunnel = "cloudflared_tunnel"
-    cwsDeployment = "cws_deployment"
-    cwsPolicy = "cws_policy"
-    cwsPolicySet = "cws_policy_set"
-    cwsWorkload = "cws_workload"
+    cwsDeployment2 = "cws_deployment"
+    cwsPolicy2 = "cws_policy"
+    cwsPolicySet2 = "cws_policy_set"
+    cwsWorkload2 = "cws_workload"
     d1Database = "d1_database"
     device = "device"
     durableObjectNamespace = "durable_object_namespace"
@@ -34749,6 +36257,7 @@ type
     kvNamespace = "kv_namespace"
     loadBalancerMonitor = "load_balancer_monitor"
     loadBalancerPool = "load_balancer_pool"
+    namespaceWorker = "namespace_worker"
     pagesProject2 = "pages_project"
     queue = "queue"
     r2Bucket2 = "r2_bucket"
@@ -34771,10 +36280,10 @@ type
     alertingPolicy = "alerting_policy"
     alertingWebhook = "alerting_webhook"
     cloudflaredTunnel = "cloudflared_tunnel"
-    cwsDeployment = "cws_deployment"
-    cwsPolicy = "cws_policy"
-    cwsPolicySet = "cws_policy_set"
-    cwsWorkload = "cws_workload"
+    cwsDeployment2 = "cws_deployment"
+    cwsPolicy2 = "cws_policy"
+    cwsPolicySet2 = "cws_policy_set"
+    cwsWorkload2 = "cws_workload"
     d1Database = "d1_database"
     device = "device"
     durableObjectNamespace = "durable_object_namespace"
@@ -34785,6 +36294,7 @@ type
     kvNamespace = "kv_namespace"
     loadBalancerMonitor = "load_balancer_monitor"
     loadBalancerPool = "load_balancer_pool"
+    namespaceWorker = "namespace_worker"
     pagesProject2 = "pages_project"
     queue = "queue"
     r2Bucket2 = "r2_bucket"
@@ -34854,6 +36364,16 @@ type
 
   ResourceTaggingMessages* = seq[JsonNode]
 
+  ResourceTaggingNamespaceWorkerNavigation* = ref object of RootObj
+    ## Read-only routing metadata resolved from EWC using the account and immutable
+    ## namespace Worker ID. Returned only by tagged-resource lists requested with
+    ## include_navigation=true. Omitted when lookup is unavailable or the child
+    ## has been deleted. Never supplied on tag writes or stored as extra_data.
+    ##
+    namespace_id*: string
+    namespace_name*: string
+    script_name*: string
+
   ResourceTaggingResourceId* = string
 
   ResourceTaggingResourceName* = string
@@ -34873,10 +36393,10 @@ type
     cloudflaredTunnel = "cloudflared_tunnel"
     customCertificate = "custom_certificate"
     customHostname = "custom_hostname"
-    cwsDeployment = "cws_deployment"
-    cwsPolicy = "cws_policy"
-    cwsPolicySet = "cws_policy_set"
-    cwsWorkload = "cws_workload"
+    cwsDeployment2 = "cws_deployment"
+    cwsPolicy2 = "cws_policy"
+    cwsPolicySet2 = "cws_policy_set"
+    cwsWorkload2 = "cws_workload"
     d1Database = "d1_database"
     device = "device"
     dnsRecord = "dns_record"
@@ -34891,6 +36411,7 @@ type
     loadBalancerMonitor = "load_balancer_monitor"
     loadBalancerPool = "load_balancer_pool"
     managedClientCertificate = "managed_client_certificate"
+    namespaceWorker = "namespace_worker"
     pagesProject2 = "pages_project"
     queue = "queue"
     r2Bucket2 = "r2_bucket"
@@ -35277,6 +36798,16 @@ type
     tags*: ResourceTaggingTags
     tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
+
+  ResourceTaggingTaggedResourceObjectNamespaceWorker* = ref object of RootObj
+    ## Response for namespace_worker resources
+    navigation*: Option[ResourceTaggingNamespaceWorkerNavigation]
+    `type`*: string
+    etag*: ResourceTaggingEtag
+    id*: ResourceTaggingResourceId
+    name*: ResourceTaggingResourceName
+    tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectPagesProject* = ref object of RootObj
     ## Response for pages_project resources
@@ -39061,6 +40592,7 @@ type
       ## Whether the policy will be applied to matching devices.
     disable_auto_fallback*: Option[TeamsDevicesDisableAutoFallback]
     dns_search_suffixes*: Option[TeamsDevicesDnsSearchSuffixes]
+    enable_device_credential_authentication*: Option[TeamsDevicesEnableDeviceCredentialAuthentication]
     enabled*: Option[bool]
       ## Whether the policy will be applied to matching devices.
     exclude*: Option[TeamsDevicesExclude]
@@ -39192,6 +40724,7 @@ type
     description*: Option[TeamsDevicesSchemasDescription]
     disable_auto_fallback*: Option[TeamsDevicesDisableAutoFallback]
     dns_search_suffixes*: Option[TeamsDevicesDnsSearchSuffixes]
+    enable_device_credential_authentication*: Option[TeamsDevicesEnableDeviceCredentialAuthentication]
     enabled*: Option[bool]
       ## Whether the policy will be applied to matching devices.
     exclude*: Option[TeamsDevicesExclude]
@@ -39314,6 +40847,8 @@ type
   TeamsDevicesEmail* = string
 
   TeamsDevicesEmptyBody* = ref object of RootObj
+
+  TeamsDevicesEnableDeviceCredentialAuthentication* = bool
 
   TeamsDevicesExclude* = seq[TeamsDevicesSplitTunnel]
 
@@ -42385,14 +43920,6 @@ type
     success*: bool
       ## Whether the API call was successful.
 
-  VectorizeApiResponseCollection* = ref object of RootObj
-    errors*: VectorizeMessages
-    messages*: VectorizeMessages
-    result*: Option[seq[JsonNode]]
-    success*: bool
-      ## Whether the API call was successful
-    result_info*: Option[VectorizeResultInfo]
-
   VectorizeApiResponseCommon* = ref object of RootObj
     errors*: VectorizeMessages
     messages*: VectorizeMessages
@@ -42482,7 +44009,7 @@ type
     processed_up_to_datetime*: Option[string]
       ## Specifies the timestamp the last mutation batch was processed as an ISO8601
       ## string.
-    processed_up_to_mutation*: Option[VectorizeMutationUuid]
+    processed_up_to_mutation*: Option[string]
     vector_count*: Option[int64]
       ## Specifies the number of vectors present in the index
 
@@ -42580,18 +44107,7 @@ type
 
   VectorizeMessages* = seq[JsonNode]
 
-  VectorizeMutationUuid* = ref object of RootObj
-    ## The unique identifier for the async mutation operation containing the changeset.
-
-  VectorizeResultInfo* = ref object of RootObj
-    count*: Option[float64]
-      ## Total number of results for the requested service
-    page*: Option[float64]
-      ## Current page within paginated list of results
-    per_page*: Option[float64]
-      ## Number of results per page of results
-    total_count*: Option[float64]
-      ## Total results available without any search parameters
+  VectorizeMutationUuid* = string
 
   VectorizeUpdateIndexRequest* = ref object of RootObj
     description*: VectorizeIndexDescription
@@ -44141,75 +45657,71 @@ type
     ## A byte sequence to be stored, up to 25 MiB in length.
 
   WorkersObservabilityAgentSession* = ref object of RootObj
-    agent_id*: Option[string]
-      ## Agent instance identifier from the earliest invocation that reports one.
-    agent_name*: string
-      ## Agent name (gen_ai.agent.name) reported by the Session's invocations.
     conversation_id*: string
-      ## GenAI conversation identifier (gen_ai.conversation.id) for the Session.
+      ## OpenTelemetry gen_ai.conversation.id value that identifies the session within
+      ## the account.
     input_tokens*: Option[float64]
-      ## Input tokens reported by the Session's chat spans; spans without usage are
-      ## skipped, and the field is omitted when none report it.
-    last_active_ms*: float64
-      ## End of this Agent's last observed invocation in the Session, as Unix epoch
-      ## milliseconds. Sessions are ordered by this value. Agent activity, not Trace end:
-      ## work that continues in a Trace after the Agent returns is not included; per-run
-      ## Trace times are on the Session runs endpoint.
+      ## Sum of input tokens reported by chat spans attributed to the session. Omitted
+      ## when no span reports input-token usage.
+    last_active_ms*: int64
+      ## End of the latest observed agent invocation in the session, as Unix epoch
+      ## milliseconds. Sessions are ordered by this value.
     models*: seq[string]
-      ## Distinct models reported by chat spans.
+      ## Distinct models reported by chat spans attributed to the session.
     output_tokens*: Option[float64]
-      ## Output tokens reported by the Session's chat spans; spans without usage are
-      ## skipped, and the field is omitted when none report it.
+      ## Sum of output tokens reported by chat spans attributed to the session. Omitted
+      ## when no span reports output-token usage.
     providers*: seq[string]
-      ## Distinct GenAI providers reported by chat spans.
-    service_name*: string
-      ## Worker service that emitted the Session's Agent invocations.
-    session_duration_ms*: float64
-      ## Elapsed time from sessionStartMs to lastActiveMs.
-    session_start_ms*: float64
-      ## Start of this Agent's first observed invocation in the Session, as Unix epoch
-      ## milliseconds. Agent activity, not Trace start.
-    span_count*: float64
-      ## Total spans across the Session's observed Traces.
+      ## Distinct generative AI providers reported by chat spans attributed to the
+      ## session.
+    session_duration_ms*: int64
+      ## Elapsed time from sessionStartMs to lastActiveMs, in milliseconds.
+    session_start_ms*: int64
+      ## Start of the earliest observed agent invocation in the session, as Unix epoch
+      ## milliseconds.
     status*: string
-      ## Whether an error was observed; not a completeness or successful-completion
-      ## guarantee.
-    trace_count*: float64
-      ## Distinct observed Traces in the window; not conversational Turns.
+      ## Observed status of agent invocation and chat spans attributed to the session.
+      ## error means at least one span reported an error; observed_no_error means no
+      ## error was observed. This does not guarantee that the session completed
+      ## successfully.
+    trace_count*: int64
+      ## Number of distinct traces associated with the session during the requested time
+      ## range.
 
   WorkersObservabilityAgentSessionRun* = ref object of RootObj
-    agent_id*: Option[string]
-      ## ID from the earliest agent invocation that provides one.
-    agent_name*: Option[string]
-      ## Name from the earliest agent invocation that provides one.
-    conversation_id*: Option[string]
-      ## Conversation ID from the earliest invocation that provides one.
+    conversation_id*: string
+      ## OpenTelemetry gen_ai.conversation.id value that identifies the session
+      ## containing the run.
     errors*: seq[string]
-      ## Distinct errors reported by spans in the run.
+      ## Distinct errors reported by the observed spans in the trace.
     input_tokens*: Option[float64]
-      ## Input tokens summed across chat spans in the run's trace; informational, not
-      ## billing data.
+      ## Sum of input tokens reported by chat spans attributed to the session within this
+      ## trace. Omitted when none report input-token usage.
     models*: seq[string]
-      ## Distinct models reported by chat spans across the run's trace.
+      ## Distinct models reported by chat spans attributed to the session within this
+      ## trace.
     output_tokens*: Option[float64]
-      ## Output tokens summed across chat spans in the run's trace; informational, not
-      ## billing data.
+      ## Sum of output tokens reported by chat spans attributed to the session within
+      ## this trace. Omitted when none report output-token usage.
     providers*: seq[string]
-      ## Distinct GenAI providers reported by chat spans in the run.
+      ## Distinct generative AI providers reported by chat spans attributed to the
+      ## session within this trace.
     services*: seq[string]
-      ## Worker services represented in the run's trace.
-    spans*: float64
-      ## Number of spans in the run's trace.
+      ## Distinct Worker services represented by the observed spans in the trace.
+    spans*: int64
+      ## Number of observed spans in the trace during the requested time range.
     status*: string
-      ## Observed run status.
-    trace_duration_ms*: float64
-      ## Total trace duration in milliseconds.
-    trace_end_ms*: float64
-      ## End of the run's trace as a Unix epoch in milliseconds.
+      ## Observed trace status. error means at least one observed span reported an error;
+      ## completed means no error was observed. This does not guarantee that the complete
+      ## trace was observed.
+    trace_duration_ms*: int64
+      ## Elapsed time from traceStartMs to traceEndMs, in milliseconds.
+    trace_end_ms*: int64
+      ## End of the latest observed span in the trace, as Unix epoch milliseconds.
     trace_id*: string
-      ## Trace identifier for this agent run.
-    trace_start_ms*: float64
-      ## Start of the run's trace as a Unix epoch in milliseconds.
+      ## Trace identifier for the run.
+    trace_start_ms*: int64
+      ## Start of the earliest observed span in the trace, as Unix epoch milliseconds.
 
   WorkersObservabilityDistributionResult* = ref object of RootObj
     ## Bucketed 2D histogram of a numeric field over time. Present when chartType is
@@ -44373,6 +45885,11 @@ type
   WorkersDomain* = ref object of RootObj
     cert_id*: string
       ## ID of the TLS certificate issued for the domain.
+    enabled*: bool
+      ## Whether the configured hostname is routable for the domain. If disabled, then
+      ## requests to the configured hostname will not be routed to the configured Worker.
+      ## If disabled, then preview routing must be enabled, and only subdomains of the
+      ## configured hostname will be routable.
     environment*: string
       ## Worker environment associated with the domain.
     hostname*: string
@@ -44380,6 +45897,13 @@ type
       ## Requests to this hostname will be routed to the configured Worker.
     id*: string
       ## Immutable ID of the domain.
+    previews_enabled*: bool
+      ## Whether previews are routable for the domain. If enabled, previews will be
+      ## routable as subdomains of the configured hostname. For example, if the
+      ## configured hostname is `app.example.com`, then requests to
+      ## `my-feature.app.example.com` will be routed to the preview with slug
+      ## `my-feature`, if such a preview exists. If preview routing is disabled, then
+      ## hostname routing must be enabled.
     service*: string
       ## Name of the Worker associated with the domain. Requests to the configured
       ## hostname will be routed to this Worker.
@@ -44927,10 +46451,6 @@ type
       ## The environment of the script_name to bind to.
     name*: WorkersBindingName
     namespace_id*: Option[JsonNode]
-    retry*: Option[JsonNode]
-      ## Retry policy for calls made to the Durable Object through this binding. Omitted
-      ## or null properties use the runtime defaults. These limits are upper bounds and
-      ## do not enable retries for otherwise ineligible calls.
     script_name*: Option[string]
       ## The script where the Durable Object is defined, if it is external to this
       ## Worker.
@@ -44966,9 +46486,13 @@ type
     `type`*: string
       ## The kind of resource that the binding provides.
     version_id*: Option[string]
-      ## Identifier for the version to inherit the binding from, which can be the version
-      ## ID or the literal "latest" to inherit from the latest version. Defaults to
-      ## inheriting the binding from the latest version.
+      ## Identifier for the version to inherit the binding from. This can be a version
+      ## ID, or the literal "latest" to inherit from the most recently uploaded version,
+      ## which may not be the deployed version. Defaults to "latest". Only the Workers
+      ## API version endpoints under
+      ## `/accounts/{account_id}/workers/workers/{worker_id}/versions` accept a version
+      ## ID. Other endpoints, including script upload and script version upload, accept
+      ## only "latest" and reject a version ID with error 10057.
 
   WorkersBindingKindJson* = ref object of RootObj
     json*: JsonNode
@@ -46768,6 +48292,8 @@ type
 
   ZeroTrustGatewayDnsDestinationIpsIdWrite* = string
 
+  ZeroTrustGatewayDns64Enabled* = bool
+
   ZeroTrustGatewayDnsDestinationIpPair* = ref object of RootObj
     backup_ip*: string
     id*: string
@@ -47026,6 +48552,7 @@ type
   ZeroTrustGatewayLocations* = ref object of RootObj
     client_default*: Option[ZeroTrustGatewayClientDefault]
     created_at*: Option[ZeroTrustGatewayReadOnlyTimestamp]
+    dns64_enabled*: Option[ZeroTrustGatewayDns64Enabled]
     dns_destination_ips_id*: Option[ZeroTrustGatewayDnsDestinationIpsIdRead]
     dns_destination_ipv6_block_id*: Option[ZeroTrustGatewayDnsDestinationIpv6BlockId]
     doh_subdomain*: Option[ZeroTrustGatewaySubdomain]
@@ -47269,9 +48796,6 @@ type
     allow_child_bypass*: Option[bool]
       ## Set to enable MSP children to bypass this rule. Only parent MSP accounts can set
       ## this. this rule. Settable for all types of rules.
-    audit_ssh*: Option[JsonNode]
-      ## Define the settings for the Audit SSH action. Settable only for `l4` rules with
-      ## `audit_ssh` action.
     biso_admin_controls*: Option[JsonNode]
       ## Configure browser isolation behavior. Settable only for `http` rules with the
       ## action set to `isolate`.

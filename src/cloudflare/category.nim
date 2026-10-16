@@ -251,13 +251,15 @@ proc patchAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryId*(cli
 proc getAccountsAccountIdResourceLibraryCategories*(client: CloudflareClient,
                                                     accountId: string,
                                                     limit: int64 = 25,
-                                                    offset: int64 = 0): Future[types.AlexandriaGetCategoriesResponse] {.async.} =
-  ## List the categories available for classifying applications. Results are
-  ## paginated.
+                                                    offset: int64 = 0,
+                                                    cursor: string = default(string)): Future[types.AlexandriaGetCategoriesResponse] {.async.} =
+  ## List the categories available for classifying applications, ordered by name.
+  ## Results are paginated by `offset` or `cursor`.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
   q["offset"] = $offset
+  q["cursor"] = $cursor
   let res = await client.httpGET(fmt"/accounts/{accountId}/resource-library/categories", q)
   let body = await res.body
   case res.code
