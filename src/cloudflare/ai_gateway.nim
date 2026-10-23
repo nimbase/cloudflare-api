@@ -16,9 +16,6 @@ type
   PostAccountsAccountIdAiGatewayBillingTopupRequest = object
     amount: int64
     payment_method_id: Option[string]
-  PostAccountsAccountIdAiGatewayBillingTopupConfigRequest = object
-    amount: int64
-    threshold: int64
   PostAccountsAccountIdAiGatewayBillingTopupEligibilityRequest = object
     payment_methods: Option[seq[JsonNode]]
   PostAccountsAccountIdAiGatewayBillingTopupStatusRequest = object
@@ -150,10 +147,11 @@ proc getAccountsAccountIdAiGatewayBillingTopupConfig*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdAiGatewayBillingTopupConfig*(client: CloudflareClient,
-                                                       accountId: string,
-                                                       body: PostAccountsAccountIdAiGatewayBillingTopupConfigRequest): Future[types.AigBillingSetTopupConfigResponse] {.async.} =
-  ## Configure auto top-up with a balance threshold and top-up amount. Dashboard
-  ## sessions only: API token, OAuth, and service credentials are rejected with 403.
+                                                       accountId: string): Future[types.AigBillingSetTopupConfigResponse] {.async.} =
+  ## Configure auto top-up with a balance threshold and top-up amount. Requests that
+  ## add a payment method first return authentication details. The configuration is
+  ## saved only after the authenticated setup is submitted. Dashboard sessions only:
+  ## API token, OAuth, and service credentials are rejected with 403.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/billing/topup/config", body)
   let body = await res.body
@@ -207,7 +205,7 @@ proc getAccountsAccountIdAiGatewayBillingTopupLimits*(client: CloudflareClient,
 proc postAccountsAccountIdAiGatewayBillingTopupStatus*(client: CloudflareClient,
                                                        accountId: string,
                                                        body: PostAccountsAccountIdAiGatewayBillingTopupStatusRequest): Future[types.AigBillingTopupStatusResponse] {.async.} =
-  ## Get the payment processing status of a top-up by its invoice ID.
+  ## Get the payment processing status of a top-up by its top-up identifier.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/billing/topup/status", body)
   let body = await res.body

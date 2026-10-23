@@ -127,7 +127,7 @@ suite "workers_pipelines_other endpoints":
   test "GET /accounts/{account_id}/pipelines/v1/sinks":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdPipelinesV1Sinks("test", "test", "test", 1.0, 1.0)
+    discard waitFor client.getAccountsAccountIdPipelinesV1Sinks("test", "test", "test", orderByName, directionAsc, 1.0, 1.0)
 
   test "GET /accounts/{account_id}/pipelines/v1/sinks/{sink_id}":
     let client = initCloudflareClient("test-key")
@@ -142,7 +142,7 @@ suite "workers_pipelines_other endpoints":
   test "GET /accounts/{account_id}/pipelines/v1/streams":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdPipelinesV1Streams("test", "test", "test", 1.0, 1.0)
+    discard waitFor client.getAccountsAccountIdPipelinesV1Streams("test", "test", "test", orderByName, directionAsc, 1.0, 1.0)
 
   test "GET /accounts/{account_id}/pipelines/v1/streams/{stream_id}":
     let client = initCloudflareClient("test-key")

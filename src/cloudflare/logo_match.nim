@@ -12,7 +12,7 @@ proc getAccountsAccountIdBrandProtectionLogoMatches*(client: CloudflareClient,
                                                      logoId: seq[string] = @[],
                                                      offset: string = default(string),
                                                      limit: string = default(string)): Future[types.BrandProtectionApiLogoMatch] {.async.} =
-  ## Return matches for logo queries based on ID
+  ## Return matches for logo queries based on ID.
 
   var q = initOrderedTable[string, string]()
   for v in logoId: q["logo_id"] = $v
@@ -30,7 +30,7 @@ proc getAccountsAccountIdBrandProtectionLogoMatchesDownload*(client: CloudflareC
                                                              logoId: seq[string] = @[],
                                                              offset: string = default(string),
                                                              limit: string = default(string)): Future[types.BrandProtectionApiLogoMatch] {.async.} =
-  ## Return matches as CSV for logo queries based on ID
+  ## Return matches as CSV for logo queries based on ID.
 
   var q = initOrderedTable[string, string]()
   for v in logoId: q["logo_id"] = $v
@@ -45,7 +45,7 @@ proc getAccountsAccountIdBrandProtectionLogoMatchesDownload*(client: CloudflareC
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdBrandProtectionLogos*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return all saved logo queries
+  ## Return all saved logo queries.
 
   let res = await client.httpGET("/accounts/{account_id}/brand-protection/logos")
   return res
@@ -54,7 +54,7 @@ proc postAccountsAccountIdBrandProtectionLogos*(client: CloudflareClient,
                                                 tag: string = default(string),
                                                 matchType: string = default(string),
                                                 threshold: float64 = default(float64)): Future[types.BrandProtectionApiLogo] {.async.} =
-  ## Return new saved logo queries created from image files
+  ## Return new saved logo queries created from image files.
 
   var q = initOrderedTable[string, string]()
   q["tag"] = $tag
@@ -69,25 +69,25 @@ proc postAccountsAccountIdBrandProtectionLogos*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdBrandProtectionLogosLogoId*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return saved logo queries based on ID
+  ## Return saved logo queries based on ID.
 
   let res = await client.httpGET("/accounts/{account_id}/brand-protection/logos/{logo_id}")
   return res
 
 proc deleteAccountsAccountIdBrandProtectionLogosLogoId*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return a success message after deleting saved logo queries by ID
+  ## Return a success message after deleting saved logo queries by ID.
 
   let res = await client.httpDELETE("/accounts/{account_id}/brand-protection/logos/{logo_id}")
   return res
 
 proc postAccountsAccountIdBrandProtectionScanLogo*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return new logo queries created from image files
+  ## Return new logo queries created from image files.
 
   let res = await client.httpPOST("/accounts/{account_id}/brand-protection/scan-logo")
   return res
 
 proc postAccountsAccountIdBrandProtectionScanPage*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return new logo queries created from URLs
+  ## Return new logo queries created from URLs.
 
   let res = await client.httpPOST("/accounts/{account_id}/brand-protection/scan-page")
   return res

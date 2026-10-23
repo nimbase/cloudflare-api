@@ -31,10 +31,6 @@ suite "cloudflare_images_variants serialization":
     let obj = newImagesImageVariantDefinition()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ImagesImageVariantDefinition)) == openjson.toJson(obj)
 
-  test "round-trips ImagesApiResponseCommonFailure":
-    let obj = newImagesApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ImagesApiResponseCommonFailure)) == openjson.toJson(obj)
-
   test "round-trips ImagesImageVariantPatchRequest":
     let obj = newImagesImageVariantPatchRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ImagesImageVariantPatchRequest)) == openjson.toJson(obj)

@@ -1130,6 +1130,12 @@ proc renameHook*(v: types.DnssecDnssecZsk, fieldName: var string) {.inline.} =
   elif fieldName == "tag":
     fieldName = "Tag"
 
+proc renameHook*(v: types.DomainConnectTemplateSpec, fieldName: var string) {.inline.} =
+  if fieldName == "accountTags":
+    fieldName = "account_tags"
+  elif fieldName == "account_tags":
+    fieldName = "accountTags"
+
 proc renameHook*(v: types.FlagshipEvaluationResult, fieldName: var string) {.inline.} =
   if fieldName == "flagKey":
     fieldName = "flag_key"

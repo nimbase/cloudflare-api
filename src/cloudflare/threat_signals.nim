@@ -279,7 +279,10 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdContent*(c
                                                                                accountId: string,
                                                                                articleId: string,
                                                                                format: ThreatSignalFormatOption = formatText): Future[AsyncResponse] {.async.} =
-  ## Retrieves the stored body of a Threat Signals article as plain text or HTML.
+  ## Retrieves the stored content of a Threat Signals article, unchanged. Depending
+  ## on how the article was captured from its source, the content is HTML, Markdown,
+  ## or plain text. The format parameter sets only the response Content-Type; it does
+  ## not convert the content.
 
   var q = initOrderedTable[string, string]()
   q["format"] = $format
@@ -291,7 +294,7 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkills*(cl
                                                                               articleId: string): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsResponse] {.async.} =
   ## Lists active custom skills currently assigned to the article's feed and whether
   ## each has a stored output. Output content and skill configuration are retrieved
-  ## separately.
+  ## separately. Free Threat Signals accounts cannot read Custom Skills.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/{articleId}/skills")
   let body = await res.body
@@ -305,7 +308,9 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkil
                                                                                            accountId: string,
                                                                                            articleId: string,
                                                                                            skillId: string): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkillIdOutputResponse] {.async.} =
-  ## Retrieves the stored output of a skill for a Threat Signals article.
+  ## Retrieves the stored output of a skill for a Threat Signals article. The
+  ## custom_output field is parsed JSON when the stored output is valid JSON,
+  ## otherwise the raw string.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/{articleId}/skills/{skillId}/output")
   let body = await res.body
@@ -319,8 +324,10 @@ proc postAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSki
                                                                                          accountId: string,
                                                                                          articleId: string,
                                                                                          skillId: JsonNode): Future[PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsSkillIdRunResponse] {.async.} =
-  ## Paid customer operation that always persists a managed default skill or an
-  ## assigned active custom skill result without exposing diagnostic model data.
+  ## Run an active Custom Skill assigned to the article's feed, or run a managed
+  ## default skill. Requires a paid Threat Signals subscription and the Cloudforce
+  ## One Write permission. Always persists output; rerunning overwrites the previous
+  ## result. Does not expose diagnostic model data or accept server-preview inputs.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/{articleId}/skills/{skillId}/run", body)
   let body = await res.body
@@ -416,7 +423,11 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsFeeds*(client: CloudflareCl
 proc postAccountsAccountIdCloudforceOneV2ThreatSignalsFeeds*(client: CloudflareClient,
                                                              accountId: string,
                                                              body: PostAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsRequest): Future[PostAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsResponse] {.async.} =
-  ## Subscribes the account to a custom or curated Threat Signals feed.
+  ## Subscribes the account to a custom or curated Threat Signals feed. Adding a
+  ## custom feed when the account is at its custom-feed limit returns 403 with
+  ## `errors[0].reason` `threat_signals_feed_limit`, and
+  ## `errors[0].custom_feed_limit` and `errors[0].custom_feed_count` give the limit
+  ## and current count. Curated feeds are not subject to this limit.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/feeds", body)
   let body = await res.body
@@ -472,7 +483,8 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdRaw*(client: Clo
                                                                      accountId: string,
                                                                      feedId: string,
                                                                      format: ThreatSignalFormatOption = formatText): Future[AsyncResponse] {.async.} =
-  ## Retrieves the feed document fetched by the most recent poll.
+  ## Retrieves the feed document fetched by the most recent poll as text/plain by
+  ## default or application/xml when format is xml.
 
   var q = initOrderedTable[string, string]()
   q["format"] = $format
@@ -482,7 +494,9 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdRaw*(client: Clo
 proc getAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdSkills*(client: CloudflareClient,
                                                                         accountId: string,
                                                                         feedId: string): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdSkillsResponse] {.async.} =
-  ## Retrieves the effective skill pipeline for a Threat Signals feed.
+  ## Retrieves active non-IOC-context Managed Default Skills followed by active
+  ## Custom Skills assigned to the feed, with each entry's source. Free Threat
+  ## Signals accounts receive only those Managed Default Skills.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/feeds/{feedId}/skills")
   let body = await res.body
@@ -496,7 +510,8 @@ proc putAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdSkills*(client: 
                                                                         accountId: string,
                                                                         feedId: string,
                                                                         body: PutAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdSkillsRequest): Future[PutAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdSkillsResponse] {.async.} =
-  ## Replaces the ordered custom skills assigned to a Threat Signals feed.
+  ## Replaces the ordered custom skills assigned to a Threat Signals feed. Requires a
+  ## paid Threat Signals subscription.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/feeds/{feedId}/skills", body)
   let body = await res.body
@@ -558,7 +573,8 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsSkills*(client: CloudflareC
                                                              accountId: string,
                                                              page: int64 = 1,
                                                              perPage: int64 = 20): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsResponse] {.async.} =
-  ## Lists the default and custom skills available to the account.
+  ## Lists active Managed Default Skills and Custom Skills. Free Threat Signals
+  ## accounts see active managed defaults only, with custom_skills_available: false.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -574,7 +590,8 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsSkills*(client: CloudflareC
 proc postAccountsAccountIdCloudforceOneV2ThreatSignalsSkills*(client: CloudflareClient,
                                                               accountId: string,
                                                               body: PostAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsRequest): Future[PostAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsResponse] {.async.} =
-  ## Creates a custom AI skill for the account.
+  ## Creates a Custom Skill for the account. Free Threat Signals accounts cannot
+  ## create Custom Skills.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/skills", body)
   let body = await res.body
@@ -587,7 +604,8 @@ proc postAccountsAccountIdCloudforceOneV2ThreatSignalsSkills*(client: Cloudflare
 proc getAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillId*(client: CloudflareClient,
                                                                     accountId: string,
                                                                     skillId: string): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillIdResponse] {.async.} =
-  ## Retrieves a default or custom skill by ID.
+  ## Retrieves a Managed Default Skill or Custom Skill. Managed catalog definitions
+  ## are readable. Free Threat Signals accounts cannot read Custom Skills.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/skills/{skillId}")
   let body = await res.body
@@ -600,7 +618,9 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillId*(client: Clou
 proc deleteAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillId*(client: CloudflareClient,
                                                                        accountId: string,
                                                                        skillId: string): Future[DeleteAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillIdResponse] {.async.} =
-  ## Deletes a custom skill. Default skills cannot be deleted.
+  ## Deletes a Custom Skill. The skill's stored outputs on articles are deleted with
+  ## it. Managed Default Skills cannot be deleted. Free Threat Signals accounts
+  ## cannot delete Custom Skills.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/skills/{skillId}")
   let body = await res.body
@@ -614,7 +634,8 @@ proc patchAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillId*(client: Cl
                                                                       accountId: string,
                                                                       skillId: string,
                                                                       body: PatchAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillIdRequest): Future[PatchAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillIdResponse] {.async.} =
-  ## Updates a custom skill. Default skills are read-only.
+  ## Updates a Custom Skill. Managed Default Skills cannot be updated. Free Threat
+  ## Signals accounts cannot update Custom Skills.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/skills/{skillId}", body)
   let body = await res.body
@@ -627,7 +648,8 @@ proc patchAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillId*(client: Cl
 proc getAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillIdTagCategories*(client: CloudflareClient,
                                                                                  accountId: string,
                                                                                  skillId: SkillId): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillIdTagCategoriesResponse] {.async.} =
-  ## Retrieves the tag categories the default tagging skill may choose tags from.
+  ## Retrieves the Tag Categories the managed default tagging skill may select tags
+  ## from. This configures the managed default tagging skill, not Custom Skills.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/skills/{skillId}/tag-categories")
   let body = await res.body
@@ -641,7 +663,8 @@ proc putAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillIdTagCategories*
                                                                                  accountId: string,
                                                                                  skillId: SkillId,
                                                                                  body: PutAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillIdTagCategoriesRequest): Future[PutAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillIdTagCategoriesResponse] {.async.} =
-  ## Replaces the tag categories the default tagging skill may choose tags from.
+  ## Replaces the Tag Categories the managed default tagging skill may select tags
+  ## from. This configures the managed default tagging skill, not Custom Skills.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/skills/{skillId}/tag-categories", body)
   let body = await res.body

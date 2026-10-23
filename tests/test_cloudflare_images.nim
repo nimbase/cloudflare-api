@@ -39,10 +39,6 @@ suite "cloudflare_images serialization":
     let obj = newImagesImageDirectUploadRequestV2()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ImagesImageDirectUploadRequestV2)) == openjson.toJson(obj)
 
-  test "round-trips ImagesImageResponseBlob":
-    let obj = newImagesImageResponseBlob()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ImagesImageResponseBlob)) == openjson.toJson(obj)
-
   test "round-trips ImagesImagesListResponseV2":
     let obj = newImagesImagesListResponseV2()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ImagesImagesListResponseV2)) == openjson.toJson(obj)

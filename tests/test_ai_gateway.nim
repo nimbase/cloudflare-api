@@ -106,6 +106,11 @@ suite "ai_gateway endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdAiGatewayBillingTopupConfig("test")
 
+  test "POST /accounts/{account_id}/ai-gateway/billing/topup/config":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdAiGatewayBillingTopupConfig("test")
+
   test "DELETE /accounts/{account_id}/ai-gateway/billing/topup/config":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

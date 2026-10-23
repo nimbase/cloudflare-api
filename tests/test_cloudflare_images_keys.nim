@@ -15,10 +15,6 @@ suite "cloudflare_images_keys serialization":
     let obj = newImagesImageKeyResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ImagesImageKeyResponseCollection)) == openjson.toJson(obj)
 
-  test "round-trips ImagesApiResponseCommonFailure":
-    let obj = newImagesApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ImagesApiResponseCommonFailure)) == openjson.toJson(obj)
-
 suite "cloudflare_images_keys endpoints":
   test "GET /accounts/{account_id}/images/v1/keys":
     let client = initCloudflareClient("test-key")

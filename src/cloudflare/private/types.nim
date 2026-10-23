@@ -5710,13 +5710,13 @@ type
     brand*: Option[string]
       ## Card brand (visa, mastercard, etc.).
     client_secret*: Option[string]
-      ## Stripe PaymentIntent client secret.
+      ## Client secret used to complete payment authentication.
     last4*: Option[string]
       ## Last 4 digits of card.
     onboarding*: bool
       ## Whether the user was already onboarded.
     payment_intent_id*: string
-      ## Stripe invoice ID.
+      ## Top-up payment identifier.
 
   AigBillingDeleteSpendingLimitResponse* = ref object of RootObj
     errors*: seq[JsonNode]
@@ -5818,17 +5818,17 @@ type
 
   AigBillingGetTopupEligibilityResult* = ref object of RootObj
     account_payment_method_state*: string
-      ## Account-level PM posture derived from the passed-in list.
+      ## Account-level payment-method state derived from the provided list.
     aig_customer_state*: string
-      ## AIG Stripe customer resolution outcome.
+      ## AI Gateway billing profile resolution outcome.
     aig_default_payment_method_state*: string
-      ## Whether the AIG Stripe customer has a default PM attached.
+      ## Whether AI Gateway billing has a default payment method.
     display_payment_method*: Option[JsonNode]
       ## Card to reference in the UI, e.g. "use card ending 1234".
     eligible*: bool
       ## True only when reason === ELIGIBLE.
     reason*: string
-      ## Canonical (in)eligibility cause. Drives Stratus copy + support triage.
+      ## Canonical eligibility outcome for display and support triage.
     recommended_action*: string
       ## Machine-readable next step.
     recoverable*: bool
@@ -5875,8 +5875,6 @@ type
     success*: bool
 
   AigBillingSetTopupConfigResult* = ref object of RootObj
-    amount*: float64
-    threshold*: float64
 
   AigBillingTopupStatusResponse* = ref object of RootObj
     errors*: seq[JsonNode]
@@ -8633,13 +8631,13 @@ type
 
   BrandProtectionApiError* = ref object of RootObj
     code*: Option[int64]
-      ## Error code
+      ## Error code.
     errors*: Option[JsonNode]
-      ## Errors
+      ## Errors.
     message*: Option[string]
-      ## Error message
+      ## Error message.
     status*: Option[string]
-      ## Error name
+      ## Error name.
 
   BrandProtectionApiImageFile* = ref object of RootObj
     image*: Option[string]
@@ -8653,20 +8651,11 @@ type
     matches*: Option[seq[JsonNode]]
     total*: Option[int64]
 
-  BrandProtectionApiPaginationMetadata* = ref object of RootObj
-    first_page*: Option[int64]
-    last_page*: Option[int64]
-    next_page*: Option[int64]
-    page*: Option[int64]
-    previous_page*: Option[int64]
-    total*: Option[int64]
-    total_pages*: Option[int64]
-
   BrandProtectionApiQuery* = ref object of RootObj
     max_time*: Option[string]
     min_time*: Option[string]
     scan*: Option[bool]
-    string_matches*: Option[JsonNode]
+    string_matches*: Option[seq[JsonNode]]
     tag*: Option[string]
 
   BrandProtectionApiQueryBulk* = ref object of RootObj
@@ -10418,18 +10407,21 @@ type
     ## Create a Durable Object-managed Containers application. Each Durable Object
     ## creates and manages the lifecycle of its container instance. Supply `name`,
     ## `scheduling_policy`, and `durable_objects`, with optional `configuration` and
-    ## top-level `observability` settings. Deployment configuration, instance counts,
-    ## scaling, constraints, versions, and rollouts do not apply.
+    ## top-level `observability` settings. `constraints.jurisdiction` selects the
+    ## jurisdiction of the application's primary control-plane object at creation time.
+    ## Deployment configuration, instance counts, scaling, other placement constraints,
+    ## versions, and rollouts do not apply.
     ##
     configuration*: Option[JsonNode]
       ## Configuration for a Durable Object-managed application.
+    constraints*: Option[CcDurableObjectApplicationConstraints]
     durable_objects*: JsonNode
       ## The customer-owned Durable Object namespace that owns this application and its
       ## instances.
     name*: string
       ## The name for this application.
     observability*: Option[CcDurableObjectApplicationObservability]
-    scheduling_policy*: CcDurableObjectApplicationSchedulingPolicy
+    scheduling_policy*: JsonNode
 
   CcContainersCreateImageRegistryRequestBody* = ref object of RootObj
     ## Configuration for connecting Containers to a supported private external image
@@ -10475,7 +10467,7 @@ type
       ## This field is mutually exclusive with configuration.observability.
       ##
     rollout_active_grace_period*: Option[CcApplicationRolloutActiveGracePeriod]
-    scheduling_policy*: CcScheduledApplicationSchedulingPolicy
+    scheduling_policy*: JsonNode
 
   CcContainersDeleteApplicationResponseBody* = ref object of RootObj
     ## Result of starting asynchronous deletion for a Containers application.
@@ -10483,7 +10475,7 @@ type
 
   CcContainersDeleteImageRegistryResponseBody* = ref object of RootObj
     ## Result of deleting an image registry from a Containers account.
-    domain*: CcDomain
+    domain*: JsonNode
 
   CcContainersImageRegistryAuth* = ref object of RootObj
     ## Credentials for authenticating to a private external image registry. Store the
@@ -10565,6 +10557,7 @@ type
     ## Each Durable Object creates and manages the lifecycle of its container instance.
     account_id*: CcAccountID
     configuration*: Option[CcDurableObjectApplicationConfiguration]
+    constraints*: Option[CcDurableObjectApplicationConstraints]
     created_at*: CcISO8601Timestamp
     durable_objects*: CcDurableObjectsConfigurationNamespaceId
     health*: Option[CcDurableObjectApplicationHealth]
@@ -10578,6 +10571,14 @@ type
     ## Application-wide settings for a Durable Object-managed application.
     authorized_keys*: Option[seq[CcUserSSHPublicKey]]
     wrangler_ssh*: Option[CcWranglerSSHConfig]
+
+  CcDurableObjectApplicationConstraints* = ref object of RootObj
+    ## The jurisdiction of a Durable Object-managed application's primary control-plane
+    ## object.
+    ## Set this when creating the application; it cannot be changed afterwards.
+    ## Other placement constraints are not supported by this scheduling policy.
+    ##
+    jurisdiction*: string
 
   CcDurableObjectApplicationHealth* = ref object of RootObj
     ## Aggregate current activity for the latest observed placement of each instance.
@@ -12560,7 +12561,7 @@ type
     messages*: CustomIndicatorFeedsMessages2
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[CustomIndicatorFeedsIndicatorFeedMetadata]
+    result*: Option[JsonNode]
 
   CustomIndicatorFeedsIndicatorFeedResponse* = ref object of RootObj
     errors*: CustomIndicatorFeedsMessages2
@@ -12568,13 +12569,6 @@ type
     success*: bool
       ## Whether the API call was successful.
     result*: Option[seq[CustomIndicatorFeedsIndicatorFeedItem]]
-
-  CustomIndicatorFeedsIndicatorFeedResponseSingle* = ref object of RootObj
-    errors*: CustomIndicatorFeedsMessages2
-    messages*: CustomIndicatorFeedsMessages2
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[CustomIndicatorFeedsIndicatorFeedItem]
 
   CustomIndicatorFeedsIsAttributable* = bool
 
@@ -13001,9 +12995,9 @@ type
     entrypoint*: string
       ## Non-function rule declared in rego_source. Evaluation uses
       ## data.<package_path>.<entrypoint>.
-    filter*: Option[string]
-      ## Optional filter expression that determines whether this policy applies. Omit or
-      ## set null to apply the policy to every request. Maximum 4096 UTF-8 bytes.
+    filter*: string
+      ## Filter expression that determines whether this policy applies. Maximum 4096
+      ## UTF-8 bytes.
     name*: string
       ## Name of the policy
     rego_source*: string
@@ -13252,9 +13246,9 @@ type
     entrypoint*: string
       ## Non-function rule declared in rego_source. Evaluation uses
       ## data.<package_path>.<entrypoint>.
-    filter*: Option[string]
-      ## Optional filter expression that determines whether this policy applies. Null
-      ## means the policy applies to every request. Maximum 4096 UTF-8 bytes.
+    filter*: string
+      ## Filter expression that determines whether this policy applies. Maximum 4096
+      ## UTF-8 bytes.
     id*: string
       ## Server-assigned UUID
     name*: string
@@ -13546,9 +13540,9 @@ type
     entrypoint*: string
       ## Non-function rule declared in rego_source. Evaluation uses
       ## data.<package_path>.<entrypoint>.
-    filter*: Option[string]
-      ## Optional filter expression that determines whether this policy applies. Omit or
-      ## set null to apply the policy to every request. Maximum 4096 UTF-8 bytes.
+    filter*: string
+      ## Filter expression that determines whether this policy applies. Maximum 4096
+      ## UTF-8 bytes.
     name*: string
       ## Name of the policy
     rego_source*: string
@@ -14887,8 +14881,6 @@ type
   DlpEntryUpdate* = ref object of RootObj
     enabled*: bool
 
-  DlpEntryUpdateType* = ref object of RootObj
-
   DlpEntryWithSharedProfiles* = ref object of RootObj
     upload_status*: Option[JsonNode]
     profiles*: seq[DlpEntryProfile]
@@ -15675,6 +15667,9 @@ type
 
   DlsCodedMessage* = ref object of RootObj
     code*: int64
+    error_chain*: Option[seq[DlsCodedMessage]]
+      ## Optional upstream error context for APIv4 errors that wrap downstream service
+      ## failures.
     message*: string
 
   DlsGoodResponse* = ref object of RootObj
@@ -16243,7 +16238,7 @@ type
     ttl*: Option[DnsRecordsTtl]
     content*: Option[string]
       ## A valid mail server hostname.
-    priority*: Option[DnsRecordsPriority]
+    priority*: Option[JsonNode]
     `type`*: Option[string]
       ## Record type.
 
@@ -16396,7 +16391,7 @@ type
       ## Formatted URI content. See 'data' to set URI properties.
     data*: Option[JsonNode]
       ## Components of a URI record.
-    priority*: Option[DnsRecordsPriority]
+    priority*: Option[JsonNode]
     `type`*: Option[string]
       ## Record type.
 
@@ -17153,6 +17148,27 @@ type
     pendingDisabled = "pending-disabled"
     error = "error"
 
+  DomainConnectPostData* = ref object of RootObj
+    domain*: Option[string]
+    hash*: Option[string]
+    sig*: Option[string]
+
+  DomainConnectHttpError* = ref object of RootObj
+    error*: Option[string]
+
+  DomainConnectHttpStatus* = ref object of RootObj
+    status*: Option[string]
+
+  DomainConnectNeededByStratus* = ref object of RootObj
+    logo*: Option[string]
+    `template`*: Option[JsonNode]
+    template_spec*: Option[DomainConnectTemplateSpec]
+
+  DomainConnectTemplateSpec* = ref object of RootObj
+    account_tags*: Option[seq[string]]
+    proxied*: Option[bool]
+    status*: Option[int64]
+
   DosDnsProtectionRule* = ref object of RootObj
     block_any_queries*: bool
       ## Whether to block DNS ANY queries. Defaults to true.
@@ -17797,6 +17813,10 @@ type
     ## An email allow policy.
     comments*: Option[string]
     created_at*: JsonNode
+    expires_at*: Option[string]
+      ## Timestamp at which the policy expires. After this time, Email Security ignores
+      ## the policy. The value must lie in the future. Send `null` to clear the
+      ## expiration.
     id*: JsonNode
     is_acceptable_sender*: Option[bool]
       ## Exempts messages from this sender from Spam, Spoof and Bulk dispositions only;
@@ -17858,6 +17878,10 @@ type
     ## A blocked sender pattern.
     comments*: Option[string]
     created_at*: Option[JsonNode]
+    expires_at*: Option[string]
+      ## Timestamp at which the pattern expires. After this time, Email Security ignores
+      ## the pattern. The value must lie in the future. Send `null` to clear the
+      ## expiration.
     id*: Option[JsonNode]
     is_regex*: Option[bool]
       ## Whether `pattern` is a regular expression instead of a literal value.
@@ -17997,6 +18021,10 @@ type
     created_at*: Option[JsonNode]
     enabled*: Option[bool]
       ## Whether the policy is active.
+    expires_at*: Option[string]
+      ## Timestamp at which the policy expires. After this time, Email Security ignores
+      ## the policy. The value must lie in the future. Send `null` to clear the
+      ## expiration.
     id*: Option[JsonNode]
     modified_at*: Option[JsonNode]
     name*: Option[string]
@@ -18021,6 +18049,10 @@ type
     ## Create an allow policy.
     comments*: Option[string]
     created_at*: JsonNode
+    expires_at*: Option[string]
+      ## Timestamp at which the policy expires. After this time, Email Security ignores
+      ## the policy. The value must lie in the future. Send `null` to clear the
+      ## expiration.
     id*: JsonNode
     is_acceptable_sender*: bool
       ## Exempts messages from this sender from Spam, Spoof and Bulk dispositions only;
@@ -18058,6 +18090,10 @@ type
     ## Create a blocked sender pattern.
     comments*: Option[string]
     created_at*: Option[JsonNode]
+    expires_at*: Option[string]
+      ## Timestamp at which the pattern expires. After this time, Email Security ignores
+      ## the pattern. The value must lie in the future. Send `null` to clear the
+      ## expiration.
     id*: Option[JsonNode]
     is_regex*: bool
       ## Whether `pattern` is a regular expression instead of a literal value.
@@ -18078,6 +18114,10 @@ type
     created_at*: Option[JsonNode]
     enabled*: bool
       ## Whether the policy is active.
+    expires_at*: Option[string]
+      ## Timestamp at which the policy expires. After this time, Email Security ignores
+      ## the policy. The value must lie in the future. Send `null` to clear the
+      ## expiration.
     id*: Option[JsonNode]
     modified_at*: Option[JsonNode]
     name*: string
@@ -18716,6 +18756,10 @@ type
     ## Update an allow policy.
     comments*: Option[string]
     created_at*: JsonNode
+    expires_at*: Option[string]
+      ## Timestamp at which the policy expires. After this time, Email Security ignores
+      ## the policy. The value must lie in the future. Send `null` to clear the
+      ## expiration.
     id*: JsonNode
     is_acceptable_sender*: Option[bool]
       ## Exempts messages from this sender from Spam, Spoof and Bulk dispositions only;
@@ -18753,6 +18797,10 @@ type
     ## Update a blocked sender pattern.
     comments*: Option[string]
     created_at*: Option[JsonNode]
+    expires_at*: Option[string]
+      ## Timestamp at which the pattern expires. After this time, Email Security ignores
+      ## the pattern. The value must lie in the future. Send `null` to clear the
+      ## expiration.
     id*: Option[JsonNode]
     is_regex*: Option[bool]
       ## Whether `pattern` is a regular expression instead of a literal value.
@@ -18773,6 +18821,10 @@ type
     created_at*: Option[JsonNode]
     enabled*: Option[bool]
       ## Whether the policy is active.
+    expires_at*: Option[string]
+      ## Timestamp at which the policy expires. After this time, Email Security ignores
+      ## the policy. The value must lie in the future. Send `null` to clear the
+      ## expiration.
     id*: Option[JsonNode]
     modified_at*: Option[JsonNode]
     name*: Option[string]
@@ -23129,16 +23181,6 @@ type
       ## Whether the API call was successful.
     result*: Option[IntelAsn]
 
-  IntelAsnCountry* = string
-
-  IntelAsnDescription* = string
-
-  IntelAsnType* = enum
-    ## Infrastructure type of this ASN.
-    hostingProvider = "hosting_provider"
-    isp = "isp"
-    organization = "organization"
-
   IntelCategoriesWithSuperCategoryIdsExampleEmpty* = seq[IntelCategoryWithSuperCategoryId]
 
   IntelCategoryWithSuperCategoryId* = ref object of RootObj
@@ -23245,46 +23287,6 @@ type
 
   IntelPerPage* = float64
 
-  IntelPhishingUrlInfo* = ref object of RootObj
-    categorizations*: Option[seq[JsonNode]]
-      ## List of categorizations applied to this submission.
-    model_results*: Option[seq[JsonNode]]
-      ## List of model results for completed scans.
-    rule_matches*: Option[seq[JsonNode]]
-      ## List of signatures that matched against site content found when crawling the
-      ## URL.
-    scan_status*: Option[JsonNode]
-      ## Status of the most recent scan found.
-    screenshot_download_signature*: Option[string]
-      ## For internal use.
-    screenshot_path*: Option[string]
-      ## For internal use.
-    url*: Option[string]
-      ## URL that was submitted.
-
-  IntelPhishingUrlInfoComponentsSchemasSingleResponse* = ref object of RootObj
-    errors*: IntelSchemasMessages
-    messages*: IntelSchemasMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[IntelPhishingUrlInfo]
-
-  IntelPhishingUrlSubmit* = ref object of RootObj
-    excluded_urls*: Option[seq[JsonNode]]
-      ## URLs that were excluded from scanning because their domain is in our no-scan
-      ## list.
-    skipped_urls*: Option[seq[JsonNode]]
-      ## URLs that were skipped because the same URL is currently being scanned.
-    submitted_urls*: Option[seq[JsonNode]]
-      ## URLs that were successfully submitted for scanning.
-
-  IntelPhishingUrlSubmitComponentsSchemasSingleResponse* = ref object of RootObj
-    errors*: IntelSchemasMessages
-    messages*: IntelSchemasMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[IntelPhishingUrlSubmit]
-
   IntelPopularityRank* = int64
 
   IntelResolvesToRef* = ref object of RootObj
@@ -23329,14 +23331,6 @@ type
     success*: bool
       ## Whether the API call was successful.
 
-  IntelSchemasAsn* = ref object of RootObj
-    asn*: Option[IntelAsn]
-    country*: Option[IntelAsnCountry]
-    description*: Option[IntelAsnDescription]
-    domain_count*: Option[int64]
-    top_domains*: Option[seq[string]]
-    `type`*: Option[IntelAsnType]
-
   IntelSchemasIp* = ref object of RootObj
     belongs_to_ref*: Option[JsonNode]
       ## Specifies a reference to the autonomous systems (AS) that the IP address belongs
@@ -23364,13 +23358,6 @@ type
     total_count*: Option[float64]
       ## Total results available without any search parameters.
 
-  IntelSchemasSingleResponse* = ref object of RootObj
-    errors*: IntelSchemasMessages
-    messages*: IntelSchemasMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[IntelWhois]
-
   IntelSingleResponse* = ref object of RootObj
     errors*: IntelSchemasMessages
     messages*: IntelSchemasMessages
@@ -23385,8 +23372,6 @@ type
       ## Defaults to 30 days before the end parameter value.
 
   IntelStixIdentifier* = string
-
-  IntelUrl* = string
 
   IntelUrlIntelligence* = ref object of RootObj
     content_categories*: seq[IntelUrlIntelligenceCategoryWithSource]
@@ -23412,20 +23397,6 @@ type
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IntelUrlIntelligence]
-
-  IntelUrlParam* = ref object of RootObj
-    url*: Option[IntelUrl]
-
-  IntelWhois* = ref object of RootObj
-    created_date*: Option[string]
-    domain*: Option[IntelDomainName]
-    nameservers*: Option[seq[string]]
-    registrant*: Option[string]
-    registrant_country*: Option[string]
-    registrant_email*: Option[string]
-    registrant_org*: Option[string]
-    registrar*: Option[string]
-    updated_date*: Option[string]
 
   KaminoEnvironment* = ref object of RootObj
     expression*: string
@@ -25921,6 +25892,12 @@ type
     extra_prefixes*: Option[seq[string]]
       ## Prefixes in this list will be advertised to the customer device, in addition to
       ## the routes in the Magic routing table.
+      ## Each entry must be a network address in CIDR notation with no host bits set (for
+      ## example `192.0.2.0/24`, not
+      ## `192.0.2.1/24`) and must not repeat another entry. IPv6 prefixes are accepted
+      ## only when the tunnel has an
+      ## `interface_address6`.
+      ##
     import_filter_id*: Option[string]
       ## ID of the BGP filter profile applied to routes received from the customer.
     md5_key*: Option[string]
@@ -26352,8 +26329,12 @@ type
     export_filter_id*: Option[string]
       ## ID of the BGP filter profile applied to routes advertised to the customer.
     extra_prefixes*: Option[seq[string]]
-      ## Prefixes in this list will be advertised to the customer device, in addition to
-      ## the routes in the Magic routing table.
+      ## IPv4 prefixes in this list will be advertised to the customer device, in
+      ## addition to the routes in the Magic
+      ## routing table. Each entry must be a network address in CIDR notation with no
+      ## host bits set (for example
+      ## `192.0.2.0/24`, not `192.0.2.1/24`) and must not repeat another entry.
+      ##
     import_filter_id*: Option[string]
       ## ID of the BGP filter profile applied to routes received from the customer.
     md5_key*: Option[string]
@@ -27220,11 +27201,8 @@ type
   ManagedDefenseVulnerabilityDiscoveryCreateRepositoryResult* = ref object of RootObj
 
   ManagedDefenseVulnerabilityDiscoveryCreateScan* = ref object of RootObj
-    repo_hosts*: Option[JsonNode]
-      ## Explicit hostname scopes. Every hostname must be authorized for its repository
-      ## before review admission; rejected scopes return 422 and do not persist a scan
-      ## request.
-    repos*: seq[string]
+    repos*: seq[JsonNode]
+      ## Repository names must be unique within a request.
     telemetry_window*: Option[ManagedDefenseVulnerabilityDiscoveryTelemetryWindow]
 
   ManagedDefenseVulnerabilityDiscoveryCreatedRepository* = ref object of RootObj
@@ -27232,6 +27210,9 @@ type
     import_error*: Option[JsonNode]
     name*: string
     readiness*: string
+      ## Source state. `awaiting_source`: the upload repository's default branch has no
+      ## commits yet. `processing`: an import is in progress. `ready`: source is
+      ## available. `failed`: the Worker import failed or could not be verified.
     source*: string
 
   ManagedDefenseVulnerabilityDiscoveryCuratedReportPublication* = ref object of RootObj
@@ -27296,6 +27277,9 @@ type
     external_links*: Option[seq[ManagedDefenseVulnerabilityDiscoveryReportExternalLink]]
     id*: string
     impact*: string
+    impact_ids*: Option[seq[string]]
+      ## Accepted settled impact-charter premises cited by the finding. Optional on
+      ## legacy report revisions.
     location*: JsonNode
     open_question*: Option[string]
       ## One bounded unresolved proof question. Optional on legacy report revisions.
@@ -27310,6 +27294,9 @@ type
     severity_basis*: string
     summary*: string
     telemetry*: JsonNode
+    threat_ids*: Option[seq[string]]
+      ## Accepted settled threat-model premises cited by the finding. Optional on legacy
+      ## report revisions.
     title*: string
     trace*: seq[ManagedDefenseVulnerabilityDiscoveryReportTraceStep]
     waf_rules*: Option[ManagedDefenseVulnerabilityDiscoveryReportWafRules]
@@ -27400,6 +27387,9 @@ type
     import_error*: Option[JsonNode]
     name*: string
     readiness*: string
+      ## Source state. `awaiting_source`: the upload repository's default branch has no
+      ## commits yet. `processing`: an import is in progress. `ready`: source is
+      ## available. `failed`: the Worker import failed or could not be verified.
     source*: string
 
   ManagedDefenseVulnerabilityDiscoveryRepositoryDetail* = ref object of RootObj
@@ -27429,6 +27419,12 @@ type
     success*: bool
     result*: ManagedDefenseVulnerabilityDiscoveryRepositoryDetail
     result_info*: ManagedDefenseVulnerabilityDiscoveryResultInfo
+
+  ManagedDefenseVulnerabilityDiscoveryRepositoryTokenResponse* = ref object of RootObj
+    errors*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    messages*: seq[ManagedDefenseVulnerabilityDiscoveryMessage]
+    success*: bool
+    result*: ManagedDefenseVulnerabilityDiscoveryUploadCredentials
 
   ManagedDefenseVulnerabilityDiscoveryResultInfo* = ref object of RootObj
     count*: int64
@@ -29182,20 +29178,6 @@ type
 
   MonetizationZoneIdentifier* = string
 
-  MonolithHealthResponse* = ref object of RootObj
-    errors*: seq[MonolithMessage]
-    messages*: seq[MonolithMessage]
-    result*: MonolithHealthResult
-    success*: bool
-
-  MonolithHealthResult* = ref object of RootObj
-    healthy*: bool
-      ## Whether the API monolith is healthy.
-
-  MonolithMessage* = ref object of RootObj
-    code*: int64
-    message*: string
-
   MoqAccountIdentifier* = string
 
   MoqApiResponseCommon* = ref object of RootObj
@@ -30092,37 +30074,6 @@ type
     id*: string
       ## Auth method identifier.
 
-  OneCredentialUpdateField* = ref object of RootObj
-    ## An entry in `credential_update_fields`: either a submittable FormField, or an
-    ## instruction-only entry (`type="instruction"`) for flows with nothing to PATCH
-    ## directly (e.g. re-authorize via OAuth, or delete-and-recreate).
-    default_value*: Option[string]
-      ## Backend-computed value to pre-fill the field with.
-    description*: Option[string]
-      ## Risk/behavior callout for a field, or the message for an instruction entry.
-    label*: Option[string]
-      ## Human-readable field label.
-    name*: Option[string]
-      ## Field identifier (maps to credentials key). Omitted for instruction entries.
-    placeholder*: Option[string]
-      ## Placeholder text.
-    readonly*: Option[bool]
-      ## Whether the field is backend-computed and must be rendered disabled.
-    required*: Option[bool]
-      ## Whether field is required.
-    supported_file_types*: Option[seq[string]]
-      ## Allowed file extensions for file_upload type.
-    title*: Option[string]
-      ## Instruction title. Only present for instruction entries.
-    `type`*: string
-      ## Field input type, or 'instruction' for a non-submittable message.
-      ##
-      ## * `text` - text
-      ## * `password` - password
-      ## * `email` - email
-      ## * `file_upload` - file_upload
-      ## * `instruction` - instruction
-
   OneDynamicContent* = ref object of RootObj
     ## Dynamic content for instruction/form_input steps.
     label*: string
@@ -30154,6 +30105,10 @@ type
       ## Backend-computed value to pre-fill the field with.
     description*: Option[string]
       ## Risk or behavior callout for the field (e.g. consequences of an invalid value).
+    is_used_in_create*: bool
+      ## Whether this field is part of the one-time create flow.
+    is_used_in_update*: bool
+      ## Whether this field is safe to PATCH on an existing integration.
     label*: string
       ## Human-readable field label.
     name*: string
@@ -30395,11 +30350,6 @@ type
     ## Setup flow for an application auth method.
     auth_config*: Option[JsonNode]
       ## OAuth configuration (present for OAuth-based flows).
-    credential_update_fields*: Option[seq[OneCredentialUpdateField]]
-      ## Credential fields that can be changed later via PATCH on an existing integration
-      ## (e.g. to fix a broken integration or re-key for a new use case). An
-      ## 'instruction' entry (type='instruction') is returned instead when nothing is
-      ## directly submittable (e.g. re-authorize via OAuth, or delete-and-recreate).
     default*: bool
       ## Whether this is the default auth method.
     description*: string
@@ -30409,7 +30359,10 @@ type
     name*: string
       ## Human-readable flow name.
     steps*: seq[OneSetupFlowStep]
-      ## Ordered list of setup steps.
+      ## Ordered list of setup steps. Each step/field is flagged
+      ## `is_used_in_create`/`is_used_in_update` for whether it belongs to the one-time
+      ## create flow, the credential-update (PATCH) flow for an existing integration, or
+      ## both.
     supported_environments*: seq[string]
       ## Environments this auth method supports (standard, fedramp).
 
@@ -30425,6 +30378,12 @@ type
       ## Form fields (for form_input).
     is_required*: Option[bool]
       ## Whether step is required (for form_input).
+    is_used_in_create*: bool
+      ## Whether this step is part of the one-time create flow.
+    is_used_in_update*: bool
+      ## Whether this step is shown when fixing an existing integration's credentials
+      ## (e.g. a re-authorize/delete-and-recreate instruction, or a step holding a
+      ## patchable field).
     parameters*: Option[JsonNode]
       ## Component parameters (for component type).
     title*: Option[string]
@@ -36240,6 +36199,8 @@ type
     account = "account"
     accountRuleset = "account_ruleset"
     aiGateway = "ai_gateway"
+    aiSearchInstance = "ai_search_instance"
+    aiSearchNamespace = "ai_search_namespace"
     alertingPolicy = "alerting_policy"
     alertingWebhook = "alerting_webhook"
     cloudflaredTunnel = "cloudflared_tunnel"
@@ -36277,6 +36238,8 @@ type
     account = "account"
     accountRuleset = "account_ruleset"
     aiGateway = "ai_gateway"
+    aiSearchInstance = "ai_search_instance"
+    aiSearchNamespace = "ai_search_namespace"
     alertingPolicy = "alerting_policy"
     alertingWebhook = "alerting_webhook"
     cloudflaredTunnel = "cloudflared_tunnel"
@@ -36387,6 +36350,8 @@ type
     account = "account"
     accountRuleset = "account_ruleset"
     aiGateway = "ai_gateway"
+    aiSearchInstance = "ai_search_instance"
+    aiSearchNamespace = "ai_search_namespace"
     alertingPolicy = "alerting_policy"
     alertingWebhook = "alerting_webhook"
     apiGatewayOperation = "api_gateway_operation"
@@ -36569,6 +36534,24 @@ type
 
   ResourceTaggingTaggedResourceObjectAiGateway* = ref object of RootObj
     ## Response for ai_gateway resources
+    `type`*: string
+    etag*: ResourceTaggingEtag
+    id*: ResourceTaggingResourceId
+    name*: ResourceTaggingResourceName
+    tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
+
+  ResourceTaggingTaggedResourceObjectAiSearchInstance* = ref object of RootObj
+    ## Response for ai_search_instance resources
+    `type`*: string
+    etag*: ResourceTaggingEtag
+    id*: ResourceTaggingResourceId
+    name*: ResourceTaggingResourceName
+    tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
+
+  ResourceTaggingTaggedResourceObjectAiSearchNamespace* = ref object of RootObj
+    ## Response for ai_search_namespace resources
     `type`*: string
     etag*: ResourceTaggingEtag
     id*: ResourceTaggingResourceId
@@ -37582,6 +37565,7 @@ type
     httpRequestTransform = "http_request_transform"
     httpResponseCacheSettings = "http_response_cache_settings"
     httpResponseCompression = "http_response_compression"
+    httpResponseFirewallCustom = "http_response_firewall_custom"
     httpResponseFirewallManaged = "http_response_firewall_managed"
     httpResponseHeadersTransform = "http_response_headers_transform"
     magicTransit = "magic_transit"
@@ -38637,6 +38621,7 @@ type
     resolve_text*: Option[string]
     severity*: Option[string]
     since*: Option[string]
+    source*: Option[SecurityCenterSource]
     status*: Option[string]
       ## The current status of the insight.
     subject*: Option[SecurityCenterSubject]
@@ -38685,7 +38670,14 @@ type
     enabled*: bool
       ## Whether the partner integration is enabled for the account.
 
-  SecurityCenterPartnerSettingsResponse* = ref object of RootObj
+  SecurityCenterPartnerSettingsGetResponse* = ref object of RootObj
+    errors*: SecurityCenterMessages
+    messages*: SecurityCenterMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[JsonNode]
+
+  SecurityCenterPartnerSettingsPostResponse* = ref object of RootObj
     errors*: SecurityCenterMessages
     messages*: SecurityCenterMessages
     success*: bool
@@ -38740,6 +38732,9 @@ type
     hostname*: string
     ip_address*: string
       ## The IP address observed for the host.
+    issue_count*: Option[int64]
+      ## Number of active Security Center insights associated with the host. Present only
+      ## in zone-level shadow-host responses.
 
   SecurityCenterShadowHostsResponse* = ref object of RootObj
     errors*: SecurityCenterMessages
@@ -38764,7 +38759,13 @@ type
       ## Whether the API call was successful.
     result*: Option[JsonNode]
 
-  SecurityCenterSources* = seq[string]
+  SecurityCenterSource* = enum
+    ## Who generated the insight. `cloudflare` for Cloudflare-generated insights,
+    ## otherwise the partner.
+    cloudflare = "cloudflare"
+    riskrecon = "riskrecon"
+
+  SecurityCenterSources* = seq[SecurityCenterSource]
 
   SecurityCenterSubject* = string
 
@@ -38810,23 +38811,18 @@ type
   SmartshieldApiResponseCommon* = ref object of RootObj
     errors*: SmartshieldMessages
     messages*: SmartshieldMessages
-    result*: JsonNode
+    result*: SmartshieldApiResponseResult
     success*: bool
       ## Whether the API call was successful.
 
   SmartshieldApiResponseCommonFailure* = ref object of RootObj
     errors*: JsonNode
-    messages*: JsonNode
+    messages*: Option[JsonNode]
     result*: Option[JsonNode]
     success*: bool
       ## Whether the API call was successful.
 
-  SmartshieldApiResponseSingle* = ref object of RootObj
-    errors*: SmartshieldMessages
-    messages*: SmartshieldMessages
-    result*: JsonNode
-    success*: bool
-      ## Whether the API call was successful.
+  SmartshieldApiResponseResult* = ref object of RootObj
 
   SmartshieldBase* = ref object of RootObj
     id*: string
@@ -39007,6 +39003,9 @@ type
   SmartshieldSmartShieldSettingsPatchResponse* = ref object of RootObj
     ## A consolidated object containing settings from multiple APIs for partial
     ## updates.
+    cache_reserve*: JsonNode
+    regional_tiered_cache*: JsonNode
+    smart_routing*: JsonNode
     smart_tiered_cache*: JsonNode
 
   SmartshieldStatus* = enum
@@ -39379,13 +39378,6 @@ type
     success*: bool
       ## Whether the API call was successful.
 
-  SpeedApiResponseSingleId* = ref object of RootObj
-    errors*: SpeedMessages
-    messages*: SpeedMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[JsonNode]
-
   SpeedAutomaticPlatformOptimizationResponse* = ref object of RootObj
     ## Controls Automatic Platform Optimization (APO) for WordPress.
     editable*: Option[bool]
@@ -39605,7 +39597,7 @@ type
       ## Feature identifier.
     modified_on*: Option[string]
       ## When this setting was last modified.
-    value*: Option[JsonNode]
+    value*: Option[string]
       ## Current value of the feature setting.
 
   StreamAccessRules* = ref object of RootObj

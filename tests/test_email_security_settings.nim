@@ -167,7 +167,7 @@ suite "email_security_settings endpoints":
   test "GET /accounts/{account_id}/email-security/settings/allow_policies":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailSecuritySettingsAllowPolicies(1, 1, "test", orderPattern, directionAsc, true, true, true, true, openjson.newJObject(), "test")
+    discard waitFor client.getAccountsAccountIdEmailSecuritySettingsAllowPolicies(1, 1, "test", orderPattern, directionAsc, true, true, true, true, openjson.newJObject(), "test", true)
 
   test "POST /accounts/{account_id}/email-security/settings/allow_policies":
     let client = initCloudflareClient("test-key")
@@ -197,7 +197,7 @@ suite "email_security_settings endpoints":
   test "GET /accounts/{account_id}/email-security/settings/block_senders":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailSecuritySettingsBlockSenders(1, 1, "test", orderPattern, directionAsc, openjson.newJObject(), "test")
+    discard waitFor client.getAccountsAccountIdEmailSecuritySettingsBlockSenders(1, 1, "test", orderPattern, directionAsc, openjson.newJObject(), "test", true)
 
   test "POST /accounts/{account_id}/email-security/settings/block_senders":
     let client = initCloudflareClient("test-key")
@@ -227,7 +227,7 @@ suite "email_security_settings endpoints":
   test "GET /accounts/{account_id}/email-security/settings/content_policies":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdEmailSecuritySettingsContentPolicies(1, 1, "test", orderPattern, directionAsc, true, "test")
+    discard waitFor client.getAccountsAccountIdEmailSecuritySettingsContentPolicies(1, 1, "test", orderPattern, directionAsc, true, "test", true)
 
   test "POST /accounts/{account_id}/email-security/settings/content_policies":
     let client = initCloudflareClient("test-key")

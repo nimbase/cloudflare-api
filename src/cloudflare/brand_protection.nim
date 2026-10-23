@@ -221,108 +221,108 @@ type
 
 
 proc getAccountsAccountIdBrandProtectionAlerts*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return all alerts on submitted domains
+  ## Return all alerts on submitted domains.
 
   let res = await client.httpGET("/accounts/{account_id}/brand-protection/alerts")
   return res
 
 proc patchAccountsAccountIdBrandProtectionAlerts*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return a success message after updating alerts on submitted domains by ID
+  ## Return a success message after updating alerts on submitted domains by ID.
 
   let res = await client.httpPATCH("/accounts/{account_id}/brand-protection/alerts")
   return res
 
 proc patchAccountsAccountIdBrandProtectionAlertsClear*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
   ## Return a success message after updating verification statuses of tracked URLs to
-  ## awaiting by ID
+  ## awaiting by ID.
 
   let res = await client.httpPATCH("/accounts/{account_id}/brand-protection/alerts/clear")
   return res
 
 proc patchAccountsAccountIdBrandProtectionAlertsRefute*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
   ## Return a success message after updating verification statuses of tracked URLs to
-  ## disproven by ID
+  ## disproven by ID.
 
   let res = await client.httpPATCH("/accounts/{account_id}/brand-protection/alerts/refute")
   return res
 
 proc patchAccountsAccountIdBrandProtectionAlertsVerify*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
   ## Return a success message after updating verification statuses of tracked URLs to
-  ## confirmed by ID
+  ## confirmed by ID.
 
   let res = await client.httpPATCH("/accounts/{account_id}/brand-protection/alerts/verify")
   return res
 
 proc getAccountsAccountIdBrandProtectionBrands*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return all brands
+  ## Return all brands.
 
   let res = await client.httpGET("/accounts/{account_id}/brand-protection/brands")
   return res
 
 proc postAccountsAccountIdBrandProtectionBrands*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return new brands
+  ## Return new brands.
 
   let res = await client.httpPOST("/accounts/{account_id}/brand-protection/brands")
   return res
 
 proc deleteAccountsAccountIdBrandProtectionBrands*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return a success message after deleting brands by ID
+  ## Return a success message after deleting brands by ID.
 
   let res = await client.httpDELETE("/accounts/{account_id}/brand-protection/brands")
   return res
 
 proc getAccountsAccountIdBrandProtectionBrandsPatterns*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return patterns for brands based on ID
+  ## Return patterns for brands based on ID.
 
   let res = await client.httpGET("/accounts/{account_id}/brand-protection/brands/patterns")
   return res
 
 proc postAccountsAccountIdBrandProtectionBrandsPatterns*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return a success message after creating new patterns for brands by ID
+  ## Return a success message after creating new patterns for brands by ID.
 
   let res = await client.httpPOST("/accounts/{account_id}/brand-protection/brands/patterns")
   return res
 
 proc deleteAccountsAccountIdBrandProtectionBrandsPatterns*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return a success message after deleting patterns for brands by ID
+  ## Return a success message after deleting patterns for brands by ID.
 
   let res = await client.httpDELETE("/accounts/{account_id}/brand-protection/brands/patterns")
   return res
 
 proc patchAccountsAccountIdBrandProtectionClear*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
   ## Return a success message after updating verification statuses of submitted URLs
-  ## to awaiting by ID
+  ## to awaiting by ID.
 
   let res = await client.httpPATCH("/accounts/{account_id}/brand-protection/clear")
   return res
 
 proc getAccountsAccountIdBrandProtectionDomainInfo*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return submitted domains based on ID
+  ## Return submitted domains based on ID.
 
   let res = await client.httpGET("/accounts/{account_id}/brand-protection/domain-info")
   return res
 
 proc getAccountsAccountIdBrandProtectionRecentSubmissions*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return recent URL submissions
+  ## Return recent URL submissions.
 
   let res = await client.httpGET("/accounts/{account_id}/brand-protection/recent-submissions")
   return res
 
 proc patchAccountsAccountIdBrandProtectionRefute*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
   ## Return a success message after updating verification statuses of submitted URLs
-  ## to disproven by ID
+  ## to disproven by ID.
 
   let res = await client.httpPATCH("/accounts/{account_id}/brand-protection/refute")
   return res
 
 proc getAccountsAccountIdBrandProtectionSubmissionInfo*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return URL submissions based on ID
+  ## Return URL submissions based on ID.
 
   let res = await client.httpGET("/accounts/{account_id}/brand-protection/submission-info")
   return res
 
 proc postAccountsAccountIdBrandProtectionSubmit*(client: CloudflareClient): Future[types.BrandProtectionApiURLSubmit] {.async.} =
-  ## Return new URL submissions
+  ## Return new URL submissions.
 
   let res = await client.httpPOST("/accounts/{account_id}/brand-protection/submit")
   let body = await res.body
@@ -333,13 +333,13 @@ proc postAccountsAccountIdBrandProtectionSubmit*(client: CloudflareClient): Futu
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdBrandProtectionTrackedDomains*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return submitted domains based on pattern
+  ## Return submitted domains based on pattern.
 
   let res = await client.httpGET("/accounts/{account_id}/brand-protection/tracked-domains")
   return res
 
 proc getAccountsAccountIdBrandProtectionUrlInfo*(client: CloudflareClient): Future[types.BrandProtectionApiURLInfo] {.async.} =
-  ## Return submitted URLs based on ID
+  ## Return submitted URLs based on ID.
 
   let res = await client.httpGET("/accounts/{account_id}/brand-protection/url-info")
   let body = await res.body
@@ -351,7 +351,7 @@ proc getAccountsAccountIdBrandProtectionUrlInfo*(client: CloudflareClient): Futu
 
 proc patchAccountsAccountIdBrandProtectionVerify*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
   ## Return a success message after updating verification statuses of submitted URLs
-  ## to confirmed by ID
+  ## to confirmed by ID.
 
   let res = await client.httpPATCH("/accounts/{account_id}/brand-protection/verify")
   return res
@@ -867,13 +867,13 @@ proc postInternalSubmit*(client: CloudflareClient): Future[AsyncResponse] {.asyn
   return res
 
 proc getLive*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return a success message after running liveness checks
+  ## Return a success message after running liveness checks.
 
   let res = await client.httpGET("/live")
   return res
 
 proc getReady*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return a success message after running readiness checks
+  ## Return a success message after running readiness checks.
 
   let res = await client.httpGET("/ready")
   return res

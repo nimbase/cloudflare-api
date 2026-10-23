@@ -29,7 +29,7 @@ type
     result: JsonNode
     success: bool
   PatchAccountsAccountIdWorkersObservabilityDestinationsSlugRequest = object
-    configuration: JsonNode
+    configuration: Option[JsonNode]
     enabled: bool
   PatchAccountsAccountIdWorkersObservabilityDestinationsSlugResponse* = object
     errors: seq[JsonNode]

@@ -15,13 +15,17 @@ suite "security_center_partners serialization":
     let obj = newSecurityCenterApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips SecurityCenterPartnerSettingsResponse":
-    let obj = newSecurityCenterPartnerSettingsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterPartnerSettingsResponse)) == openjson.toJson(obj)
+  test "round-trips SecurityCenterPartnerSettingsGetResponse":
+    let obj = newSecurityCenterPartnerSettingsGetResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterPartnerSettingsGetResponse)) == openjson.toJson(obj)
 
   test "round-trips SecurityCenterPartnerSettings":
     let obj = newSecurityCenterPartnerSettings()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterPartnerSettings)) == openjson.toJson(obj)
+
+  test "round-trips SecurityCenterPartnerSettingsPostResponse":
+    let obj = newSecurityCenterPartnerSettingsPostResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterPartnerSettingsPostResponse)) == openjson.toJson(obj)
 
   test "round-trips SecurityCenterShadowZonesResponse":
     let obj = newSecurityCenterShadowZonesResponse()

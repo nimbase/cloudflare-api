@@ -4,17 +4,17 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[strformat, options]
+import std/[strformat, options, json]
 import ./private/metaclient
 import ./private/types
 
 type
   PostAccountsAccountIdDevicesNetworksRequest = object
-    config: types.TeamsDevicesSchemasConfigRequest
+    config: JsonNode
     name: types.TeamsDevicesDeviceManagedNetworksComponentsSchemasName
     `type`: types.TeamsDevicesComponentsSchemasType
   PutAccountsAccountIdDevicesNetworksNetworkIdRequest = object
-    config: Option[types.TeamsDevicesSchemasConfigRequest]
+    config: Option[JsonNode]
     name: Option[types.TeamsDevicesDeviceManagedNetworksComponentsSchemasName]
     `type`: Option[types.TeamsDevicesComponentsSchemasType]
 

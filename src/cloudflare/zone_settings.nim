@@ -74,6 +74,21 @@ proc getZonesZoneIdSettingsAegis*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc deleteZonesZoneIdSettingsAegis*(client: CloudflareClient,
+                                     zoneId: types.CacheSettingsIdentifier): Future[JsonNode] {.async.} =
+  ## Aegis provides dedicated egress IPs (from Cloudflare to your origin) for your
+  ## layer 7 WAF and CDN services. The egress IPs are reserved exclusively for your
+  ## account so that you can increase your origin security by only allowing traffic
+  ## from a small list of IP addresses.
+
+  let res = await client.httpDELETE(fmt"/zones/{zoneId}/settings/aegis")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc patchZonesZoneIdSettingsAegis*(client: CloudflareClient,
                                     zoneId: types.CacheSettingsIdentifier,
                                     body: PatchZonesZoneIdSettingsAegisRequest): Future[JsonNode] {.async.} =

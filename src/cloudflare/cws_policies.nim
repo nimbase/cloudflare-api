@@ -49,8 +49,8 @@ proc getAccountsAccountIdCwsPolicies*(client: CloudflareClient,
 proc postAccountsAccountIdCwsPolicies*(client: CloudflareClient,
                                        accountId: string,
                                        body: types.CwsCreatePolicyInputBody): Future[types.CwsResponsePolicy] {.async.} =
-  ## Creates a policy from inline Rego source and an entrypoint. Omit filter to apply
-  ## the policy to every request.
+  ## Creates a policy from inline Rego source, an entrypoint, and a filter
+  ## expression.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cws/policies", body)
   let body = await res.body
@@ -77,8 +77,7 @@ proc putAccountsAccountIdCwsPoliciesPolicyId*(client: CloudflareClient,
                                               accountId: string,
                                               policyId: string,
                                               body: types.CwsUpdatePolicyInputBody): Future[types.CwsResponsePolicy] {.async.} =
-  ## Replaces the policy's configuration. Omit filter to apply the policy to every
-  ## request. Omit tags or use {} to clear them.
+  ## Replaces the policy's configuration. Omit tags or use {} to clear them.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/cws/policies/{policyId}", body)
   let body = await res.body

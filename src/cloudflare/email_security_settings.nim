@@ -61,7 +61,8 @@ proc getAccountsAccountIdEmailSecuritySettingsAllowPolicies*(client: CloudflareC
                                                              isAcceptableSender: bool = default(bool),
                                                              verifySender: bool = default(bool),
                                                              patternType: JsonNode = default(JsonNode),
-                                                             pattern: string = default(string)): Future[JsonNode] {.async.} =
+                                                             pattern: string = default(string),
+                                                             expired: bool = default(bool)): Future[JsonNode] {.async.} =
   ## Returns a paginated list of email allow policies. These policies exempt matching
   ## emails from security detection, allowing them to bypass disposition actions.
   ## Supports filtering by pattern type and policy attributes.
@@ -78,6 +79,7 @@ proc getAccountsAccountIdEmailSecuritySettingsAllowPolicies*(client: CloudflareC
   q["verify_sender"] = $verifySender
   q["pattern_type"] = $patternType
   q["pattern"] = $pattern
+  q["expired"] = $expired
   let res = await client.httpGET("/accounts/{account_id}/email-security/settings/allow_policies", q)
   let body = await res.body
   case res.code
@@ -174,7 +176,8 @@ proc getAccountsAccountIdEmailSecuritySettingsBlockSenders*(client: CloudflareCl
                                                             order: EmailSecuritySettingOrderOption = orderPattern,
                                                             direction: EmailSecuritySettingDirectionOption = directionAsc,
                                                             patternType: JsonNode = default(JsonNode),
-                                                            pattern: string = default(string)): Future[JsonNode] {.async.} =
+                                                            pattern: string = default(string),
+                                                            expired: bool = default(bool)): Future[JsonNode] {.async.} =
   ## Returns a paginated list of blocked email sender patterns. These patterns
   ## prevent emails from matching senders from being delivered. Supports filtering by
   ## pattern type and searching across patterns.
@@ -187,6 +190,7 @@ proc getAccountsAccountIdEmailSecuritySettingsBlockSenders*(client: CloudflareCl
   q["direction"] = $direction
   q["pattern_type"] = $patternType
   q["pattern"] = $pattern
+  q["expired"] = $expired
   let res = await client.httpGET("/accounts/{account_id}/email-security/settings/block_senders", q)
   let body = await res.body
   case res.code
@@ -285,7 +289,8 @@ proc getAccountsAccountIdEmailSecuritySettingsContentPolicies*(client: Cloudflar
                                                                order: EmailSecuritySettingOrderOption = orderPattern,
                                                                direction: EmailSecuritySettingDirectionOption = directionAsc,
                                                                enabled: bool = default(bool),
-                                                               name: string = default(string)): Future[JsonNode] {.async.} =
+                                                               name: string = default(string),
+                                                               expired: bool = default(bool)): Future[JsonNode] {.async.} =
   ## Returns a paginated list of content policies. These policies match against the
   ## subject or body of emails using a pattern. Supports filtering by name or enabled
   ## status, and searching across name and pattern fields.
@@ -298,6 +303,7 @@ proc getAccountsAccountIdEmailSecuritySettingsContentPolicies*(client: Cloudflar
   q["direction"] = $direction
   q["enabled"] = $enabled
   q["name"] = $name
+  q["expired"] = $expired
   let res = await client.httpGET("/accounts/{account_id}/email-security/settings/content_policies", q)
   let body = await res.body
   case res.code

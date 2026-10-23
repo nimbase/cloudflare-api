@@ -12,7 +12,7 @@ import ./private/types
 proc getAccountsAccountIdDnsSettingsNameserverSets*(client: CloudflareClient,
                                                     accountId: types.DnsSettingsIdentifier,
                                                     page: types.DnsSettingsPage = default(types.DnsSettingsPage),
-                                                    perPage: types.DnsSettingsPerPage = default(types.DnsSettingsPerPage)): Future[types.DnsSettingsNameserverSetResponseCollection] {.async.} =
+                                                    perPage: int64 = 100): Future[types.DnsSettingsNameserverSetResponseCollection] {.async.} =
   ## Lists an account's Custom Nameserver Sets.
 
   var q = initOrderedTable[string, string]()

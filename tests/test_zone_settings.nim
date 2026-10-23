@@ -23,6 +23,10 @@ suite "zone_settings serialization":
     let obj = newSpeedTransformationsC2paResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedTransformationsC2paResponse)) == openjson.toJson(obj)
 
+  test "round-trips CacheSettingsZoneCacheSettingsDeleteResponseSingle":
+    let obj = newCacheSettingsZoneCacheSettingsDeleteResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsZoneCacheSettingsDeleteResponseSingle)) == openjson.toJson(obj)
+
   test "round-trips SpeedAutomaticPlatformOptimizationValue":
     let obj = newSpeedAutomaticPlatformOptimizationValue()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedAutomaticPlatformOptimizationValue)) == openjson.toJson(obj)
@@ -117,6 +121,11 @@ suite "zone_settings endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getZonesZoneIdSettingsAegis("test")
+
+  test "DELETE /zones/{zone_id}/settings/aegis":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteZonesZoneIdSettingsAegis("test")
 
   test "GET /zones/{zone_id}/settings/automatic_platform_optimization":
     let client = initCloudflareClient("test-key")

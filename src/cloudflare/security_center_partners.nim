@@ -11,22 +11,23 @@ import ./private/types
 
 proc getAccountsAccountIdSecurityCenterPartnersPartnerSettings*(client: CloudflareClient,
                                                                 accountId: types.SecurityCenterIdentifier,
-                                                                partner: Partner): Future[types.SecurityCenterPartnerSettingsResponse] {.async.} =
-  ## Returns whether the account has enabled the selected partner integration. An
-  ## integration that has never been configured is returned as disabled.
+                                                                partner: Partner): Future[types.SecurityCenterPartnerSettingsGetResponse] {.async.} =
+  ## Returns whether the account has enabled the selected partner integration and, if
+  ## enabled, whether the account has been matched with the partner. An integration
+  ## that has not been configured is returned as disabled.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/security-center/partners/{partner}/settings")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.SecurityCenterPartnerSettingsResponse)
+    result = fromJson(body, types.SecurityCenterPartnerSettingsGetResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdSecurityCenterPartnersPartnerSettings*(client: CloudflareClient,
                                                                  accountId: types.SecurityCenterIdentifier,
                                                                  partner: Partner,
-                                                                 body: types.SecurityCenterPartnerSettings): Future[types.SecurityCenterPartnerSettingsResponse] {.async.} =
+                                                                 body: types.SecurityCenterPartnerSettings): Future[types.SecurityCenterPartnerSettingsPostResponse] {.async.} =
   ## Enables or disables the selected partner integration for the account. Enabling
   ## the integration for the first time also schedules an account scan for that
   ## partner.
@@ -35,7 +36,7 @@ proc postAccountsAccountIdSecurityCenterPartnersPartnerSettings*(client: Cloudfl
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.SecurityCenterPartnerSettingsResponse)
+    result = fromJson(body, types.SecurityCenterPartnerSettingsPostResponse)
   else:
     raise newException(CloudflareClientError, body)
 

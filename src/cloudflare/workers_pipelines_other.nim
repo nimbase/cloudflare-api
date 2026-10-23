@@ -95,6 +95,14 @@ type
   PutAccountsAccountIdPipelinesPipelineNameResponse* = object
     result: types.CloudflarePipelinesWorkersPipelinesPipeline
     success: types.CloudflarePipelinesWorkerPipelinesCommonSuccess
+  WorkersPipelinesOtherOrderByOption* = enum
+    orderByName = "name"
+    orderByCreatedAt = "created_at"
+
+  WorkersPipelinesOtherDirectionOption* = enum
+    directionAsc = "asc"
+    directionDesc = "desc"
+
 
 proc getAccountsAccountIdPipelines*(client: CloudflareClient,
                                     accountId: types.CloudflarePipelinesWorkersPipelinesAccountId,
@@ -191,6 +199,8 @@ proc getAccountsAccountIdPipelinesV1Sinks*(client: CloudflareClient,
                                            accountId: types.CloudflarePipelinesWorkersPipelinesAccountId,
                                            pipelineId: string = default(string),
                                            name: string = default(string),
+                                           orderBy: WorkersPipelinesOtherOrderByOption = orderByName,
+                                           direction: WorkersPipelinesOtherDirectionOption = directionAsc,
                                            page: float64 = default(float64),
                                            perPage: float64 = default(float64)): Future[GetAccountsAccountIdPipelinesV1SinksResponse] {.async.} =
   ## List/Filter Sinks in Account.
@@ -198,6 +208,8 @@ proc getAccountsAccountIdPipelinesV1Sinks*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["pipeline_id"] = $pipelineId
   q["name"] = $name
+  q["order_by"] = $orderBy
+  q["direction"] = $direction
   q["page"] = $page
   q["per_page"] = $perPage
   let res = await client.httpGET(fmt"/accounts/{accountId}/pipelines/v1/sinks", q)
@@ -251,6 +263,8 @@ proc getAccountsAccountIdPipelinesV1Streams*(client: CloudflareClient,
                                              accountId: types.CloudflarePipelinesWorkersPipelinesAccountId,
                                              pipelineId: types.CloudflarePipelinesWorkersPipelinesPipelineId = default(types.CloudflarePipelinesWorkersPipelinesPipelineId),
                                              name: string = default(string),
+                                             orderBy: WorkersPipelinesOtherOrderByOption = orderByName,
+                                             direction: WorkersPipelinesOtherDirectionOption = directionAsc,
                                              page: float64 = default(float64),
                                              perPage: float64 = default(float64)): Future[GetAccountsAccountIdPipelinesV1StreamsResponse] {.async.} =
   ## List/Filter Streams in Account.
@@ -258,6 +272,8 @@ proc getAccountsAccountIdPipelinesV1Streams*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   q["pipeline_id"] = $pipelineId
   q["name"] = $name
+  q["order_by"] = $orderBy
+  q["direction"] = $direction
   q["page"] = $page
   q["per_page"] = $perPage
   let res = await client.httpGET(fmt"/accounts/{accountId}/pipelines/v1/streams", q)

@@ -21,7 +21,7 @@ proc getAccountsAccountIdBrandProtectionMatches*(client: CloudflareClient,
                                                  limit: int64 = default(int64),
                                                  includeDomainId: bool = default(bool),
                                                  includeDismissed: bool = default(bool)): Future[types.BrandProtectionApiQueryMatch] {.async.} =
-  ## Return matches for string queries based on ID
+  ## Return matches for string queries based on ID.
 
   var q = initOrderedTable[string, string]()
   q["id"] = $id
@@ -43,7 +43,7 @@ proc getAccountsAccountIdBrandProtectionMatchesDownload*(client: CloudflareClien
                                                          limit: int64 = default(int64),
                                                          includeDomainId: bool = default(bool),
                                                          includeDismissed: bool = default(bool)): Future[types.BrandProtectionApiQueryMatch] {.async.} =
-  ## Return matches as CSV for string queries based on ID
+  ## Return matches as CSV for string queries based on ID.
 
   var q = initOrderedTable[string, string]()
   q["id"] = $id
@@ -60,7 +60,7 @@ proc getAccountsAccountIdBrandProtectionMatchesDownload*(client: CloudflareClien
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdBrandProtectionQueries*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return string queries based on ID
+  ## Return string queries based on ID.
 
   let res = await client.httpGET("/accounts/{account_id}/brand-protection/queries")
   return res
@@ -70,7 +70,7 @@ proc postAccountsAccountIdBrandProtectionQueries*(client: CloudflareClient,
                                                   tag: string = default(string),
                                                   scan: bool = default(bool),
                                                   body: types.BrandProtectionApiQuery): Future[AsyncResponse] {.async.} =
-  ## Return a success message after creating new saved string queries
+  ## Return a success message after creating new saved string queries.
 
   var q = initOrderedTable[string, string]()
   q["id"] = $id
@@ -83,7 +83,7 @@ proc deleteAccountsAccountIdBrandProtectionQueries*(client: CloudflareClient,
                                                     id: string = default(string),
                                                     tag: string = default(string),
                                                     scan: bool = default(bool)): Future[AsyncResponse] {.async.} =
-  ## Return a success message after deleting saved string queries by ID
+  ## Return a success message after deleting saved string queries by ID.
 
   var q = initOrderedTable[string, string]()
   q["id"] = $id
@@ -103,7 +103,7 @@ proc patchAccountsAccountIdBrandProtectionQueries*(client: CloudflareClient,
 
 proc postAccountsAccountIdBrandProtectionQueriesBulk*(client: CloudflareClient,
                                                       body: types.BrandProtectionApiQueryBulk): Future[AsyncResponse] {.async.} =
-  ## Return a success message after creating new saved string queries in bulk
+  ## Return a success message after creating new saved string queries in bulk.
 
   let res = await client.httpPOST("/accounts/{account_id}/brand-protection/queries/bulk", body)
   return res
@@ -123,13 +123,13 @@ proc postAccountsAccountIdBrandProtectionQueriesQueryIdMatchesDomainIdUndismiss*
   return res
 
 proc postAccountsAccountIdBrandProtectionSearch*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return new string queries
+  ## Return new string queries.
 
   let res = await client.httpPOST("/accounts/{account_id}/brand-protection/search")
   return res
 
 proc getAccountsAccountIdBrandProtectionTotalQueries*(client: CloudflareClient): Future[AsyncResponse] {.async.} =
-  ## Return the total number of saved string queries
+  ## Return the total number of saved string queries.
 
   let res = await client.httpGET("/accounts/{account_id}/brand-protection/total-queries")
   return res
