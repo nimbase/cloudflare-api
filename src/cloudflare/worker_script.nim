@@ -96,7 +96,7 @@ proc putAccountsAccountIdWorkersScriptsScriptName*(client: CloudflareClient,
                                                    scriptName: types.WorkersScriptName,
                                                    bindingsInherit: WorkerScriptBindingsInheritOption = bindingsInheritStrict): Future[JsonNode] {.async.} =
   ## Upload a worker module. You can find more about the multipart metadata on our
-  ## docs:https://developers.cloudflare.com/workers/configuration/multipart-upload-m
+  ## docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-m
   ## etadata/.
 
   var q = initOrderedTable[string, string]()
@@ -165,7 +165,7 @@ proc getAccountsAccountIdWorkersScriptsScriptNameContentV2*(client: CloudflareCl
 proc getAccountsAccountIdWorkersScriptsScriptNameScriptSettings*(client: CloudflareClient,
                                                                  accountId: types.WorkersIdentifier,
                                                                  scriptName: types.WorkersScriptName): Future[types.WorkersScriptSettingsResponse] {.async.} =
-  ## Get Worker script-level settings when using [WorkerVersions](https://developers
+  ## Get Worker script-level settings when using [Worker Versions](https://developers
   ## .cloudflare.com/api/operations/worker-versions-list-versions). Includes Logpush
   ## and Tail Consumers.
 
@@ -181,7 +181,7 @@ proc patchAccountsAccountIdWorkersScriptsScriptNameScriptSettings*(client: Cloud
                                                                    accountId: types.WorkersIdentifier,
                                                                    scriptName: types.WorkersScriptName,
                                                                    body: types.WorkersScriptSettingsItem): Future[types.WorkersScriptSettingsResponse] {.async.} =
-  ## Patch Worker script-level settings when using [WorkerVersions](https://develope
+  ## Patch Worker script-level settings when using [Worker Versions](https://develope
   ## rs.cloudflare.com/api/operations/worker-versions-list-versions). Including but
   ## not limited to Logpush and Tail Consumers.
 

@@ -19,10 +19,6 @@ suite "zone_holds serialization":
     let obj = newZonesApiResponseSingle2()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ZonesApiResponseSingle2)) == openjson.toJson(obj)
 
-  test "round-trips GetZonesZoneIdHoldZoneNameResponse":
-    let obj = cloudflare.GetZonesZoneIdHoldZoneNameResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetZonesZoneIdHoldZoneNameResponse)) == openjson.toJson(obj)
-
 suite "zone_holds endpoints":
   test "GET /zones/{zone_id}/hold":
     let client = initCloudflareClient("test-key")
@@ -38,9 +34,4 @@ suite "zone_holds endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteZonesZoneIdHold("test", "test")
-
-  test "GET /zones/{zone_id}/hold/{zone_name}":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdHoldZoneName("test", "test")
 

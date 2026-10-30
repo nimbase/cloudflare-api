@@ -162,7 +162,7 @@ proc postZonesZoneIdEnvironmentsEnvironmentIdInvalidateCache*(client: Cloudflare
   ## ### Availability and limits
   ##
   ## Rate limits and the number of items you can send in one request depend on your
-  ## plan. See [Purge cache: availability andlimits](https://developers.cloudflare.c
+  ## plan. See [Purge cache: availability and limits](https://developers.cloudflare.c
   ## om/cache/how-to/purge-cache/#availability-and-limits).
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/environments/{environmentId}/invalidate_cache", body)
@@ -193,7 +193,7 @@ proc postZonesZoneIdEnvironmentsEnvironmentIdPurgeCache*(client: CloudflareClien
   ## ### Availability and limits
   ##
   ## Rate limits and the number of items you can send in one request depend on your
-  ## plan. See [Purge cache: availability andlimits](https://developers.cloudflare.c
+  ## plan. See [Purge cache: availability and limits](https://developers.cloudflare.c
   ## om/cache/how-to/purge-cache/#availability-and-limits).
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/environments/{environmentId}/purge_cache", body)
@@ -259,7 +259,7 @@ proc postZonesZoneIdInvalidateCache*(client: CloudflareClient,
   ## ### Availability and limits
   ##
   ## Rate limits and the number of items you can send in one request depend on your
-  ## plan. See [Purge cache: availability andlimits](https://developers.cloudflare.c
+  ## plan. See [Purge cache: availability and limits](https://developers.cloudflare.c
   ## om/cache/how-to/purge-cache/#availability-and-limits).
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/invalidate_cache", body)
@@ -301,7 +301,7 @@ proc postZonesZoneIdPurgeCache*(client: CloudflareClient,
   ## ### Availability and limits
   ##
   ## Rate limits and the number of items you can send in one request depend on your
-  ## plan. See [Purge cache: availability andlimits](https://developers.cloudflare.c
+  ## plan. See [Purge cache: availability and limits](https://developers.cloudflare.c
   ## om/cache/how-to/purge-cache/#availability-and-limits).
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/purge_cache", body)

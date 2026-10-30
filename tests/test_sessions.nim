@@ -19,6 +19,10 @@ suite "sessions serialization":
     let obj = newRealtimekitTranscript()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitTranscript)) == openjson.toJson(obj)
 
+  test "round-trips RealtimekitGenericErrorResponse":
+    let obj = newRealtimekitGenericErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitGenericErrorResponse)) == openjson.toJson(obj)
+
   test "round-trips RealtimekitActiveSession":
     let obj = newRealtimekitActiveSession()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitActiveSession)) == openjson.toJson(obj)

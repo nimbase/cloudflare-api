@@ -20,6 +20,14 @@ type
     messages: seq[JsonNode]
     result: JsonNode
     success: bool
+  GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesRelevanceAggregateResponse* = object
+    errors: seq[JsonNode]
+    result: JsonNode
+    success: bool
+  GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesSeverityAggregateResponse* = object
+    errors: seq[JsonNode]
+    result: JsonNode
+    success: bool
   GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdResponse* = object
     errors: seq[JsonNode]
     result: JsonNode
@@ -28,6 +36,11 @@ type
     read: bool
   PatchAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdResponse* = object
     errors: seq[JsonNode]
+    result: JsonNode
+    success: bool
+  PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdReprocessResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
     result: JsonNode
     success: bool
   GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkillsResponse* = object
@@ -179,6 +192,11 @@ type
     tagAppliedByAnalyst = "analyst"
     tagAppliedBySystem = "system"
 
+  ThreatSignalMinRelevanceOption* = enum
+    minRelevanceLow = "low"
+    minRelevanceMedium = "medium"
+    minRelevanceHigh = "high"
+
   ThreatSignalFormatOption* = enum
     formatText = "text"
     formatHtml = "html"
@@ -204,6 +222,9 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles*(client: Cloudflar
                                                                feedCategory: string = default(string),
                                                                sourceType: ThreatSignalSourceTypeOption = sourceTypeCurated,
                                                                tagAppliedBy: ThreatSignalTagAppliedByOption = tagAppliedByAi,
+                                                               pirId: string = default(string),
+                                                               minRelevance: ThreatSignalMinRelevanceOption = minRelevanceLow,
+                                                               severity: seq[string] = default(seq[string]),
                                                                sort: string = "-fetched_at"): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesResponse] {.async.} =
   ## Lists articles from the account's Threat Signals feeds.
 
@@ -226,6 +247,9 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles*(client: Cloudflar
   q["feed_category"] = $feedCategory
   q["source_type"] = $sourceType
   q["tag_applied_by"] = $tagAppliedBy
+  q["pir_id"] = $pirId
+  q["min_relevance"] = $minRelevance
+  q["severity"] = $severity
   q["sort"] = $sort
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles", q)
   let body = await res.body
@@ -248,10 +272,70 @@ proc patchAccountsAccountIdCloudforceOneV2ThreatSignalsArticles*(client: Cloudfl
   else:
     raise newException(CloudflareClientError, body)
 
+proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesRelevanceAggregate*(client: CloudflareClient,
+                                                                                 accountId: string,
+                                                                                 publishedAfter: string = default(string),
+                                                                                 publishedBefore: string = default(string),
+                                                                                 read: bool = default(bool)): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesRelevanceAggregateResponse] {.async.} =
+  ## Beta. Counts the account's Threat Signals articles in each relevance band, for
+  ## each active Priority Intelligence Requirement and across all of them. Uses the
+  ## same PIRs as article relevance: active PIRs, including those the matcher paused;
+  ## drafts and deleted PIRs are excluded. Articles not scored against a PIR are not
+  ## counted for it. The combined counts place each article once, in the band of its
+  ## best score, so they are not the sum of the per-PIR counts. read counts only read
+  ## or only unread articles. All counts are read together and are exact.
+
+  var q = initOrderedTable[string, string]()
+  q["published_after"] = $publishedAfter
+  q["published_before"] = $publishedBefore
+  q["read"] = $read
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/relevance/aggregate", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesRelevanceAggregateResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesSeverityAggregate*(client: CloudflareClient,
+                                                                                accountId: string,
+                                                                                publishedAfter: string = default(string),
+                                                                                publishedBefore: string = default(string),
+                                                                                read: bool = default(bool),
+                                                                                pirId: string = default(string),
+                                                                                minRelevance: ThreatSignalMinRelevanceOption = minRelevanceLow): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesSeverityAggregateResponse] {.async.} =
+  ## Beta. Counts the account's Threat Signals articles in each intrinsic severity
+  ## band. An article's band is the one reported as its severity, from informational
+  ## to critical. Articles without a severity are not counted. Also counts, for each
+  ## active Priority Intelligence Requirement, the articles scored against it.
+  ## min_relevance counts only articles at or above a relevance band: overall, for
+  ## any active PIR; per PIR, for that PIR, the same rule as the per-PIR relevance
+  ## counts. pir_id counts for one active PIR only. read counts only read or only
+  ## unread articles, in both articles and priorities. Like the article severity
+  ## field, severity is reported only while the account has an active Priority
+  ## Intelligence Requirement, including one the matcher paused; otherwise every
+  ## count is zero and priorities is empty. All counts are read together and are
+  ## exact.
+
+  var q = initOrderedTable[string, string]()
+  q["published_after"] = $publishedAfter
+  q["published_before"] = $publishedBefore
+  q["read"] = $read
+  q["pir_id"] = $pirId
+  q["min_relevance"] = $minRelevance
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/severity/aggregate", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesSeverityAggregateResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleId*(client: CloudflareClient,
                                                                         accountId: string,
                                                                         articleId: string): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdResponse] {.async.} =
-  ## Retrieves a Threat Signals article with its summary, tags and indicator status.
+  ## Retrieves a Threat Signals article with its summary, tags, indicator status and
+  ## relevance to the account's Priority Intelligence Requirements.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/{articleId}")
   let body = await res.body
@@ -288,6 +372,25 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdContent*(c
   q["format"] = $format
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/{articleId}/content", q)
   return res
+
+proc postAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdReprocess*(client: CloudflareClient,
+                                                                                  accountId: string,
+                                                                                  articleId: string): Future[PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdReprocessResponse] {.async.} =
+  ## Synchronously re-runs every processing step for a Threat Signals article:
+  ## content acquisition, summary, indicator extraction, CVE tags, IOC context, and
+  ## default tags. Replaces the article's summary, AI tags, and indicators;
+  ## indicators no longer found are removed. Creates a Threat Event only when the
+  ## article has none; an existing Event is never updated. Takes over the article
+  ## from any queued processing. Requires a paid Threat Signals subscription and the
+  ## Cloudforce One Write permission.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/{articleId}/reprocess", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdReprocessResponse)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdSkills*(client: CloudflareClient,
                                                                               accountId: string,

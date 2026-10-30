@@ -18,7 +18,9 @@ type
 proc getAccountsAccountIdCloudforceOneEventsIndicatorTypes*(client: CloudflareClient,
                                                             accountId: string,
                                                             datasetIds: seq[string] = @[]): Future[GetAccountsAccountIdCloudforceOneEventsIndicatorTypesResponse] {.async.} =
-  ## Lists indicator types across multiple datasets
+  ## Lists the indicator types used in the datasets given by `datasetIds`, which
+  ## accepts dataset UUIDs or one scope value used alone. Without `datasetIds`, every
+  ## dataset you can read is included, analytics datasets too.
 
   var q = initOrderedTable[string, string]()
   for v in datasetIds: q["datasetIds"] = $v
@@ -32,7 +34,7 @@ proc getAccountsAccountIdCloudforceOneEventsIndicatorTypes*(client: CloudflareCl
 
 proc getAccountsAccountIdCloudforceOneEventsIndicatorTypes*(client: CloudflareClient,
                                                             accountId: string): Future[GetAccountsAccountIdCloudforceOneEventsIndicatorTypesResponse] {.async.} =
-  ## This Method is deprecated. Please use /events/dataset/:dataset_id/indicatorTypes
+  ## Legacy. Use `threat-intel indicators types list` (`GET /events/indicator-types`)
   ## instead.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/indicatorTypes")

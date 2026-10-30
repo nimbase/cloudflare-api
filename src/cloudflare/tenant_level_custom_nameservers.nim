@@ -9,11 +9,11 @@ import ./private/metaclient
 import ./private/types
 
 
-proc getTenantsTenantTagCustomNs*(client: CloudflareClient,
-                                  tenantTag: types.DnsCustomNameserversIdentifier3): Future[types.DnsCustomNameserversTcnsResponseCollection] {.async.} =
+proc getTenantsTenantIdCustomNs*(client: CloudflareClient,
+                                 tenantId: types.DnsCustomNameserversIdentifier3): Future[types.DnsCustomNameserversTcnsResponseCollection] {.async.} =
   ## Lists a tenant's custom nameservers.
 
-  let res = await client.httpGET(fmt"/tenants/{tenantTag}/custom_ns")
+  let res = await client.httpGET(fmt"/tenants/{tenantId}/custom_ns")
   let body = await res.body
   case res.code
   of Http200:
@@ -21,12 +21,12 @@ proc getTenantsTenantTagCustomNs*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc postTenantsTenantTagCustomNs*(client: CloudflareClient,
-                                   tenantTag: types.DnsCustomNameserversIdentifier3,
-                                   body: types.DnsCustomNameserversCustomNSInput): Future[types.DnsCustomNameserversTcnsResponseSingle] {.async.} =
+proc postTenantsTenantIdCustomNs*(client: CloudflareClient,
+                                  tenantId: types.DnsCustomNameserversIdentifier3,
+                                  body: types.DnsCustomNameserversCustomNSInput): Future[types.DnsCustomNameserversTcnsResponseSingle] {.async.} =
   ## Adds a custom nameserver for a tenant.
 
-  let res = await client.httpPOST(fmt"/tenants/{tenantTag}/custom_ns", body)
+  let res = await client.httpPOST(fmt"/tenants/{tenantId}/custom_ns", body)
   let body = await res.body
   case res.code
   of Http200:
@@ -34,12 +34,12 @@ proc postTenantsTenantTagCustomNs*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc deleteTenantsTenantTagCustomNsCustomNsId*(client: CloudflareClient,
-                                               customNsId: types.DnsCustomNameserversNsName,
-                                               tenantTag: types.DnsCustomNameserversIdentifier3): Future[types.DnsCustomNameserversEmptyResponse3] {.async.} =
+proc deleteTenantsTenantIdCustomNsCustomNsId*(client: CloudflareClient,
+                                              customNsId: types.DnsCustomNameserversNsName,
+                                              tenantId: types.DnsCustomNameserversIdentifier3): Future[types.DnsCustomNameserversEmptyResponse3] {.async.} =
   ## Deletes a tenant's custom nameserver.
 
-  let res = await client.httpDELETE(fmt"/tenants/{tenantTag}/custom_ns/{customNsId}")
+  let res = await client.httpDELETE(fmt"/tenants/{tenantId}/custom_ns/{customNsId}")
   let body = await res.body
   case res.code
   of Http200:

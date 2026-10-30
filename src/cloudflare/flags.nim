@@ -20,7 +20,8 @@ type
     description: Option[string]
     enabled: bool
     key: string
-    rules: seq[JsonNode]
+    metadata: Option[JsonNode]
+    rules: seq[types.FlagshipRule]
     `type`: Option[string]
     variations: JsonNode
   PostAccountsAccountIdFlagshipAppsAppIdFlagsResponse* = object
@@ -38,7 +39,8 @@ type
     description: Option[string]
     enabled: bool
     key: string
-    rules: seq[JsonNode]
+    metadata: Option[JsonNode]
+    rules: seq[types.FlagshipRule]
     `type`: Option[string]
     variations: JsonNode
   PutAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse* = object
@@ -50,6 +52,16 @@ type
     errors: seq[JsonNode]
     messages: seq[JsonNode]
     result: types.FlagshipDeleteFlagResult
+    success: bool
+  PatchAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyRequest = object
+    default_variation: Option[string]
+    description: Option[string]
+    enabled: Option[bool]
+    metadata: Option[JsonNode]
+  PatchAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: types.FlagshipFlag
     success: bool
 
 proc getAccountsAccountIdFlagshipAppsAppIdFlags*(client: CloudflareClient,
@@ -76,7 +88,8 @@ proc postAccountsAccountIdFlagshipAppsAppIdFlags*(client: CloudflareClient,
                                                   appId: string,
                                                   body: PostAccountsAccountIdFlagshipAppsAppIdFlagsRequest): Future[PostAccountsAccountIdFlagshipAppsAppIdFlagsResponse] {.async.} =
   ## Creates a flag. Returns 409 if the key already exists. `type` is always inferred
-  ## from variation values; legacy request-side values are ignored.
+  ## from variation values; legacy request-side values are ignored. Optional
+  ## `metadata` can be attached at creation.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/flagship/apps/{appId}/flags", body)
   let body = await res.body
@@ -90,7 +103,8 @@ proc getAccountsAccountIdFlagshipAppsAppIdFlagsFlagKey*(client: CloudflareClient
                                                         accountId: string,
                                                         appId: string,
                                                         flagKey: string): Future[GetAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse] {.async.} =
-  ## Returns the full flag definition including rules, variations, and audit fields.
+  ## Returns the full flag definition including rules, variations, metadata, and
+  ## audit fields.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/flagship/apps/{appId}/flags/{flagKey}")
   let body = await res.body
@@ -105,9 +119,10 @@ proc putAccountsAccountIdFlagshipAppsAppIdFlagsFlagKey*(client: CloudflareClient
                                                         appId: string,
                                                         flagKey: string,
                                                         body: PutAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyRequest): Future[PutAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse] {.async.} =
-  ## Replaces the entire flag definition. Omitted fields are dropped, not preserved —
+  ## Replaces the entire flag definition. Omitted fields are cleared, not preserved —
   ## read before writing. The path key identifies the flag and cannot be renamed by
-  ## changing the body `key`. Each update appends a changelog entry.
+  ## changing the body `key`. A changelog entry is appended when the flag content
+  ## actually changes; identical updates are no-ops.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/flagship/apps/{appId}/flags/{flagKey}", body)
   let body = await res.body
@@ -130,5 +145,25 @@ proc deleteAccountsAccountIdFlagshipAppsAppIdFlagsFlagKey*(client: CloudflareCli
   case res.code
   of Http200:
     result = fromJson(body, DeleteAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdFlagshipAppsAppIdFlagsFlagKey*(client: CloudflareClient,
+                                                          accountId: string,
+                                                          appId: string,
+                                                          flagKey: string,
+                                                          body: PatchAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyRequest): Future[PatchAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse] {.async.} =
+  ## Applies a partial update to lightweight flag fields: `enabled`, `description`,
+  ## `metadata`, and `default_variation`. Only fields present in the request body are
+  ## modified; omitted fields are preserved. `metadata: null` or an empty object
+  ## clears metadata. `default_variation` must exist in the current `variations`.
+  ## Structural changes to `variations` and `rules` use PUT. A changelog entry is
+  ## appended when the flag content actually changes.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/flagship/apps/{appId}/flags/{flagKey}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PatchAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse)
   else:
     raise newException(CloudflareClientError, body)

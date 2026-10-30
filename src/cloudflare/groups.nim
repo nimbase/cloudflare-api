@@ -51,7 +51,8 @@ type
 
 proc getAccountsAccountIdCloudforceOneEventsDatasetGroups*(client: CloudflareClient,
                                                            accountId: string): Future[seq[JsonNode]] {.async.} =
-  ## List groups for an account
+  ## Lists the account groups. A group is a set of accounts that can be given access
+  ## to a dataset with `threat-intel datasets access permissions create`.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/-/groups")
   let body = await res.body
@@ -64,7 +65,8 @@ proc getAccountsAccountIdCloudforceOneEventsDatasetGroups*(client: CloudflareCli
 proc postAccountsAccountIdCloudforceOneEventsDatasetGroups*(client: CloudflareClient,
                                                             accountId: string,
                                                             body: PostAccountsAccountIdCloudforceOneEventsDatasetGroupsRequest): Future[PostAccountsAccountIdCloudforceOneEventsDatasetGroupsResponse] {.async.} =
-  ## Create a group
+  ## Creates a named group of accounts. To give the group access to a dataset, use
+  ## `threat-intel datasets access permissions create`.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/-/groups", body)
   let body = await res.body
@@ -77,7 +79,7 @@ proc postAccountsAccountIdCloudforceOneEventsDatasetGroups*(client: CloudflareCl
 proc getAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupId*(client: CloudflareClient,
                                                                   accountId: string,
                                                                   groupId: string): Future[GetAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupIdResponse] {.async.} =
-  ## Read a group for an account
+  ## Returns an account group by its ID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/-/groups/{groupId}")
   let body = await res.body
@@ -91,7 +93,7 @@ proc putAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupId*(client: Cloudf
                                                                   accountId: string,
                                                                   groupId: string,
                                                                   body: PutAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupIdRequest): Future[PutAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupIdResponse] {.async.} =
-  ## Update a group
+  ## Replaces an account group's `name` and `description`.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/-/groups/{groupId}", body)
   let body = await res.body
@@ -104,7 +106,7 @@ proc putAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupId*(client: Cloudf
 proc deleteAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupId*(client: CloudflareClient,
                                                                      accountId: string,
                                                                      groupId: string): Future[DeleteAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupIdResponse] {.async.} =
-  ## Delete a group for an account
+  ## Deletes an account group by its ID.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/-/groups/{groupId}")
   let body = await res.body
@@ -117,7 +119,7 @@ proc deleteAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupId*(client: Clo
 proc getAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupIdMembers*(client: CloudflareClient,
                                                                          accountId: string,
                                                                          groupId: string): Future[seq[JsonNode]] {.async.} =
-  ## List group members
+  ## Lists the accounts in an account group.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/-/groups/{groupId}/members")
   let body = await res.body
@@ -131,7 +133,8 @@ proc postAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupIdMembers*(client
                                                                           accountId: string,
                                                                           groupId: string,
                                                                           body: PostAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupIdMembersRequest): Future[PostAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupIdMembersResponse] {.async.} =
-  ## Create a group member
+  ## Adds an account to an account group. Identify the account by `accountId` or
+  ## `accountTag`.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/-/groups/{groupId}/members", body)
   let body = await res.body
@@ -145,7 +148,7 @@ proc deleteAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupIdMembersMember
                                                                                     accountId: string,
                                                                                     groupId: string,
                                                                                     memberId: string): Future[DeleteAccountsAccountIdCloudforceOneEventsDatasetGroupsGroupIdMembersMemberIdResponse] {.async.} =
-  ## Delete a group member
+  ## Removes an account from an account group.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/-/groups/{groupId}/members/{memberId}")
   let body = await res.body

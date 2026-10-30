@@ -11,117 +11,117 @@ import cloudflare
 import ./common
 
 suite "dos_flowtrackd_api_other serialization":
-  test "round-trips DosExpressionFilterUpdate":
-    let obj = newDosExpressionFilterUpdate()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosExpressionFilterUpdate)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionNewSynProtectionRule":
+    let obj = newAdvancedDdosProtectionNewSynProtectionRule()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionNewSynProtectionRule)) == openjson.toJson(obj)
 
-  test "round-trips DosTcpFlowProtectionRuleListResponse":
-    let obj = newDosTcpFlowProtectionRuleListResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosTcpFlowProtectionRuleListResponse)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionPrefixListResponse":
+    let obj = newAdvancedDdosProtectionPrefixListResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionPrefixListResponse)) == openjson.toJson(obj)
 
-  test "round-trips DosDnsProtectionRuleListResponse":
-    let obj = newDosDnsProtectionRuleListResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosDnsProtectionRuleListResponse)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionExpressionFilterListResponse":
+    let obj = newAdvancedDdosProtectionExpressionFilterListResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionExpressionFilterListResponse)) == openjson.toJson(obj)
 
-  test "round-trips DosNewTcpFlowProtectionRule":
-    let obj = newDosNewTcpFlowProtectionRule()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosNewTcpFlowProtectionRule)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionSynProtectionRuleUpdate":
+    let obj = newAdvancedDdosProtectionSynProtectionRuleUpdate()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionSynProtectionRuleUpdate)) == openjson.toJson(obj)
 
-  test "round-trips DosPrefixUpdate":
-    let obj = newDosPrefixUpdate()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosPrefixUpdate)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionInfraPrefixListResponse":
+    let obj = newAdvancedDdosProtectionInfraPrefixListResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionInfraPrefixListResponse)) == openjson.toJson(obj)
 
-  test "round-trips DosExpressionFilterListResponse":
-    let obj = newDosExpressionFilterListResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosExpressionFilterListResponse)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionTcpFlowProtectionRuleListResponse":
+    let obj = newAdvancedDdosProtectionTcpFlowProtectionRuleListResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionTcpFlowProtectionRuleListResponse)) == openjson.toJson(obj)
 
-  test "round-trips DosNewDnsProtectionRule":
-    let obj = newDosNewDnsProtectionRule()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosNewDnsProtectionRule)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionTcpFlowProtectionRuleResponse":
+    let obj = newAdvancedDdosProtectionTcpFlowProtectionRuleResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionTcpFlowProtectionRuleResponse)) == openjson.toJson(obj)
 
-  test "round-trips DosNewInfraPrefix":
-    let obj = newDosNewInfraPrefix()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosNewInfraPrefix)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionPrefixResponse":
+    let obj = newAdvancedDdosProtectionPrefixResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionPrefixResponse)) == openjson.toJson(obj)
 
-  test "round-trips DosInfraPrefixUpdate":
-    let obj = newDosInfraPrefixUpdate()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosInfraPrefixUpdate)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionInfraPrefixResponse":
+    let obj = newAdvancedDdosProtectionInfraPrefixResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionInfraPrefixResponse)) == openjson.toJson(obj)
 
-  test "round-trips DosNewSynProtectionRule":
-    let obj = newDosNewSynProtectionRule()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosNewSynProtectionRule)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionTcpFlowProtectionRuleUpdate":
+    let obj = newAdvancedDdosProtectionTcpFlowProtectionRuleUpdate()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionTcpFlowProtectionRuleUpdate)) == openjson.toJson(obj)
 
-  test "round-trips DosProtectionStatusResponse":
-    let obj = newDosProtectionStatusResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosProtectionStatusResponse)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionExpressionFilterResponse":
+    let obj = newAdvancedDdosProtectionExpressionFilterResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionExpressionFilterResponse)) == openjson.toJson(obj)
 
-  test "round-trips DosPrefixResponse":
-    let obj = newDosPrefixResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosPrefixResponse)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionDnsProtectionRuleListResponse":
+    let obj = newAdvancedDdosProtectionDnsProtectionRuleListResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionDnsProtectionRuleListResponse)) == openjson.toJson(obj)
 
-  test "round-trips DosTcpFlowProtectionRuleResponse":
-    let obj = newDosTcpFlowProtectionRuleResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosTcpFlowProtectionRuleResponse)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionUpdateProtectionStatus":
+    let obj = newAdvancedDdosProtectionUpdateProtectionStatus()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionUpdateProtectionStatus)) == openjson.toJson(obj)
 
-  test "round-trips DosSynProtectionRuleUpdate":
-    let obj = newDosSynProtectionRuleUpdate()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosSynProtectionRuleUpdate)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionNewExpressionFilter":
+    let obj = newAdvancedDdosProtectionNewExpressionFilter()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionNewExpressionFilter)) == openjson.toJson(obj)
 
-  test "round-trips DosApiResponseCommon":
-    let obj = newDosApiResponseCommon()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosApiResponseCommon)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionSynProtectionRuleListResponse":
+    let obj = newAdvancedDdosProtectionSynProtectionRuleListResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionSynProtectionRuleListResponse)) == openjson.toJson(obj)
 
-  test "round-trips DosTcpFlowProtectionRuleUpdate":
-    let obj = newDosTcpFlowProtectionRuleUpdate()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosTcpFlowProtectionRuleUpdate)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionApiResponseCommon":
+    let obj = newAdvancedDdosProtectionApiResponseCommon()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionApiResponseCommon)) == openjson.toJson(obj)
 
-  test "round-trips DosExpressionFilterResponse":
-    let obj = newDosExpressionFilterResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosExpressionFilterResponse)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionNewTcpFlowProtectionRule":
+    let obj = newAdvancedDdosProtectionNewTcpFlowProtectionRule()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionNewTcpFlowProtectionRule)) == openjson.toJson(obj)
 
-  test "round-trips DosDnsProtectionRuleUpdate":
-    let obj = newDosDnsProtectionRuleUpdate()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosDnsProtectionRuleUpdate)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionExpressionFilterUpdate":
+    let obj = newAdvancedDdosProtectionExpressionFilterUpdate()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionExpressionFilterUpdate)) == openjson.toJson(obj)
 
-  test "round-trips DosDnsProtectionRuleResponse":
-    let obj = newDosDnsProtectionRuleResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosDnsProtectionRuleResponse)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionSynProtectionRuleResponse":
+    let obj = newAdvancedDdosProtectionSynProtectionRuleResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionSynProtectionRuleResponse)) == openjson.toJson(obj)
 
-  test "round-trips DosInfraPrefixListResponse":
-    let obj = newDosInfraPrefixListResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosInfraPrefixListResponse)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionProtectionStatusResponse":
+    let obj = newAdvancedDdosProtectionProtectionStatusResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionProtectionStatusResponse)) == openjson.toJson(obj)
 
-  test "round-trips DosUpdateProtectionStatus":
-    let obj = newDosUpdateProtectionStatus()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosUpdateProtectionStatus)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionDnsProtectionRuleResponse":
+    let obj = newAdvancedDdosProtectionDnsProtectionRuleResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionDnsProtectionRuleResponse)) == openjson.toJson(obj)
 
-  test "round-trips DosNewExpressionFilter":
-    let obj = newDosNewExpressionFilter()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosNewExpressionFilter)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionInfraPrefixUpdate":
+    let obj = newAdvancedDdosProtectionInfraPrefixUpdate()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionInfraPrefixUpdate)) == openjson.toJson(obj)
 
-  test "round-trips DosApiResponseCommonFailure":
-    let obj = newDosApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionNewInfraPrefix":
+    let obj = newAdvancedDdosProtectionNewInfraPrefix()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionNewInfraPrefix)) == openjson.toJson(obj)
 
-  test "round-trips DosSynProtectionRuleResponse":
-    let obj = newDosSynProtectionRuleResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosSynProtectionRuleResponse)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionPrefixUpdate":
+    let obj = newAdvancedDdosProtectionPrefixUpdate()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionPrefixUpdate)) == openjson.toJson(obj)
 
-  test "round-trips DosNewPrefix":
-    let obj = newDosNewPrefix()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosNewPrefix)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionNewDnsProtectionRule":
+    let obj = newAdvancedDdosProtectionNewDnsProtectionRule()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionNewDnsProtectionRule)) == openjson.toJson(obj)
 
-  test "round-trips DosInfraPrefixResponse":
-    let obj = newDosInfraPrefixResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosInfraPrefixResponse)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionApiResponseCommonFailure":
+    let obj = newAdvancedDdosProtectionApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips DosSynProtectionRuleListResponse":
-    let obj = newDosSynProtectionRuleListResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosSynProtectionRuleListResponse)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionDnsProtectionRuleUpdate":
+    let obj = newAdvancedDdosProtectionDnsProtectionRuleUpdate()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionDnsProtectionRuleUpdate)) == openjson.toJson(obj)
 
-  test "round-trips DosPrefixListResponse":
-    let obj = newDosPrefixListResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DosPrefixListResponse)) == openjson.toJson(obj)
+  test "round-trips AdvancedDdosProtectionNewPrefix":
+    let obj = newAdvancedDdosProtectionNewPrefix()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AdvancedDdosProtectionNewPrefix)) == openjson.toJson(obj)
 
 suite "dos_flowtrackd_api_other endpoints":
   test "GET /accounts/{account_id}/magic/advanced_dns_protection/configs/dns_protection/rules":
@@ -132,7 +132,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "POST /accounts/{account_id}/magic/advanced_dns_protection/configs/dns_protection/rules":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdMagicAdvancedDnsProtectionConfigsDnsProtectionRules("test", newDosNewDnsProtectionRule())
+    discard waitFor client.postAccountsAccountIdMagicAdvancedDnsProtectionConfigsDnsProtectionRules("test", newAdvancedDdosProtectionNewDnsProtectionRule())
 
   test "DELETE /accounts/{account_id}/magic/advanced_dns_protection/configs/dns_protection/rules":
     let client = initCloudflareClient("test-key")
@@ -152,7 +152,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "PATCH /accounts/{account_id}/magic/advanced_dns_protection/configs/dns_protection/rules/{rule_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchAccountsAccountIdMagicAdvancedDnsProtectionConfigsDnsProtectionRulesRuleId("test", "test", newDosDnsProtectionRuleUpdate())
+    discard waitFor client.patchAccountsAccountIdMagicAdvancedDnsProtectionConfigsDnsProtectionRulesRuleId("test", "test", newAdvancedDdosProtectionDnsProtectionRuleUpdate())
 
   test "GET /accounts/{account_id}/magic/advanced_tcp_protection/configs/allowlist":
     let client = initCloudflareClient("test-key")
@@ -162,7 +162,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "POST /accounts/{account_id}/magic/advanced_tcp_protection/configs/allowlist":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdMagicAdvancedTcpProtectionConfigsAllowlist("test", newDosNewInfraPrefix())
+    discard waitFor client.postAccountsAccountIdMagicAdvancedTcpProtectionConfigsAllowlist("test", newAdvancedDdosProtectionNewInfraPrefix())
 
   test "DELETE /accounts/{account_id}/magic/advanced_tcp_protection/configs/allowlist":
     let client = initCloudflareClient("test-key")
@@ -182,7 +182,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "PATCH /accounts/{account_id}/magic/advanced_tcp_protection/configs/allowlist/{prefix_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsAllowlistPrefixId("test", "test", newDosInfraPrefixUpdate())
+    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsAllowlistPrefixId("test", "test", newAdvancedDdosProtectionInfraPrefixUpdate())
 
   test "GET /accounts/{account_id}/magic/advanced_tcp_protection/configs/prefixes":
     let client = initCloudflareClient("test-key")
@@ -192,7 +192,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "POST /accounts/{account_id}/magic/advanced_tcp_protection/configs/prefixes":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdMagicAdvancedTcpProtectionConfigsPrefixes("test", newDosNewPrefix())
+    discard waitFor client.postAccountsAccountIdMagicAdvancedTcpProtectionConfigsPrefixes("test", newAdvancedDdosProtectionNewPrefix())
 
   test "DELETE /accounts/{account_id}/magic/advanced_tcp_protection/configs/prefixes":
     let client = initCloudflareClient("test-key")
@@ -217,7 +217,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "PATCH /accounts/{account_id}/magic/advanced_tcp_protection/configs/prefixes/{prefix_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsPrefixesPrefixId("test", "test", newDosPrefixUpdate())
+    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsPrefixesPrefixId("test", "test", newAdvancedDdosProtectionPrefixUpdate())
 
   test "GET /accounts/{account_id}/magic/advanced_tcp_protection/configs/syn_protection/filters":
     let client = initCloudflareClient("test-key")
@@ -227,7 +227,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "POST /accounts/{account_id}/magic/advanced_tcp_protection/configs/syn_protection/filters":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdMagicAdvancedTcpProtectionConfigsSynProtectionFilters("test", newDosNewExpressionFilter())
+    discard waitFor client.postAccountsAccountIdMagicAdvancedTcpProtectionConfigsSynProtectionFilters("test", newAdvancedDdosProtectionNewExpressionFilter())
 
   test "DELETE /accounts/{account_id}/magic/advanced_tcp_protection/configs/syn_protection/filters":
     let client = initCloudflareClient("test-key")
@@ -247,7 +247,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "PATCH /accounts/{account_id}/magic/advanced_tcp_protection/configs/syn_protection/filters/{filter_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsSynProtectionFiltersFilterId("test", "test", newDosExpressionFilterUpdate())
+    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsSynProtectionFiltersFilterId("test", "test", newAdvancedDdosProtectionExpressionFilterUpdate())
 
   test "GET /accounts/{account_id}/magic/advanced_tcp_protection/configs/syn_protection/rules":
     let client = initCloudflareClient("test-key")
@@ -257,7 +257,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "POST /accounts/{account_id}/magic/advanced_tcp_protection/configs/syn_protection/rules":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdMagicAdvancedTcpProtectionConfigsSynProtectionRules("test", newDosNewSynProtectionRule())
+    discard waitFor client.postAccountsAccountIdMagicAdvancedTcpProtectionConfigsSynProtectionRules("test", newAdvancedDdosProtectionNewSynProtectionRule())
 
   test "DELETE /accounts/{account_id}/magic/advanced_tcp_protection/configs/syn_protection/rules":
     let client = initCloudflareClient("test-key")
@@ -277,7 +277,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "PATCH /accounts/{account_id}/magic/advanced_tcp_protection/configs/syn_protection/rules/{rule_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsSynProtectionRulesRuleId("test", "test", newDosSynProtectionRuleUpdate())
+    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsSynProtectionRulesRuleId("test", "test", newAdvancedDdosProtectionSynProtectionRuleUpdate())
 
   test "GET /accounts/{account_id}/magic/advanced_tcp_protection/configs/tcp_flow_protection/filters":
     let client = initCloudflareClient("test-key")
@@ -287,7 +287,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "POST /accounts/{account_id}/magic/advanced_tcp_protection/configs/tcp_flow_protection/filters":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdMagicAdvancedTcpProtectionConfigsTcpFlowProtectionFilters("test", newDosNewExpressionFilter())
+    discard waitFor client.postAccountsAccountIdMagicAdvancedTcpProtectionConfigsTcpFlowProtectionFilters("test", newAdvancedDdosProtectionNewExpressionFilter())
 
   test "DELETE /accounts/{account_id}/magic/advanced_tcp_protection/configs/tcp_flow_protection/filters":
     let client = initCloudflareClient("test-key")
@@ -307,7 +307,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "PATCH /accounts/{account_id}/magic/advanced_tcp_protection/configs/tcp_flow_protection/filters/{filter_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsTcpFlowProtectionFiltersFilterId("test", "test", newDosExpressionFilterUpdate())
+    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsTcpFlowProtectionFiltersFilterId("test", "test", newAdvancedDdosProtectionExpressionFilterUpdate())
 
   test "GET /accounts/{account_id}/magic/advanced_tcp_protection/configs/tcp_flow_protection/rules":
     let client = initCloudflareClient("test-key")
@@ -317,7 +317,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "POST /accounts/{account_id}/magic/advanced_tcp_protection/configs/tcp_flow_protection/rules":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdMagicAdvancedTcpProtectionConfigsTcpFlowProtectionRules("test", newDosNewTcpFlowProtectionRule())
+    discard waitFor client.postAccountsAccountIdMagicAdvancedTcpProtectionConfigsTcpFlowProtectionRules("test", newAdvancedDdosProtectionNewTcpFlowProtectionRule())
 
   test "DELETE /accounts/{account_id}/magic/advanced_tcp_protection/configs/tcp_flow_protection/rules":
     let client = initCloudflareClient("test-key")
@@ -337,7 +337,7 @@ suite "dos_flowtrackd_api_other endpoints":
   test "PATCH /accounts/{account_id}/magic/advanced_tcp_protection/configs/tcp_flow_protection/rules/{rule_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsTcpFlowProtectionRulesRuleId("test", "test", newDosTcpFlowProtectionRuleUpdate())
+    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsTcpFlowProtectionRulesRuleId("test", "test", newAdvancedDdosProtectionTcpFlowProtectionRuleUpdate())
 
   test "GET /accounts/{account_id}/magic/advanced_tcp_protection/configs/tcp_protection_status":
     let client = initCloudflareClient("test-key")
@@ -347,5 +347,5 @@ suite "dos_flowtrackd_api_other endpoints":
   test "PATCH /accounts/{account_id}/magic/advanced_tcp_protection/configs/tcp_protection_status":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsTcpProtectionStatus("test", newDosUpdateProtectionStatus())
+    discard waitFor client.patchAccountsAccountIdMagicAdvancedTcpProtectionConfigsTcpProtectionStatus("test", newAdvancedDdosProtectionUpdateProtectionStatus())
 

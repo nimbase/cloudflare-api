@@ -55,6 +55,13 @@ type
   PatchAccountsAccountIdCloudforceOneV2PriorityIntelligenceInterestsInterestIdRequest = object
     enabled: Option[bool]
     value: Option[string]
+  GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceMatchesAggregateResponse* = object
+    combined: JsonNode
+    priorities: seq[JsonNode]
+      ## Each active priority's own counts, newest priority first. Counts are never
+      ## summed.
+  PutAccountsAccountIdCloudforceOneV2PriorityIntelligenceProfileRequest = object
+    profile: string
   PutAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdRequest = object
     confirm_query: Option[bool]
     dataset_scope: Option[JsonNode]
@@ -73,6 +80,25 @@ type
   PatchAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesRequest = object
     matches: seq[JsonNode]
     triage_state: string
+  GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesAggregateResponse* = object
+    fields: JsonNode
+      ## One entry per requested field. For `tags`, a match counts once for each of its
+      ## tags, so tag counts can add up to more than `matches.counted`.
+    matches: JsonNode
+  GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesSeriesResponse* = object
+    days: seq[JsonNode]
+      ## Every UTC day overlapping the range, oldest first, including days with no
+      ## matches.
+    interval: string
+    since: string
+      ## Start of the range, inclusive.
+    total: int64
+      ## Matches in the range; the sum of `days[].count`.
+    until: string
+      ## End of the range, exclusive.
+    without_created_at: int64
+      ## Matches that pass the other filters but have no record of when their event was
+      ## added, so they are on no day. Not limited to the range.
   PriorityIntelligenceRequirementEnabledOption* = enum
     enabledTrue = "true"
     enabledFalse = "false"
@@ -81,6 +107,10 @@ type
     triageStateNew = "new"
     triageStateRelevant = "relevant"
     triageStateNotRelevant = "not_relevant"
+
+  PriorityIntelligenceRequirementIncludeBackfillOption* = enum
+    includeBackfillTrue = "true"
+    includeBackfillFalse = "false"
 
 
 proc getAccountsAccountIdCloudforceOneV2PriorityIntelligence*(client: CloudflareClient,
@@ -213,6 +243,62 @@ proc patchAccountsAccountIdCloudforceOneV2PriorityIntelligenceInterestsInterestI
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/interests/{interestId}", body)
   return res
 
+proc getAccountsAccountIdCloudforceOneV2PriorityIntelligenceMatchesAggregate*(client: CloudflareClient,
+                                                                              accountId: string,
+                                                                              aggregateBy: string,
+                                                                              limit: int64 = 10,
+                                                                              since: string = default(string),
+                                                                              triageState: PriorityIntelligenceRequirementTriageStateOption = triageStateNew,
+                                                                              includeBackfill: PriorityIntelligenceRequirementIncludeBackfillOption = includeBackfillTrue): Future[GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceMatchesAggregateResponse] {.async.} =
+  ## Returns each active PIR's match counts, with the same fields and filters as a
+  ## single PIR's aggregate, and the number of distinct values of each field across
+  ## all of them, each value counted once. Counts are not summed across PIRs: an
+  ## event can match several PIRs. Drafts are left out; PIRs the matcher paused are
+  ## included. A PIR whose matches cannot be counted is returned with `error` and
+  ## left out of `combined`. Requires the Threat Events entitlement.
+
+  var q = initOrderedTable[string, string]()
+  q["aggregate_by"] = $aggregateBy
+  q["limit"] = $limit
+  q["since"] = $since
+  q["triage_state"] = $triageState
+  q["include_backfill"] = $includeBackfill
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/matches/aggregate", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceMatchesAggregateResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdCloudforceOneV2PriorityIntelligenceProfile*(client: CloudflareClient,
+                                                                     accountId: string): Future[AsyncResponse] {.async.} =
+  ## Returns the account's organization profile, which all of its Priority
+  ## Intelligence Requirements share to judge how relevant intelligence is to the
+  ## organization. `result` is null when the account has no profile.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/profile")
+  return res
+
+proc putAccountsAccountIdCloudforceOneV2PriorityIntelligenceProfile*(client: CloudflareClient,
+                                                                     accountId: string,
+                                                                     body: PutAccountsAccountIdCloudforceOneV2PriorityIntelligenceProfileRequest): Future[AsyncResponse] {.async.} =
+  ## Creates or replaces the account's organization profile: who the organization is,
+  ## such as its name, brands, domains, sector, regions, key systems and suppliers.
+  ## All of the account's Priority Intelligence Requirements share it. An account has
+  ## at most one profile, and it does not count against the PIR quota.
+
+  let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/profile", body)
+  return res
+
+proc deleteAccountsAccountIdCloudforceOneV2PriorityIntelligenceProfile*(client: CloudflareClient,
+                                                                        accountId: string): Future[AsyncResponse] {.async.} =
+  ## Deletes the account's organization profile. Succeeds when the account has no
+  ## profile.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/profile")
+  return res
+
 proc postAccountsAccountIdCloudforceOneV2PriorityIntelligenceQuota*(client: CloudflareClient,
                                                                     accountId: string): Future[AsyncResponse] {.async.} =
   ## Returns the account's PIR quota. `quota` and `remaining` count active PIRs
@@ -286,3 +372,63 @@ proc patchAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatches*
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/{priorityId}/matches", body)
   return res
+
+proc getAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesAggregate*(client: CloudflareClient,
+                                                                                        accountId: string,
+                                                                                        priorityId: string,
+                                                                                        aggregateBy: string,
+                                                                                        limit: int64 = 10,
+                                                                                        since: string = default(string),
+                                                                                        triageState: PriorityIntelligenceRequirementTriageStateOption = triageStateNew,
+                                                                                        includeBackfill: PriorityIntelligenceRequirementIncludeBackfillOption = includeBackfillTrue): Future[GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesAggregateResponse] {.async.} =
+  ## Counts the PIR's matches by tag, attacker, attacker country, target industry,
+  ## primary indicator, or indicator type: the top values, the number of distinct
+  ## values, and the matches without a value. Covers the same matches as the matches
+  ## list, in datasets the account can read now. Tags are grouped case-insensitively
+  ## and shown with their most common spelling; an event counts once for each of its
+  ## tags. `indicator` is the first indicator each event was created with. Field
+  ## values are copied when an event matches; matches still being copied are reported
+  ## in `matches.pending` and not counted, and matches whose event was already gone
+  ## when its fields were copied in `matches.missing`. Counts keep the copied values,
+  ## so an event deleted later stays counted. Requires the Threat Events entitlement.
+
+  var q = initOrderedTable[string, string]()
+  q["aggregate_by"] = $aggregateBy
+  q["limit"] = $limit
+  q["since"] = $since
+  q["triage_state"] = $triageState
+  q["include_backfill"] = $includeBackfill
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/{priorityId}/matches/aggregate", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesAggregateResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesSeries*(client: CloudflareClient,
+                                                                                     accountId: string,
+                                                                                     priorityId: string,
+                                                                                     since: string = default(string),
+                                                                                     until: string = default(string),
+                                                                                     triageState: PriorityIntelligenceRequirementTriageStateOption = triageStateNew,
+                                                                                     includeBackfill: PriorityIntelligenceRequirementIncludeBackfillOption = includeBackfillTrue): Future[GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesSeriesResponse] {.async.} =
+  ## Returns the PIR's matches per UTC day of when each matched event was added to
+  ## its dataset, over the same matches as the matches list, in datasets the account
+  ## can read now. Every day in the range is listed, including days with no matches.
+  ## The range defaults to the last 30 days and is at most 90 days, because matches
+  ## are kept for 90 days. Days before the PIR was activated hold only the most
+  ## recent backfill matches. Requires the Threat Events entitlement.
+
+  var q = initOrderedTable[string, string]()
+  q["since"] = $since
+  q["until"] = $until
+  q["triage_state"] = $triageState
+  q["include_backfill"] = $includeBackfill
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/{priorityId}/matches/series", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesSeriesResponse)
+  else:
+    raise newException(CloudflareClientError, body)

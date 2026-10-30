@@ -45,6 +45,7 @@ type
     name: Option[string]
     picture: Option[string]
     preset_name: string
+    token: Option[types.RealtimekitParticipantTokenValidity]
   PutAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdParticipantsParticipantIdRequest = object
     custom_participant_id: string
     name: Option[string]
@@ -54,6 +55,8 @@ type
     name: Option[string]
     picture: Option[string]
     preset_name: Option[string]
+  DeleteAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdParticipantsParticipantIdTokenRequest = object
+    token: string
   MeetingStatusOption* = enum
     statusACTIVE = "ACTIVE"
     statusINACTIVE = "INACTIVE"
@@ -232,11 +235,29 @@ proc postAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdParticipantsParticipa
                                                                                            accountId: types.RealtimekitAccountIdentifier,
                                                                                            appId: types.RealtimekitAppId,
                                                                                            meetingId: string,
-                                                                                           participantId: string): Future[JsonNode] {.async.} =
+                                                                                           participantId: string,
+                                                                                           body: types.RealtimekitParticipantTokenValidity): Future[JsonNode] {.async.} =
   ## Regenerates participant's authentication token for the given meeting and
   ## participant ID.
 
-  let res = await client.httpPOST(fmt"/accounts/{accountId}/realtime/kit/{appId}/meetings/{meetingId}/participants/{participantId}/token")
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/realtime/kit/{appId}/meetings/{meetingId}/participants/{participantId}/token", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdParticipantsParticipantIdToken*(client: CloudflareClient,
+                                                                                             accountId: types.RealtimekitAccountIdentifier,
+                                                                                             appId: types.RealtimekitAppId,
+                                                                                             meetingId: string,
+                                                                                             participantId: string,
+                                                                                             body: DeleteAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdParticipantsParticipantIdTokenRequest): Future[JsonNode] {.async.} =
+  ## Revokes a previously issued participant authentication token without deleting
+  ## the participant. Other tokens issued to the participant remain valid.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/realtime/kit/{appId}/meetings/{meetingId}/participants/{participantId}/token", body)
   let body = await res.body
   case res.code
   of Http200:

@@ -32,7 +32,7 @@ type
     id: string
       ## RFI UUID
     investigation_id: string
-      ## Investigation UUID
+      ## Linked Casefiles case UUID. Null until an analyst links a case to the request.
     is_free_request: bool
       ## Whether this is a free request
     message_tokens: float64
@@ -71,7 +71,7 @@ type
     id: string
       ## RFI UUID
     investigation_id: string
-      ## Investigation UUID
+      ## Linked Casefiles case UUID. Null until an analyst links a case to the request.
     is_free_request: bool
       ## Whether this is a free request
     message_tokens: float64
@@ -119,7 +119,7 @@ type
     id: string
       ## RFI UUID
     investigation_id: string
-      ## Investigation UUID
+      ## Linked Casefiles case UUID. Null until an analyst links a case to the request.
     is_free_request: bool
       ## Whether this is a free request
     message_tokens: float64

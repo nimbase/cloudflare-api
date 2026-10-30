@@ -27,6 +27,10 @@ suite "webhooks serialization":
     let obj = newPostureApiCreateWebhookJobsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostureApiCreateWebhookJobsResponse)) == openjson.toJson(obj)
 
+  test "round-trips RealtimekitGenericErrorResponse":
+    let obj = newRealtimekitGenericErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitGenericErrorResponse)) == openjson.toJson(obj)
+
   test "round-trips PostureApiWebhookListResponse":
     let obj = newPostureApiWebhookListResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostureApiWebhookListResponse)) == openjson.toJson(obj)

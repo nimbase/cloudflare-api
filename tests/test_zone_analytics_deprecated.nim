@@ -28,13 +28,13 @@ suite "zone_analytics_deprecated serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ZoneAnalyticsApiApiResponseCommonFailure)) == openjson.toJson(obj)
 
 suite "zone_analytics_deprecated endpoints":
-  test "GET /zones/{zone_identifier}/analytics/colos":
+  test "GET /zones/{zone_id}/analytics/colos":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdentifierAnalyticsColos("test", newZoneAnalyticsApiUntil(), openjson.newJObject(), true)
+    discard waitFor client.getZonesZoneIdAnalyticsColos("test", newZoneAnalyticsApiUntil(), openjson.newJObject(), true)
 
-  test "GET /zones/{zone_identifier}/analytics/dashboard":
+  test "GET /zones/{zone_id}/analytics/dashboard":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdentifierAnalyticsDashboard("test", newZoneAnalyticsApiUntil(), openjson.newJObject(), true)
+    discard waitFor client.getZonesZoneIdAnalyticsDashboard("test", newZoneAnalyticsApiUntil(), openjson.newJObject(), true)
 

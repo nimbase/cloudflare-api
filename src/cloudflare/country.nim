@@ -10,7 +10,8 @@ import ./private/metaclient
 
 proc getAccountsAccountIdCloudforceOneEventsCountries*(client: CloudflareClient,
                                                        accountId: string): Future[seq[JsonNode]] {.async.} =
-  ## Lists countries referenced in Cloudforce One threat intelligence data.
+  ## Lists the countries used in threat intelligence data, such as attacker and
+  ## target countries.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/countries")
   let body = await res.body

@@ -85,7 +85,7 @@ proc postZonesZoneIdWaitingRoomsPreview*(client: CloudflareClient,
   ## in the prequeue when it starts. This can only be set to **true** if an event is
   ## active (`event` is not **none**).
   ##
-  ## For example, you can make a request to`http://waitingrooms.dev/preview/<uuid>?f
+  ## For example, you can make a request to `http://waitingrooms.dev/preview/<uuid>?f
   ## orce_queue=false&queue_is_full=false&queueing_method=random&event=started&shuffl
   ## e_at_event_start=true`
   ## 6. `waitTime`: Non-zero, positive integer indicating the estimated wait time in

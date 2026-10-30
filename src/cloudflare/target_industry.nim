@@ -21,7 +21,8 @@ type
 proc getAccountsAccountIdCloudforceOneEventsDatasetDatasetIdTargetIndustries*(client: CloudflareClient,
                                                                               accountId: string,
                                                                               datasetId: string): Future[GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdTargetIndustriesResponse] {.async.} =
-  ## Lists all target industries for a specific dataset
+  ## Legacy. Use `threat-intel events target-industries list` (`GET
+  ## /events/targetIndustries`) instead.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/targetIndustries")
   let body = await res.body
@@ -34,8 +35,9 @@ proc getAccountsAccountIdCloudforceOneEventsDatasetDatasetIdTargetIndustries*(cl
 proc getAccountsAccountIdCloudforceOneEventsTargetIndustries*(client: CloudflareClient,
                                                               accountId: string,
                                                               datasetIds: seq[string] = @[]): Future[GetAccountsAccountIdCloudforceOneEventsTargetIndustriesResponse] {.async.} =
-  ## Retrieves the catalog of industry classifications used in Cloudforce One threat
-  ## intelligence.
+  ## Lists the target industries referenced by events in the datasets given by
+  ## `datasetIds`, or in the default dataset when `datasetIds` is omitted. To list
+  ## every target industry, use `threat-intel events target-industries catalog list`.
 
   var q = initOrderedTable[string, string]()
   for v in datasetIds: q["datasetIds"] = $v
@@ -49,7 +51,9 @@ proc getAccountsAccountIdCloudforceOneEventsTargetIndustries*(client: Cloudflare
 
 proc getAccountsAccountIdCloudforceOneEventsTargetIndustriesCatalog*(client: CloudflareClient,
                                                                      accountId: string): Future[GetAccountsAccountIdCloudforceOneEventsTargetIndustriesCatalogResponse] {.async.} =
-  ## Lists all target industries from industry map catalog
+  ## Lists every predefined target industry, whether or not an event uses it. To list
+  ## only the industries used in specific datasets, use `threat-intel events
+  ## target-industries list`.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/targetIndustries/catalog")
   let body = await res.body

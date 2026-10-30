@@ -9,8 +9,8 @@ import ./private/metaclient
 import ./private/types
 
 
-proc getAccountsAccountTagAnalyticsSql*(client: CloudflareClient,
-                                        accountTag: string, query: string): Future[JsonNode] {.async.} =
+proc getAccountsAccountIdAnalyticsSql*(client: CloudflareClient,
+                                       accountId: string, query: string): Future[JsonNode] {.async.} =
   ## Executes a SQL query scoped to the account in the request path. API Gateway
   ## preserves the account path, and SQL API requires it to match the signed JWT
   ## account, so an accountTag predicate or JSON scope is not required. Explicit
@@ -20,7 +20,7 @@ proc getAccountsAccountTagAnalyticsSql*(client: CloudflareClient,
 
   var q = initOrderedTable[string, string]()
   q["query"] = $query
-  let res = await client.httpGET(fmt"/accounts/{accountTag}/analytics/sql", q)
+  let res = await client.httpGET(fmt"/accounts/{accountId}/analytics/sql", q)
   let body = await res.body
   case res.code
   of Http200:
@@ -28,9 +28,9 @@ proc getAccountsAccountTagAnalyticsSql*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc postAccountsAccountTagAnalyticsSql*(client: CloudflareClient,
-                                         accountTag: string,
-                                         body: types.AnalyticsSqlSqlQueryRequest): Future[JsonNode] {.async.} =
+proc postAccountsAccountIdAnalyticsSql*(client: CloudflareClient,
+                                        accountId: string,
+                                        body: types.AnalyticsSqlSqlQueryRequest): Future[JsonNode] {.async.} =
   ## Executes a SQL query scoped to the account in the request path. API Gateway
   ## preserves the account path, and SQL API requires it to match the signed JWT
   ## account, so an accountTag predicate or JSON scope is not required. Explicit
@@ -38,7 +38,7 @@ proc postAccountsAccountTagAnalyticsSql*(client: CloudflareClient,
   ## that account. Query parameters, time ranges, output formats, authorization, and
   ## responses follow the legacy query endpoint.
 
-  let res = await client.httpPOST(fmt"/accounts/{accountTag}/analytics/sql", body)
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/analytics/sql", body)
   let body = await res.body
   case res.code
   of Http200:
@@ -46,14 +46,14 @@ proc postAccountsAccountTagAnalyticsSql*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc getAccountsAccountTagAnalyticsSqlIntrospection*(client: CloudflareClient,
-                                                     accountTag: string,
-                                                     includeColumns: bool = false,
-                                                     includeCustomAttributes: bool = false,
-                                                     includeAttributes: bool = false,
-                                                     includeWae: bool = true,
-                                                     includeLex: bool = true,
-                                                     datasetName: string = default(string)): Future[types.AnalyticsSqlIntrospectionResponse] {.async.} =
+proc getAccountsAccountIdAnalyticsSqlIntrospection*(client: CloudflareClient,
+                                                    accountId: string,
+                                                    includeColumns: bool = false,
+                                                    includeCustomAttributes: bool = false,
+                                                    includeAttributes: bool = false,
+                                                    includeWae: bool = true,
+                                                    includeLex: bool = true,
+                                                    datasetName: string = default(string)): Future[types.AnalyticsSqlIntrospectionResponse] {.async.} =
   ## Returns the dataset catalogue for the account in the request path. API Gateway
   ## preserves the account path, and SQL API requires it to match the signed JWT
   ## account; account_tag is not required as a query parameter. If supplied, it must
@@ -67,7 +67,7 @@ proc getAccountsAccountTagAnalyticsSqlIntrospection*(client: CloudflareClient,
   q["include_wae"] = $includeWae
   q["include_lex"] = $includeLex
   q["dataset_name"] = $datasetName
-  let res = await client.httpGET(fmt"/accounts/{accountTag}/analytics/sql/introspection", q)
+  let res = await client.httpGET(fmt"/accounts/{accountId}/analytics/sql/introspection", q)
   let body = await res.body
   case res.code
   of Http200:

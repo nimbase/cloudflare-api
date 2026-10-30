@@ -34,7 +34,7 @@ proc getZonesZoneIdFirewallWafPackages*(client: CloudflareClient,
                                         name: string = default(string)): Future[types.FirewallPackageResponseCollection] {.async.} =
   ## Fetches WAF packages for a zone.
   ##
-  ## **Note:** Applies only to the [previous version of WAF managedrules](https://de
+  ## **Note:** Applies only to the [previous version of WAF managed rules](https://de
   ## velopers.cloudflare.com/support/firewall/managed-rules-web-application-firewall-
   ## waf/understanding-waf-managed-rules-web-application-firewall/).
 
@@ -58,7 +58,7 @@ proc getZonesZoneIdFirewallWafPackagesPackageId*(client: CloudflareClient,
                                                  zoneId: types.FirewallIdentifier): Future[types.FirewallPackageResponseSingle] {.async.} =
   ## Fetches the details of a WAF package.
   ##
-  ## **Note:** Applies only to the [previous version of WAF managedrules](https://de
+  ## **Note:** Applies only to the [previous version of WAF managed rules](https://de
   ## velopers.cloudflare.com/support/firewall/managed-rules-web-application-firewall-
   ## waf/understanding-waf-managed-rules-web-application-firewall/).
 
@@ -77,7 +77,7 @@ proc patchZonesZoneIdFirewallWafPackagesPackageId*(client: CloudflareClient,
   ## Updates a WAF package. You can update the sensitivity and the action of an
   ## anomaly detection WAF package.
   ##
-  ## **Note:** Applies only to the [previous version of WAF managedrules](https://de
+  ## **Note:** Applies only to the [previous version of WAF managed rules](https://de
   ## velopers.cloudflare.com/support/firewall/managed-rules-web-application-firewall-
   ## waf/understanding-waf-managed-rules-web-application-firewall/).
 

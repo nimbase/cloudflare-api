@@ -96,7 +96,7 @@ type
 
 proc getAccountsAccountIdDevices*(client: CloudflareClient,
                                   accountId: types.TeamsDevicesIdentifier): Future[types.TeamsDevicesDevicesResponse] {.async.} =
-  ## List WARP devices. Not supported when [multi-usermode](https://developers.cloud
+  ## List WARP devices. Not supported when [multi-user mode](https://developers.cloud
   ## flare.com/cloudflare-one/connections/connect-devices/warp/deployment/mdm-deploym
   ## ent/windows-multiuser/) is enabled for the account.
   ##
@@ -433,7 +433,7 @@ proc putAccountsAccountIdDevicesPolicyPolicyIdInclude*(client: CloudflareClient,
 proc postAccountsAccountIdDevicesRevoke*(client: CloudflareClient,
                                          accountId: types.TeamsDevicesIdentifier,
                                          body: types.TeamsDevicesRevokeDevicesRequest): Future[types.TeamsDevicesApiResponseSingle] {.async.} =
-  ## Revokes a list of devices. Not supported when [multi-usermode](https://develope
+  ## Revokes a list of devices. Not supported when [multi-user mode](https://develope
   ## rs.cloudflare.com/cloudflare-one/connections/connect-devices/warp/deployment/mdm
   ## -deployment/windows-multiuser/) is enabled.
   ##
@@ -451,7 +451,7 @@ proc postAccountsAccountIdDevicesRevoke*(client: CloudflareClient,
 proc postAccountsAccountIdDevicesUnrevoke*(client: CloudflareClient,
                                            accountId: types.TeamsDevicesIdentifier,
                                            body: types.TeamsDevicesUnrevokeDevicesRequest): Future[types.TeamsDevicesApiResponseSingle] {.async.} =
-  ## Unrevokes a list of devices. Not supported when [multi-usermode](https://develo
+  ## Unrevokes a list of devices. Not supported when [multi-user mode](https://develo
   ## pers.cloudflare.com/cloudflare-one/connections/connect-devices/warp/deployment/m
   ## dm-deployment/windows-multiuser/) is enabled.
   ##
@@ -469,7 +469,7 @@ proc postAccountsAccountIdDevicesUnrevoke*(client: CloudflareClient,
 proc getAccountsAccountIdDevicesDeviceId*(client: CloudflareClient,
                                           deviceId: types.TeamsDevicesRegistrationId,
                                           accountId: types.TeamsDevicesIdentifier): Future[types.TeamsDevicesDeviceResponse] {.async.} =
-  ## Fetches a single WARP device. Not supported when [multi-usermode](https://devel
+  ## Fetches a single WARP device. Not supported when [multi-user mode](https://devel
   ## opers.cloudflare.com/cloudflare-one/connections/connect-devices/warp/deployment/
   ## mdm-deployment/windows-multiuser/) is enabled for the account.
   ##
@@ -490,7 +490,7 @@ proc getAccountsAccountIdDevicesDeviceIdOverrideCodes*(client: CloudflareClient,
                                                        accountId: types.TeamsDevicesIdentifier): Future[types.TeamsDevicesOverrideCodesResponse] {.async.} =
   ## Fetches a one-time use admin override code for a device. This relies on the
   ## **Admin Override** setting being enabled in your device configuration. Not
-  ## supported when [multi-usermode](https://developers.cloudflare.com/cloudflare-on
+  ## supported when [multi-user mode](https://developers.cloudflare.com/cloudflare-on
   ## e/connections/connect-devices/warp/deployment/mdm-deployment/windows-multiuser/)
   ## is enabled for the account.
   ## **Deprecated:** please use GET

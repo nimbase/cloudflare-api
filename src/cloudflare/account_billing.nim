@@ -11,8 +11,6 @@ import ./private/types
 type
   PatchAccountsAccountIdInvoicesRequest = object
     toggle: Option[bool]
-  PostAccountsAccountIdPayBadDebtRequest = object
-    payment_method_id: Option[string]
   PostAccountsAccountIdPayInvoiceRequest = object
     invoice_id: Option[string]
     payment_method_id: Option[string]
@@ -92,20 +90,6 @@ proc patchAccountsAccountIdInvoices*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, types.BillSubsApiApiResponseSingle)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc postAccountsAccountIdPayBadDebt*(client: CloudflareClient,
-                                      accountId: types.BillSubsApiIdentifier,
-                                      body: PostAccountsAccountIdPayBadDebtRequest): Future[types.BillSubsApiClientSecretResponseSingle] {.async.} =
-  ## Pays outstanding bad debt for an account. Discovers all debt automatically and
-  ## handles invoice deduplication.
-
-  let res = await client.httpPOST(fmt"/accounts/{accountId}/pay-bad-debt", body)
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, types.BillSubsApiClientSecretResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 

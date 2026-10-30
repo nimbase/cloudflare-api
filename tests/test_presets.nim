@@ -23,6 +23,10 @@ suite "presets serialization":
     let obj = newRealtimekitPagingResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitPagingResponse)) == openjson.toJson(obj)
 
+  test "round-trips RealtimekitGenericErrorResponse":
+    let obj = newRealtimekitGenericErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitGenericErrorResponse)) == openjson.toJson(obj)
+
   test "round-trips RealtimekitPresetListItem":
     let obj = newRealtimekitPresetListItem()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitPresetListItem)) == openjson.toJson(obj)

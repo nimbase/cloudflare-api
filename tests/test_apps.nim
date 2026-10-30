@@ -15,9 +15,17 @@ suite "apps serialization":
     let obj = newFlagshipError()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FlagshipError)) == openjson.toJson(obj)
 
+  test "round-trips RealtimekitGenericErrorResponse":
+    let obj = newRealtimekitGenericErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitGenericErrorResponse)) == openjson.toJson(obj)
+
   test "round-trips FlagshipDeleteAppResult":
     let obj = newFlagshipDeleteAppResult()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FlagshipDeleteAppResult)) == openjson.toJson(obj)
+
+  test "round-trips RealtimekitErrorResponse":
+    let obj = newRealtimekitErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitErrorResponse)) == openjson.toJson(obj)
 
   test "round-trips FlagshipApp":
     let obj = newFlagshipApp()
@@ -54,6 +62,10 @@ suite "apps serialization":
   test "round-trips GetAccountsAccountIdRealtimeKitAppsAppIdResponse":
     let obj = cloudflare.GetAccountsAccountIdRealtimeKitAppsAppIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdRealtimeKitAppsAppIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips PatchAccountsAccountIdRealtimeKitAppsAppIdResponse":
+    let obj = cloudflare.PatchAccountsAccountIdRealtimeKitAppsAppIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdRealtimeKitAppsAppIdResponse)) == openjson.toJson(obj)
 
 suite "apps endpoints":
   test "GET /accounts/{account_id}/flagship/apps":

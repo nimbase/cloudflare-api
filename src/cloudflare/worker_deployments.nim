@@ -37,7 +37,7 @@ proc postAccountsAccountIdWorkersScriptsScriptNameDeployments*(client: Cloudflar
                                                                scriptName: types.WorkersScriptName,
                                                                force: bool = default(bool),
                                                                body: types.WorkersDeployment): Future[JsonNode] {.async.} =
-  ## Deployments configure how [WorkerVersions](https://developers.cloudflare.com/ap
+  ## Deployments configure how [Worker Versions](https://developers.cloudflare.com/ap
   ## i/operations/worker-versions-list-versions) are deployed to traffic. A
   ## deployment can consist of multiple versions of a Worker.
 

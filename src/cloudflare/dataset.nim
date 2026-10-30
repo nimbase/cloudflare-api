@@ -44,7 +44,7 @@ type
 proc getAccountsAccountIdCloudforceOneEventsDataset*(client: CloudflareClient,
                                                      accountId: string,
                                                      includeDeleted: bool = default(bool)): Future[seq[JsonNode]] {.async.} =
-  ## Lists all threat event datasets configured in Cloudforce One.
+  ## Lists the account's datasets. Set `includeDeleted` to include deleted datasets.
 
   var q = initOrderedTable[string, string]()
   q["includeDeleted"] = $includeDeleted
@@ -59,8 +59,8 @@ proc getAccountsAccountIdCloudforceOneEventsDataset*(client: CloudflareClient,
 proc postAccountsAccountIdCloudforceOneEventsDatasetCreate*(client: CloudflareClient,
                                                             accountId: string,
                                                             body: PostAccountsAccountIdCloudforceOneEventsDatasetCreateRequest): Future[PostAccountsAccountIdCloudforceOneEventsDatasetCreateResponse] {.async.} =
-  ## Creates a new threat event dataset in Cloudforce One for organizing related
-  ## threat events.
+  ## Creates a dataset for grouping events. Set `isPublic` to true to let anyone
+  ## search it; otherwise only the account can.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/create", body)
   let body = await res.body
@@ -73,7 +73,7 @@ proc postAccountsAccountIdCloudforceOneEventsDatasetCreate*(client: CloudflareCl
 proc getAccountsAccountIdCloudforceOneEventsDatasetDatasetId*(client: CloudflareClient,
                                                               accountId: string,
                                                               datasetId: string): Future[GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdResponse] {.async.} =
-  ## Retrieves details for a specific threat event dataset.
+  ## Returns a dataset by its ID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}")
   let body = await res.body
@@ -87,7 +87,7 @@ proc postAccountsAccountIdCloudforceOneEventsDatasetDatasetId*(client: Cloudflar
                                                                accountId: string,
                                                                datasetId: string,
                                                                body: PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdRequest): Future[PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdResponse] {.async.} =
-  ## Updates an existing dataset
+  ## Updates a dataset's `name` and `isPublic` setting. Both fields are required.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}", body)
   let body = await res.body
@@ -100,7 +100,8 @@ proc postAccountsAccountIdCloudforceOneEventsDatasetDatasetId*(client: Cloudflar
 proc deleteAccountsAccountIdCloudforceOneEventsDatasetDatasetId*(client: CloudflareClient,
                                                                  accountId: string,
                                                                  datasetId: string): Future[DeleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdResponse] {.async.} =
-  ## Soft-deletes a dataset given a datasetId.
+  ## Deletes a dataset. To see deleted datasets, use `threat-intel datasets list`
+  ## with `includeDeleted`.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}")
   let body = await res.body
@@ -114,8 +115,7 @@ proc patchAccountsAccountIdCloudforceOneEventsDatasetDatasetId*(client: Cloudfla
                                                                 accountId: string,
                                                                 datasetId: string,
                                                                 body: PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdRequest): Future[PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdResponse] {.async.} =
-  ## Partially updates a threat event dataset in Cloudforce One, modifying specific
-  ## fields without replacing the entire dataset configuration.
+  ## Updates a dataset's `name` and `isPublic` setting. Both fields are required.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}", body)
   let body = await res.body

@@ -20,7 +20,7 @@ proc postAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorTypesCreat
                                                                                    accountId: string,
                                                                                    datasetId: string,
                                                                                    body: PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorTypesCreateRequest): Future[PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorTypesCreateResponse] {.async.} =
-  ## Creates a new indicator type and initializes its dedicated Durable Object
+  ## Creates an indicator type in a dataset.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicatorTypes/create", body)
   let body = await res.body

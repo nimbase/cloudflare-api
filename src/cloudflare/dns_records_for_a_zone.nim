@@ -129,7 +129,7 @@ proc postZonesZoneIdDnsRecordsBatch*(client: CloudflareClient,
   ## - Although Cloudflare will execute the batched operations in a single database
   ## transaction, Cloudflare's distributed KV store must treat each record change as
   ## a single key-value pair. This means that the propagation of changes is not
-  ## atomic. See [thedocumentation](https://developers.cloudflare.com/dns/manage-dns
+  ## atomic. See [the documentation](https://developers.cloudflare.com/dns/manage-dns
   ## -records/how-to/batch-record-changes/ "Batch DNS records") for more information.
   ## - The operations you specify within the /batch request body are always executed
   ## in the following order:
@@ -154,7 +154,7 @@ proc getZonesZoneIdDnsRecordsExport*(client: CloudflareClient,
   ## You can export your [BIND config](https://en.wikipedia.org/wiki/Zone_file "Zone
   ## file") through this endpoint.
   ##
-  ## See [thedocumentation](https://developers.cloudflare.com/dns/manage-dns-records
+  ## See [the documentation](https://developers.cloudflare.com/dns/manage-dns-records
   ## /how-to/import-and-export/ "Import and export records") for more information.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/dns_records/export")
@@ -166,7 +166,7 @@ proc postZonesZoneIdDnsRecordsImport*(client: CloudflareClient,
   ## file") through this endpoint. It assumes that cURL is called from a location
   ## with bind_config.txt (valid BIND config) present.
   ##
-  ## See [thedocumentation](https://developers.cloudflare.com/dns/manage-dns-records
+  ## See [the documentation](https://developers.cloudflare.com/dns/manage-dns-records
   ## /how-to/import-and-export/ "Import and export records") for more information.
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/dns_records/import")

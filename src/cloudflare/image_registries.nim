@@ -27,7 +27,7 @@ proc postAccountsAccountIdContainersRegistries*(client: CloudflareClient,
   ## or upload an image. Public Docker Hub images and images in the Cloudflare
   ## managed registry do not require this configuration.
   ##
-  ## Refer to [Imagemanagement](https://developers.cloudflare.com/containers/platfor
+  ## Refer to [Image management](https://developers.cloudflare.com/containers/platfor
   ## m-details/image-management/)
   ## for supported registries and instructions for storing registry credentials.
 

@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "evaluation serialization":
+  test "round-trips FlagshipEvaluationError":
+    let obj = newFlagshipEvaluationError()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FlagshipEvaluationError)) == openjson.toJson(obj)
+
   test "round-trips FlagshipError":
     let obj = newFlagshipError()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FlagshipError)) == openjson.toJson(obj)

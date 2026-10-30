@@ -32,7 +32,7 @@ proc postZonesZoneIdBotManagementFeedback*(client: CloudflareClient,
   ## to identify the affected traffic sample.
   ##
   ## See more accepted API fields and expression types at
-  ## https://developers.cloudflare.com/bots/concepts/feedback-loop/#api-fields andht
+  ## https://developers.cloudflare.com/bots/concepts/feedback-loop/#api-fields and ht
   ## tps://developers.cloudflare.com/bots/concepts/feedback-loop/#expression-fields,
   ## respectively.
 

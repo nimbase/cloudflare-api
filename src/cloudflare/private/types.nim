@@ -729,8 +729,16 @@ type
       ## Whether the report has at least one mitigation an appeal could reverse.
     has_open_appeal*: bool
       ## Whether the report already has an open (undecided) appeal.
+    has_pending_notice*: bool
+      ## Whether the report is in its Notice and Takedown notice period. No mitigation is
+      ## applied yet, but one will be applied at `notice_deadline` unless the report is
+      ## resolved first.
     max_appeals*: int64
       ## Maximum number of appeals allowed per report.
+    notice_deadline*: Option[string]
+      ## When the notice period ends and the mitigation is applied. Present only when
+      ## `has_pending_notice` is true. Time in RFC 3339 format
+      ## (https://www.rfc-editor.org/rfc/rfc3339.html)
 
   AbuseReportsAppealReason* = enum
     ## Reason why the customer is appealing.
@@ -1102,10 +1110,17 @@ type
   AbuseReportsMitigationAppealRequest* = ref object of RootObj
     ## Submit an appeal for a report. Provide either a list of mitigations to appeal,
     ## or an appeal type with its supporting details, but not both. When type is
-    ## "counter_notice", the counter-notice details are required.
+    ## "counter_notice", the counter-notice details are required. A "content_removed"
+    ## appeal takes an optional explanation instead and is accepted only while the
+    ## report is in its Notice and Takedown notice period (`has_pending_notice` on the
+    ## eligibility response). Reports that allow a single appeal (`max_appeals` of 1)
+    ## never have a notice period and accept it whenever `appealable` is true.
     appeals*: Option[seq[AbuseReportsMitigationAppeal]]
       ## List of mitigations to appeal.
     data*: Option[AbuseReportsDMCACounterNotice]
+    explanation*: Option[string]
+      ## Optional explanation for a "content_removed" appeal, such as how the content was
+      ## removed. Not accepted for other appeal types.
     `type`*: Option[AbuseReportsAppealType]
 
   AbuseReportsMitigationAppealResult* = ref object of RootObj
@@ -1263,6 +1278,17 @@ type
       ##
 
   AbuseReportsPortsProtocolError* = string
+
+  AbuseReportsRateLimitedError* = string
+
+  AbuseReportsRateLimitedErrorResponse* = ref object of RootObj
+    err_code*: AbuseReportsRateLimitedError
+    error_code*: AbuseReportsRateLimitedError
+    msg*: string
+      ## The error message for the error
+    request*: JsonNode
+    result*: string
+      ## Always 'error'
 
   AbuseReportsRegistrarWhoIsFields* = ref object of RootObj
     ## RDP-mandated fields for registrar WHOIS data disclosure requests.
@@ -1759,6 +1785,7 @@ type
     exclude*: Option[AccessExclude2]
     `include`*: AccessInclude2
     name*: AccessName9
+    policy_resolution_account_id*: Option[AccessPolicyResolutionAccountId]
     require*: Option[AccessRequire2]
 
   AccessAppPolicyResponse* = ref object of RootObj
@@ -1776,6 +1803,7 @@ type
     id*: Option[AccessUuid2]
     `include`*: Option[AccessInclude2]
     name*: Option[AccessName9]
+    policy_resolution_account_id*: Option[AccessPolicyResolutionAccountId]
     require*: Option[AccessRequire2]
     updated_at*: Option[AccessTimestamp]
     account_id*: Option[AccessIdentifier]
@@ -1899,7 +1927,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessAzureAD2* = ref object of RootObj
@@ -1911,7 +1939,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessAzureGroupRule* = ref object of RootObj
@@ -1924,6 +1952,7 @@ type
     exclude*: Option[AccessExclude2]
     `include`*: AccessInclude2
     name*: AccessName9
+    policy_resolution_account_id*: Option[AccessPolicyResolutionAccountId]
     require*: Option[AccessRequire2]
 
   AccessBasePolicyResp* = ref object of RootObj
@@ -1933,6 +1962,7 @@ type
     id*: Option[AccessUuid2]
     `include`*: Option[AccessInclude2]
     name*: Option[AccessName9]
+    policy_resolution_account_id*: Option[AccessPolicyResolutionAccountId]
     require*: Option[AccessRequire2]
     updated_at*: Option[AccessTimestamp]
 
@@ -2038,7 +2068,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessCentrify2* = ref object of RootObj
@@ -2050,7 +2080,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessCertificateRule* = ref object of RootObj
@@ -2502,7 +2532,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessFacebook2* = ref object of RootObj
@@ -2514,7 +2544,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessFailedLoginResponse* = ref object of RootObj
@@ -2606,7 +2636,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessGithub2* = ref object of RootObj
@@ -2618,7 +2648,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessGithubOrganizationRule* = ref object of RootObj
@@ -2651,7 +2681,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessGoogle2* = ref object of RootObj
@@ -2663,7 +2693,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessGoogleApps* = ref object of RootObj
@@ -2691,7 +2721,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessGoogleApps2* = ref object of RootObj
@@ -2703,8 +2733,10 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
+
+  AccessGrantTrustToAllAccountsInOrg* = bool
 
   AccessGroupDetails* = ref object of RootObj
     display_name*: Option[string]
@@ -2826,7 +2858,7 @@ type
   AccessIdentityProvider* = ref object of RootObj
     config*: JsonNode
       ## The configuration parameters for the identity provider. To view the required
-      ## parameters for a specific provider, refer to our [developerdocumentation](https
+      ## parameters for a specific provider, refer to our [developer documentation](https
       ## ://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).
     id*: Option[AccessUuid]
     name*: AccessName3
@@ -2851,13 +2883,13 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessIdentityProvider2* = ref object of RootObj
     config*: JsonNode
       ## The configuration parameters for the identity provider. To view the required
-      ## parameters for a specific provider, refer to our [developerdocumentation](https
+      ## parameters for a specific provider, refer to our [developer documentation](https
       ## ://developers.cloudflare.com/cloudflare-one/identity/idp-integration/).
     id*: Option[AccessUuid]
     name*: AccessName3
@@ -2866,7 +2898,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessIdentityProviders* = ref object of RootObj
@@ -2950,6 +2982,7 @@ type
     exclude*: Option[AccessExclude2]
     `include`*: AccessInclude2
     name*: AccessName9
+    policy_resolution_account_id*: Option[AccessPolicyResolutionAccountId]
     require*: Option[AccessRequire2]
 
   AccessInfraPolicyResp* = ref object of RootObj
@@ -2961,6 +2994,7 @@ type
     id*: Option[AccessUuid2]
     `include`*: Option[AccessInclude2]
     name*: Option[AccessName9]
+    policy_resolution_account_id*: Option[AccessPolicyResolutionAccountId]
     require*: Option[AccessRequire2]
     updated_at*: Option[AccessTimestamp]
 
@@ -3118,7 +3152,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessLinkedin2* = ref object of RootObj
@@ -3130,7 +3164,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessLoginDesign* = ref object of RootObj
@@ -3327,7 +3361,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessOidc2* = ref object of RootObj
@@ -3339,7 +3373,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessOidcClaimRule* = ref object of RootObj
@@ -3440,7 +3474,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessOkta2* = ref object of RootObj
@@ -3452,7 +3486,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessOktaGroupRule* = ref object of RootObj
@@ -3485,7 +3519,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessOnelogin2* = ref object of RootObj
@@ -3497,7 +3531,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessOnetimepin* = ref object of RootObj
@@ -3651,7 +3685,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessPingone2* = ref object of RootObj
@@ -3663,7 +3697,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessPolicies* = ref object of RootObj
@@ -3719,7 +3753,10 @@ type
     exclude*: Option[AccessExclude2]
     `include`*: AccessInclude2
     name*: AccessName9
+    policy_resolution_account_id*: Option[AccessPolicyResolutionAccountId]
     require*: Option[AccessRequire2]
+
+  AccessPolicyResolutionAccountId* = string
 
   AccessPolicyResp* = ref object of RootObj
     approval_groups*: Option[AccessApprovalGroups]
@@ -3736,6 +3773,7 @@ type
     id*: Option[AccessUuid2]
     `include`*: Option[AccessInclude2]
     name*: Option[AccessName9]
+    policy_resolution_account_id*: Option[AccessPolicyResolutionAccountId]
     require*: Option[AccessRequire2]
     updated_at*: Option[AccessTimestamp]
 
@@ -4117,6 +4155,7 @@ type
     id*: Option[AccessUuid2]
     `include`*: Option[AccessInclude2]
     name*: Option[AccessName9]
+    policy_resolution_account_id*: Option[AccessPolicyResolutionAccountId]
     require*: Option[AccessRequire2]
     updated_at*: Option[AccessTimestamp]
     account_id*: Option[AccessIdentifier]
@@ -4174,7 +4213,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessSaml2* = ref object of RootObj
@@ -4186,7 +4225,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessSamlCertificate* = ref object of RootObj
@@ -5026,6 +5065,15 @@ type
 
   AccessTotalUsers* = int64
 
+  AccessTrustSettingsResponse* = ref object of RootObj
+    errors*: AccessMessages
+    messages*: AccessMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[JsonNode]
+
+  AccessTrustingAccounts* = seq[string]
+
   AccessType* = enum
     ## The application type.
     selfHosted = "self_hosted"
@@ -5269,7 +5317,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AccessYandex2* = ref object of RootObj
@@ -5281,7 +5329,7 @@ type
       ## Management (SCIM) with the identity provider.
     `type`*: string
       ## The type of identity provider. To determine the value for a specific provider,
-      ## refer to our [developerdocumentation](https://developers.cloudflare.com/cloudfl
+      ## refer to our [developer documentation](https://developers.cloudflare.com/cloudfl
       ## are-one/identity/idp-integration/).
 
   AddressingAccountIdentifier* = string
@@ -5652,6 +5700,384 @@ type
   AddressingVerifiedAt* = string
 
   AddressingZoneIdentifier* = string
+
+  AdvancedDdosProtectionDnsProtectionRule* = ref object of RootObj
+    block_any_queries*: bool
+      ## Whether to block DNS ANY queries. Defaults to true.
+    burst_sensitivity*: string
+      ## The burst sensitivity. Must be one of 'low', 'medium', 'high'.
+    created_on*: string
+      ## The creation timestamp of the DNS Protection rule.
+    id*: string
+      ## The unique ID of the DNS Protection rule.
+    mode*: string
+      ## The mode for DNS Protection. Must be one of 'enabled', 'disabled', 'monitoring'.
+    modified_on*: string
+      ## The last modification timestamp of the DNS Protection rule.
+    name*: string
+      ## The name of the DNS Protection rule. Value is relative to the 'scope' setting.
+      ## For 'global' scope, name should be 'global'. For either the 'region' or
+      ## 'datacenter' scope, name should be the actual name of the region or datacenter,
+      ## e.g., 'wnam' or 'lax'.
+    profile_sensitivity*: string
+      ## The profile sensitivity. Recommended setting is 'low'. Must be one of 'low',
+      ## 'medium', 'high', or 'very_high'.
+    rate_sensitivity*: string
+      ## The rate sensitivity. Must be one of 'low', 'medium', 'high'.
+    scope*: string
+      ## The scope for the DNS Protection rule. Must be one of 'global', 'region', or
+      ## 'datacenter'.
+
+  AdvancedDdosProtectionDnsProtectionRuleUpdate* = ref object of RootObj
+    block_any_queries*: Option[bool]
+      ## The new value for whether to block DNS ANY queries. Optional.
+    burst_sensitivity*: Option[string]
+      ## The new burst sensitivity. Optional. Must be one of 'low', 'medium', 'high'.
+    mode*: Option[string]
+      ## The new mode for DNS Protection. Optional. Must be one of 'enabled', 'disabled',
+      ## 'monitoring'.
+    profile_sensitivity*: Option[string]
+      ## The new profile sensitivity. Optional. Recommended setting is 'low'. Must be one
+      ## of 'low', 'medium', 'high', or 'very_high'.
+    rate_sensitivity*: Option[string]
+      ## The new rate sensitivity. Optional. Must be one of 'low', 'medium', 'high'.
+
+  AdvancedDdosProtectionExpressionFilter* = ref object of RootObj
+    created_on*: string
+      ## The creation timestamp of the expression filter.
+    expression*: string
+      ## The filter expression.
+    id*: string
+      ## The unique ID of the expression filter.
+    mode*: string
+      ## The filter's mode. Must be one of 'enabled', 'disabled', 'monitoring'.
+    modified_on*: string
+      ## The last modification timestamp of the expression filter.
+
+  AdvancedDdosProtectionExpressionFilterUpdate* = ref object of RootObj
+    expression*: Option[string]
+      ## The new filter expression. Optional.
+    mode*: Option[string]
+      ## The new mode for the filter. Optional. Must be one of 'enabled', 'disabled',
+      ## 'monitoring'.
+
+  AdvancedDdosProtectionInfraPrefix* = ref object of RootObj
+    comment*: string
+      ## An optional comment describing the allowlist prefix.
+    created_on*: string
+      ## The creation timestamp of the allowlist prefix.
+    enabled*: bool
+      ## Whether to enable the allowlist prefix into effect. Defaults to false.
+    id*: string
+      ## The unique ID of the allowlist prefix.
+    modified_on*: string
+      ## The last modification timestamp of the allowlist prefix.
+    prefix*: string
+      ## The allowlist prefix in CIDR format.
+
+  AdvancedDdosProtectionInfraPrefixUpdate* = ref object of RootObj
+    comment*: Option[string]
+      ## A comment describing the allowlist prefix. Optional.
+    enabled*: Option[bool]
+      ## Whether to enable the allowlist prefix into effect. Optional.
+
+  AdvancedDdosProtectionNewDnsProtectionRule* = ref object of RootObj
+    block_any_queries*: Option[bool]
+      ## Whether to block DNS ANY queries. Optional. Defaults to true.
+    burst_sensitivity*: string
+      ## The burst sensitivity. Must be one of 'low', 'medium', 'high'.
+    mode*: string
+      ## The mode for DNS Protection. Must be one of 'enabled', 'disabled', 'monitoring'.
+    name*: string
+      ## The name of the DNS Protection rule. Value is relative to the 'scope' setting.
+      ## For 'global' scope, name should be 'global'. For either the 'region' or
+      ## 'datacenter' scope, name should be the actual name of the region or datacenter,
+      ## e.g., 'wnam' or 'lax'.
+    profile_sensitivity*: string
+      ## The profile sensitivity. Recommended setting is 'low'. Must be one of 'low',
+      ## 'medium', 'high', or 'very_high'.
+    rate_sensitivity*: string
+      ## The rate sensitivity. Must be one of 'low', 'medium', 'high'.
+    scope*: string
+      ## The scope for the DNS Protection rule. Must be one of 'global', 'region', or
+      ## 'datacenter'.
+
+  AdvancedDdosProtectionNewExpressionFilter* = ref object of RootObj
+    expression*: string
+      ## The filter expression.
+    mode*: string
+      ## The filter's mode. Must be one of 'enabled', 'disabled', 'monitoring'.
+
+  AdvancedDdosProtectionNewInfraPrefix* = ref object of RootObj
+    comment*: string
+      ## An comment describing the allowlist prefix.
+    enabled*: bool
+      ## Whether to enable the allowlist prefix into effect.
+    prefix*: string
+      ## The allowlist prefix to add in CIDR format.
+
+  AdvancedDdosProtectionNewPrefix* = ref object of RootObj
+    comment*: string
+      ## A comment describing the prefix.
+    excluded*: bool
+      ## Whether to exclude the prefix from protection.
+    prefix*: string
+      ## The prefix to add in CIDR format.
+
+  AdvancedDdosProtectionNewSynProtectionRule* = ref object of RootObj
+    burst_sensitivity*: string
+      ## The burst sensitivity. Must be one of 'low', 'medium', 'high'.
+    mitigation_type*: Option[string]
+      ## The type of mitigation. Must be one of 'challenge' or 'retransmit'. Optional.
+      ## Defaults to 'challenge'.
+    mode*: string
+      ## The mode for SYN Protection. Must be one of 'enabled', 'disabled', 'monitoring'.
+    name*: string
+      ## The name of the SYN Protection rule. Value is relative to the 'scope' setting.
+      ## For 'global' scope, name should be 'global'. For either the 'region' or
+      ## 'datacenter' scope, name should be the actual name of the region or datacenter,
+      ## e.g., 'wnam' or 'lax'.
+    rate_sensitivity*: string
+      ## The rate sensitivity. Must be one of 'low', 'medium', 'high'.
+    scope*: string
+      ## The scope for the SYN Protection rule. Must be one of 'global', 'region', or
+      ## 'datacenter'.
+
+  AdvancedDdosProtectionNewTcpFlowProtectionRule* = ref object of RootObj
+    burst_sensitivity*: string
+      ## The burst sensitivity. Must be one of 'low', 'medium', 'high'.
+    mode*: string
+      ## The mode for the TCP Flow Protection. Must be one of 'enabled', 'disabled',
+      ## 'monitoring'.
+    name*: string
+      ## The name of the TCP Flow Protection rule. Value is relative to the 'scope'
+      ## setting. For 'global' scope, name should be 'global'. For either the 'region' or
+      ## 'datacenter' scope, name should be the actual name of the region or datacenter,
+      ## e.g., 'wnam' or 'lax'.
+    rate_sensitivity*: string
+      ## The rate sensitivity. Must be one of 'low', 'medium', 'high'.
+    scope*: string
+      ## The scope for the TCP Flow Protection rule.
+
+  AdvancedDdosProtectionPrefix* = ref object of RootObj
+    comment*: string
+      ## A comment describing the prefix.
+    created_on*: string
+      ## The creation timestamp of the prefix.
+    excluded*: bool
+      ## Whether to exclude the prefix from protection.
+    id*: string
+      ## The unique ID of the prefix.
+    modified_on*: string
+      ## The last modification timestamp of the prefix.
+    prefix*: string
+      ## The prefix in CIDR format.
+
+  AdvancedDdosProtectionPrefixUpdate* = ref object of RootObj
+    comment*: Option[string]
+      ## A new comment for the prefix. Optional.
+    excluded*: Option[bool]
+      ## Whether to exclude the prefix from protection. Optional.
+
+  AdvancedDdosProtectionProtectionStatus* = ref object of RootObj
+    enabled*: bool
+
+  AdvancedDdosProtectionSynProtectionRule* = ref object of RootObj
+    burst_sensitivity*: string
+      ## The burst sensitivity. Must be one of 'low', 'medium', 'high'.
+    created_on*: string
+      ## The creation timestamp of the SYN Protection rule.
+    id*: string
+      ## The unique ID of the SYN Protection rule.
+    mitigation_type*: string
+      ## The type of mitigation for SYN Protection. Must be one of 'challenge' or
+      ## 'retransmit'.
+    mode*: string
+      ## The mode for SYN Protection. Must be one of 'enabled', 'disabled', 'monitoring'.
+    modified_on*: string
+      ## The last modification timestamp of the SYN Protection rule.
+    name*: string
+      ## The name of the SYN Protection rule. Value is relative to the 'scope' setting.
+      ## For 'global' scope, name should be 'global'. For either the 'region' or
+      ## 'datacenter' scope, name should be the actual name of the region or datacenter,
+      ## e.g., 'wnam' or 'lax'.
+    rate_sensitivity*: string
+      ## The rate sensitivity. Must be one of 'low', 'medium', 'high'.
+    scope*: string
+      ## The scope for the SYN Protection rule. Must be one of 'global', 'region', or
+      ## 'datacenter'.
+
+  AdvancedDdosProtectionSynProtectionRuleUpdate* = ref object of RootObj
+    burst_sensitivity*: Option[string]
+      ## The new burst sensitivity. Optional. Must be one of 'low', 'medium', 'high'.
+    mitigation_type*: Option[string]
+      ## The new mitigation type. Optional. Must be one of 'challenge' or 'retransmit'.
+    mode*: Option[string]
+      ## The new mode for SYN Protection. Optional. Must be one of 'enabled', 'disabled',
+      ## 'monitoring'.
+    rate_sensitivity*: Option[string]
+      ## The new rate sensitivity. Optional. Must be one of 'low', 'medium', 'high'.
+
+  AdvancedDdosProtectionTcpFlowProtectionRule* = ref object of RootObj
+    burst_sensitivity*: string
+      ## The burst sensitivity. Must be one of 'low', 'medium', 'high'.
+    created_on*: string
+      ## The creation timestamp of the TCP Flow Protection rule.
+    id*: string
+      ## The unique ID of the TCP Flow Protection rule.
+    mode*: string
+      ## The mode for TCP Flow Protection. Must be one of 'enabled', 'disabled',
+      ## 'monitoring'.
+    modified_on*: string
+      ## The last modification timestamp of the TCP Flow Protection rule.
+    name*: string
+      ## The name of the TCP Flow Protection rule. Value is relative to the 'scope'
+      ## setting. For 'global' scope, name should be 'global'. For either the 'region' or
+      ## 'datacenter' scope, name should be the actual name of the region or datacenter,
+      ## e.g., 'wnam' or 'lax'.
+    rate_sensitivity*: string
+      ## The rate sensitivity. Must be one of 'low', 'medium', 'high'.
+    scope*: string
+      ## The scope for the TCP Flow Protection rule. Must be one of 'global', 'region',
+      ## or 'datacenter'.
+
+  AdvancedDdosProtectionTcpFlowProtectionRuleUpdate* = ref object of RootObj
+    burst_sensitivity*: Option[string]
+      ## The new burst sensitivity. Optional. Must be one of 'low', 'medium', 'high'.
+    mode*: Option[string]
+      ## The new mode for TCP Flow Protection. Optional. Must be one of 'enabled',
+      ## 'disabled', 'monitoring'.
+    rate_sensitivity*: Option[string]
+      ## The new rate sensitivity. Optional. Must be one of 'low', 'medium', 'high'.
+
+  AdvancedDdosProtectionUpdateProtectionStatus* = ref object of RootObj
+    enabled*: bool
+      ## Enables or disables protection.
+
+  AdvancedDdosProtectionApiResponseCollection* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result_info*: Option[JsonNode]
+
+  AdvancedDdosProtectionApiResponseCommon* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+
+  AdvancedDdosProtectionApiResponseCommonFailure* = ref object of RootObj
+    errors*: JsonNode
+    messages*: JsonNode
+    result*: Option[JsonNode]
+    success*: bool
+      ## Whether the API call was successful.
+
+  AdvancedDdosProtectionApiResponseCommonPaginated* = AdvancedDdosProtectionApiResponseCollection
+
+  AdvancedDdosProtectionDnsProtectionRuleListResponse* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result_info*: Option[JsonNode]
+    result*: Option[seq[AdvancedDdosProtectionDnsProtectionRule]]
+
+  AdvancedDdosProtectionDnsProtectionRuleResponse* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[AdvancedDdosProtectionDnsProtectionRule]
+
+  AdvancedDdosProtectionExpressionFilterListResponse* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result_info*: Option[JsonNode]
+    result*: Option[seq[AdvancedDdosProtectionExpressionFilter]]
+
+  AdvancedDdosProtectionExpressionFilterResponse* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[AdvancedDdosProtectionExpressionFilter]
+
+  AdvancedDdosProtectionIdentifier* = string
+
+  AdvancedDdosProtectionInfraPrefixListResponse* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result_info*: Option[JsonNode]
+    result*: Option[seq[AdvancedDdosProtectionInfraPrefix]]
+
+  AdvancedDdosProtectionInfraPrefixResponse* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[AdvancedDdosProtectionInfraPrefix]
+
+  AdvancedDdosProtectionMessages* = seq[JsonNode]
+
+  AdvancedDdosProtectionPrefixListResponse* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result_info*: Option[JsonNode]
+    result*: Option[seq[AdvancedDdosProtectionPrefix]]
+
+  AdvancedDdosProtectionPrefixResponse* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[AdvancedDdosProtectionPrefix]
+
+  AdvancedDdosProtectionProtectionStatusResponse* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[AdvancedDdosProtectionProtectionStatus]
+
+  AdvancedDdosProtectionSynProtectionRuleListResponse* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result_info*: Option[JsonNode]
+    result*: Option[seq[AdvancedDdosProtectionSynProtectionRule]]
+
+  AdvancedDdosProtectionSynProtectionRuleResponse* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[AdvancedDdosProtectionSynProtectionRule]
+
+  AdvancedDdosProtectionTcpFlowProtectionRuleListResponse* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result_info*: Option[JsonNode]
+    result*: Option[seq[AdvancedDdosProtectionTcpFlowProtectionRule]]
+
+  AdvancedDdosProtectionTcpFlowProtectionRuleResponse* = ref object of RootObj
+    errors*: AdvancedDdosProtectionMessages
+    messages*: AdvancedDdosProtectionMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[AdvancedDdosProtectionTcpFlowProtectionRule]
+
+  AdvancedDdosProtectionUuid* = string
 
   AiAuditApiResponseCommon* = ref object of RootObj
     errors*: seq[AiAuditApiMessage]
@@ -6807,7 +7233,7 @@ type
     code*: int64
       ## Code that identifies the event that occurred.
     locations*: Option[seq[string]]
-      ## JSONPath location(s) in the schema where these events were encountered.  See[ht
+      ## JSONPath location(s) in the schema where these events were encountered.  See [ht
       ## tps://goessner.net/articles/JsonPath/](https://goessner.net/articles/JsonPath/)
       ## for JSONPath specification.
     message*: Option[string]
@@ -7656,7 +8082,6 @@ type
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful
-    result_info*: Option[BillSubsApiResultInfo]
 
   BillSubsApiCanSubscribe* = bool
 
@@ -7944,7 +8369,7 @@ type
     price*: Option[BillSubsApiPrice]
     rate_plan*: Option[BillSubsApiRatePlan]
     state*: Option[BillSubsApiState]
-    zone*: Option[BillSubsApiZone]
+    zone*: Option[JsonNode]
 
   BillSubsApiSubscriptionV2* = ref object of RootObj
     app*: Option[JsonNode]
@@ -7959,7 +8384,7 @@ type
     price*: Option[BillSubsApiPrice]
     rate_plan*: Option[BillSubsApiRatePlan]
     state*: Option[BillSubsApiState]
-    zone*: Option[BillSubsApiZone]
+    zone*: Option[JsonNode]
 
   BillSubsApiSubscriptionResponse* = ref object of RootObj
     app*: Option[JsonNode]
@@ -7974,7 +8399,7 @@ type
     price*: Option[BillSubsApiPrice]
     rate_plan*: Option[BillSubsApiRatePlan]
     state*: Option[BillSubsApiState]
-    zone*: Option[BillSubsApiZone]
+    zone*: Option[JsonNode]
 
   BillSubsApiType* = string
 
@@ -8366,6 +8791,206 @@ type
       ## Contains the array of cost and usage records.
     success*: bool
       ## Indicates whether the API call was successful.
+
+  BillingSpendPoliciesApiResponseCommonFailure* = ref object of RootObj
+    ## Represents a failed API response.
+    errors*: seq[BillingSpendPoliciesMessage]
+      ## Contains error details describing why the request failed.
+    messages*: seq[BillingSpendPoliciesMessage]
+      ## Contains informational notices about the response.
+    result*: Option[JsonNode]
+      ## Contains the response payload (always null on failure).
+    success*: bool
+      ## Indicates whether the API call was successful.
+
+  BillingSpendPoliciesApiResponseCommonSuccess* = ref object of RootObj
+    ## Represents a successful API response.
+    errors*: seq[BillingSpendPoliciesMessage]
+      ## Always empty on success.
+    messages*: seq[BillingSpendPoliciesMessage]
+      ## Contains informational notices about the response.
+    success*: bool
+      ## Indicates whether the API call was successful.
+
+  BillingSpendPoliciesIdentifier* = string
+
+  BillingSpendPoliciesMessage* = ref object of RootObj
+    ## Represents an API notice or error detail.
+    code*: Option[int64]
+      ## Identifies the error or notice type.
+    message*: string
+      ## Describes the error or notice.
+
+  BillingSpendPoliciesPolicy* = ref object of RootObj
+    ## A spend policy.
+    account_id*: int64
+      ## Internal numeric ID of the account that owns the policy. This is not the account
+      ## tag used in the path.
+    action*: BillingSpendPoliciesPolicyAction
+    current_state*: Option[BillingSpendPoliciesPolicyCurrentState]
+    enabled*: bool
+      ## Whether the policy is evaluated.
+    id*: BillingSpendPoliciesPolicyId
+    name*: string
+      ## Display name of the policy.
+    notification_email*: string
+      ## Email address that receives notifications. An empty string when none is set.
+    product_id*: BillingSpendPoliciesProductId
+    threshold_cents*: int64
+      ## The spend threshold for the current billing period, in US cents.
+    version*: int64
+      ## Optimistic-concurrency version. It starts at 1 and goes up by one on every
+      ## update or delete. This value is also returned in `ETag`.
+
+  BillingSpendPoliciesPolicyAction* = enum
+    ## The action taken when the threshold is reached. `notification` sends an email to
+    ## `notification_email`. `usage_block` blocks further usage of the product until
+    ## the end of the billing period. Raising the threshold above the current balance,
+    ## disabling the policy, or deleting it lifts the block early.
+    notification = "notification"
+    usageBlock = "usage_block"
+
+  BillingSpendPoliciesPolicyActivityEvent* = ref object of RootObj
+    action*: string
+    actor*: string
+      ## Verified actor identifier, unknown when absent, or trusted internal actor.
+    details*: JsonNode
+    id*: string
+    occurred_at*: string
+    policy_id*: BillingSpendPoliciesPolicyId
+    policy_version*: int64
+    product_id*: string
+
+  BillingSpendPoliciesPolicyActivityResponse* = ref object of RootObj
+    ## A successful response containing spend policy activity.
+    errors*: seq[BillingSpendPoliciesMessage]
+      ## Always empty on success.
+    messages*: seq[BillingSpendPoliciesMessage]
+      ## Contains informational notices about the response.
+    success*: bool
+      ## Indicates whether the API call was successful.
+    result*: seq[BillingSpendPoliciesPolicyActivityEvent]
+    result_info*: JsonNode
+
+  BillingSpendPoliciesPolicyAuditEntry* = ref object of RootObj
+    ## A state transition recorded when the policy was evaluated against the account's
+    ## balance.
+    action*: BillingSpendPoliciesPolicyAction
+    balance_cents*: int64
+      ## The account's balance for the product at evaluation time, in US cents.
+    billing_period_end*: string
+      ## Exclusive end of the billing period that was evaluated.
+    billing_period_start*: string
+      ## Inclusive start of the billing period that was evaluated.
+    created_at*: string
+      ## When the entry was recorded.
+    policy_version*: int64
+      ## The policy `version` that was evaluated.
+    reason*: string
+      ## A human-readable explanation of the trigger.
+    source*: string
+      ## What caused the evaluation. `kafka` means a balance update. `policy_revision`
+      ## means a change to the policy.
+    threshold_cents*: int64
+      ## The policy threshold at evaluation time, in US cents.
+    trigger*: string
+      ## The state the balance moved into. `approaching_limit` means the balance is at
+      ## least 80% of the threshold (rounded up to a whole cent), but below the
+      ## threshold. `limit_reached` means the balance reached or exceeded the threshold.
+
+  BillingSpendPoliciesPolicyAuditResponse* = ref object of RootObj
+    ## A successful response containing spend policy audit entries.
+    errors*: seq[BillingSpendPoliciesMessage]
+      ## Always empty on success.
+    messages*: seq[BillingSpendPoliciesMessage]
+      ## Contains informational notices about the response.
+    success*: bool
+      ## Indicates whether the API call was successful.
+    result*: seq[BillingSpendPoliciesPolicyAuditEntry]
+      ## Audit entries, newest first. An empty array when there are none.
+
+  BillingSpendPoliciesPolicyCurrentState* = ref object of RootObj
+    ## Read-only state on list/get responses, evaluated from the latest owning
+    ## projector snapshot at request time, independently of the API replica.
+    ## Configuration enabled/version/ETag do not change when a cycle rolls over. Audit
+    ## history remains unchanged. Missing during a rolling upgrade or on mutation
+    ## responses; clients must treat missing state as unavailable. Balances are
+    ## asynchronous estimates, not a synchronous usage read.
+    balance_cents*: Option[int64]
+    billing_period_end*: Option[string]
+    billing_period_start*: Option[string]
+    enforcement*: Option[JsonNode]
+      ## Durable desired cap and delivery bookkeeping for this policy, or null if no
+      ## owned effect exists. Separate from threshold evaluation: pending/leased/retry
+      ## can lag the new billing period. Succeeded with equal generations means delivery
+      ## completed, not an EWC readback.
+    evaluated_at*: string
+      ## Evaluation time; not the timestamp of the latest usage event.
+    status*: string
+      ## Threshold evaluation, not proof of an edge cap. No current active period yields
+      ## no_current_period for enabled policies; failed aggregate reads yield unavailable
+      ## for enabled policies. Disabled policies report disabled. Neither
+      ## no_current_period nor unavailable implies a zero balance or below-limit state.
+      ## Operators may disable current-state reads, in which case current_state is
+      ## omitted.
+
+  BillingSpendPoliciesPolicyDeleteResponse* = ref object of RootObj
+    ## A successful response confirming that a spend policy was deleted.
+    errors*: seq[BillingSpendPoliciesMessage]
+      ## Always empty on success.
+    messages*: seq[BillingSpendPoliciesMessage]
+      ## Contains informational notices about the response.
+    success*: bool
+      ## Indicates whether the API call was successful.
+    result*: JsonNode
+
+  BillingSpendPoliciesPolicyId* = string
+
+  BillingSpendPoliciesPolicyInput* = ref object of RootObj
+    ## A spend policy as sent on create and on full replacement. Unknown fields and
+    ## trailing JSON are rejected. Only the first 1 MiB of the body is read.
+    action*: BillingSpendPoliciesPolicyAction
+    enabled*: bool
+      ## Whether the policy is evaluated.
+    name*: string
+      ## Display name of the policy. After surrounding whitespace is trimmed, it must be
+      ## 1 to 200 bytes long. The value is stored as sent, untrimmed.
+    notification_email*: Option[string]
+      ## Email address that receives notifications. Required when `action` is
+      ## `notification`. When set, it must be a bare address (`user@example.com`);
+      ## display-name forms such as `Name <user@example.com>` are rejected.
+    product_id*: BillingSpendPoliciesProductId
+    threshold_cents*: int64
+      ## The spend threshold for the current billing period, in US cents. Must be greater
+      ## than zero.
+
+  BillingSpendPoliciesPolicyListResponse* = ref object of RootObj
+    ## A successful response containing a list of spend policies.
+    errors*: seq[BillingSpendPoliciesMessage]
+      ## Always empty on success.
+    messages*: seq[BillingSpendPoliciesMessage]
+      ## Contains informational notices about the response.
+    success*: bool
+      ## Indicates whether the API call was successful.
+    result*: seq[BillingSpendPoliciesPolicy]
+      ## The account's spend policies. An empty array when there are none.
+
+  BillingSpendPoliciesPolicyResponse* = ref object of RootObj
+    ## A successful response containing one spend policy.
+    errors*: seq[BillingSpendPoliciesMessage]
+      ## Always empty on success.
+    messages*: seq[BillingSpendPoliciesMessage]
+      ## Contains informational notices about the response.
+    success*: bool
+      ## Indicates whether the API call was successful.
+    result*: BillingSpendPoliciesPolicy
+
+  BillingSpendPoliciesProductId* = enum
+    ## The product the policy applies to: `workers` or `durable_objects`. Each
+    ## product's balance and policies are separate. Both products support
+    ## `notification` and `usage_block` policies on create and update.
+    workers = "workers"
+    durableObjects = "durable_objects"
 
   BotManagementAiBotsMigrationOptOut* = bool
 
@@ -8913,7 +9538,7 @@ type
   BuildsAPIResponse* = ref object of RootObj
     errors*: seq[BuildsApiError]
     messages*: seq[string]
-    result*: Option[JsonNode]
+    result*: JsonNode
     result_info*: Option[BuildsPaginationInfo]
     success*: bool
 
@@ -9057,7 +9682,8 @@ type
 
   BuildsCreateWorkerBuildSettingsInput* = ref object of RootObj
     ## Build and deploy settings when creating a Worker build configuration
-    build_caching_enabled*: Option[JsonNode]
+    build_caching_enabled*: Option[bool]
+      ## Whether builds reuse cached dependencies and build artifacts.
     build_command*: BuildsBuildCommand
     build_token_uuid*: BuildsBuildTokenUuid
     deploy_command*: BuildsDeployCommand
@@ -9400,7 +10026,7 @@ type
   CachePurgeFlexPurgeByHostnames* = ref object of RootObj
     hosts*: Option[seq[string]]
       ## Hostnames, such as `www.example.com`. Targets all content cached for these
-      ## hostnames. See [Purge cache byhostname](https://developers.cloudflare.com/cache
+      ## hostnames. See [Purge cache by hostname](https://developers.cloudflare.com/cache
       ## /how-to/purge-cache/purge-by-hostname/).
 
   CachePurgeFlexPurgeByPrefixes* = ref object of RootObj
@@ -9408,20 +10034,20 @@ type
       ## URL prefixes, each a hostname followed by a path, such as
       ## `www.example.com/blog/`. Targets all content whose URL starts with one of these
       ## prefixes. Do not include a scheme, query string, or fragment. See [Purge cache
-      ## byprefix](https://developers.cloudflare.com/cache/how-to/purge-cache/purge_by_p
+      ## by prefix](https://developers.cloudflare.com/cache/how-to/purge-cache/purge_by_p
       ## refix/).
 
   CachePurgeFlexPurgeByTags* = ref object of RootObj
     tags*: Option[seq[string]]
       ## Cache tags. Targets all content whose `Cache-Tag` response header contains at
-      ## least one of these tags. See [Purge cache bycache-tags](https://developers.clou
+      ## least one of these tags. See [Purge cache by cache-tags](https://developers.clou
       ## dflare.com/cache/how-to/purge-cache/purge-by-tags/).
 
   CachePurgeSingleFile* = ref object of RootObj
     files*: Option[seq[string]]
       ## Full URLs, such as `https://www.example.com/css/styles.css`. Targets the content
       ## cached for each URL. If your cache key includes request headers, send objects
-      ## with `url` and `headers` instead. See [Purge bysingle-file](https://developers.
+      ## with `url` and `headers` instead. See [Purge by single-file](https://developers.
       ## cloudflare.com/cache/how-to/purge-cache/purge-by-single-file/).
 
   CachePurgeSingleFileWithUrlAndHeaders* = ref object of RootObj
@@ -9434,7 +10060,7 @@ type
       ## When you send the `Origin` header, include the scheme and hostname. Include the
       ## port unless it is the default for the scheme: 80 for `http`, 443 for `https`.
       ##
-      ## See [Purge bysingle-file](https://developers.cloudflare.com/cache/how-to/purge-
+      ## See [Purge by single-file](https://developers.cloudflare.com/cache/how-to/purge-
       ## cache/purge-by-single-file/).
       ##
 
@@ -10425,7 +11051,7 @@ type
 
   CcContainersCreateImageRegistryRequestBody* = ref object of RootObj
     ## Configuration for connecting Containers to a supported private external image
-    ## registry. See [Imagemanagement](https://developers.cloudflare.com/containers/pl
+    ## registry. See [Image management](https://developers.cloudflare.com/containers/pl
     ## atform-details/image-management/)
     ## for supported providers and credential setup instructions.
     ##
@@ -10481,7 +11107,7 @@ type
     ## Credentials for authenticating to a private external image registry. Store the
     ## private credential in [Secrets
     ## Store](https://developers.cloudflare.com/secrets-store/)
-    ## before calling the API. Refer to [Imagemanagement](https://developers.cloudflar
+    ## before calling the API. Refer to [Image management](https://developers.cloudflar
     ## e.com/containers/platform-details/image-management/)
     ## for the credential required by each supported registry provider.
     ##
@@ -16849,6 +17475,7 @@ type
       ## When the nameserver set was created.
     id*: DnsSettingsNameserverSetId
     ip_set*: DnsSettingsNameserverSetIpSet
+    name*: DnsSettingsNameserverSetName
     advanced*: bool
       ## Whether the nameserver set uses Advanced anycast groups.
     nameservers*: seq[DnsSettingsNameserverSetAdvancedResponseMember]
@@ -16864,6 +17491,7 @@ type
     advanced*: Option[bool]
       ## Whether to allocate the nameservers from distinct Advanced anycast groups.
     ip_set*: Option[DnsSettingsNameserverSetIpSet]
+    name*: DnsSettingsNameserverSetName
     nameservers*: seq[DnsSettingsNameserverSetCreateMember]
       ## Lists each nameserver and the number of addresses to allocate to it. Requires a
       ## unique name for each entry in the set.
@@ -16882,6 +17510,16 @@ type
 
   DnsSettingsNameserverSetIpv6Addresses* = seq[string]
 
+  DnsSettingsNameserverSetName* = string
+
+  DnsSettingsNameserverSetPatch* = ref object of RootObj
+    ## Updates only the customer-defined name. All other fields are rejected, even if
+    ## unchanged. An empty object or the current name succeeds without changing the
+    ## set. A null name is invalid. Requires the account-scoped creation entitlements,
+    ## including eligibility for the set's current IP set and the Advanced entitlement
+    ## for an Advanced set.
+    name*: Option[DnsSettingsNameserverSetName]
+
   DnsSettingsNameserverSetResponse* = ref object of RootObj
 
   DnsSettingsNameserverSetResponseBase* = ref object of RootObj
@@ -16889,6 +17527,7 @@ type
       ## When the nameserver set was created.
     id*: DnsSettingsNameserverSetId
     ip_set*: DnsSettingsNameserverSetIpSet
+    name*: DnsSettingsNameserverSetName
 
   DnsSettingsNameserverSetResponseMember* = ref object of RootObj
     ipv4*: DnsSettingsNameserverSetIpv4Addresses
@@ -16900,6 +17539,7 @@ type
       ## When the nameserver set was created.
     id*: DnsSettingsNameserverSetId
     ip_set*: DnsSettingsNameserverSetIpSet
+    name*: DnsSettingsNameserverSetName
     advanced*: bool
       ## Whether the nameserver set uses Advanced anycast groups.
     nameservers*: seq[DnsSettingsNameserverSetResponseMember]
@@ -17169,266 +17809,6 @@ type
     proxied*: Option[bool]
     status*: Option[int64]
 
-  DosDnsProtectionRule* = ref object of RootObj
-    block_any_queries*: bool
-      ## Whether to block DNS ANY queries. Defaults to true.
-    burst_sensitivity*: string
-      ## The burst sensitivity. Must be one of 'low', 'medium', 'high'.
-    created_on*: string
-      ## The creation timestamp of the DNS Protection rule.
-    id*: string
-      ## The unique ID of the DNS Protection rule.
-    mode*: string
-      ## The mode for DNS Protection. Must be one of 'enabled', 'disabled', 'monitoring'.
-    modified_on*: string
-      ## The last modification timestamp of the DNS Protection rule.
-    name*: string
-      ## The name of the DNS Protection rule. Value is relative to the 'scope' setting.
-      ## For 'global' scope, name should be 'global'. For either the 'region' or
-      ## 'datacenter' scope, name should be the actual name of the region or datacenter,
-      ## e.g., 'wnam' or 'lax'.
-    profile_sensitivity*: string
-      ## The profile sensitivity. Recommended setting is 'low'. Must be one of 'low',
-      ## 'medium', 'high', or 'very_high'.
-    rate_sensitivity*: string
-      ## The rate sensitivity. Must be one of 'low', 'medium', 'high'.
-    scope*: string
-      ## The scope for the DNS Protection rule. Must be one of 'global', 'region', or
-      ## 'datacenter'.
-
-  DosDnsProtectionRuleUpdate* = ref object of RootObj
-    block_any_queries*: Option[bool]
-      ## The new value for whether to block DNS ANY queries. Optional.
-    burst_sensitivity*: Option[string]
-      ## The new burst sensitivity. Optional. Must be one of 'low', 'medium', 'high'.
-    mode*: Option[string]
-      ## The new mode for DNS Protection. Optional. Must be one of 'enabled', 'disabled',
-      ## 'monitoring'.
-    profile_sensitivity*: Option[string]
-      ## The new profile sensitivity. Optional. Recommended setting is 'low'. Must be one
-      ## of 'low', 'medium', 'high', or 'very_high'.
-    rate_sensitivity*: Option[string]
-      ## The new rate sensitivity. Optional. Must be one of 'low', 'medium', 'high'.
-
-  DosExpressionFilter* = ref object of RootObj
-    created_on*: string
-      ## The creation timestamp of the expression filter.
-    expression*: string
-      ## The filter expression.
-    id*: string
-      ## The unique ID of the expression filter.
-    mode*: string
-      ## The filter's mode. Must be one of 'enabled', 'disabled', 'monitoring'.
-    modified_on*: string
-      ## The last modification timestamp of the expression filter.
-
-  DosExpressionFilterUpdate* = ref object of RootObj
-    expression*: Option[string]
-      ## The new filter expression. Optional.
-    mode*: Option[string]
-      ## The new mode for the filter. Optional. Must be one of 'enabled', 'disabled',
-      ## 'monitoring'.
-
-  DosInfraPrefix* = ref object of RootObj
-    comment*: string
-      ## An optional comment describing the allowlist prefix.
-    created_on*: string
-      ## The creation timestamp of the allowlist prefix.
-    enabled*: bool
-      ## Whether to enable the allowlist prefix into effect. Defaults to false.
-    id*: string
-      ## The unique ID of the allowlist prefix.
-    modified_on*: string
-      ## The last modification timestamp of the allowlist prefix.
-    prefix*: string
-      ## The allowlist prefix in CIDR format.
-
-  DosInfraPrefixUpdate* = ref object of RootObj
-    comment*: Option[string]
-      ## A comment describing the allowlist prefix. Optional.
-    enabled*: Option[bool]
-      ## Whether to enable the allowlist prefix into effect. Optional.
-
-  DosNewDnsProtectionRule* = ref object of RootObj
-    block_any_queries*: Option[bool]
-      ## Whether to block DNS ANY queries. Optional. Defaults to true.
-    burst_sensitivity*: string
-      ## The burst sensitivity. Must be one of 'low', 'medium', 'high'.
-    mode*: string
-      ## The mode for DNS Protection. Must be one of 'enabled', 'disabled', 'monitoring'.
-    name*: string
-      ## The name of the DNS Protection rule. Value is relative to the 'scope' setting.
-      ## For 'global' scope, name should be 'global'. For either the 'region' or
-      ## 'datacenter' scope, name should be the actual name of the region or datacenter,
-      ## e.g., 'wnam' or 'lax'.
-    profile_sensitivity*: string
-      ## The profile sensitivity. Recommended setting is 'low'. Must be one of 'low',
-      ## 'medium', 'high', or 'very_high'.
-    rate_sensitivity*: string
-      ## The rate sensitivity. Must be one of 'low', 'medium', 'high'.
-    scope*: string
-      ## The scope for the DNS Protection rule. Must be one of 'global', 'region', or
-      ## 'datacenter'.
-
-  DosNewExpressionFilter* = ref object of RootObj
-    expression*: string
-      ## The filter expression.
-    mode*: string
-      ## The filter's mode. Must be one of 'enabled', 'disabled', 'monitoring'.
-
-  DosNewInfraPrefix* = ref object of RootObj
-    comment*: string
-      ## An comment describing the allowlist prefix.
-    enabled*: bool
-      ## Whether to enable the allowlist prefix into effect.
-    prefix*: string
-      ## The allowlist prefix to add in CIDR format.
-
-  DosNewPrefix* = ref object of RootObj
-    comment*: string
-      ## A comment describing the prefix.
-    excluded*: bool
-      ## Whether to exclude the prefix from protection.
-    prefix*: string
-      ## The prefix to add in CIDR format.
-
-  DosNewSynProtectionRule* = ref object of RootObj
-    burst_sensitivity*: string
-      ## The burst sensitivity. Must be one of 'low', 'medium', 'high'.
-    mitigation_type*: Option[string]
-      ## The type of mitigation. Must be one of 'challenge' or 'retransmit'. Optional.
-      ## Defaults to 'challenge'.
-    mode*: string
-      ## The mode for SYN Protection. Must be one of 'enabled', 'disabled', 'monitoring'.
-    name*: string
-      ## The name of the SYN Protection rule. Value is relative to the 'scope' setting.
-      ## For 'global' scope, name should be 'global'. For either the 'region' or
-      ## 'datacenter' scope, name should be the actual name of the region or datacenter,
-      ## e.g., 'wnam' or 'lax'.
-    rate_sensitivity*: string
-      ## The rate sensitivity. Must be one of 'low', 'medium', 'high'.
-    scope*: string
-      ## The scope for the SYN Protection rule. Must be one of 'global', 'region', or
-      ## 'datacenter'.
-
-  DosNewTcpFlowProtectionRule* = ref object of RootObj
-    burst_sensitivity*: string
-      ## The burst sensitivity. Must be one of 'low', 'medium', 'high'.
-    mode*: string
-      ## The mode for the TCP Flow Protection. Must be one of 'enabled', 'disabled',
-      ## 'monitoring'.
-    name*: string
-      ## The name of the TCP Flow Protection rule. Value is relative to the 'scope'
-      ## setting. For 'global' scope, name should be 'global'. For either the 'region' or
-      ## 'datacenter' scope, name should be the actual name of the region or datacenter,
-      ## e.g., 'wnam' or 'lax'.
-    rate_sensitivity*: string
-      ## The rate sensitivity. Must be one of 'low', 'medium', 'high'.
-    scope*: string
-      ## The scope for the TCP Flow Protection rule.
-
-  DosPrefix* = ref object of RootObj
-    comment*: string
-      ## A comment describing the prefix.
-    created_on*: string
-      ## The creation timestamp of the prefix.
-    excluded*: bool
-      ## Whether to exclude the prefix from protection.
-    id*: string
-      ## The unique ID of the prefix.
-    modified_on*: string
-      ## The last modification timestamp of the prefix.
-    prefix*: string
-      ## The prefix in CIDR format.
-
-  DosPrefixUpdate* = ref object of RootObj
-    comment*: Option[string]
-      ## A new comment for the prefix. Optional.
-    excluded*: Option[bool]
-      ## Whether to exclude the prefix from protection. Optional.
-
-  DosProtectionStatus* = ref object of RootObj
-    enabled*: bool
-
-  DosSynProtectionRule* = ref object of RootObj
-    burst_sensitivity*: string
-      ## The burst sensitivity. Must be one of 'low', 'medium', 'high'.
-    created_on*: string
-      ## The creation timestamp of the SYN Protection rule.
-    id*: string
-      ## The unique ID of the SYN Protection rule.
-    mitigation_type*: string
-      ## The type of mitigation for SYN Protection. Must be one of 'challenge' or
-      ## 'retransmit'.
-    mode*: string
-      ## The mode for SYN Protection. Must be one of 'enabled', 'disabled', 'monitoring'.
-    modified_on*: string
-      ## The last modification timestamp of the SYN Protection rule.
-    name*: string
-      ## The name of the SYN Protection rule. Value is relative to the 'scope' setting.
-      ## For 'global' scope, name should be 'global'. For either the 'region' or
-      ## 'datacenter' scope, name should be the actual name of the region or datacenter,
-      ## e.g., 'wnam' or 'lax'.
-    rate_sensitivity*: string
-      ## The rate sensitivity. Must be one of 'low', 'medium', 'high'.
-    scope*: string
-      ## The scope for the SYN Protection rule. Must be one of 'global', 'region', or
-      ## 'datacenter'.
-
-  DosSynProtectionRuleUpdate* = ref object of RootObj
-    burst_sensitivity*: Option[string]
-      ## The new burst sensitivity. Optional. Must be one of 'low', 'medium', 'high'.
-    mitigation_type*: Option[string]
-      ## The new mitigation type. Optional. Must be one of 'challenge' or 'retransmit'.
-    mode*: Option[string]
-      ## The new mode for SYN Protection. Optional. Must be one of 'enabled', 'disabled',
-      ## 'monitoring'.
-    rate_sensitivity*: Option[string]
-      ## The new rate sensitivity. Optional. Must be one of 'low', 'medium', 'high'.
-
-  DosTcpFlowProtectionRule* = ref object of RootObj
-    burst_sensitivity*: string
-      ## The burst sensitivity. Must be one of 'low', 'medium', 'high'.
-    created_on*: string
-      ## The creation timestamp of the TCP Flow Protection rule.
-    id*: string
-      ## The unique ID of the TCP Flow Protection rule.
-    mode*: string
-      ## The mode for TCP Flow Protection. Must be one of 'enabled', 'disabled',
-      ## 'monitoring'.
-    modified_on*: string
-      ## The last modification timestamp of the TCP Flow Protection rule.
-    name*: string
-      ## The name of the TCP Flow Protection rule. Value is relative to the 'scope'
-      ## setting. For 'global' scope, name should be 'global'. For either the 'region' or
-      ## 'datacenter' scope, name should be the actual name of the region or datacenter,
-      ## e.g., 'wnam' or 'lax'.
-    rate_sensitivity*: string
-      ## The rate sensitivity. Must be one of 'low', 'medium', 'high'.
-    scope*: string
-      ## The scope for the TCP Flow Protection rule. Must be one of 'global', 'region',
-      ## or 'datacenter'.
-
-  DosTcpFlowProtectionRuleUpdate* = ref object of RootObj
-    burst_sensitivity*: Option[string]
-      ## The new burst sensitivity. Optional. Must be one of 'low', 'medium', 'high'.
-    mode*: Option[string]
-      ## The new mode for TCP Flow Protection. Optional. Must be one of 'enabled',
-      ## 'disabled', 'monitoring'.
-    rate_sensitivity*: Option[string]
-      ## The new rate sensitivity. Optional. Must be one of 'low', 'medium', 'high'.
-
-  DosUpdateProtectionStatus* = ref object of RootObj
-    enabled*: bool
-      ## Enables or disables protection.
-
-  DosApiResponseCollection* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[JsonNode]
-
   DosApiResponseCommon* = ref object of RootObj
     errors*: DosMessages
     messages*: DosMessages
@@ -17442,114 +17822,13 @@ type
     success*: bool
       ## Whether the API call was successful.
 
-  DosApiResponseCommonPaginated* = DosApiResponseCollection
-
   DosAsn* = int64
-
-  DosDnsProtectionRuleListResponse* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[JsonNode]
-    result*: Option[seq[DosDnsProtectionRule]]
-
-  DosDnsProtectionRuleResponse* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[DosDnsProtectionRule]
-
-  DosExpressionFilterListResponse* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[JsonNode]
-    result*: Option[seq[DosExpressionFilter]]
-
-  DosExpressionFilterResponse* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[DosExpressionFilter]
 
   DosIdentifier* = string
 
-  DosInfraPrefixListResponse* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[JsonNode]
-    result*: Option[seq[DosInfraPrefix]]
-
-  DosInfraPrefixResponse* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[DosInfraPrefix]
-
   DosMessages* = seq[JsonNode]
 
-  DosPrefixListResponse* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[JsonNode]
-    result*: Option[seq[DosPrefix]]
-
-  DosPrefixResponse* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[DosPrefix]
-
-  DosProtectionStatusResponse* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[DosProtectionStatus]
-
-  DosSynProtectionRuleListResponse* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[JsonNode]
-    result*: Option[seq[DosSynProtectionRule]]
-
-  DosSynProtectionRuleResponse* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[DosSynProtectionRule]
-
-  DosTcpFlowProtectionRuleListResponse* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[JsonNode]
-    result*: Option[seq[DosTcpFlowProtectionRule]]
-
-  DosTcpFlowProtectionRuleResponse* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[DosTcpFlowProtectionRule]
-
   DosTimestamp* = string
-
-  DosUuid* = string
 
   EmailAuthApprovedSourceResponse* = ref object of RootObj
     ## A single approved sending source
@@ -19081,7 +19360,9 @@ type
     spam_rejection*: JsonNode
       ## Spam-rejection-rate thresholds used to evaluate reputation status.
     suspension_after_hours*: int64
-      ## The grace period before suspension. The value must be a whole number of days.
+      ## The grace period before suspension. The value must be a whole number of days. It
+      ## applies only while grace_started_at is set; when grace_started_at is null, the
+      ## account is not counting down to an automatic suspension.
 
   EmailReputationThreshold* = ref object of RootObj
     at_risk_at*: float64
@@ -19233,7 +19514,9 @@ type
     name*: string
       ## The domain name within the zone. A wildcard is allowed only as the complete
       ## leftmost label (`*.example.com`) and requires the account wildcard Email Sending
-      ## entitlement.
+      ## entitlement. The derived Return-Path hostname, including its bounce prefix, must
+      ## be at most 201 characters after ASCII conversion; wildcards use the base
+      ## hostname.
 
   EmailCreated* = string
 
@@ -19288,6 +19571,174 @@ type
     result*: Option[seq[EmailDnsRecord]]
 
   EmailEmail* = string
+
+  EmailEmailDomain* = ref object of RootObj
+    account_id*: EmailIdentifier
+    claim_release_at*: Option[string]
+      ## When the claim will enter blocked-first release if both ownership records remain
+      ## continuously invalid. Absent outside that recovery period.
+    client_reference*: Option[string]
+      ## Opaque customer enrollment reference supplied at Create. The platform must map
+      ## customers by this reference and EmailDomain ID, never by hostname alone.
+    dns_management*: string
+      ## The customer publishes the returned DNS instructions.
+    dns_records*: Option[seq[EmailEmailDomainDnsRecord]]
+      ## Four immutable assignments, including one Routing MX record. Included on
+      ## single-resource responses and optionally on lists; operation examples show the
+      ## complete set.
+    hostname*: string
+      ## Canonical exact external customer hostname.
+    id*: string
+      ## Stable identifier of this exact domain enrollment.
+    lifecycle_reason*: Option[string]
+      ## Why the resource is leaving the provisioned lifecycle.
+    lifecycle_status*: string
+      ## Resource lifecycle; provisioned does not imply active mail, and completed
+      ## deletion returns HTTP 404.
+    modified_at*: string
+      ## Last state change. Use the opaque change-feed cursor rather than comparing this
+      ## value alone.
+    routing*: JsonNode
+      ## Whether this exact domain can currently receive mail.
+    sending*: JsonNode
+      ## Whether this exact domain can currently send mail.
+    verification*: JsonNode
+      ## Customer DNS ownership status, independent of mail capability readiness.
+
+  EmailEmailDomainCapability* = ref object of RootObj
+    ## Current Sending or Routing availability for the exact domain.
+    reason*: Option[string]
+      ## Machine-readable explanation. V1 reasons: policy_suspended denotes an
+      ## unavailable capability; customer_dns_invalid, customer_dns_indeterminate, and
+      ## verification_invalid reflect customer ownership records; rollout_unacknowledged,
+      ## sending_not_ready, routing_not_ready, worker_unavailable,
+      ## platform_dependency_unavailable, platform_health_unavailable,
+      ## platform_health_stale, platform_dns_invalid, platform_dns_indeterminate,
+      ## publication_invalid, publication_unavailable, and validation_overdue reflect
+      ## service readiness or internal evidence; deleting means teardown is in progress.
+      ## Clients must tolerate unknown future values and treat the capability as
+      ## unavailable.
+    status*: string
+      ## Current capability state. Treat suspended and unknown future values as
+      ## unavailable.
+    uncertainty_expires_at*: Option[string]
+      ## End of the immutable last-known-good lease; present only while degraded.
+
+  EmailEmailDomainChange* = ref object of RootObj
+    email_domain*: Option[JsonNode]
+      ## EmailDomain state at this change. Present only when kind is email_domain; DNS
+      ## assignments are omitted.
+    kind*: string
+      ## Change type. email_domain carries the domain state at this change; tombstone
+      ## records a completed removal.
+    tombstone*: Option[JsonNode]
+      ## Bounded reconciliation record for a completed removal. Present only when kind is
+      ## tombstone.
+
+  EmailEmailDomainChangeCollectionResponse* = ref object of RootObj
+    errors*: seq[JsonNode]
+    messages*: seq[string]
+    platform*: EmailEmailDomainPlatformStatus
+    result*: seq[EmailEmailDomainChange]
+    result_info*: JsonNode
+    success*: bool
+
+  EmailEmailDomainCollectionResponse* = ref object of RootObj
+    errors*: seq[JsonNode]
+    messages*: seq[string]
+    result*: seq[EmailEmailDomain]
+    result_info*: JsonNode
+    success*: bool
+
+  EmailEmailDomainCreate* = ref object of RootObj
+    client_reference*: Option[string]
+      ## Opaque reference for one customer enrollment. Reuse it with the same hostname to
+      ## retry Create safely. Distinct references can enroll the same unverified
+      ## hostname; a hostname alone never identifies a customer.
+    hostname*: string
+      ## Exact external hostname to enroll. After ASCII conversion, the assigned
+      ## Return-Path hostname must be at most 201 characters (191 for the current
+      ## cf-bounce. prefix). Wildcards, provider-zone names, and hostnames inside an
+      ## existing Cloudflare-managed DNS zone are rejected.
+
+  EmailEmailDomainDnsRecord* = ref object of RootObj
+    content*: string
+      ## Assigned target. CNAME targets contain the enrollment token; use the returned
+      ## value verbatim.
+    name*: string
+      ## Exact owner name to publish in the customer's DNS.
+    observed_at*: Option[string]
+      ## Time of the latest accepted observation for this assignment.
+    priority*: Option[int64]
+      ## MX preference; present only for MX records.
+    purpose*: string
+      ## Role of this DNS assignment.
+    required_for*: seq[string]
+      ## Capabilities that depend on this assignment.
+    selector*: Option[string]
+      ## DKIM selector, the first label of name; present only for DKIM assignments. New
+      ## enrollments use cf1 and cf2. Enrollments created before cf1 and cf2 keep s1 and
+      ## s2.
+    `type`*: string
+      ## DNS record type to publish.
+    validation_status*: string
+      ## Observation of the exact customer record.
+    verification_group*: Option[string]
+      ## Either current DKIM alias can establish ownership.
+
+  EmailEmailDomainErrorResponse* = ref object of RootObj
+    errors*: seq[JsonNode]
+      ## One or more structured API errors.
+    messages*: seq[JsonNode]
+      ## Structured messages from the standard API error handler; normally empty on
+      ## success.
+    result*: Option[JsonNode]
+    success*: bool
+      ## Always false for this error envelope.
+
+  EmailEmailDomainPlatformStatus* = ref object of RootObj
+    routing*: JsonNode
+      ## Shared platform Routing gate. A suspended value blocks Routing for every
+      ## EmailDomain regardless of its domain-specific state.
+    sending*: JsonNode
+      ## Shared platform Sending gate. A suspended value blocks Sending for every
+      ## EmailDomain regardless of its domain-specific state.
+
+  EmailEmailDomainResponse* = ref object of RootObj
+    errors*: seq[JsonNode]
+    messages*: seq[string]
+    result*: EmailEmailDomain
+    success*: bool
+
+  EmailEmailDomainTombstone* = ref object of RootObj
+    hostname*: string
+      ## Canonical hostname released by the removal.
+    id*: string
+      ## Identifier of the removed EmailDomain.
+    modified_at*: string
+      ## Time the removal completed.
+    reason*: string
+      ## Why the resource disappeared from the live inventory: deleted by DELETE or
+      ## account deletion; claim_released after 30 days of lost ownership DNS; expired,
+      ## an unverified candidate whose records must be published again under a new
+      ## enrollment; claim_lost, an unverified candidate whose hostname another
+      ## enrollment holds. Clients must tolerate unknown future values.
+
+  EmailEmailDomainVerification* = ref object of RootObj
+    ## Customer DNS ownership status, independent of mail capability readiness.
+    expires_at*: Option[string]
+      ## Expiry of an unclaimed candidate; absent once ownership is claimed.
+    observed_at*: Option[string]
+      ## Time of the latest accepted customer DNS observation.
+    reason*: Option[string]
+      ## Machine-readable explanation. Current values are customer_dns_indeterminate,
+      ## customer_dns_invalid, and platform_dependency_unavailable. Clients must tolerate
+      ## unknown future values and treat ownership as unverified unless status is
+      ## verified.
+    status*: string
+      ## Current ownership-verification result.
+    verified_at*: Option[string]
+      ## Time ownership was first verified for this enrollment.
 
   EmailEmailSettingCreated* = string
 
@@ -19454,8 +19905,8 @@ type
       ## never been evaluated.
     grace_started_at*: Option[string]
       ## When the current At Risk suspension grace period started. This can be later than
-      ## status_since if the grace period was restarted. Null outside At Risk. Automatic
-      ## suspension remains subject to enforcement and suspension exemptions.
+      ## status_since if the grace period was restarted. Null outside At Risk, and null
+      ## when the account cannot be suspended automatically.
     status*: string
       ## The account's current reputation status.
     status_since*: Option[string]
@@ -19888,7 +20339,7 @@ type
       ## country code in the rule.
     value*: Option[string]
       ## The two-letter ISO-3166-1 alpha-2 code to match. For more information, refer to
-      ## [IP Access rules:Parameters](https://developers.cloudflare.com/waf/tools/ip-acc
+      ## [IP Access rules: Parameters](https://developers.cloudflare.com/waf/tools/ip-acc
       ## ess-rules/parameters/#country).
 
   FirewallCreatedOn* = string
@@ -20138,6 +20589,19 @@ type
     success*: bool
       ## Defines whether the API call was successful.
 
+  FirewallPayloadLoggingKey* = ref object of RootObj
+    public_key*: string
+      ## Defines the X25519 public key, as standard base64 of exactly 32 bytes, that
+      ## encrypts matched payloads. Cloudflare stores only the public key; keep the
+      ## private key to decrypt logged payloads.
+
+  FirewallPayloadLoggingKeyResponseSingle* = ref object of RootObj
+    errors*: FirewallMessages
+    messages*: FirewallMessages
+    result*: FirewallPayloadLoggingKey
+    success*: bool
+      ## Defines whether the API call was successful.
+
   FirewallPeriod* = float64
 
   FirewallProducts* = seq[string]
@@ -20376,9 +20840,24 @@ type
     updated_by*: string
       ## Email of the actor who last modified the app, or `unknown` when unavailable.
 
+  FlagshipBaseCondition* = ref object of RootObj
+    attribute*: string
+    operator*: string
+    value*: FlagshipJsonValue
+
   FlagshipChangelogEntry* = ref object of RootObj
 
   FlagshipChangelogPage* = seq[FlagshipChangelogEntry]
+
+  FlagshipCondition* = ref object of RootObj
+
+  FlagshipCondition1* = ref object of RootObj
+
+  FlagshipCondition2* = ref object of RootObj
+
+  FlagshipCondition3* = ref object of RootObj
+
+  FlagshipCondition4* = ref object of RootObj
 
   FlagshipDeleteAppResult* = ref object of RootObj
     id*: string
@@ -20392,14 +20871,33 @@ type
     result*: Option[JsonNode]
     success*: bool
 
+  FlagshipEvaluationError* = ref object of RootObj
+    errors*: seq[FlagshipApiMessage]
+    messages*: seq[FlagshipApiMessage]
+    result*: Option[JsonNode]
+    success*: bool
+    error_code*: string
+      ## OpenFeature error code for the failed evaluation.
+
   FlagshipEvaluationResult* = ref object of RootObj
     flag_key*: string
       ## Key of the evaluated flag.
+    metadata*: Option[JsonNode]
+      ## Key-value metadata associated with the flag. Returned only when the flag has
+      ## metadata.
     reason*: string
       ## Reason the evaluator selected this variation.
     value*: Option[FlagshipJsonValue]
     variant*: string
       ## Name of the variation that supplied the resolved value.
+
+  FlagshipEvaluationRule* = ref object of RootObj
+    conditions*: seq[FlagshipCondition]
+      ## Conditions the context must satisfy for this rule to match. An empty array
+      ## matches all contexts.
+    rollout*: Option[JsonNode]
+    serve_variation*: string
+      ## Variation the API serves when this rule matches. Must be a key in `variations`.
 
   FlagshipFlag* = ref object of RootObj
     default_variation*: string
@@ -20412,7 +20910,10 @@ type
     key*: string
       ## Unique identifier for the flag within an app. Used in all evaluation and SDK
       ## calls.
-    rules*: seq[JsonNode]
+    metadata*: Option[JsonNode]
+      ## Key-value metadata associated with the flag. Returned only when the flag has
+      ## metadata.
+    rules*: seq[FlagshipRule]
       ## Targeting rules evaluated in ascending `priority`; the first matching rule wins.
       ## An empty array means the flag always serves `default_variation`.
     `type`*: string
@@ -20430,11 +20931,42 @@ type
 
   FlagshipJsonValue* = ref object of RootObj
 
+  FlagshipLogicalCondition* = ref object of RootObj
+    clauses*: seq[FlagshipCondition1]
+    logical_operator*: string
+
+  FlagshipLogicalCondition1* = ref object of RootObj
+    clauses*: seq[FlagshipCondition2]
+    logical_operator*: string
+
+  FlagshipLogicalCondition2* = ref object of RootObj
+    clauses*: seq[FlagshipCondition3]
+    logical_operator*: string
+
+  FlagshipLogicalCondition3* = ref object of RootObj
+    clauses*: seq[FlagshipCondition4]
+    logical_operator*: string
+
+  FlagshipLogicalCondition4* = ref object of RootObj
+    clauses*: seq[FlagshipBaseCondition]
+    logical_operator*: string
+
   FlagshipResultInfo* = ref object of RootObj
     count*: int64
       ## Number of items returned in this page.
     cursor*: Option[string]
       ## Cursor to pass back to fetch the next page, or null when this is the last page.
+
+  FlagshipRule* = ref object of RootObj
+    conditions*: seq[FlagshipCondition]
+      ## Conditions the context must satisfy for this rule to match. An empty array
+      ## matches all contexts.
+    priority*: int64
+      ## Evaluation order: the API evaluates rules with lower numbers first. Must be
+      ## unique across the flag's rules.
+    rollout*: Option[JsonNode]
+    serve_variation*: string
+      ## Variation the API serves when this rule matches. Must be a key in `variations`.
 
   FraudApiResponseCommon* = ref object of RootObj
     errors*: FraudMessages
@@ -21107,7 +21639,6 @@ type
     managed_by*: Option[JsonNode]
       ## Parent container details
     name*: string
-      ## Account name
     settings*: Option[JsonNode]
       ## Account settings
     `type`*: IamAccountType
@@ -22283,6 +22814,8 @@ type
     provisioner_id*: Option[IamProvisionerId]
     provisioner_type*: Option[IamProvisionerType]
     status*: Option[IamTokenStatus]
+    token_prefix*: Option[IamTokenPrefix]
+    token_suffix*: Option[IamTokenSuffix]
 
   IamTokenBody* = ref object of RootObj
     condition*: Option[IamCondition]
@@ -22298,16 +22831,22 @@ type
     provisioner_id*: Option[IamProvisionerId]
     provisioner_type*: Option[IamProvisionerType]
     status*: Option[IamTokenStatus]
+    token_prefix*: Option[IamTokenPrefix]
+    token_suffix*: Option[IamTokenSuffix]
 
   IamTokenIdentifier* = string
 
   IamTokenPolicies* = seq[IamPolicyWithPermissionGroupsAndResources]
+
+  IamTokenPrefix* = string
 
   IamTokenStatus* = enum
     ## Status of the token.
     active = "active"
     disabled = "disabled"
     expired = "expired"
+
+  IamTokenSuffix* = string
 
   IamTokenVerifyResponseSingleSegment* = ref object of RootObj
     errors*: IamMessages2
@@ -22330,6 +22869,8 @@ type
     provisioner_id*: Option[IamProvisionerId]
     provisioner_type*: Option[IamProvisionerType]
     status*: Option[IamTokenStatus]
+    token_prefix*: Option[IamTokenPrefix]
+    token_suffix*: Option[IamTokenSuffix]
     value*: Option[IamValue]
 
   IamTwoFactorAuthenticationEnabled* = bool
@@ -22894,14 +23435,19 @@ type
 
   InfraApiTlsSettings* = ref object of RootObj
     ## TLS settings for a connectivity service.
-    ##
-    ## If omitted, the default mode (`verify_full`) is used.
     cert_verification_mode*: string
       ## TLS certificate verification mode for the connection to the origin.
       ##
       ## - `"verify_full"` — verify certificate chain and hostname (default)
       ## - `"verify_ca"` — verify certificate chain only, skip hostname check
       ## - `"disabled"` — do not verify the server certificate at all
+      ##
+      ## `disabled` cannot be combined with `certificate_authority`: a custom CA is
+      ## only used to verify the server certificate.
+    certificate_authority*: Option[string]
+      ## UUID of the custom CA certificate or chain.
+    client_certificate*: Option[string]
+      ## UUID of the mTLS client certificate and private key.
 
   InfraBatchReplaceTargetTagsItem* = ref object of RootObj
     tags*: JsonNode
@@ -24709,7 +25255,7 @@ type
     messages*: LogcontrolMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[LogcontrolCmbConfig]
+    result*: Option[JsonNode]
 
   LogcontrolFlag* = bool
 
@@ -24727,7 +25273,7 @@ type
     messages*: LogcontrolMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[LogcontrolRetentionFlag]
+    result*: Option[JsonNode]
 
   LogcontrolZoneIdentifier* = LogcontrolIdentifier
 
@@ -24769,6 +25315,7 @@ type
     ## Docs](https://developers.cloudflare.com/logs/reference/log-fields/).
     accessRequests = "access_requests"
     accountAbuseProtectionEvents = "account_abuse_protection_events"
+    aiGatewayEvents = "ai_gateway_events"
     auditLogs = "audit_logs"
     auditLogsV2 = "audit_logs_v2"
     bisoUserActions = "biso_user_actions"
@@ -25112,8 +25659,6 @@ type
   LogshareFieldsResponse* = ref object of RootObj
     key*: Option[string]
 
-  LogshareIdentifier* = string
-
   LogshareLogsResponseJsonLines* = ref object of RootObj
 
   LogshareMessages* = seq[JsonNode]
@@ -25138,7 +25683,7 @@ type
     unixnano = "unixnano"
     rfc3339 = "rfc3339"
 
-  LogshareZoneIdentifier* = LogshareIdentifier
+  LogshareZoneIdentifier* = string
 
   MagicTransitApiResponseCommon* = ref object of RootObj
     errors*: MagicTransitMessages
@@ -27479,695 +28024,6 @@ type
     remote*: string
     token*: string
 
-  McnAccountId* = string
-
-  McnApplyProgress* = ref object of RootObj
-    done*: int64
-    total*: int64
-
-  McnAwsTrustPolicy* = ref object of RootObj
-    aws_trust_policy*: string
-    item_type*: string
-
-  McnAzureSetup* = ref object of RootObj
-    azure_consent_url*: string
-    integration_identity_tag*: string
-    item_type*: string
-    tag_cli_command*: string
-
-  McnBadResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: Option[JsonNode]
-
-  McnCatalogSync* = ref object of RootObj
-    description*: string
-    destination_id*: McnCatalogSyncDestinationId
-    destination_type*: McnCatalogSyncDestinationType
-    errors*: Option[JsonNode]
-    id*: McnCatalogSyncId
-    includes_discoveries_until*: Option[string]
-    last_attempted_update_at*: Option[string]
-    last_successful_update_at*: Option[string]
-    last_user_update_at*: string
-    name*: string
-    policy*: string
-    update_mode*: McnCatalogSyncUpdateMode
-
-  McnCatalogSyncDestinationId* = string
-
-  McnCatalogSyncDestinationType* = enum
-    NONE = "NONE"
-    ZEROTRUSTLIST = "ZERO_TRUST_LIST"
-
-  McnCatalogSyncId* = string
-
-  McnCatalogSyncUpdateMode* = enum
-    AUTO = "AUTO"
-    MANUAL = "MANUAL"
-
-  McnCatalogSyncsPrebuiltPoliciesResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: seq[McnCatalogSyncsPrebuiltPolicy]
-
-  McnCatalogSyncsPrebuiltPolicy* = ref object of RootObj
-    applicable_destinations*: seq[McnCatalogSyncDestinationType]
-    policy_description*: string
-    policy_name*: string
-    policy_string*: string
-
-  McnCidrPrefix* = string
-
-  McnCloudPlatformClient* = ref object of RootObj
-    client_type*: string
-    id*: McnPlatformClientId
-    name*: string
-
-  McnCloudType* = enum
-    AWS = "AWS"
-    AZURE = "AZURE"
-    GOOGLE = "GOOGLE"
-    CLOUDFLARE = "CLOUDFLARE"
-
-  McnConduitRouteId* = string
-
-  McnConduitTunnelId* = string
-
-  McnCost* = ref object of RootObj
-    currency*: string
-    monthly_cost*: float64
-
-  McnCostDiff* = ref object of RootObj
-    currency*: string
-    current_monthly_cost*: float64
-    diff*: float64
-    proposed_monthly_cost*: float64
-
-  McnCreateCatalogSyncRequest* = ref object of RootObj
-    description*: Option[string]
-    destination_type*: McnCatalogSyncDestinationType
-    name*: string
-    policy*: Option[string]
-    update_mode*: McnCatalogSyncUpdateMode
-
-  McnCreateCatalogSyncResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnCatalogSync
-
-  McnCreateOnrampRequest* = ref object of RootObj
-    adopted_hub_id*: Option[McnResourceId]
-    attached_hubs*: Option[seq[McnResourceId]]
-    attached_vpcs*: Option[seq[McnResourceId]]
-    cloud_asn*: Option[int64]
-      ## Sets the cloud-side ASN. If unset or zero, the cloud's default ASN takes effect.
-    cloud_type*: McnOnrampCloudType
-    description*: Option[string]
-    dynamic_routing*: bool
-      ## Enables BGP routing. When enabling this feature, set both
-      ## install_routes_in_cloud and install_routes_in_magic_wan to false.
-    hub_provider_id*: Option[McnProviderId]
-    install_routes_in_cloud*: bool
-    install_routes_in_magic_wan*: bool
-    manage_hub_to_hub_attachments*: Option[bool]
-    manage_vpc_to_hub_attachments*: Option[bool]
-    name*: string
-    region*: Option[string]
-    `type`*: McnOnrampType
-    vpc*: Option[McnResourceId]
-
-  McnCreateOnrampResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnOnramp
-
-  McnCreateProviderRequest* = ref object of RootObj
-    cloud_type*: McnCloudType
-    description*: Option[string]
-    friendly_name*: string
-
-  McnCreateProviderResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnProvider
-
-  McnDeleteCatalogSyncResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnDeletedCatalogSync
-
-  McnDeleteOnrampResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnDeletedOnramp
-
-  McnDeleteProviderResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnDeletedProvider
-
-  McnDeleteResourceResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnDeletedResource
-
-  McnDeletedCatalogSync* = ref object of RootObj
-    id*: McnCatalogSyncId
-
-  McnDeletedOnramp* = ref object of RootObj
-    id*: McnOnrampId
-
-  McnDeletedProvider* = ref object of RootObj
-    id*: McnProviderId
-
-  McnDeletedResource* = ref object of RootObj
-    id*: McnResourceId
-
-  McnError* = ref object of RootObj
-    code*: int64
-    documentation_url*: Option[string]
-    message*: string
-    meta*: Option[McnErrorMeta]
-    source*: Option[McnErrorSource]
-
-  McnErrorMeta* = ref object of RootObj
-    l10n_key*: Option[string]
-    loggable_error*: Option[string]
-    template_data*: Option[JsonNode]
-    trace_id*: Option[string]
-
-  McnErrorSource* = ref object of RootObj
-    parameter*: Option[string]
-    parameter_value_index*: Option[int64]
-    pointer*: Option[string]
-
-  McnGcpSetup* = ref object of RootObj
-    integration_identity_tag*: string
-    item_type*: string
-    tag_cli_command*: string
-
-  McnGetMagicWanAddressSpaceResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnMagicWanAddressSpace
-
-  McnGetOnrampResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnOnramp
-
-  McnGoodResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-
-  McnGoodResponseCollection* = ref object of RootObj
-    messages*: seq[McnError]
-    result_info*: Option[McnResultInfo]
-    success*: bool
-    errors*: seq[McnError]
-
-  McnListItem* = ref object of RootObj
-    item_type*: string
-    list*: seq[JsonNode]
-
-  McnListOnrampsResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: seq[McnOnramp]
-
-  McnMagicWanAddressSpace* = ref object of RootObj
-    prefixes*: seq[McnCidrPrefix]
-
-  McnObservation* = ref object of RootObj
-    first_observed_at*: string
-    last_observed_at*: string
-    provider_id*: McnProviderId
-    resource_id*: McnResourceId
-
-  McnOnramp* = ref object of RootObj
-    attached_hubs*: Option[seq[McnResourceId]]
-    attached_vpcs*: Option[seq[McnResourceId]]
-    cloud_asn*: Option[int64]
-    cloud_type*: McnOnrampCloudType
-    description*: Option[string]
-    dynamic_routing*: bool
-    hub*: Option[McnResourceId]
-    id*: McnOnrampId
-    install_routes_in_cloud*: bool
-    install_routes_in_magic_wan*: bool
-    last_applied_at*: Option[string]
-    last_exported_at*: Option[string]
-    last_planned_at*: Option[string]
-    manage_hub_to_hub_attachments*: Option[bool]
-    manage_vpc_to_hub_attachments*: Option[bool]
-    name*: string
-    planned_monthly_cost_estimate*: Option[McnCostDiff]
-    planned_resources*: Option[seq[McnResourceDiff]]
-    planned_resources_unavailable*: Option[bool]
-    post_apply_monthly_cost_estimate*: Option[McnCost]
-    post_apply_resources*: Option[JsonNode]
-    post_apply_resources_unavailable*: Option[bool]
-    region*: Option[string]
-    status*: Option[McnOnrampStatus]
-    `type`*: McnOnrampType
-    updated_at*: string
-    vpc*: Option[McnResourceId]
-    vpcs_by_id*: Option[JsonNode]
-    vpcs_by_id_unavailable*: Option[seq[McnResourceId]]
-      ## The list of vpc IDs for which resource details failed to generate.
-
-  McnOnrampCloudType* = enum
-    AWS = "AWS"
-    AZURE = "AZURE"
-    GOOGLE = "GOOGLE"
-
-  McnOnrampId* = string
-
-  McnOnrampLifecycleState* = enum
-    OnrampNeedsApply = "OnrampNeedsApply"
-    OnrampPendingPlan = "OnrampPendingPlan"
-    OnrampPlanning = "OnrampPlanning"
-    OnrampPlanFailed = "OnrampPlanFailed"
-    OnrampPendingApproval = "OnrampPendingApproval"
-    OnrampPendingApply = "OnrampPendingApply"
-    OnrampApplying = "OnrampApplying"
-    OnrampApplyFailed = "OnrampApplyFailed"
-    OnrampActive = "OnrampActive"
-    OnrampPendingDestroy = "OnrampPendingDestroy"
-    OnrampDestroying = "OnrampDestroying"
-    OnrampDestroyFailed = "OnrampDestroyFailed"
-
-  McnOnrampStatus* = ref object of RootObj
-    apply_progress*: McnApplyProgress
-    lifecycle_errors*: Option[JsonNode]
-    lifecycle_state*: McnOnrampLifecycleState
-    plan_progress*: McnPlanProgress
-    routes*: seq[McnConduitRouteId]
-    tunnels*: seq[McnConduitTunnelId]
-
-  McnOnrampType* = enum
-    OnrampTypeSingle = "OnrampTypeSingle"
-    OnrampTypeHub = "OnrampTypeHub"
-
-  McnOnrampWithAccount* = ref object of RootObj
-    attached_hubs*: Option[seq[McnResourceId]]
-    attached_vpcs*: Option[seq[McnResourceId]]
-    cloud_asn*: Option[int64]
-    cloud_type*: McnOnrampCloudType
-    description*: Option[string]
-    dynamic_routing*: bool
-    hub*: Option[McnResourceId]
-    id*: McnOnrampId
-    install_routes_in_cloud*: bool
-    install_routes_in_magic_wan*: bool
-    last_applied_at*: Option[string]
-    last_exported_at*: Option[string]
-    last_planned_at*: Option[string]
-    manage_hub_to_hub_attachments*: Option[bool]
-    manage_vpc_to_hub_attachments*: Option[bool]
-    name*: string
-    planned_monthly_cost_estimate*: Option[McnCostDiff]
-    planned_resources*: Option[seq[McnResourceDiff]]
-    planned_resources_unavailable*: Option[bool]
-    post_apply_monthly_cost_estimate*: Option[McnCost]
-    post_apply_resources*: Option[JsonNode]
-    post_apply_resources_unavailable*: Option[bool]
-    region*: Option[string]
-    status*: Option[McnOnrampStatus]
-    `type`*: McnOnrampType
-    updated_at*: string
-    vpc*: Option[McnResourceId]
-    vpcs_by_id*: Option[JsonNode]
-    vpcs_by_id_unavailable*: Option[seq[McnResourceId]]
-      ## The list of vpc IDs for which resource details failed to generate.
-    account_id*: McnAccountId
-
-  McnPlanProgress* = ref object of RootObj
-    done*: int64
-    total*: int64
-
-  McnPlannedAction* = enum
-    noOp = "no_op"
-    create = "create"
-    update = "update"
-    replace = "replace"
-    destroy = "destroy"
-
-  McnPlatformClientId* = string
-
-  McnPolicyResult* = string
-
-  McnProvider* = ref object of RootObj
-    aws_arn*: Option[string]
-    azure_subscription_id*: Option[string]
-    azure_tenant_id*: Option[string]
-    cloud_type*: McnCloudType
-    description*: Option[string]
-    friendly_name*: string
-    gcp_project_id*: Option[string]
-    gcp_service_account_email*: Option[string]
-    id*: McnProviderId
-    last_updated*: string
-    lifecycle_state*: McnProviderLifecycleState
-    state*: McnProviderDiscoveryStatus
-    state_v2*: McnProviderDiscoveryStatus
-    status*: Option[McnProviderStatus]
-
-  McnProviderDiscoveryProgress* = ref object of RootObj
-    done*: int64
-    total*: int64
-    unit*: string
-
-  McnProviderDiscoveryStatus* = enum
-    UNSPECIFIED = "UNSPECIFIED"
-    PENDING = "PENDING"
-    DISCOVERING = "DISCOVERING"
-    FAILED = "FAILED"
-    SUCCEEDED = "SUCCEEDED"
-
-  McnProviderId* = string
-
-  McnProviderInitialSetupResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: JsonNode
-
-  McnProviderLifecycleState* = enum
-    ACTIVE = "ACTIVE"
-    PENDINGSETUP = "PENDING_SETUP"
-    RETIRED = "RETIRED"
-
-  McnProviderStatus* = ref object of RootObj
-    credentials_good_since*: Option[string]
-    credentials_missing_since*: Option[string]
-    credentials_rejected_since*: Option[string]
-    discovery_message*: Option[string]
-    discovery_message_v2*: Option[string]
-    discovery_progress*: McnProviderDiscoveryProgress
-    discovery_progress_v2*: McnProviderDiscoveryProgress
-    in_use_by*: Option[seq[McnCloudPlatformClient]]
-    last_discovery_completed_at*: Option[string]
-    last_discovery_completed_at_v2*: Option[string]
-    last_discovery_started_at*: Option[string]
-    last_discovery_started_at_v2*: Option[string]
-    last_discovery_status*: McnProviderDiscoveryStatus
-    last_discovery_status_v2*: McnProviderDiscoveryStatus
-    last_updated*: Option[string]
-    regions*: seq[string]
-
-  McnProviderWithAccount* = ref object of RootObj
-    aws_arn*: Option[string]
-    azure_subscription_id*: Option[string]
-    azure_tenant_id*: Option[string]
-    cloud_type*: McnCloudType
-    description*: Option[string]
-    friendly_name*: string
-    gcp_project_id*: Option[string]
-    gcp_service_account_email*: Option[string]
-    id*: McnProviderId
-    last_updated*: string
-    lifecycle_state*: McnProviderLifecycleState
-    state*: McnProviderDiscoveryStatus
-    state_v2*: McnProviderDiscoveryStatus
-    status*: Option[McnProviderStatus]
-    account_id*: McnAccountId
-
-  McnReadAccountCatalogSyncResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnCatalogSync
-
-  McnReadAccountCatalogSyncsResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: seq[McnCatalogSync]
-
-  McnReadAccountProviderResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnProvider
-
-  McnReadAccountProvidersResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: seq[McnProvider]
-
-  McnReadAccountResourceResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnResourceDetails
-
-  McnReadAccountResourcesResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    result_info*: Option[McnResultInfo]
-    success*: bool
-    errors*: seq[McnError]
-    result*: seq[McnResourceDetails]
-
-  McnRefreshCatalogSyncResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnPolicyResult
-
-  McnResourceDetails* = ref object of RootObj
-    account_id*: McnAccountId
-    cloud_type*: McnCloudType
-    config*: JsonNode
-    deployment_provider*: McnProviderId
-    id*: McnResourceId
-    managed*: bool
-    managed_by*: Option[seq[McnCloudPlatformClient]]
-    monthly_cost_estimate*: McnCost
-    name*: string
-    native_id*: string
-    observations*: JsonNode
-    provider_ids*: seq[McnProviderId]
-    provider_names_by_id*: JsonNode
-    region*: string
-    resource_group*: string
-    resource_type*: McnResourceType
-    sections*: seq[McnResourceDetailsSection]
-    state*: JsonNode
-    tags*: JsonNode
-    updated_at*: string
-    url*: string
-
-  McnResourceDetailsSection* = ref object of RootObj
-    help_text*: Option[string]
-    hidden_items*: seq[McnResourceDetailsSectionItem]
-    name*: string
-    visible_items*: seq[McnResourceDetailsSectionItem]
-
-  McnResourceDetailsSectionItem* = ref object of RootObj
-    help_text*: Option[string]
-    name*: Option[string]
-    value*: Option[JsonNode]
-
-  McnResourceDiff* = ref object of RootObj
-    diff*: McnYamlDiff
-    keys_require_replace*: seq[string]
-    monthly_cost_estimate_diff*: McnCostDiff
-    planned_action*: McnPlannedAction
-    resource*: McnResourcePreview
-
-  McnResourceId* = string
-
-  McnResourcePreview* = ref object of RootObj
-    cloud_type*: McnCloudType
-    detail*: string
-    id*: McnResourceId
-    name*: string
-    resource_type*: McnResourceType
-    title*: string
-
-  McnResourcePreviewItem* = ref object of RootObj
-    item_type*: string
-    resource_preview*: McnResourcePreview
-
-  McnResourceType* = enum
-    awsCustomerGateway = "aws_customer_gateway"
-    awsEgressOnlyInternetGateway = "aws_egress_only_internet_gateway"
-    awsInternetGateway = "aws_internet_gateway"
-    awsInstance = "aws_instance"
-    awsNetworkInterface = "aws_network_interface"
-    awsRoute = "aws_route"
-    awsRouteTable = "aws_route_table"
-    awsRouteTableAssociation = "aws_route_table_association"
-    awsSubnet = "aws_subnet"
-    awsVpc = "aws_vpc"
-    awsVpcIpv4CidrBlockAssociation = "aws_vpc_ipv4_cidr_block_association"
-    awsVpnConnection = "aws_vpn_connection"
-    awsVpnConnectionRoute = "aws_vpn_connection_route"
-    awsVpnGateway = "aws_vpn_gateway"
-    awsSecurityGroup = "aws_security_group"
-    awsVpcSecurityGroupIngressRule = "aws_vpc_security_group_ingress_rule"
-    awsVpcSecurityGroupEgressRule = "aws_vpc_security_group_egress_rule"
-    awsEc2ManagedPrefixList = "aws_ec2_managed_prefix_list"
-    awsEc2TransitGateway = "aws_ec2_transit_gateway"
-    awsEc2TransitGatewayPrefixListReference = "aws_ec2_transit_gateway_prefix_list_reference"
-    awsEc2TransitGatewayVpcAttachment = "aws_ec2_transit_gateway_vpc_attachment"
-    azurermApplicationSecurityGroup = "azurerm_application_security_group"
-    azurermLb = "azurerm_lb"
-    azurermLbBackendAddressPool = "azurerm_lb_backend_address_pool"
-    azurermLbNatPool = "azurerm_lb_nat_pool"
-    azurermLbNatRule = "azurerm_lb_nat_rule"
-    azurermLbRule = "azurerm_lb_rule"
-    azurermLocalNetworkGateway = "azurerm_local_network_gateway"
-    azurermNetworkInterface = "azurerm_network_interface"
-    azurermNetworkInterfaceApplicationSecurityGroupAssociation = "azurerm_network_interface_application_security_group_association"
-    azurermNetworkInterfaceBackendAddressPoolAssociation = "azurerm_network_interface_backend_address_pool_association"
-    azurermNetworkInterfaceSecurityGroupAssociation = "azurerm_network_interface_security_group_association"
-    azurermNetworkSecurityGroup = "azurerm_network_security_group"
-    azurermPublicIp = "azurerm_public_ip"
-    azurermRoute = "azurerm_route"
-    azurermRouteTable = "azurerm_route_table"
-    azurermSubnet = "azurerm_subnet"
-    azurermSubnetRouteTableAssociation = "azurerm_subnet_route_table_association"
-    azurermVirtualMachine = "azurerm_virtual_machine"
-    azurermVirtualNetworkGatewayConnection = "azurerm_virtual_network_gateway_connection"
-    azurermVirtualNetwork = "azurerm_virtual_network"
-    azurermVirtualNetworkGateway = "azurerm_virtual_network_gateway"
-    googleComputeNetwork = "google_compute_network"
-    googleComputeSubnetwork = "google_compute_subnetwork"
-    googleComputeVpnGateway = "google_compute_vpn_gateway"
-    googleComputeVpnTunnel = "google_compute_vpn_tunnel"
-    googleComputeRoute = "google_compute_route"
-    googleComputeAddress = "google_compute_address"
-    googleComputeGlobalAddress = "google_compute_global_address"
-    googleComputeRouter = "google_compute_router"
-    googleComputeInterconnectAttachment = "google_compute_interconnect_attachment"
-    googleComputeHaVpnGateway = "google_compute_ha_vpn_gateway"
-    googleComputeForwardingRule = "google_compute_forwarding_rule"
-    googleComputeNetworkFirewallPolicy = "google_compute_network_firewall_policy"
-    googleComputeNetworkFirewallPolicyRule = "google_compute_network_firewall_policy_rule"
-    cloudflareStaticRoute = "cloudflare_static_route"
-    cloudflareIpsecTunnel = "cloudflare_ipsec_tunnel"
-
-  McnResourcesCatalogPolicyPreview* = string
-
-  McnResourcesCatalogPolicyPreviewRequest* = ref object of RootObj
-    policy*: string
-
-  McnResourcesCatalogPolicyPreviewResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnResourcesCatalogPolicyPreview
-
-  McnResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-
-  McnResponseCollection* = ref object of RootObj
-    messages*: seq[McnError]
-    result_info*: Option[McnResultInfo]
-    success*: bool
-
-  McnResultInfo* = ref object of RootObj
-    count*: int64
-      ## The number of items in the current result set.
-    page*: int64
-      ## The current page (starts from zero).
-    per_page*: int64
-      ## The maximum number of items per page.
-    total_count*: int64
-      ## The total number of items in the entire result set.
-    total_pages*: Option[int64]
-      ## The number of total pages in the entire result set.
-
-  McnStringItem* = ref object of RootObj
-    item_type*: string
-    string*: string
-
-  McnUpdateCatalogSyncRequest* = ref object of RootObj
-    description*: Option[string]
-    name*: Option[string]
-    policy*: Option[string]
-    update_mode*: Option[McnCatalogSyncUpdateMode]
-
-  McnUpdateCatalogSyncResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnCatalogSync
-
-  McnUpdateMagicWanAddressSpaceRequest* = ref object of RootObj
-    prefixes*: seq[McnCidrPrefix]
-
-  McnUpdateMagicWanAddressSpaceResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnMagicWanAddressSpace
-
-  McnUpdateOnrampRequest* = ref object of RootObj
-    attached_hubs*: Option[seq[McnResourceId]]
-    attached_vpcs*: Option[seq[McnResourceId]]
-    description*: Option[string]
-    install_routes_in_cloud*: Option[bool]
-    install_routes_in_magic_wan*: Option[bool]
-    manage_hub_to_hub_attachments*: Option[bool]
-    manage_vpc_to_hub_attachments*: Option[bool]
-    name*: Option[string]
-    vpc*: Option[McnResourceId]
-
-  McnUpdateOnrampResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnOnramp
-
-  McnUpdateProviderRequest* = ref object of RootObj
-    aws_arn*: Option[string]
-    azure_subscription_id*: Option[string]
-    azure_tenant_id*: Option[string]
-    description*: Option[string]
-    friendly_name*: Option[string]
-    gcp_project_id*: Option[string]
-    gcp_service_account_email*: Option[string]
-
-  McnUpdateProviderResponse* = ref object of RootObj
-    messages*: seq[McnError]
-    success*: bool
-    errors*: seq[McnError]
-    result*: McnProvider
-
-  McnYamlDiff* = ref object of RootObj
-    diff*: string
-    left_description*: string
-    left_yaml*: string
-    right_description*: string
-    right_yaml*: string
-
-  McnYamlDiffItem* = ref object of RootObj
-    item_type*: string
-    yaml_diff*: McnYamlDiff
-
-  McnYamlItem* = ref object of RootObj
-    item_type*: string
-    yaml*: string
-
   MconnTelemetryAccountId* = string
 
   MconnTelemetryCodedMessage* = ref object of RootObj
@@ -30267,7 +30123,7 @@ type
       ## Integration status.
     updated*: string
       ## When the integration was last updated.
-    use_cases*: seq[JsonNode]
+    use_cases*: seq[string]
       ## Use cases enabled for the integration.
 
   OnePaginatedApplicationListList* = ref object of RootObj
@@ -31991,9 +31847,6 @@ type
     zt_enrollments*: seq[PostureApiZeroTrustProduct]
       ## Zero Trust products associated with this integration.
 
-  PostureApiNullEnum* = enum
-    null = "null"
-
   PostureApiObservationEnum* = enum
     ## The type of the observation.
     Issue = "Issue"
@@ -32888,11 +32741,22 @@ type
       ## Shows the credential configuration status.
     id*: string
       ## Use this to uniquely identify the catalog.
+    jurisdiction*: Option[string]
+      ## Specifies the data-locality jurisdiction of the catalog. The first enable sets
+      ## it, and it cannot change. Currently always `default`.
     maintenance_config*: Option[JsonNode]
       ## Configures maintenance for the catalog.
     name*: string
       ## Specifies the catalog name (generated from account and bucket name).
     status*: R2DataCatalogCatalogStatus
+
+  R2DataCatalogCatalogActivationRequest* = ref object of RootObj
+    ## Contains the optional request to enable a catalog. Send an empty body
+    ## to keep the defaults. If you include `credential`, the service checks
+    ## that the token can access the bucket, then stores it as the catalog's
+    ## maintenance credential, like the store credentials operation.
+    ##
+    credential*: Option[R2DataCatalogCatalogCredentialRequest]
 
   R2DataCatalogCatalogActivationResponse* = ref object of RootObj
     ## Contains response from activating an R2 bucket as a catalog.
@@ -33884,21 +33748,6 @@ type
     chat_download_url_expiry*: string
       ## Time when the download URL will expire
 
-  RealtimekitCreateChatChannelInfo* = ref object of RootObj
-    custom_participant_ids*: Option[seq[string]]
-    display_name*: Option[string]
-    visibility*: Option[string]
-
-  RealtimekitDaywiseStats* = ref object of RootObj
-    date*: Option[string]
-      ## Date in YYYY-MM-DD format
-    recordings_minutes_consumed*: Option[float64]
-      ## Total recordings minutes consumed across all sessions in the given time period.
-    sessions_count*: Option[float64]
-      ## Number of sessions_count happened in the given time period
-    sessions_minutes_consumed*: Option[float64]
-      ## Total meetings minutes consumed across all sessions in the given time period.
-
   RealtimekitErrorResponse* = ref object of RootObj
     error*: JsonNode
       ## Object containing details of the error that occurred
@@ -33932,30 +33781,53 @@ type
     f500ms_or_greater_event_fraction*: Option[float64]
     avg*: Option[float64]
 
-  RealtimekitLivestreamBase* = ref object of RootObj
-    created_at*: Option[string]
-      ## The timestamp at which the livestream was created. The time is returned in ISO
-      ## format.
-    disabled*: Option[bool]
-      ## Specifies if the livestream was disabled.
-    id*: Option[string]
-      ## The livestream ID.
-    ingest_server*: Option[string]
+  RealtimekitLivestream* = ref object of RootObj
+    created_at*: string
+      ## Timestamp the livestream was created at, in ISO format.
+    disabled*: bool
+      ## Specifies if the livestream is disabled.
+    external_id*: string
+      ## ID of the underlying Cloudflare Stream live input.
+    id*: string
+      ## ID of the livestream.
+    ingest_server*: string
       ## The server URL to which the RTMP encoder sends the video and audio data.
+    manual_ingest*: bool
+      ## Specifies if the livestream is ingested manually by an RTMP encoder.
     meeting_id*: Option[string]
-      ## ID of the meeting.
+      ## ID of the meeting being livestreamed, if any.
     name*: Option[string]
       ## Name of the livestream.
-    org_id*: Option[string]
-    playback_url*: Option[string]
+    playback_url*: string
       ## The web address that viewers can use to watch the livestream.
-    status*: Option[string]
-      ## The status of the livestream.
-    stream_key*: Option[string]
-      ## Unique key for accessing each livestream.
-    updated_at*: Option[string]
-      ## The timestamp at which the livestream was updated. The time is returned in ISO
-      ## format.
+    status*: string
+      ## Status of the livestream.
+    stream_key*: string
+      ## Unique key for accessing each livestream. Empty if the livestream is disabled.
+    updated_at*: string
+      ## Timestamp the livestream was last updated at, in ISO format.
+
+  RealtimekitLivestreamSession* = ref object of RootObj
+    created_at*: string
+      ## Timestamp the livestream session was created at, in ISO format.
+    err_message*: Option[string]
+      ## Error message, if the livestream session failed.
+    id*: string
+      ## ID of the livestream session.
+    ingest_seconds*: float64
+      ## The time duration for which the input was given or the meeting was streamed.
+    invoked_time*: Option[string]
+      ## Timestamp the livestream session was invoked at, in ISO format.
+    livestream_id*: string
+      ## ID of the livestream.
+    started_time*: Option[string]
+      ## Timestamp the livestream session started at, in ISO format.
+    stopped_time*: Option[string]
+      ## Timestamp the livestream session stopped at, in ISO format.
+    updated_at*: string
+      ## Timestamp the livestream session was last updated at, in ISO format.
+    viewer_seconds*: float64
+      ## The total view time for which the viewers watched the stream.
 
   RealtimekitLivestreamingConfig* = ref object of RootObj
     rtmp_url*: Option[string]
@@ -33989,14 +33861,6 @@ type
       ## Automatically generate transcripts when the meeting ends.
     updated_at*: string
       ## Timestamp the object was updated at. The time is returned in ISO format.
-
-  RealtimekitOverallStats* = ref object of RootObj
-    recordings_minutes_consumed*: Option[float64]
-      ## Total recordings minutes consumed across all sessions in the given time period.
-    sessions_count*: Option[float64]
-      ## Number of sessions_count happened in the given time period
-    sessions_minutes_consumed*: Option[float64]
-      ## Total meetings minutes consumed across all sessions in the given time period.
 
   RealtimekitPacketLossCumulative* = ref object of RootObj
     ## Cumulative packet loss distribution.
@@ -34032,6 +33896,17 @@ type
       ## Preset applied to the participant.
     updated_at*: string
       ## When this object was updated. The time is returned in ISO format.
+
+  RealtimekitParticipantTokenValidity* = ref object of RootObj
+    ## Validity window of the participant authentication token. The window is
+    ## [not_before, expires_on) and cannot be longer than 100 days. Defaults to a token
+    ## valid from now for 100 days.
+    expires_on*: Option[string]
+      ## RFC 3339 timestamp with a timezone at or after which the token cannot be used.
+      ## Must be in the future. Defaults to not_before plus 100 days.
+    not_before*: Option[string]
+      ## RFC 3339 timestamp with a timezone before which the token cannot be used.
+      ## Defaults to the current time. May be in the past.
 
   RealtimekitParticipantsList* = ref object of RootObj
     created_at*: Option[string]
@@ -34363,6 +34238,17 @@ type
     permissions*: Option[JsonNode]
     ui*: Option[JsonNode]
 
+  RealtimekitValidationIssue* = ref object of RootObj
+    ## A single request validation failure.
+    code*: string
+      ## Machine-readable validation error code.
+    field*: string
+      ## Name of the field that failed validation.
+    location*: string
+      ## Part of the request that failed validation.
+    message*: string
+      ## Human-readable description of the validation failure.
+
   RealtimekitVideoConfig* = ref object of RootObj
     codec*: Option[string]
       ## Codec using which the recording will be encoded.
@@ -34462,20 +34348,6 @@ type
     data*: seq[string]
     success*: bool
 
-  RealtimekitWebhookLog* = ref object of RootObj
-    event*: Option[string]
-      ## Webhook event name.
-    headers*: Option[JsonNode]
-      ## Headers sent with the webhook delivery attempt.
-    id*: Option[string]
-      ## ID of the webhook delivery log.
-    payload*: Option[JsonNode]
-      ## Webhook delivery payload.
-    status_code*: Option[int64]
-      ## HTTP status code returned by the webhook endpoint.
-    timestamp*: Option[string]
-      ## Timestamp for the webhook delivery attempt.
-
   RealtimekitWebhookRequest* = ref object of RootObj
     enabled*: Option[bool]
       ## Set whether or not the webhook should be active when created
@@ -34498,19 +34370,11 @@ type
 
   RealtimekitAppId* = string
 
-  RealtimekitCreated* = string
-
-  RealtimekitIdentifier* = string
-
-  RealtimekitModified* = string
-
   RealtimekitRealtimekitBucketConfig* = ref object of RootObj
     enabled*: bool
       ## Controls whether recordings are uploaded to RealtimeKit's bucket. If set to
       ## false, `download_url`, `audio_download_url`, `download_url_expiry` won't be
       ## generated for a recording.
-
-  RealtimekitSecret* = string
 
   RealtimekitStartReason* = ref object of RootObj
     caller*: Option[JsonNode]
@@ -34525,8 +34389,6 @@ type
     caller*: Option[JsonNode]
     reason*: Option[string]
       ## Specifies the reason why the recording stopped.
-
-  RealtimekitSuccess* = bool
 
   RegistrarApiSandboxApiResponseCommon* = ref object of RootObj
     errors*: RegistrarApiSandboxMessages
@@ -35730,7 +35592,7 @@ type
 
   ReportsAccountIndustryErrorResponse* = ref object of RootObj
     errors*: seq[ReportsError]
-    messages*: Option[seq[JsonNode]]
+    messages*: Option[seq[ReportsMessage]]
     result*: Option[JsonNode]
     success*: bool
 
@@ -35838,7 +35700,7 @@ type
 
   ReportsPolicyErrorResponse* = ref object of RootObj
     errors*: seq[ReportsError]
-    messages*: Option[seq[JsonNode]]
+    messages*: Option[seq[ReportsMessage]]
     result*: Option[JsonNode]
     success*: bool
 
@@ -38424,7 +38286,7 @@ type
   SecretsStoreCreateSecretObject* = ref object of RootObj
     comment*: Option[SecretsStoreComment]
     name*: SecretsStoreSecretName
-    scopes*: SecretsStoreScopes
+    scopes*: Option[SecretsStoreScopes]
     value*: SecretsStoreValue
 
   SecretsStoreCreateStoreObject* = ref object of RootObj
@@ -38448,9 +38310,11 @@ type
   SecretsStoreDuplicateSecretObject* = ref object of RootObj
     comment*: Option[SecretsStoreComment]
     name*: SecretsStoreSecretName
-    scopes*: SecretsStoreScopes
+    scopes*: Option[SecretsStoreScopes]
 
   SecretsStoreIdentifier* = string
+
+  SecretsStoreInheritableScopes* = seq[string]
 
   SecretsStoreMessages* = seq[JsonNode]
 
@@ -38458,7 +38322,7 @@ type
 
   SecretsStorePatchSecretObject* = ref object of RootObj
     comment*: Option[SecretsStoreComment]
-    scopes*: Option[SecretsStoreScopes]
+    scopes*: Option[SecretsStoreInheritableScopes]
     value*: Option[SecretsStoreValue]
 
   SecretsStoreQuota* = float64
@@ -38479,7 +38343,7 @@ type
     id*: SecretsStoreIdentifier
     modified*: SecretsStoreModified
     name*: SecretsStoreSecretName
-    scopes*: Option[SecretsStoreScopes]
+    scopes*: Option[SecretsStoreInheritableScopes]
     status*: SecretsStoreSecretStatus
     store_id*: SecretsStoreStoreIdentifier
 
@@ -39329,7 +39193,7 @@ type
     result*: Option[seq[SpectrumConfigAppProtocol]]
 
   SpectrumConfigProxyProtocol* = enum
-    ## Enables Proxy Protocol to the origin. Refer to [Enable Proxyprotocol](https://d
+    ## Enables Proxy Protocol to the origin. Refer to [Enable Proxy protocol](https://d
     ## evelopers.cloudflare.com/spectrum/getting-started/proxy-protocol/) for
     ## implementation details on PROXY Protocol V1, PROXY Protocol V2, and Simple Proxy
     ## Protocol.
@@ -40907,6 +40771,9 @@ type
     ## the Global Accelerator addresses instead of the default ones. Please contact
     ## your account representative to enable this feature on your account. See
     ## https://developers.cloudflare.com/china-network/concepts/global-acceleration/.
+    allow_manual_override*: Option[bool]
+      ## Whether WARP users may manually override the automatic Global Acceleration
+      ## decision. Defaults to true when not provided.
     api_endpoints*: seq[string]
       ## IP:port entries for the API endpoints.
     autoswitch*: Option[bool]
@@ -41168,6 +41035,10 @@ type
       ## The device manufacturer.
     model*: Option[string]
       ## The model name of the device.
+    multiuser*: Option[bool]
+      ## True if this device is in [multi-user mode](https://developers.cloudflare.com/cl
+      ## oudflare-one/connections/connect-devices/warp/deployment/mdm-deployment/windows-
+      ## multiuser/).
     name*: string
       ## The name of the device.
     os_version*: Option[string]
@@ -41177,7 +41048,7 @@ type
       ## Revision). For Mac or iOS, the Product Version Extra. For Linux, the
       ## distribution name and version.
     public_ip*: Option[string]
-      ## **Deprecated**: IP information is provided by DEX - seehttps://developers.cloud
+      ## **Deprecated**: IP information is provided by DEX - see https://developers.cloud
       ## flare.com/api/resources/zero_trust/subresources/dex/subresources/fleet_status/su
       ## bresources/devices/methods/list/
       ##
@@ -41801,7 +41672,7 @@ type
 
   TlsCertificatesAndHostnamesCertificateAuthority2* = enum
     ## Certificate Authority selected for the order.  For information on any
-    ## certificate authority specific details or restrictions [see this page for mored
+    ## certificate authority specific details or restrictions [see this page for more d
     ## etails](https://developers.cloudflare.com/ssl/reference/certificate-authorities)
     ## .
     google = "google"
@@ -44774,7 +44645,10 @@ type
       ## Unique label identifier. Must contain only lowercase letters (a–z), digits
       ## (0–9), and hyphens.
     topic*: string
-      ## Description of the topic category. Must contain only printable ASCII characters.
+      ## Description of the topic category. Must contain 2–50 UTF-8 bytes. Text in any
+      ## language is supported, including spaces, numbers, punctuation, and symbols.
+      ## Tabs, line breaks, invalid text, and invisible formatting characters are not
+      ## allowed.
 
   WafProductApiBundleCustomTopics* = ref object of RootObj
     topics*: Option[seq[WafProductApiBundleCustomTopic]]
@@ -45282,7 +45156,7 @@ type
 
   WaitingroomTurnstileMode* = enum
     ## Which Turnstile widget type to use for detecting bot traffic. See
-    ## [the Turnstiledocumentation](https://developers.cloudflare.com/turnstile/concep
+    ## [the Turnstile documentation](https://developers.cloudflare.com/turnstile/concep
     ## ts/widget/#widget-types)
     ## for the definitions of these widget types. Set to `off` to disable the
     ## Turnstile integration entirely. Setting this to anything other than
@@ -46239,7 +46113,7 @@ type
     modules*: Option[seq[JsonNode]]
       ## Code, sourcemaps, and other content used at runtime.
       ##
-      ## This includes[`_headers`](https://developers.cloudflare.com/workers/static-asse
+      ## This includes [`_headers`](https://developers.cloudflare.com/workers/static-asse
       ## ts/headers/#custom-headers) and
       ## [`_redirects`](https://developers.cloudflare.com/workers/static-assets/redirects
       ## /) files used to configure
@@ -46258,7 +46132,7 @@ type
     source*: Option[string]
       ## The client used to create the version.
     startup_time_ms*: Option[int64]
-      ## Time in milliseconds spent on [Workerstartup](https://developers.cloudflare.com
+      ## Time in milliseconds spent on [Worker startup](https://developers.cloudflare.com
       ## /workers/platform/limits/#worker-startup-time).
     urls*: seq[string]
       ## All routable URLs that always point to this version. Does not include alias
@@ -46551,7 +46425,7 @@ type
     bucket_name*: string
       ## R2 bucket to bind to.
     jurisdiction*: Option[string]
-      ## The[jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/
+      ## The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/
       ## #jurisdictional-restrictions) of the R2 bucket.
     name*: WorkersBindingName
     `type`*: string
@@ -46568,21 +46442,21 @@ type
 
   WorkersBindingKindSecretKey* = ref object of RootObj
     algorithm*: JsonNode
-      ## Algorithm-specific key parameters. [Learnmore](https://developer.mozilla.org/en
+      ## Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en
       ## -US/docs/Web/API/SubtleCrypto/importKey#algorithm).
     format*: string
-      ## Data format of the key. [Learnmore](https://developer.mozilla.org/en-US/docs/We
+      ## Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/We
       ## b/API/SubtleCrypto/importKey#format).
     key_base64*: Option[string]
       ## Base64-encoded key data. Required if `format` is "raw", "pkcs8", or "spki".
     key_jwk*: Option[JsonNode]
-      ## Key data in [JSON WebKey](https://developer.mozilla.org/en-US/docs/Web/API/Subt
+      ## Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/Subt
       ## leCrypto/importKey#json_web_key) format. Required if `format` is "jwk".
     name*: WorkersBindingName
     `type`*: string
       ## The kind of resource that the binding provides.
     usages*: seq[string]
-      ## Allowed operations with the key. [Learnmore](https://developer.mozilla.org/en-U
+      ## Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-U
       ## S/docs/Web/API/SubtleCrypto/importKey#keyUsages).
 
   WorkersBindingKindSecretText* = ref object of RootObj
@@ -46646,12 +46520,14 @@ type
   WorkersBindingKindVpcNetwork* = ref object of RootObj
     identity*: Option[string]
       ## Enables Gateway identity for the binding. Requires network_id to be
-      ## "cf1:network" and cannot be combined with tunnel_id.
+      ## "cf1:network" and cannot be combined with tunnel_id or an explicit
+      ## "cf1:vnet:<UUID>" network_id.
       ##
     name*: WorkersBindingName
     network_id*: Option[string]
-      ## Identifier of the network to bind to. Only "cf1:network" is currently supported.
-      ## Mutually exclusive with tunnel_id.
+      ## Identifier of the network to bind to. Use "cf1:network" to select the account's
+      ## default virtual network at runtime, or "cf1:vnet:<UUID>" to select an explicit
+      ## virtual network in the Worker's account. Mutually exclusive with tunnel_id.
       ##
     tunnel_id*: Option[string]
       ## UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.
@@ -46706,6 +46582,8 @@ type
     enabled*: bool
       ## Whether caching is enabled for this Worker.
 
+  WorkersCodeUpdateStrategy* = ref object of RootObj
+
   WorkersCompatibilityDate* = string
 
   WorkersCompatibilityFlag* = string
@@ -46745,6 +46623,9 @@ type
   WorkersDeployment* = ref object of RootObj
     annotations*: Option[JsonNode]
     author_email*: Option[string]
+    code_update_strategy*: Option[JsonNode]
+      ## Choose whether to apply Durable Object code updates immediately or defer them.
+      ## When omitted, the default strategy applies.
     created_on*: string
     id*: string
     source*: string
@@ -47287,28 +47168,28 @@ type
       ## List of cloud providers with their available regions.
 
   WorkersPlacementInfo* = ref object of RootObj
-    ## Configuration for [SmartPlacement](https://developers.cloudflare.com/workers/co
+    ## Configuration for [Smart Placement](https://developers.cloudflare.com/workers/co
     ## nfiguration/smart-placement). Specify mode='smart' for Smart Placement, or one
     ## of region/hostname/host.
     last_analyzed_at*: Option[string]
-      ## The last time the script was analyzed for [SmartPlacement](https://developers.c
+      ## The last time the script was analyzed for [Smart Placement](https://developers.c
       ## loudflare.com/workers/configuration/smart-placement).
     status*: Option[WorkersPlacementStatus]
 
   WorkersPlacementInfoNoStatus* = ref object of RootObj
-    ## Configuration for [SmartPlacement](https://developers.cloudflare.com/workers/co
+    ## Configuration for [Smart Placement](https://developers.cloudflare.com/workers/co
     ## nfiguration/smart-placement). Specify mode='smart' for Smart Placement, or one
     ## of region/hostname/host.
 
   WorkersPlacementMode* = enum
-    ## Configuration for [SmartPlacement](https://developers.cloudflare.com/workers/co
+    ## Configuration for [Smart Placement](https://developers.cloudflare.com/workers/co
     ## nfiguration/smart-placement). Specify mode='smart' for Smart Placement, or one
     ## of region/hostname/host.
     smart = "smart"
     targeted = "targeted"
 
   WorkersPlacementStatus* = enum
-    ## Status of [SmartPlacement](https://developers.cloudflare.com/workers/configurat
+    ## Status of [Smart Placement](https://developers.cloudflare.com/workers/configurat
     ## ion/smart-placement).
     SUCCESS = "SUCCESS"
     UNSUPPORTEDAPPLICATION = "UNSUPPORTED_APPLICATION"
@@ -47345,7 +47226,7 @@ type
   WorkersRoute* = ref object of RootObj
     id*: JsonNode
     pattern*: string
-      ## Pattern to match incoming requests against. [Learnmore](https://developers.clou
+      ## Pattern to match incoming requests against. [Learn more](https://developers.clou
       ## dflare.com/workers/configuration/routing/routes/#matching-behavior).
     script*: Option[string]
       ## Name of the script to run if the route matches.
@@ -47667,7 +47548,7 @@ type
       ## not contribute to this summary.
       ##
     startup_time_ms*: Option[int64]
-      ## Time in milliseconds spent on [Workerstartup](https://developers.cloudflare.com
+      ## Time in milliseconds spent on [Worker startup](https://developers.cloudflare.com
       ## /workers/platform/limits/#worker-startup-time).
 
   WorkersVersionIdentifier* = string
@@ -49512,7 +49393,7 @@ type
 
   ZonesAutomaticPlatformOptimization* = ref object of RootObj
     cache_by_device_type*: bool
-      ## Indicates whether or not [cache by devicetype](https://developers.cloudflare.co
+      ## Indicates whether or not [cache by device type](https://developers.cloudflare.co
       ## m/automatic-platform-optimization/reference/cache-device-type/) is enabled.
     cf*: bool
       ## Indicates whether or not Cloudflare proxy is enabled.
@@ -49851,7 +49732,7 @@ type
     ## When enabled and the client sends an Accept header requesting text/markdown,
     ## Cloudflare will convert HTML responses to Markdown format using the toMarkdown()
     ## service.
-    ## Refer to the [developerdocumentation](https://developers.cloudflare.com/workers
+    ## Refer to the [developer documentation](https://developers.cloudflare.com/workers
     ## -ai/features/markdown-conversion/) for more information.
     editable*: Option[bool]
       ## Whether or not this setting can be modified for this zone (based on your
@@ -49897,7 +49778,7 @@ type
 
   ZonesDisableApps* = ref object of RootObj
     id*: Option[string]
-      ## Turn off all active [CloudflareApps](https://developers.cloudflare.com/support/
+      ## Turn off all active [Cloudflare Apps](https://developers.cloudflare.com/support/
       ## more-dashboard-apps/cloudflare-apps/)
       ## (deprecated).
       ##
@@ -49905,7 +49786,7 @@ type
   ZonesDisablePerformance* = ref object of RootObj
     id*: Option[string]
       ## Turn off
-      ## [RocketLoader](https://developers.cloudflare.com/speed/optimization/content/roc
+      ## [Rocket Loader](https://developers.cloudflare.com/speed/optimization/content/roc
       ## ket-loader/), and
       ## [Polish](https://developers.cloudflare.com/images/polish/).
       ##
@@ -49913,14 +49794,14 @@ type
   ZonesDisableSecurity* = ref object of RootObj
     id*: Option[string]
       ## Turn off
-      ## [EmailObfuscation](https://developers.cloudflare.com/waf/tools/scrape-shield/em
+      ## [Email Obfuscation](https://developers.cloudflare.com/waf/tools/scrape-shield/em
       ## ail-address-obfuscation/),
-      ## [Rate Limiting (previous version,deprecated)](https://developers.cloudflare.com
+      ## [Rate Limiting (previous version, deprecated)](https://developers.cloudflare.com
       ## /waf/reference/legacy/old-rate-limiting/),
       ## [Scrape Shield](https://developers.cloudflare.com/waf/tools/scrape-shield/),
       ## [URL (Zone)
       ## Lockdown](https://developers.cloudflare.com/waf/tools/zone-lockdown/), and
-      ## [WAF managed rules (previous version,deprecated)](https://developers.cloudflare
+      ## [WAF managed rules (previous version, deprecated)](https://developers.cloudflare
       ## .com/waf/reference/legacy/old-waf-managed-rules/).
       ##
 
@@ -50005,7 +49886,7 @@ type
   ZonesForwardingUrl* = ref object of RootObj
     id*: Option[string]
       ## Redirects one URL to another using an `HTTP 301/302` redirect. Refer
-      ## to [Wildcard matching andreferencing](https://developers.cloudflare.com/rules/p
+      ## to [Wildcard matching and referencing](https://developers.cloudflare.com/rules/p
       ## age-rules/reference/wildcard-matching/).
       ##
     value*: Option[JsonNode]
@@ -50697,16 +50578,7 @@ type
 
   ZonesSettingName* = string
 
-  ZonesSettingReadonly* = bool
-
-  ZonesSettingToggle* = enum
-    ## Value of the zone setting.
-    on = "on"
-    off = "off"
-
   ZonesSettingValue* = ref object of RootObj
-
-  ZonesSettingWritable* = bool
 
   ZonesSettings* = seq[JsonNode]
 
@@ -50877,7 +50749,7 @@ type
   ZonesTransformations* = ref object of RootObj
     ## Media Transformations provides on-demand resizing, conversion and optimization
     ## for images and video served through Cloudflare's network. Refer to the [Image
-    ## Transformations](https://developers.cloudflare.com/images/) and [VideoTransform
+    ## Transformations](https://developers.cloudflare.com/images/) and [Video Transform
     ## ations](https://developers.cloudflare.com/stream/transform-videos/#getting-start
     ## ed) documentation for more information.
     editable*: Option[bool]
@@ -50893,7 +50765,7 @@ type
   ZonesTransformationsAllowedOrigins* = ref object of RootObj
     ## Media Transformations Allowed Origins restricts transformations for images and
     ## video served through Cloudflare's network. Refer to the [Image
-    ## Transformations](https://developers.cloudflare.com/images/) and [VideoTransform
+    ## Transformations](https://developers.cloudflare.com/images/) and [Video Transform
     ## ations](https://developers.cloudflare.com/stream/transform-videos/#getting-start
     ## ed) documentation for more information.
     editable*: Option[bool]
@@ -50953,7 +50825,7 @@ type
 
   ZonesWaf* = ref object of RootObj
     id*: Option[string]
-      ## Turn on or off [WAF managed rules (previous version,deprecated)](https://develo
+      ## Turn on or off [WAF managed rules (previous version, deprecated)](https://develo
       ## pers.cloudflare.com/waf/reference/legacy/old-waf-managed-rules/).
       ## You cannot enable or disable individual WAF managed rules via Page Rules.
       ##
@@ -51066,7 +50938,7 @@ type
     ## back and forth without having to reestablish sessions. This makes exchanging
     ## data within a WebSockets connection fast. WebSockets are often used for
     ## real-time applications such as live chat and gaming. For more information refer
-    ## to [Can I use Cloudflare withWebsockets](https://support.cloudflare.com/hc/en-u
+    ## to [Can I use Cloudflare with Websockets](https://support.cloudflare.com/hc/en-u
     ## s/articles/200169466-Can-I-use-Cloudflare-with-WebSockets-).
     editable*: Option[bool]
       ## Whether or not this setting can be modified for this zone (based on your

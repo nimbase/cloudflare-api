@@ -372,7 +372,8 @@ proc getAccountsAccountIdArtifactsNamespacesNamespaceReposNameTreeHash*(client: 
                                                                         namespace: string,
                                                                         name: string,
                                                                         hash: string): Future[GetAccountsAccountIdArtifactsNamespacesNamespaceReposNameTreeHashResponse] {.async.} =
-  ## Returns decoded entries for an immutable Git tree object. Tree responses are
+  ## Returns decoded entries for an immutable Git tree object. A commit hash returns
+  ## that commit's root tree; a blob or tag hash returns 422. Tree responses are
   ## cacheable forever by hash.
 
   let res = await client.httpGET(fmt"/accounts/{account_id}/artifacts/namespaces/{namespace}/repos/{name}/tree/{hash}")

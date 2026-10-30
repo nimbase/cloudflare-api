@@ -97,6 +97,7 @@ type
     class_name: string
     concurrency: Option[JsonNode]
     default_retention: Option[JsonNode]
+    jurisdiction: Option[string]
     limits: Option[JsonNode]
     schedules: Option[seq[JsonNode]]
     script_name: string

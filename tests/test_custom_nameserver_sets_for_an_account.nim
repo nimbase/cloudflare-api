@@ -15,6 +15,10 @@ suite "custom_nameserver_sets_for_an_account serialization":
     let obj = newDnsSettingsNameserverSetDeleteResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsSettingsNameserverSetDeleteResponse)) == openjson.toJson(obj)
 
+  test "round-trips DnsSettingsNameserverSetPatch":
+    let obj = newDnsSettingsNameserverSetPatch()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsSettingsNameserverSetPatch)) == openjson.toJson(obj)
+
   test "round-trips DnsSettingsNameserverSetResponseCollection":
     let obj = newDnsSettingsNameserverSetResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsSettingsNameserverSetResponseCollection)) == openjson.toJson(obj)
@@ -51,4 +55,9 @@ suite "custom_nameserver_sets_for_an_account endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdDnsSettingsNameserverSetsNameserverSetId("test", "test")
+
+  test "PATCH /accounts/{account_id}/dns_settings/nameserver_sets/{nameserver_set_id}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.patchAccountsAccountIdDnsSettingsNameserverSetsNameserverSetId("test", "test", newDnsSettingsNameserverSetPatch())
 

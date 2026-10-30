@@ -50,6 +50,11 @@ type
   GetAccountsAccountIdRealtimeKitAppsAppIdResponse* = object
     data: JsonNode
     success: bool
+  PatchAccountsAccountIdRealtimeKitAppsAppIdRequest = object
+    name: string
+  PatchAccountsAccountIdRealtimeKitAppsAppIdResponse* = object
+    data: JsonNode
+    success: bool
   AppSortOrderOption* = enum
     sortOrderASC = "ASC"
     sortOrderDESC = "DESC"
@@ -161,5 +166,19 @@ proc getAccountsAccountIdRealtimeKitAppsAppId*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, GetAccountsAccountIdRealtimeKitAppsAppIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdRealtimeKitAppsAppId*(client: CloudflareClient,
+                                                 accountId: types.RealtimekitAccountIdentifier,
+                                                 appId: string,
+                                                 body: PatchAccountsAccountIdRealtimeKitAppsAppIdRequest): Future[PatchAccountsAccountIdRealtimeKitAppsAppIdResponse] {.async.} =
+  ## Update the name of an app in your account.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/realtime/kit/apps/{appId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PatchAccountsAccountIdRealtimeKitAppsAppIdResponse)
   else:
     raise newException(CloudflareClientError, body)

@@ -27,6 +27,10 @@ suite "basin_catalog_management serialization":
     let obj = newR2DataCatalogCatalog()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2DataCatalogCatalog)) == openjson.toJson(obj)
 
+  test "round-trips R2DataCatalogCatalogActivationRequest":
+    let obj = newR2DataCatalogCatalogActivationRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2DataCatalogCatalogActivationRequest)) == openjson.toJson(obj)
+
   test "round-trips R2DataCatalogCatalogList":
     let obj = newR2DataCatalogCatalogList()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2DataCatalogCatalogList)) == openjson.toJson(obj)
@@ -55,5 +59,5 @@ suite "basin_catalog_management endpoints":
   test "POST /accounts/{account_id}/basin-catalog/{bucket_name}/enable":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdBasinCatalogBucketNameEnable("test", "test")
+    discard waitFor client.postAccountsAccountIdBasinCatalogBucketNameEnable("test", "test", newR2DataCatalogCatalogActivationRequest())
 

@@ -16,19 +16,21 @@ type
     data: JsonNode
     success: bool
   GetAccountsAccountIdRealtimeKitAppIdLivestreamsResponse* = object
-    data: JsonNode
+    data: seq[types.RealtimekitLivestream]
+    paging: types.RealtimekitPagingInfo
     success: bool
   GetAccountsAccountIdRealtimeKitAppIdLivestreamsSessionsLivestreamSessionIdResponse* = object
-    data: JsonNode
+    data: types.RealtimekitLivestreamSession
     success: bool
   GetAccountsAccountIdRealtimeKitAppIdLivestreamsLivestreamIdResponse* = object
     data: JsonNode
+    paging: types.RealtimekitPagingInfo
     success: bool
   GetAccountsAccountIdRealtimeKitAppIdLivestreamsLivestreamIdActiveLivestreamSessionResponse* = object
     data: JsonNode
     success: bool
   GetAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveLivestreamResponse* = object
-    data: JsonNode
+    data: types.RealtimekitLivestream
     success: bool
   PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveLivestreamStopResponse* = object
     data: JsonNode

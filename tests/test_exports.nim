@@ -35,6 +35,10 @@ suite "exports serialization":
     let obj = newPostureApiFindingInstanceExportFilterRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostureApiFindingInstanceExportFilterRequest)) == openjson.toJson(obj)
 
+  test "round-trips PostureApiApiResponseCommon":
+    let obj = newPostureApiApiResponseCommon()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostureApiApiResponseCommon)) == openjson.toJson(obj)
+
 suite "exports endpoints":
   test "POST /accounts/{account_id}/data-security/posture/content/export":
     let client = initCloudflareClient("test-key")

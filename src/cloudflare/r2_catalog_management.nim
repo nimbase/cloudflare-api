@@ -62,12 +62,13 @@ proc postAccountsAccountIdR2CatalogBucketNameDisable*(client: CloudflareClient,
 
 proc postAccountsAccountIdR2CatalogBucketNameEnable*(client: CloudflareClient,
                                                      accountId: types.R2DataCatalogAccountId,
-                                                     bucketName: types.R2DataCatalogBucketName): Future[JsonNode] {.async.} =
+                                                     bucketName: types.R2DataCatalogBucketName,
+                                                     body: types.R2DataCatalogCatalogActivationRequest): Future[JsonNode] {.async.} =
   ## Enable an R2 bucket as an Apache Iceberg catalog. This operation creates
   ## the necessary catalog infrastructure and activates the bucket for storing
   ## Iceberg metadata and data files.
 
-  let res = await client.httpPOST(fmt"/accounts/{accountId}/r2-catalog/{bucketName}/enable")
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/r2-catalog/{bucketName}/enable", body)
   let body = await res.body
   case res.code
   of Http200:

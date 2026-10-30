@@ -15,7 +15,8 @@ type
 proc getAccountsAccountIdCloudforceOneEventsAttackers*(client: CloudflareClient,
                                                        accountId: string,
                                                        datasetIds: seq[string] = @[]): Future[GetAccountsAccountIdCloudforceOneEventsAttackersResponse] {.async.} =
-  ## Lists known threat attackers tracked in Cloudforce One threat intelligence.
+  ## Lists the attackers referenced by events in the datasets given by `datasetIds`,
+  ## or in the default dataset when `datasetIds` is omitted.
 
   var q = initOrderedTable[string, string]()
   for v in datasetIds: q["datasetIds"] = $v

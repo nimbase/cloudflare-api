@@ -27,6 +27,10 @@ suite "zero_trust_organization serialization":
     let obj = newAccessApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessApiResponseCommonFailure)) == openjson.toJson(obj)
 
+  test "round-trips AccessTrustSettingsResponse":
+    let obj = newAccessTrustSettingsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessTrustSettingsResponse)) == openjson.toJson(obj)
+
   test "round-trips AccessEmptyResponse":
     let obj = newAccessEmptyResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessEmptyResponse)) == openjson.toJson(obj)
@@ -61,4 +65,9 @@ suite "zero_trust_organization endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdAccessOrganizationsDoh("test")
+
+  test "GET /accounts/{account_id}/access/organizations/trust_settings":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdAccessOrganizationsTrustSettings("test")
 

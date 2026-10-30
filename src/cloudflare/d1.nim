@@ -222,6 +222,7 @@ proc postAccountsAccountIdD1DatabaseDatabaseIdUndelete*(client: CloudflareClient
   ## account's limits.
   ## Undeleting a database that is not deleted succeeds without changes, unless
   ## `new_name` differs from its current name which errors.
+  ## A database can only be undeleted within 7 days (7 * 24 hours) of its deletion.
   ##
   ## Once a database is undeleted, Time Travel (point-in-time recovery) cannot
   ## restore it to a bookmark or

@@ -34,7 +34,7 @@ type
 proc getAccountsAccountIdCloudforceOneEventsDatasetDatasetIdPermissions*(client: CloudflareClient,
                                                                          accountId: string,
                                                                          datasetId: string): Future[seq[JsonNode]] {.async.} =
-  ## List permissions
+  ## Lists the access grants on a dataset.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/permissions")
   let body = await res.body
@@ -48,7 +48,8 @@ proc postAccountsAccountIdCloudforceOneEventsDatasetDatasetIdPermissions*(client
                                                                           accountId: string,
                                                                           datasetId: string,
                                                                           body: PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdPermissionsRequest): Future[PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdPermissionsResponse] {.async.} =
-  ## Create a permission
+  ## Gives an account or account group (`subjectType` and `subjectId`) `read` or
+  ## `write` access to a dataset.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/permissions", body)
   let body = await res.body
@@ -63,7 +64,7 @@ proc putAccountsAccountIdCloudforceOneEventsDatasetDatasetIdPermissionsGrantId*(
                                                                                 datasetId: string,
                                                                                 grantId: string,
                                                                                 body: PutAccountsAccountIdCloudforceOneEventsDatasetDatasetIdPermissionsGrantIdRequest): Future[PutAccountsAccountIdCloudforceOneEventsDatasetDatasetIdPermissionsGrantIdResponse] {.async.} =
-  ## Update a permission
+  ## Changes the `role` of an access grant to `read` or `write`.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/permissions/{grantId}", body)
   let body = await res.body
@@ -77,7 +78,7 @@ proc deleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdPermissionsGrantI
                                                                                    accountId: string,
                                                                                    datasetId: string,
                                                                                    grantId: string): Future[DeleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdPermissionsGrantIdResponse] {.async.} =
-  ## Delete a permission
+  ## Removes an access grant from a dataset.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/permissions/{grantId}")
   let body = await res.body

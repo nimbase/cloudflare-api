@@ -23,6 +23,10 @@ suite "indicator serialization":
     let obj = cloudflare.GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsResponse)) == openjson.toJson(obj)
 
+  test "round-trips DeleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsResponse":
+    let obj = cloudflare.DeleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsResponse)) == openjson.toJson(obj)
+
   test "round-trips PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsCreateResponse":
     let obj = cloudflare.PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsCreateResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsCreateResponse)) == openjson.toJson(obj)
@@ -68,6 +72,11 @@ suite "indicator endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicators("test", "test", 1.0, 1.0, "test", "test", @["test"])
+
+  test "DELETE /accounts/{account_id}/cloudforce-one/events/dataset/{dataset_id}/indicators":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicators("test", "test", @["test"])
 
   test "GET /accounts/{account_id}/cloudforce-one/events/dataset/{dataset_id}/indicators/tags":
     let client = initCloudflareClient("test-key")

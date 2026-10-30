@@ -157,7 +157,7 @@ proc putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                       scriptName: types.WorkersScriptName,
                                                                                       bindingsInherit: WorkersForPlatformBindingsInheritOption = bindingsInheritStrict): Future[JsonNode] {.async.} =
   ## Upload a Workers for Platforms script module to a dispatch namespace. You can
-  ## find more about the multipart metadata on our docs:https://developers.cloudflar
+  ## find more about the multipart metadata on our docs: https://developers.cloudflar
   ## e.com/workers/configuration/multipart-upload-metadata/.
 
   var q = initOrderedTable[string, string]()

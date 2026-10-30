@@ -29,8 +29,9 @@ proc getAccountsAccountIdDnsSettingsNameserverSets*(client: CloudflareClient,
 proc postAccountsAccountIdDnsSettingsNameserverSets*(client: CloudflareClient,
                                                      accountId: types.DnsSettingsIdentifier,
                                                      body: types.DnsSettingsNameserverSetCreate): Future[types.DnsSettingsNameserverSetResponseSingle] {.async.} =
-  ## Creates an immutable Custom Nameserver Set. To change a set, create a new one,
-  ## move any zone assignments, and delete the old set.
+  ## Creates a named Custom Nameserver Set. Only the customer-defined name can be
+  ## changed later. To change nameservers or addresses, create a new set, move any
+  ## zone assignments, and delete the old set.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/dns_settings/nameserver_sets", body)
   let body = await res.body
@@ -63,5 +64,22 @@ proc deleteAccountsAccountIdDnsSettingsNameserverSetsNameserverSetId*(client: Cl
   case res.code
   of Http200:
     result = fromJson(body, types.DnsSettingsNameserverSetDeleteResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdDnsSettingsNameserverSetsNameserverSetId*(client: CloudflareClient,
+                                                                     accountId: types.DnsSettingsIdentifier,
+                                                                     nameserverSetId: types.DnsSettingsNameserverSetId,
+                                                                     body: types.DnsSettingsNameserverSetPatch): Future[types.DnsSettingsNameserverSetResponseSingle] {.async.} =
+  ## Renames a Custom Nameserver Set owned by the account. Only name may be supplied;
+  ## immutable and unknown fields are rejected even if unchanged. An empty object or
+  ## the existing name is a successful no-op. Requires the account-scoped creation
+  ## entitlements for the existing set.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/dns_settings/nameserver_sets/{nameserverSetId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.DnsSettingsNameserverSetResponseSingle)
   else:
     raise newException(CloudflareClientError, body)

@@ -20,20 +20,20 @@ suite "analytics_sql serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AnalyticsSqlSqlQueryRequest)) == openjson.toJson(obj)
 
 suite "analytics_sql endpoints":
-  test "GET /accounts/{account_tag}/analytics/sql":
+  test "GET /accounts/{account_id}/analytics/sql":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountTagAnalyticsSql("test", "test")
+    discard waitFor client.getAccountsAccountIdAnalyticsSql("test", "test")
 
-  test "POST /accounts/{account_tag}/analytics/sql":
+  test "POST /accounts/{account_id}/analytics/sql":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountTagAnalyticsSql("test", newAnalyticsSqlSqlQueryRequest())
+    discard waitFor client.postAccountsAccountIdAnalyticsSql("test", newAnalyticsSqlSqlQueryRequest())
 
-  test "GET /accounts/{account_tag}/analytics/sql/introspection":
+  test "GET /accounts/{account_id}/analytics/sql/introspection":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountTagAnalyticsSqlIntrospection("test", true, true, true, true, true, "test")
+    discard waitFor client.getAccountsAccountIdAnalyticsSqlIntrospection("test", true, true, true, true, true, "test")
 
   test "GET /analytics/sql":
     let client = initCloudflareClient("test-key")

@@ -11,6 +11,22 @@ import cloudflare
 import ./common
 
 suite "live_streams serialization":
+  test "round-trips RealtimekitGenericErrorResponse":
+    let obj = newRealtimekitGenericErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitGenericErrorResponse)) == openjson.toJson(obj)
+
+  test "round-trips RealtimekitLivestreamSession":
+    let obj = newRealtimekitLivestreamSession()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitLivestreamSession)) == openjson.toJson(obj)
+
+  test "round-trips RealtimekitPagingInfo":
+    let obj = newRealtimekitPagingInfo()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitPagingInfo)) == openjson.toJson(obj)
+
+  test "round-trips RealtimekitLivestream":
+    let obj = newRealtimekitLivestream()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitLivestream)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdRealtimeKitAppIdAnalyticsLivestreamsDaywiseResponse":
     let obj = cloudflare.GetAccountsAccountIdRealtimeKitAppIdAnalyticsLivestreamsDaywiseResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdRealtimeKitAppIdAnalyticsLivestreamsDaywiseResponse)) == openjson.toJson(obj)

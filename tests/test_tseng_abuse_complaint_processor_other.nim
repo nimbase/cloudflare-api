@@ -27,6 +27,10 @@ suite "tseng_abuse_complaint_processor_other serialization":
     let obj = newAbuseReportsMitigationListItem()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AbuseReportsMitigationListItem)) == openjson.toJson(obj)
 
+  test "round-trips AbuseReportsRateLimitedErrorResponse":
+    let obj = newAbuseReportsRateLimitedErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AbuseReportsRateLimitedErrorResponse)) == openjson.toJson(obj)
+
   test "round-trips AbuseReportsSubmitReportRequest":
     let obj = newAbuseReportsSubmitReportRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AbuseReportsSubmitReportRequest)) == openjson.toJson(obj)

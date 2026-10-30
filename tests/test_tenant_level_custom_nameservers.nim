@@ -32,18 +32,18 @@ suite "tenant_level_custom_nameservers serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsCustomNameserversTcnsResponseCollection)) == openjson.toJson(obj)
 
 suite "tenant_level_custom_nameservers endpoints":
-  test "GET /tenants/{tenant_tag}/custom_ns":
+  test "GET /tenants/{tenant_id}/custom_ns":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getTenantsTenantTagCustomNs("test")
+    discard waitFor client.getTenantsTenantIdCustomNs("test")
 
-  test "POST /tenants/{tenant_tag}/custom_ns":
+  test "POST /tenants/{tenant_id}/custom_ns":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postTenantsTenantTagCustomNs("test", newDnsCustomNameserversCustomNSInput())
+    discard waitFor client.postTenantsTenantIdCustomNs("test", newDnsCustomNameserversCustomNSInput())
 
-  test "DELETE /tenants/{tenant_tag}/custom_ns/{custom_ns_id}":
+  test "DELETE /tenants/{tenant_id}/custom_ns/{custom_ns_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteTenantsTenantTagCustomNsCustomNsId("test", "test")
+    discard waitFor client.deleteTenantsTenantIdCustomNsCustomNsId("test", "test")
 

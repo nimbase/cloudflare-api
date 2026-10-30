@@ -19,6 +19,10 @@ suite "flags serialization":
     let obj = newFlagshipFlag()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FlagshipFlag)) == openjson.toJson(obj)
 
+  test "round-trips FlagshipRule":
+    let obj = newFlagshipRule()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FlagshipRule)) == openjson.toJson(obj)
+
   test "round-trips FlagshipResultInfo":
     let obj = newFlagshipResultInfo()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FlagshipResultInfo)) == openjson.toJson(obj)
@@ -46,6 +50,10 @@ suite "flags serialization":
   test "round-trips DeleteAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse":
     let obj = cloudflare.DeleteAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse)) == openjson.toJson(obj)
+
+  test "round-trips PatchAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse":
+    let obj = cloudflare.PatchAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdFlagshipAppsAppIdFlagsFlagKeyResponse)) == openjson.toJson(obj)
 
 suite "flags endpoints":
   test "GET /accounts/{account_id}/flagship/apps/{app_id}/flags":

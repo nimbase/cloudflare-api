@@ -1136,6 +1136,12 @@ proc renameHook*(v: types.DomainConnectTemplateSpec, fieldName: var string) {.in
   elif fieldName == "account_tags":
     fieldName = "accountTags"
 
+proc renameHook*(v: types.FlagshipEvaluationError, fieldName: var string) {.inline.} =
+  if fieldName == "errorCode":
+    fieldName = "error_code"
+  elif fieldName == "error_code":
+    fieldName = "errorCode"
+
 proc renameHook*(v: types.FlagshipEvaluationResult, fieldName: var string) {.inline.} =
   if fieldName == "flagKey":
     fieldName = "flag_key"
@@ -1567,12 +1573,6 @@ proc renameHook*(v: types.MagicUpdateBgpSettingsRedistributeSources, fieldName: 
     fieldName = "static_wan"
   elif fieldName == "static_wan":
     fieldName = "static:wan"
-
-proc renameHook*(v: types.McnResourceDetailsSectionItem, fieldName: var string) {.inline.} =
-  if fieldName == "helpText":
-    fieldName = "help_text"
-  elif fieldName == "help_text":
-    fieldName = "helpText"
 
 proc renameHook*(v: types.MonetizationMonetizationAccountEligibilityCheckInput, fieldName: var string) {.inline.} =
   if fieldName == "acceptedTermsOfService":

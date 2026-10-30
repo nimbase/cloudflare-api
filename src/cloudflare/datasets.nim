@@ -14,8 +14,9 @@ type
 
 proc postAccountsAccountIdCloudforceOneEventsDatasetsPopulate*(client: CloudflareClient,
                                                                accountId: string): Future[PostAccountsAccountIdCloudforceOneEventsDatasetsPopulateResponse] {.async.} =
-  ## Populate dataset-specific lookup tables from existing Events data with batch
-  ## processing
+  ## Rebuilds the lists of attackers, categories, indicator types, and target
+  ## industries for the account's datasets from their existing events. Datasets are
+  ## processed in batches.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/datasets/populate")
   let body = await res.body

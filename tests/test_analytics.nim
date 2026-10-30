@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "analytics serialization":
+  test "round-trips RealtimekitGenericErrorResponse":
+    let obj = newRealtimekitGenericErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitGenericErrorResponse)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdRealtimeKitAppIdAnalyticsDaywiseResponse":
     let obj = cloudflare.GetAccountsAccountIdRealtimeKitAppIdAnalyticsDaywiseResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdRealtimeKitAppIdAnalyticsDaywiseResponse)) == openjson.toJson(obj)

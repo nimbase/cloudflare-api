@@ -13,7 +13,7 @@ proc getZonesZoneIdCustomNs*(client: CloudflareClient,
                              zoneId: types.DnsCustomNameserversIdentifier2): Future[types.DnsCustomNameserversGetResponse] {.async.} =
   ## Get metadata for account-level custom nameservers on a zone.
   ##
-  ## Deprecated in favor of [Show DNSSettings](https://developers.cloudflare.com/api
+  ## Deprecated in favor of [Show DNS Settings](https://developers.cloudflare.com/api
   ## /operations/dns-settings-for-a-zone-list-dns-settings).
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/custom_ns")
@@ -33,7 +33,7 @@ proc putZonesZoneIdCustomNs*(client: CloudflareClient,
   ## default, use PUT /accounts/:identifier to set the account setting
   ## use_account_custom_ns_by_default to true.
   ##
-  ## Deprecated in favor of [Update DNSSettings](https://developers.cloudflare.com/a
+  ## Deprecated in favor of [Update DNS Settings](https://developers.cloudflare.com/a
   ## pi/operations/dns-settings-for-a-zone-update-dns-settings).
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/custom_ns", body)

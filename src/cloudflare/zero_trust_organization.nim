@@ -58,6 +58,12 @@ type
     email: string
     user_uid: Option[string]
     warp_session_reauth: Option[bool]
+  PutAccountsAccountIdAccessOrganizationsTrustSettingsRequest = object
+    grant_trust_to_all_accounts_in_org: types.AccessGrantTrustToAllAccountsInOrg
+    trusting_accounts: Option[types.AccessTrustingAccounts]
+  PatchAccountsAccountIdAccessOrganizationsTrustSettingsRequest = object
+    grant_trust_to_all_accounts_in_org: Option[types.AccessGrantTrustToAllAccountsInOrg]
+    trusting_accounts: Option[types.AccessTrustingAccounts]
 
 proc getAccountsAccountIdAccessOrganizations*(client: CloudflareClient,
                                               accountId: types.AccessIdentifier): Future[types.AccessGetResponse] {.async.} =
@@ -135,5 +141,43 @@ proc postAccountsAccountIdAccessOrganizationsRevokeUser*(client: CloudflareClien
   case res.code
   of Http200:
     result = fromJson(body, types.AccessEmptyResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdAccessOrganizationsTrustSettings*(client: CloudflareClient,
+                                                           accountId: types.AccessIdentifier): Future[types.AccessTrustSettingsResponse] {.async.} =
+  ## Returns the trust settings for your Zero Trust organization.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/access/organizations/trust_settings")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessTrustSettingsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountsAccountIdAccessOrganizationsTrustSettings*(client: CloudflareClient,
+                                                           accountId: types.AccessIdentifier,
+                                                           body: PutAccountsAccountIdAccessOrganizationsTrustSettingsRequest): Future[types.AccessTrustSettingsResponse] {.async.} =
+  ## Replaces the trust settings for your Zero Trust organization.
+
+  let res = await client.httpPUT(fmt"/accounts/{accountId}/access/organizations/trust_settings", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessTrustSettingsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdAccessOrganizationsTrustSettings*(client: CloudflareClient,
+                                                             accountId: types.AccessIdentifier,
+                                                             body: PatchAccountsAccountIdAccessOrganizationsTrustSettingsRequest): Future[types.AccessTrustSettingsResponse] {.async.} =
+  ## Updates the trust settings for your Zero Trust organization.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/access/organizations/trust_settings", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessTrustSettingsResponse)
   else:
     raise newException(CloudflareClientError, body)

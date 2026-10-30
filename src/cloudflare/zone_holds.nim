@@ -12,15 +12,6 @@ type
   PatchZonesZoneIdHoldRequest = object
     hold_after: Option[string]
     include_subdomains: Option[bool]
-  GetZonesZoneIdHoldZoneNameResponse* = object
-    hold: bool
-      ## Whether the hostname is currently subject to a zone hold.
-    hold_after: string
-      ## The RFC3339-formatted timestamp at which the hold will be automatically
-      ## re-enabled, if the hold was temporarily disabled. Null if the hold is
-      ## permanently enabled or not set.
-    include_subdomains: bool
-      ## Whether the hold extends to block subdomains of the held zone.
 
 proc getZonesZoneIdHold*(client: CloudflareClient,
                          zoneId: types.ZonesIdentifier2): Future[JsonNode] {.async.} =
@@ -90,26 +81,5 @@ proc patchZonesZoneIdHold*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, JsonNode)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc getZonesZoneIdHoldZoneName*(client: CloudflareClient,
-                                 zoneId: types.ZonesIdentifier2,
-                                 zoneName: string): Future[GetZonesZoneIdHoldZoneNameResponse] {.async.} =
-  ## Retrieve whether a given hostname is subject to a zone hold, and metadata about
-  ## the hold.
-  ## This endpoint checks whether the given hostname (or any of its ancestor domains)
-  ## is blocked
-  ## by an active zone hold. If a hold with `include_subdomains` is active on an
-  ## ancestor domain,
-  ## that hold is returned. This endpoint is used internally by SSL/COMS to check
-  ## hold status
-  ## during zone activation.
-
-  let res = await client.httpGET(fmt"/zones/{zoneId}/hold/{zoneName}")
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, GetZonesZoneIdHoldZoneNameResponse)
   else:
     raise newException(CloudflareClientError, body)

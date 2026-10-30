@@ -45,7 +45,7 @@ proc postZonesZoneIdAddressingRegionalHostnames*(client: CloudflareClient,
                                                  body: PostZonesZoneIdAddressingRegionalHostnamesRequest): Future[JsonNode] {.async.} =
   ## Create a new Regional Hostname entry. Cloudflare will only use data centers that
   ## are physically located within the chosen region to decrypt and service HTTPS
-  ## traffic. Learn more about [RegionalServices](https://developers.cloudflare.com/
+  ## traffic. Learn more about [Regional Services](https://developers.cloudflare.com/
   ## data-localization/regional-services/get-started/).
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/addressing/regional_hostnames", body)

@@ -9,11 +9,11 @@ import ./private/metaclient
 import ./private/types
 
 
-proc getZonesZoneIdentifierAnalyticsColos*(client: CloudflareClient,
-                                           zoneIdentifier: types.ZoneAnalyticsApiIdentifier,
-                                           until: types.ZoneAnalyticsApiUntil = default(types.ZoneAnalyticsApiUntil),
-                                           since: JsonNode = default(JsonNode),
-                                           continuous: bool = true): Future[types.ZoneAnalyticsApiColoResponse] {.async.} =
+proc getZonesZoneIdAnalyticsColos*(client: CloudflareClient,
+                                   zoneId: types.ZoneAnalyticsApiIdentifier,
+                                   until: types.ZoneAnalyticsApiUntil = default(types.ZoneAnalyticsApiUntil),
+                                   since: JsonNode = default(JsonNode),
+                                   continuous: bool = true): Future[types.ZoneAnalyticsApiColoResponse] {.async.} =
   ## This view provides a breakdown of analytics data by datacenter. Note: This is
   ## available to Enterprise customers only.
 
@@ -21,7 +21,7 @@ proc getZonesZoneIdentifierAnalyticsColos*(client: CloudflareClient,
   q["until"] = $until
   q["since"] = $since
   q["continuous"] = $continuous
-  let res = await client.httpGET(fmt"/zones/{zoneIdentifier}/analytics/colos", q)
+  let res = await client.httpGET(fmt"/zones/{zoneId}/analytics/colos", q)
   let body = await res.body
   case res.code
   of Http200:
@@ -29,11 +29,11 @@ proc getZonesZoneIdentifierAnalyticsColos*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
-proc getZonesZoneIdentifierAnalyticsDashboard*(client: CloudflareClient,
-                                               zoneIdentifier: types.ZoneAnalyticsApiIdentifier,
-                                               until: types.ZoneAnalyticsApiUntil = default(types.ZoneAnalyticsApiUntil),
-                                               since: JsonNode = default(JsonNode),
-                                               continuous: bool = true): Future[types.ZoneAnalyticsApiDashboardResponse] {.async.} =
+proc getZonesZoneIdAnalyticsDashboard*(client: CloudflareClient,
+                                       zoneId: types.ZoneAnalyticsApiIdentifier,
+                                       until: types.ZoneAnalyticsApiUntil = default(types.ZoneAnalyticsApiUntil),
+                                       since: JsonNode = default(JsonNode),
+                                       continuous: bool = true): Future[types.ZoneAnalyticsApiDashboardResponse] {.async.} =
   ## The dashboard view provides both totals and timeseries data for the given zone
   ## and time period across the entire Cloudflare network.
 
@@ -41,7 +41,7 @@ proc getZonesZoneIdentifierAnalyticsDashboard*(client: CloudflareClient,
   q["until"] = $until
   q["since"] = $since
   q["continuous"] = $continuous
-  let res = await client.httpGET(fmt"/zones/{zoneIdentifier}/analytics/dashboard", q)
+  let res = await client.httpGET(fmt"/zones/{zoneId}/analytics/dashboard", q)
   let body = await res.body
   case res.code
   of Http200:

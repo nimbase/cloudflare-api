@@ -535,13 +535,12 @@ proc getAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
                                               forceRefresh: bool = default(bool),
                                               format: EventFormatOption = formatJson,
                                               cache: EventCacheOption = cacheFromGraph): Future[seq[JsonNode]] {.async.} =
-  ## Use one standalone `datasetId` scope value: 'all'/'*' or 'operational' for
-  ## readable intelligence datasets (isAnalytics=false), or 'analytics' for readable
-  ## analytics datasets (isAnalytics=true). Scope values query at most 50 datasets
-  ## and must be used alone. When `datasetId` is unspecified, events are listed from
-  ## the default Cloudforce One Threat Events dataset. To list existing datasets, use
-  ## the [`ListDatasets`](https://developers.cloudflare.com/api/resources/cloudforce
-  ## _one/subresources/threat_events/subresources/datasets/methods/list/) endpoint.
+  ## Lists events, with filters passed as query parameters. `datasetId` accepts
+  ## dataset UUIDs or one scope value used alone: `all` (or `*`) and `operational`
+  ## select the intelligence datasets you can read, and `analytics` selects the
+  ## analytics datasets you can read. A scope value covers at most 50 datasets.
+  ## Without `datasetId`, the default Cloudforce One Threat Events dataset is used.
+  ## To send filters in a JSON body instead, use `threat-intel events search`.
 
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor
@@ -569,13 +568,13 @@ proc postAccountsAccountIdCloudforceOneEvents*(client: CloudflareClient,
                                                format: EventFormatOption = formatJson,
                                                cache: EventCacheOption = cacheFromGraph,
                                                body: PostAccountsAccountIdCloudforceOneEventsRequest): Future[seq[JsonNode]] {.async.} =
-  ## Use one standalone `datasetId` scope value: 'all'/'*' or 'operational' for
-  ## readable intelligence datasets (isAnalytics=false), or 'analytics' for readable
-  ## analytics datasets (isAnalytics=true). Scope values query at most 50 datasets
-  ## and must be used alone. When `datasetId` is unspecified, events are listed from
-  ## the default Cloudforce One Threat Events dataset. To list existing datasets, use
-  ## the [`ListDatasets`](https://developers.cloudflare.com/api/resources/cloudforce
-  ## _one/subresources/threat_events/subresources/datasets/methods/list/) endpoint.
+  ## Lists events, with filters sent in a JSON request body. Accepts the same filters
+  ## as `threat-intel events list` and suits long or complex `search` filters.
+  ## `datasetId` accepts dataset UUIDs or one scope value used alone: `all` (or `*`)
+  ## and `operational` select the intelligence datasets you can read, and `analytics`
+  ## selects the analytics datasets you can read. A scope value covers at most 50
+  ## datasets. Without `datasetId`, the default Cloudforce One Threat Events dataset
+  ## is used.
 
   var q = initOrderedTable[string, string]()
   q["forceRefresh"] = $forceRefresh
@@ -597,9 +596,8 @@ proc getAccountsAccountIdCloudforceOneEventsAggregate*(client: CloudflareClient,
                                                        endDate: string = default(string),
                                                        groupByDate: bool = default(bool),
                                                        limit: float64 = default(float64)): Future[GetAccountsAccountIdCloudforceOneEventsAggregateResponse] {.async.} =
-  ## Aggregate threat events by one or more columns (e.g., attacker, targetIndustry)
-  ## with optional date filtering and daily grouping. Supports multi-dimensional
-  ## aggregation for cross-analysis.
+  ## Counts events grouped by one or more columns, such as `attacker` or
+  ## `targetIndustry`. Optionally filter by date range and group the counts by day.
 
   var q = initOrderedTable[string, string]()
   q["aggregateBy"] = $aggregateBy
@@ -627,10 +625,9 @@ proc getAccountsAccountIdCloudforceOneEventsByIdEventIdRelationships*(client: Cl
                                                                       includeParent: bool = true,
                                                                       page: float64 = default(float64),
                                                                       pageSize: float64 = default(float64)): Future[seq[JsonNode]] {.async.} =
-  ## The `event_id` must be defined (to list existing events (and their IDs), use the
-  ## [`Filter and ListEvents`](https://developers.cloudflare.com/api/resources/cloud
-  ## force_one/subresources/threat_events/methods/list/) endpoint). Also, must
-  ## provide query parameters.
+  ## Lists events related to an event by following its relationships. `datasetId` is
+  ## required. Use `direction`, `maxDepth`, and `relationshipTypes` to control which
+  ## relationships are followed.
 
   var q = initOrderedTable[string, string]()
   q["direction"] = $direction
@@ -652,10 +649,9 @@ proc getAccountsAccountIdCloudforceOneEventsByIdEventIdRelationships*(client: Cl
 proc postAccountsAccountIdCloudforceOneEventsCreate*(client: CloudflareClient,
                                                      accountId: string,
                                                      body: PostAccountsAccountIdCloudforceOneEventsCreateRequest): Future[PostAccountsAccountIdCloudforceOneEventsCreateResponse] {.async.} =
-  ## To create a dataset, see the [`CreateDataset`](https://developers.cloudflare.co
-  ## m/api/resources/cloudforce_one/subresources/threat_events/subresources/datasets/
-  ## methods/create/) endpoint. When `datasetId` parameter is unspecified, it will be
-  ## created in a default dataset named `Cloudforce One Threat Events`.
+  ## Creates an event. Without `datasetId`, the event is created in the default
+  ## Cloudforce One Threat Events dataset. To create a dataset, use `threat-intel
+  ## datasets create`.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/create", body)
   let body = await res.body
@@ -668,10 +664,9 @@ proc postAccountsAccountIdCloudforceOneEventsCreate*(client: CloudflareClient,
 proc postAccountsAccountIdCloudforceOneEventsCreateBulk*(client: CloudflareClient,
                                                          accountId: string,
                                                          body: PostAccountsAccountIdCloudforceOneEventsCreateBulkRequest): Future[PostAccountsAccountIdCloudforceOneEventsCreateBulkResponse] {.async.} =
-  ## The `datasetId` parameter must be defined. To list existing datasets (and their
-  ## IDs) in your account, use the [`ListDatasets`](https://developers.cloudflare.co
-  ## m/api/resources/cloudforce_one/subresources/threat_events/subresources/datasets/
-  ## methods/list/) endpoint.
+  ## Creates multiple events in one dataset. `datasetId` is required; to find dataset
+  ## IDs, use `threat-intel datasets list`. Set `includeCreatedEvents` to return the
+  ## UUIDs of the created events.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/create/bulk", body)
   let body = await res.body
@@ -684,7 +679,9 @@ proc postAccountsAccountIdCloudforceOneEventsCreateBulk*(client: CloudflareClien
 proc postAccountsAccountIdCloudforceOneEventsCreateBulkRelationships*(client: CloudflareClient,
                                                                       accountId: string,
                                                                       body: PostAccountsAccountIdCloudforceOneEventsCreateBulkRelationshipsRequest): Future[PostAccountsAccountIdCloudforceOneEventsCreateBulkRelationshipsResponse] {.async.} =
-  ## This method is deprecated. Please use `event_create_bulk` instead
+  ## Legacy. Use `threat-intel events bulk-create` (`POST /events/create/bulk`) and
+  ## `threat-intel events relationships create` (`POST /events/relationships/create`)
+  ## instead.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/create/bulk/relationships", body)
   let body = await res.body
@@ -699,7 +696,8 @@ proc postAccountsAccountIdCloudforceOneEventsDatasetDatasetIdCopy*(client: Cloud
                                                                    datasetId: string,
                                                                    keepRawData: bool = default(bool),
                                                                    body: PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdCopyRequest): Future[PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdCopyResponse] {.async.} =
-  ## Copies specified events from one dataset to another dataset
+  ## Copies events to the dataset given by `destDatasetId` and leaves the originals
+  ## in place. Raw event data is copied only when `keepRawData` is true.
 
   var q = initOrderedTable[string, string]()
   q["keepRawData"] = $keepRawData
@@ -715,7 +713,7 @@ proc getAccountsAccountIdCloudforceOneEventsDatasetDatasetIdEventsEventId*(clien
                                                                            accountId: string,
                                                                            datasetId: string,
                                                                            eventId: string): Future[GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdEventsEventIdResponse] {.async.} =
-  ## Retrieves a specific event by its UUID.
+  ## Returns an event from a dataset by its UUID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/events/{eventId}")
   let body = await res.body
@@ -730,7 +728,9 @@ proc postAccountsAccountIdCloudforceOneEventsDatasetDatasetIdMove*(client: Cloud
                                                                    datasetId: string,
                                                                    keepRawData: bool = default(bool),
                                                                    body: PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdMoveRequest): Future[PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdMoveResponse] {.async.} =
-  ## Moves specified events from one dataset to another dataset
+  ## Moves events to the dataset given by `destDatasetId` and removes them from the
+  ## source dataset. Raw event data is always removed from the source and is kept
+  ## only when `keepRawData` is true.
 
   var q = initOrderedTable[string, string]()
   q["keepRawData"] = $keepRawData
@@ -746,7 +746,7 @@ proc deleteAccountsAccountIdCloudforceOneEventsDatasetsDatasetIdEvents*(client: 
                                                                         accountId: string,
                                                                         datasetId: string,
                                                                         eventIds: seq[string] = @[]): Future[float64] {.async.} =
-  ## Deletes one or more events
+  ## Deletes one or more events from a dataset. Pass the event UUIDs in `eventIds`.
 
   var q = initOrderedTable[string, string]()
   for v in eventIds: q["eventIds"] = $v
@@ -762,8 +762,7 @@ proc getAccountsAccountIdCloudforceOneEventsDatasetsDatasetIdEventsEventIdRaw*(c
                                                                                accountId: string,
                                                                                eventId: string,
                                                                                datasetId: string): Future[GetAccountsAccountIdCloudforceOneEventsDatasetsDatasetIdEventsEventIdRawResponse] {.async.} =
-  ## Retrieves the raw data associated with an event. Searches across all shards in
-  ## the dataset.
+  ## Returns the raw source data stored with an event.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/datasets/{datasetId}/events/{eventId}/raw")
   let body = await res.body
@@ -777,7 +776,8 @@ proc deleteAccountsAccountIdCloudforceOneEventsEventTagEventId*(client: Cloudfla
                                                                 accountId: string,
                                                                 eventId: string,
                                                                 body: DeleteAccountsAccountIdCloudforceOneEventsEventTagEventIdRequest): Future[DeleteAccountsAccountIdCloudforceOneEventsEventTagEventIdResponse] {.async.} =
-  ## Removes a tag from a threat event in Cloudforce One.
+  ## Legacy. Use `threat-intel tags relationships delete` (`DELETE
+  ## /events/tags/{tag_uuid}/relationships/{rel_uuid}`) instead.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/event_tag/{eventId}", body)
   let body = await res.body
@@ -791,7 +791,8 @@ proc postAccountsAccountIdCloudforceOneEventsEventTagEventIdCreate*(client: Clou
                                                                     accountId: string,
                                                                     eventId: string,
                                                                     body: PostAccountsAccountIdCloudforceOneEventsEventTagEventIdCreateRequest): Future[PostAccountsAccountIdCloudforceOneEventsEventTagEventIdCreateResponse] {.async.} =
-  ## Adds a tag to a threat event in Cloudforce One for classification and filtering.
+  ## Legacy. Use `threat-intel tags relationships create` (`POST
+  ## /events/tags/{tag_uuid}/relationships`) instead.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/event_tag/{eventId}/create", body)
   let body = await res.body
@@ -803,8 +804,8 @@ proc postAccountsAccountIdCloudforceOneEventsEventTagEventIdCreate*(client: Clou
 
 proc postAccountsAccountIdCloudforceOneEventsGraphql*(client: CloudflareClient,
                                                       accountId: string): Future[PostAccountsAccountIdCloudforceOneEventsGraphqlResponse] {.async.} =
-  ## Execute GraphQL aggregations over threat events. Supports multi-dimensional
-  ## group-bys, optional date range filtering, and multi-dataset aggregation.
+  ## Runs a GraphQL aggregation query over events. Supports grouping by multiple
+  ## fields, date range filters, and aggregation across datasets.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/graphql")
   let body = await res.body
@@ -816,7 +817,7 @@ proc postAccountsAccountIdCloudforceOneEventsGraphql*(client: CloudflareClient,
 
 proc getAccountsAccountIdCloudforceOneEventsQueries*(client: CloudflareClient,
                                                      accountId: string): Future[seq[JsonNode]] {.async.} =
-  ## Retrieve all saved event queries for the account
+  ## Lists the account's saved event queries.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/queries")
   let body = await res.body
@@ -829,7 +830,8 @@ proc getAccountsAccountIdCloudforceOneEventsQueries*(client: CloudflareClient,
 proc postAccountsAccountIdCloudforceOneEventsQueriesCreate*(client: CloudflareClient,
                                                             accountId: string,
                                                             body: PostAccountsAccountIdCloudforceOneEventsQueriesCreateRequest): Future[PostAccountsAccountIdCloudforceOneEventsQueriesCreateResponse] {.async.} =
-  ## Create a new saved event query for the account
+  ## Saves an event query under a unique `name`. `query_json` holds the query
+  ## parameters as a JSON string.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/queries/create", body)
   let body = await res.body
@@ -842,7 +844,7 @@ proc postAccountsAccountIdCloudforceOneEventsQueriesCreate*(client: CloudflareCl
 proc getAccountsAccountIdCloudforceOneEventsQueriesQueryId*(client: CloudflareClient,
                                                             accountId: string,
                                                             queryId: int64): Future[GetAccountsAccountIdCloudforceOneEventsQueriesQueryIdResponse] {.async.} =
-  ## Retrieve a saved event query by its ID
+  ## Returns a saved event query by its ID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/queries/{queryId}")
   let body = await res.body
@@ -856,7 +858,7 @@ proc postAccountsAccountIdCloudforceOneEventsQueriesQueryId*(client: CloudflareC
                                                              accountId: string,
                                                              queryId: int64,
                                                              body: PostAccountsAccountIdCloudforceOneEventsQueriesQueryIdRequest): Future[PostAccountsAccountIdCloudforceOneEventsQueriesQueryIdResponse] {.async.} =
-  ## Update an existing saved event query by its ID
+  ## Updates the given fields of a saved event query.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/queries/{queryId}", body)
   let body = await res.body
@@ -869,7 +871,7 @@ proc postAccountsAccountIdCloudforceOneEventsQueriesQueryId*(client: CloudflareC
 proc deleteAccountsAccountIdCloudforceOneEventsQueriesQueryId*(client: CloudflareClient,
                                                                accountId: string,
                                                                queryId: int64): Future[AsyncResponse] {.async.} =
-  ## Delete a saved event query by its ID
+  ## Deletes a saved event query by its ID.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/queries/{queryId}")
   return res
@@ -878,7 +880,7 @@ proc patchAccountsAccountIdCloudforceOneEventsQueriesQueryId*(client: Cloudflare
                                                               accountId: string,
                                                               queryId: int64,
                                                               body: PatchAccountsAccountIdCloudforceOneEventsQueriesQueryIdRequest): Future[PatchAccountsAccountIdCloudforceOneEventsQueriesQueryIdResponse] {.async.} =
-  ## Update an existing saved event query by its ID
+  ## Updates the given fields of a saved event query.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/queries/{queryId}", body)
   let body = await res.body
@@ -892,8 +894,9 @@ proc getAccountsAccountIdCloudforceOneEventsRawDatasetIdEventId*(client: Cloudfl
                                                                  accountId: string,
                                                                  eventId: string,
                                                                  datasetId: string): Future[GetAccountsAccountIdCloudforceOneEventsRawDatasetIdEventIdResponse] {.async.} =
-  ## Deprecated; use GET /events/datasets/{dataset_id}/events/{event_id}/raw.
-  ## Available through 2026-11-28.
+  ## Legacy. Use `threat-intel events raw get` (`GET
+  ## /events/datasets/{dataset_id}/events/{event_id}/raw`) instead. Available through
+  ## 2026-11-28.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/raw/{datasetId}/{eventId}")
   let body = await res.body
@@ -907,7 +910,8 @@ proc deleteAccountsAccountIdCloudforceOneEventsRelateEventId*(client: Cloudflare
                                                               accountId: string,
                                                               eventId: string,
                                                               body: DeleteAccountsAccountIdCloudforceOneEventsRelateEventIdRequest): Future[DeleteAccountsAccountIdCloudforceOneEventsRelateEventIdResponse] {.async.} =
-  ## Removes a reference link between related threat events in Cloudforce One.
+  ## Legacy. Removes references created with `threat-intel events legacy references
+  ## create`. Use `threat-intel events relationships` for new event links.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/relate/{eventId}", body)
   let body = await res.body
@@ -921,7 +925,8 @@ proc postAccountsAccountIdCloudforceOneEventsRelateEventIdCreate*(client: Cloudf
                                                                   accountId: string,
                                                                   eventId: string,
                                                                   body: PostAccountsAccountIdCloudforceOneEventsRelateEventIdCreateRequest): Future[PostAccountsAccountIdCloudforceOneEventsRelateEventIdCreateResponse] {.async.} =
-  ## Creates event references for a event
+  ## Legacy. Use `threat-intel events relationships create` (`POST
+  ## /events/relationships/create`) instead.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/relate/{eventId}/create", body)
   let body = await res.body
@@ -934,8 +939,8 @@ proc postAccountsAccountIdCloudforceOneEventsRelateEventIdCreate*(client: Cloudf
 proc postAccountsAccountIdCloudforceOneEventsRelationshipsCreate*(client: CloudflareClient,
                                                                   accountId: string,
                                                                   body: PostAccountsAccountIdCloudforceOneEventsRelationshipsCreateRequest): Future[PostAccountsAccountIdCloudforceOneEventsRelationshipsCreateResponse] {.async.} =
-  ## Creates a directed relationship between two events. The relationship is from
-  ## parent to child with a specified type.
+  ## Creates directed relationships of type `relationshipType` from a parent event to
+  ## one or more child events in the same dataset.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/relationships/create", body)
   let body = await res.body
@@ -948,8 +953,8 @@ proc postAccountsAccountIdCloudforceOneEventsRelationshipsCreate*(client: Cloudf
 proc patchAccountsAccountIdCloudforceOneEventsUpdateBulk*(client: CloudflareClient,
                                                           accountId: string,
                                                           body: PatchAccountsAccountIdCloudforceOneEventsUpdateBulkRequest): Future[PatchAccountsAccountIdCloudforceOneEventsUpdateBulkResponse] {.async.} =
-  ## Updates multiple events with the same field values. Maximum 100 events per
-  ## request.
+  ## Applies the same field values to up to 100 events in one dataset. The `date`
+  ## field can't be changed in bulk.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/update/bulk", body)
   let body = await res.body
@@ -963,8 +968,8 @@ proc deleteAccountsAccountIdCloudforceOneEventsDatasetIdDelete*(client: Cloudfla
                                                                 accountId: string,
                                                                 datasetId: string,
                                                                 eventIds: seq[string] = @[]): Future[float64] {.async.} =
-  ## Deprecated; use DELETE /events/datasets/{dataset_id}/events. Available through
-  ## 2026-11-28.
+  ## Legacy. Use `threat-intel events delete` (`DELETE
+  ## /events/datasets/{dataset_id}/events`) instead. Available through 2026-11-28.
 
   var q = initOrderedTable[string, string]()
   for v in eventIds: q["eventIds"] = $v
@@ -979,8 +984,8 @@ proc deleteAccountsAccountIdCloudforceOneEventsDatasetIdDelete*(client: Cloudfla
 proc getAccountsAccountIdCloudforceOneEventsEventId*(client: CloudflareClient,
                                                      accountId: string,
                                                      eventId: string): Future[GetAccountsAccountIdCloudforceOneEventsEventIdResponse] {.async.} =
-  ## This Method is deprecated. Please use
-  ## /events/dataset/:dataset_id/events/:event_id instead.
+  ## Legacy. Use `threat-intel events get` (`GET
+  ## /events/dataset/{dataset_id}/events/{event_id}`) instead.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/{eventId}")
   let body = await res.body
@@ -994,7 +999,8 @@ proc postAccountsAccountIdCloudforceOneEventsEventId*(client: CloudflareClient,
                                                       accountId: string,
                                                       eventId: string,
                                                       body: PostAccountsAccountIdCloudforceOneEventsEventIdRequest): Future[PostAccountsAccountIdCloudforceOneEventsEventIdResponse] {.async.} =
-  ## Updates an event
+  ## Updates the given fields of an event and leaves the other fields unchanged.
+  ## `datasetId` is required.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/{eventId}", body)
   let body = await res.body
@@ -1008,8 +1014,8 @@ proc patchAccountsAccountIdCloudforceOneEventsEventId*(client: CloudflareClient,
                                                        accountId: string,
                                                        eventId: string,
                                                        body: PatchAccountsAccountIdCloudforceOneEventsEventIdRequest): Future[PatchAccountsAccountIdCloudforceOneEventsEventIdResponse] {.async.} =
-  ## Partially updates a threat event in Cloudforce One, modifying specific fields
-  ## without replacing the entire event.
+  ## Updates the given fields of an event and leaves the other fields unchanged.
+  ## `datasetId` is required.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/{eventId}", body)
   let body = await res.body
@@ -1023,7 +1029,9 @@ proc getAccountsAccountIdCloudforceOneEventsEventIdRawRawId*(client: CloudflareC
                                                              accountId: string,
                                                              eventId: string,
                                                              rawId: string): Future[GetAccountsAccountIdCloudforceOneEventsEventIdRawRawIdResponse] {.async.} =
-  ## Retrieves raw threat event data for a specific event in Cloudforce One.
+  ## Legacy. Returns raw data stored under a `raw_id`, which new events don't use.
+  ## Use `threat-intel events raw get` (`GET
+  ## /events/datasets/{dataset_id}/events/{event_id}/raw`) instead.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/{eventId}/raw/{rawId}")
   let body = await res.body
@@ -1038,7 +1046,8 @@ proc postAccountsAccountIdCloudforceOneEventsEventIdRawRawId*(client: Cloudflare
                                                               eventId: string,
                                                               rawId: string,
                                                               body: PostAccountsAccountIdCloudforceOneEventsEventIdRawRawIdRequest): Future[PostAccountsAccountIdCloudforceOneEventsEventIdRawRawIdResponse] {.async.} =
-  ## Updates a raw event
+  ## Legacy. Updates raw data stored under a `raw_id`, which new events don't use.
+  ## There is no direct replacement.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/{eventId}/raw/{rawId}", body)
   let body = await res.body
@@ -1053,8 +1062,8 @@ proc patchAccountsAccountIdCloudforceOneEventsEventIdRawRawId*(client: Cloudflar
                                                                eventId: string,
                                                                rawId: string,
                                                                body: PatchAccountsAccountIdCloudforceOneEventsEventIdRawRawIdRequest): Future[PatchAccountsAccountIdCloudforceOneEventsEventIdRawRawIdResponse] {.async.} =
-  ## Partially updates raw threat event data in Cloudforce One, modifying specific
-  ## fields of the event.
+  ## Legacy. Updates raw data stored under a `raw_id`, which new events don't use.
+  ## There is no direct replacement.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/{eventId}/raw/{rawId}", body)
   let body = await res.body
@@ -1075,8 +1084,8 @@ proc getAccountsAccountIdCloudforceOneEventsEventIdRelationships*(client: Cloudf
                                                                   includeParent: bool = true,
                                                                   page: float64 = default(float64),
                                                                   pageSize: float64 = default(float64)): Future[seq[JsonNode]] {.async.} =
-  ## Deprecated; use GET /events/by-id/{event_id}/relationships. Available through
-  ## 2026-11-28.
+  ## Legacy. Use `threat-intel events relationships list` (`GET
+  ## /events/by-id/{event_id}/relationships`) instead. Available through 2026-11-28.
 
   var q = initOrderedTable[string, string]()
   q["direction"] = $direction
@@ -1097,8 +1106,8 @@ proc getAccountsAccountIdCloudforceOneEventsEventIdRelationships*(client: Cloudf
 
 proc postAccountsAccountIdCloudforceOneV2EventsGraphql*(client: CloudflareClient,
                                                         accountId: string): Future[PostAccountsAccountIdCloudforceOneV2EventsGraphqlResponse] {.async.} =
-  ## Execute GraphQL aggregations over threat events. Supports multi-dimensional
-  ## group-bys, optional date range filtering, and multi-dataset aggregation.
+  ## Legacy. Use `threat-intel events graphql` (`POST /events/graphql`) instead. Both
+  ## commands run the same query.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/events/graphql")
   let body = await res.body

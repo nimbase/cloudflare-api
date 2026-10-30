@@ -11,6 +11,12 @@ type
   GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsResponse* = object
     indicators: seq[JsonNode]
     pagination: JsonNode
+  DeleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsResponse* = object
+    deleted_count: int64
+      ## Number of indicators deleted.
+    missing_u_u_i_ds: seq[string]
+      ## Requested UUIDs that were not found in the dataset. Omitted when every UUID was
+      ## deleted.
   PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsBulkRequest = object
     auto_create_type: Option[bool]
     indicators: seq[JsonNode]
@@ -146,8 +152,8 @@ proc getAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicators*(client: 
                                                                         name: string = default(string),
                                                                         indicatorType: string = default(string),
                                                                         relatedEvent: seq[string] = @[]): Future[GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsResponse] {.async.} =
-  ## This method is deprecated. Please use /events/indicators to retrieve a paginated
-  ## list of indicators.
+  ## Legacy. Use `threat-intel indicators list` (`GET /events/indicators`) instead.
+  ## It supports multiple datasets and cursor pagination.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -163,12 +169,29 @@ proc getAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicators*(client: 
   else:
     raise newException(CloudflareClientError, body)
 
+proc deleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicators*(client: CloudflareClient,
+                                                                           accountId: string,
+                                                                           datasetId: string,
+                                                                           indicatorIds: seq[string] = @[]): Future[DeleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsResponse] {.async.} =
+  ## Deletes up to 200 indicators from a dataset. Pass the indicator UUIDs in
+  ## `indicatorIds`; UUIDs that are not found are returned in `missingUUIDs`.
+
+  var q = initOrderedTable[string, string]()
+  for v in indicatorIds: q["indicatorIds"] = $v
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, DeleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc postAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsBulk*(client: CloudflareClient,
                                                                              accountId: string,
                                                                              datasetId: string,
                                                                              body: PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsBulkRequest): Future[float64] {.async.} =
-  ## Creates multiple indicators at once with their respective types and related
-  ## datasets.
+  ## Creates multiple indicators in a dataset in one request. Set `autoCreateType` to
+  ## create any indicator types that don't exist.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators/bulk", body)
   let body = await res.body
@@ -182,7 +205,8 @@ proc postAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsCreate*(c
                                                                                accountId: string,
                                                                                datasetId: string,
                                                                                body: PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsCreateRequest): Future[PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsCreateResponse] {.async.} =
-  ## Creates a new indicator with the specified type and related datasets.
+  ## Creates an indicator in a dataset. Set `autoCreateType` to create the indicator
+  ## type if it doesn't exist.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators/create", body)
   let body = await res.body
@@ -195,8 +219,7 @@ proc postAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsCreate*(c
 proc getAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsTags*(client: CloudflareClient,
                                                                             accountId: string,
                                                                             datasetId: string): Future[seq[JsonNode]] {.async.} =
-  ## Returns all mirrored tags from the indicator dataset (DO mirror table). No
-  ## pagination.
+  ## Lists the tags applied to indicators in a dataset. Results are not paginated.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators/tags")
   let body = await res.body
@@ -210,7 +233,7 @@ proc getAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorI
                                                                                    accountId: string,
                                                                                    datasetId: string,
                                                                                    indicatorId: string): Future[GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdResponse] {.async.} =
-  ## Retrieves a specific indicator by its UUID.
+  ## Returns an indicator by its UUID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators/{indicatorId}")
   let body = await res.body
@@ -224,7 +247,7 @@ proc deleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicat
                                                                                       accountId: string,
                                                                                       datasetId: string,
                                                                                       indicatorId: string): Future[DeleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdResponse] {.async.} =
-  ## Deletes a specific indicator by its UUID.
+  ## Deletes an indicator by its UUID.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators/{indicatorId}")
   let body = await res.body
@@ -239,7 +262,7 @@ proc patchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicato
                                                                                      datasetId: string,
                                                                                      indicatorId: string,
                                                                                      body: PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRequest): Future[PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdResponse] {.async.} =
-  ## Updates an existing indicator's properties.
+  ## Updates the given fields of an indicator and leaves the other fields unchanged.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators/{indicatorId}", body)
   let body = await res.body
@@ -257,8 +280,8 @@ proc getAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorI
                                                                                                 expand: seq[string] = @[],
                                                                                                 cursor: string = default(string),
                                                                                                 pageSize: int64 = 25): Future[GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsResponse] {.async.} =
-  ## Returns sparse relationship edges. Optionally hydrate related entities via
-  ## `expand`.
+  ## Lists the relationships that start at an indicator. Use `search` to filter them
+  ## and `expand` to include the related entities in the response.
 
   var q = initOrderedTable[string, string]()
   for v in search: q["search"] = $v
@@ -278,8 +301,8 @@ proc postAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicator
                                                                                                  datasetId: string,
                                                                                                  indicatorId: string,
                                                                                                  body: PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRequest): Future[PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsResponse] {.async.} =
-  ## Creates a new relationship with the indicator as the source entity.
-  ## Indicator↔indicator relationships are not supported.
+  ## Creates a relationship from an indicator to an event or tag (`targetType`).
+  ## Relationships between two indicators are not supported.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators/{indicatorId}/relationships", body)
   let body = await res.body
@@ -294,7 +317,8 @@ proc deleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicat
                                                                                                           datasetId: string,
                                                                                                           indicatorId: string,
                                                                                                           relUuid: string): Future[DeleteAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRelUuidResponse] {.async.} =
-  ## Deletes a relationship by UUID. Idempotent: returns deleted=false if not found.
+  ## Deletes an indicator relationship by its UUID. Returns `deleted: false` if the
+  ## relationship doesn't exist.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators/{indicatorId}/relationships/{relUuid}")
   let body = await res.body
@@ -310,7 +334,8 @@ proc patchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicato
                                                                                                          indicatorId: string,
                                                                                                          relUuid: string,
                                                                                                          body: PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRelUuidRequest): Future[PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdIndicatorsIndicatorIdRelationshipsRelUuidResponse] {.async.} =
-  ## Partially updates a relationship by UUID. Only provided fields are changed.
+  ## Updates the given fields of an indicator relationship and leaves the other
+  ## fields unchanged.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/dataset/{datasetId}/indicators/{indicatorId}/relationships/{relUuid}", body)
   let body = await res.body
@@ -339,11 +364,10 @@ proc getAccountsAccountIdCloudforceOneEventsIndicators*(client: CloudflareClient
                                                         format: IndicatorFormatOption = formatJson,
                                                         cache: IndicatorCacheOption = cacheFromGraph,
                                                         cursor: string = default(string)): Future[GetAccountsAccountIdCloudforceOneEventsIndicatorsResponse] {.async.} =
-  ## Retrieves indicators across specified datasets, ordered by createdAt descending
-  ## then UUID, dataset ID, and shard ID ascending. Use one standalone datasetIds
-  ## scope value: 'all'/'*' or 'operational' for readable intelligence datasets
-  ## (isAnalytics=false), or 'analytics' for readable analytics datasets
-  ## (isAnalytics=true). If no datasetIds are provided, uses the default dataset.
+  ## Lists indicators across datasets, newest first. `datasetIds` accepts dataset
+  ## UUIDs or one scope value used alone: `all` (or `*`) and `operational` select the
+  ## intelligence datasets you can read, and `analytics` selects the analytics
+  ## datasets you can read. Without `datasetIds`, the default dataset is used.
 
   var q = initOrderedTable[string, string]()
   for v in datasetIds: q["datasetIds"] = $v

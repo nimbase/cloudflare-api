@@ -21,7 +21,7 @@ proc getAccountsAccountIdDnsFirewallDnsFirewallIdDnsAnalyticsReport*(client: Clo
                                                                      filters: types.DnsAnalyticsFilters = default(types.DnsAnalyticsFilters)): Future[JsonNode] {.async.} =
   ## Retrieves a list of summarised aggregate metrics over a given time period.
   ##
-  ## See [Analytics APIproperties](https://developers.cloudflare.com/dns/reference/a
+  ## See [Analytics API properties](https://developers.cloudflare.com/dns/reference/a
   ## nalytics-api-properties/) for detailed information about the available query
   ## parameters.
 
@@ -54,7 +54,7 @@ proc getAccountsAccountIdDnsFirewallDnsFirewallIdDnsAnalyticsReportBytime*(clien
                                                                            timeDelta: types.DnsAnalyticsTimeDelta = default(types.DnsAnalyticsTimeDelta)): Future[JsonNode] {.async.} =
   ## Retrieves a list of aggregate metrics grouped by time interval.
   ##
-  ## See [Analytics APIproperties](https://developers.cloudflare.com/dns/reference/a
+  ## See [Analytics API properties](https://developers.cloudflare.com/dns/reference/a
   ## nalytics-api-properties/) for detailed information about the available query
   ## parameters.
 

@@ -10,7 +10,7 @@ import ./private/types
 
 type
   PatchZonesZoneIdFirewallWafPackagesPackageIdGroupsGroupIdRequest = object
-    mode: Option[types.WafManagedRulesMode]
+    mode: Option[JsonNode]
   WafRuleGroupOrderOption* = enum
     orderMode = "mode"
     orderRulesCount = "rules_count"
@@ -37,7 +37,7 @@ proc getZonesZoneIdFirewallWafPackagesPackageIdGroups*(client: CloudflareClient,
                                                        rulesCount: float64 = default(float64)): Future[types.WafManagedRulesRuleGroupResponseCollection] {.async.} =
   ## Fetches the WAF rule groups in a WAF package.
   ##
-  ## **Note:** Applies only to the [previous version of WAF managedrules](https://de
+  ## **Note:** Applies only to the [previous version of WAF managed rules](https://de
   ## velopers.cloudflare.com/support/firewall/managed-rules-web-application-firewall-
   ## waf/understanding-waf-managed-rules-web-application-firewall/).
 
@@ -64,7 +64,7 @@ proc getZonesZoneIdFirewallWafPackagesPackageIdGroupsGroupId*(client: Cloudflare
                                                               zoneId: types.WafManagedRulesSchemasIdentifier): Future[types.WafManagedRulesRuleGroupResponseSingle] {.async.} =
   ## Fetches the details of a WAF rule group.
   ##
-  ## **Note:** Applies only to the [previous version of WAF managedrules](https://de
+  ## **Note:** Applies only to the [previous version of WAF managed rules](https://de
   ## velopers.cloudflare.com/support/firewall/managed-rules-web-application-firewall-
   ## waf/understanding-waf-managed-rules-web-application-firewall/).
 
@@ -84,7 +84,7 @@ proc patchZonesZoneIdFirewallWafPackagesPackageIdGroupsGroupId*(client: Cloudfla
   ## Updates a WAF rule group. You can update the state (`mode` parameter) of a rule
   ## group.
   ##
-  ## **Note:** Applies only to the [previous version of WAF managedrules](https://de
+  ## **Note:** Applies only to the [previous version of WAF managed rules](https://de
   ## velopers.cloudflare.com/support/firewall/managed-rules-web-application-firewall-
   ## waf/understanding-waf-managed-rules-web-application-firewall/).
 

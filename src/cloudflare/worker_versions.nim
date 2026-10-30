@@ -38,7 +38,7 @@ proc postAccountsAccountIdWorkersScriptsScriptNameVersions*(client: CloudflareCl
                                                             scriptName: types.WorkersScriptName2,
                                                             bindingsInherit: WorkerVersionBindingsInheritOption = bindingsInheritStrict): Future[types.WorkersVersionsUploadResponse] {.async.} =
   ## Upload a Worker Version without deploying to Cloudflare's network. You can find
-  ## more about the multipart metadata on our docs:https://developers.cloudflare.com
+  ## more about the multipart metadata on our docs: https://developers.cloudflare.com
   ## /workers/configuration/multipart-upload-metadata/.
 
   var q = initOrderedTable[string, string]()

@@ -35,7 +35,7 @@ proc postZonesZoneIdLogsControlRetentionFlag*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdLogsRayidsRayId*(client: CloudflareClient,
-                                    zoneId: types.LogshareIdentifier,
+                                    zoneId: types.LogshareZoneIdentifier,
                                     rayId: types.LogshareRayIdentifier,
                                     fields: types.LogshareFields = default(types.LogshareFields),
                                     timestamps: types.LogshareTimestamps = default(types.LogshareTimestamps)): Future[types.LogshareLogsResponseJsonLines] {.async.} =
@@ -54,7 +54,7 @@ proc getZonesZoneIdLogsRayidsRayId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdLogsReceived*(client: CloudflareClient,
-                                 zoneId: types.LogshareIdentifier,
+                                 zoneId: types.LogshareZoneIdentifier,
                                  start: types.LogshareStart = default(types.LogshareStart),
                                  `end`: types.LogshareEnd,
                                  fields: types.LogshareFields = default(types.LogshareFields),
@@ -86,7 +86,7 @@ proc getZonesZoneIdLogsReceived*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdLogsReceivedFields*(client: CloudflareClient,
-                                       zoneId: types.LogshareIdentifier): Future[types.LogshareFieldsResponse] {.async.} =
+                                       zoneId: types.LogshareZoneIdentifier): Future[types.LogshareFieldsResponse] {.async.} =
   ## Lists all fields available. The response is json object with key-value pairs,
   ## where keys are field names, and values are descriptions.
 

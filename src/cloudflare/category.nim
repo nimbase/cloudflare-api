@@ -96,8 +96,10 @@ type
 proc getAccountsAccountIdCloudforceOneEventsCategories*(client: CloudflareClient,
                                                         accountId: string,
                                                         datasetIds: seq[string] = @[]): Future[seq[JsonNode]] {.async.} =
-  ## Lists all threat event categories configured for classifying and organizing
-  ## threat events.
+  ## Lists the event categories used by events in the datasets given by `datasetIds`,
+  ## or in the default dataset when `datasetIds` is omitted. Dataset scope values are
+  ## not supported. To list every category, use `threat-intel events categories
+  ## catalog list`.
 
   var q = initOrderedTable[string, string]()
   for v in datasetIds: q["datasetIds"] = $v
@@ -111,7 +113,9 @@ proc getAccountsAccountIdCloudforceOneEventsCategories*(client: CloudflareClient
 
 proc getAccountsAccountIdCloudforceOneEventsCategoriesCatalog*(client: CloudflareClient,
                                                                accountId: string): Future[seq[JsonNode]] {.async.} =
-  ## Lists categories
+  ## Lists every event category in the catalog, whether or not an event uses it. To
+  ## list only the categories used in specific datasets, use `threat-intel events
+  ## categories list`.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/categories/catalog")
   let body = await res.body
@@ -124,8 +128,8 @@ proc getAccountsAccountIdCloudforceOneEventsCategoriesCatalog*(client: Cloudflar
 proc postAccountsAccountIdCloudforceOneEventsCategoriesCreate*(client: CloudflareClient,
                                                                accountId: string,
                                                                body: PostAccountsAccountIdCloudforceOneEventsCategoriesCreateRequest): Future[PostAccountsAccountIdCloudforceOneEventsCategoriesCreateResponse] {.async.} =
-  ## Creates a new threat event category in Cloudforce One for organizing and
-  ## classifying threat events.
+  ## Creates an event category for classifying events. `name` and `killChain` are
+  ## required.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/categories/create", body)
   let body = await res.body
@@ -138,8 +142,9 @@ proc postAccountsAccountIdCloudforceOneEventsCategoriesCreate*(client: Cloudflar
 proc getAccountsAccountIdCloudforceOneEventsCategoriesCategoryId*(client: CloudflareClient,
                                                                   accountId: string,
                                                                   categoryId: string): Future[GetAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdResponse] {.async.} =
-  ## Deprecated; use GET /events/event-categories/by-id/{category_id}. Available
-  ## through 2026-11-28.
+  ## Legacy. Use `threat-intel events categories get` (`GET
+  ## /events/event-categories/by-id/{category_id}`) instead. Available through
+  ## 2026-11-28.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/categories/{categoryId}")
   let body = await res.body
@@ -153,8 +158,9 @@ proc postAccountsAccountIdCloudforceOneEventsCategoriesCategoryId*(client: Cloud
                                                                    accountId: string,
                                                                    categoryId: string,
                                                                    body: PostAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdRequest): Future[PostAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdResponse] {.async.} =
-  ## Deprecated; use POST /events/event-categories/by-id/{category_id}. Available
-  ## through 2026-11-28.
+  ## Legacy. Use `threat-intel events categories update` (`POST
+  ## /events/event-categories/by-id/{category_id}`) instead. Available through
+  ## 2026-11-28.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/categories/{categoryId}", body)
   let body = await res.body
@@ -167,8 +173,9 @@ proc postAccountsAccountIdCloudforceOneEventsCategoriesCategoryId*(client: Cloud
 proc deleteAccountsAccountIdCloudforceOneEventsCategoriesCategoryId*(client: CloudflareClient,
                                                                      accountId: string,
                                                                      categoryId: string): Future[DeleteAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdResponse] {.async.} =
-  ## Deprecated; use DELETE /events/event-categories/by-id/{category_id}. Available
-  ## through 2026-11-28.
+  ## Legacy. Use `threat-intel events categories delete` (`DELETE
+  ## /events/event-categories/by-id/{category_id}`) instead. Available through
+  ## 2026-11-28.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/categories/{categoryId}")
   let body = await res.body
@@ -182,8 +189,9 @@ proc patchAccountsAccountIdCloudforceOneEventsCategoriesCategoryId*(client: Clou
                                                                     accountId: string,
                                                                     categoryId: string,
                                                                     body: PatchAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdRequest): Future[PatchAccountsAccountIdCloudforceOneEventsCategoriesCategoryIdResponse] {.async.} =
-  ## Deprecated; use PATCH /events/event-categories/by-id/{category_id}. Available
-  ## through 2026-11-28.
+  ## Legacy. Use `threat-intel events categories update` (`PATCH
+  ## /events/event-categories/by-id/{category_id}`) instead. Available through
+  ## 2026-11-28.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/categories/{categoryId}", body)
   let body = await res.body
@@ -196,7 +204,7 @@ proc patchAccountsAccountIdCloudforceOneEventsCategoriesCategoryId*(client: Clou
 proc getAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryId*(client: CloudflareClient,
                                                                            accountId: string,
                                                                            categoryId: string): Future[GetAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse] {.async.} =
-  ## Retrieves details for a specific threat event category.
+  ## Returns an event category by its ID.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/event-categories/by-id/{categoryId}")
   let body = await res.body
@@ -210,7 +218,8 @@ proc postAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryId*(clie
                                                                             accountId: string,
                                                                             categoryId: string,
                                                                             body: PostAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdRequest): Future[PostAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse] {.async.} =
-  ## Updates a category
+  ## Updates the given fields of an event category and leaves the other fields
+  ## unchanged.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/event-categories/by-id/{categoryId}", body)
   let body = await res.body
@@ -223,7 +232,7 @@ proc postAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryId*(clie
 proc deleteAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryId*(client: CloudflareClient,
                                                                               accountId: string,
                                                                               categoryId: string): Future[DeleteAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse] {.async.} =
-  ## Removes a threat event category from Cloudforce One.
+  ## Deletes an event category by its ID.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/event-categories/by-id/{categoryId}")
   let body = await res.body
@@ -237,8 +246,8 @@ proc patchAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryId*(cli
                                                                              accountId: string,
                                                                              categoryId: string,
                                                                              body: PatchAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdRequest): Future[PatchAccountsAccountIdCloudforceOneEventsEventCategoriesByIdCategoryIdResponse] {.async.} =
-  ## Partially updates a threat event category in Cloudforce One, modifying specific
-  ## fields without replacing the entire category.
+  ## Updates the given fields of an event category and leaves the other fields
+  ## unchanged.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/event-categories/by-id/{categoryId}", body)
   let body = await res.body

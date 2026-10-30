@@ -45,7 +45,7 @@ proc getZonesZoneIdFirewallWafPackagesPackageIdRules*(client: CloudflareClient,
                                                       priority: string = default(string)): Future[types.WafManagedRulesRuleResponseCollection] {.async.} =
   ## Fetches WAF rules in a WAF package.
   ##
-  ## **Note:** Applies only to the [previous version of WAF managedrules](https://de
+  ## **Note:** Applies only to the [previous version of WAF managed rules](https://de
   ## velopers.cloudflare.com/support/firewall/managed-rules-web-application-firewall-
   ## waf/understanding-waf-managed-rules-web-application-firewall/).
 
@@ -73,7 +73,7 @@ proc getZonesZoneIdFirewallWafPackagesPackageIdRulesRuleId*(client: CloudflareCl
                                                             zoneId: types.WafManagedRulesSchemasIdentifier): Future[types.WafManagedRulesRuleResponseSingle] {.async.} =
   ## Fetches the details of a WAF rule in a WAF package.
   ##
-  ## **Note:** Applies only to the [previous version of WAF managedrules](https://de
+  ## **Note:** Applies only to the [previous version of WAF managed rules](https://de
   ## velopers.cloudflare.com/support/firewall/managed-rules-web-application-firewall-
   ## waf/understanding-waf-managed-rules-web-application-firewall/).
 
@@ -92,7 +92,7 @@ proc patchZonesZoneIdFirewallWafPackagesPackageIdRulesRuleId*(client: Cloudflare
                                                               body: PatchZonesZoneIdFirewallWafPackagesPackageIdRulesRuleIdRequest): Future[JsonNode] {.async.} =
   ## Updates a WAF rule. You can only update the mode/action of the rule.
   ##
-  ## **Note:** Applies only to the [previous version of WAF managedrules](https://de
+  ## **Note:** Applies only to the [previous version of WAF managed rules](https://de
   ## velopers.cloudflare.com/support/firewall/managed-rules-web-application-firewall-
   ## waf/understanding-waf-managed-rules-web-application-firewall/).
 

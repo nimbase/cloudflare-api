@@ -35,6 +35,10 @@ suite "meetings serialization":
     let obj = newRealtimekitAIConfig()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitAIConfig)) == openjson.toJson(obj)
 
+  test "round-trips RealtimekitParticipantTokenValidity":
+    let obj = newRealtimekitParticipantTokenValidity()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitParticipantTokenValidity)) == openjson.toJson(obj)
+
   test "round-trips RealtimekitParticipant":
     let obj = newRealtimekitParticipant()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RealtimekitParticipant)) == openjson.toJson(obj)
@@ -68,5 +72,5 @@ suite "meetings endpoints":
   test "POST /accounts/{account_id}/realtime/kit/{app_id}/meetings/{meeting_id}/participants/{participant_id}/token":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdParticipantsParticipantIdToken("test", "test", "test", "test")
+    discard waitFor client.postAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdParticipantsParticipantIdToken("test", "test", "test", "test", newRealtimekitParticipantTokenValidity())
 

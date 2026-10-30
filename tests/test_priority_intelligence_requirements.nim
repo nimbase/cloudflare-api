@@ -15,6 +15,18 @@ suite "priority_intelligence_requirements serialization":
     let obj = cloudflare.PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceMatchesAggregateResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceMatchesAggregateResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceMatchesAggregateResponse)) == openjson.toJson(obj)
+
+  test "round-trips GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesAggregateResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesAggregateResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesAggregateResponse)) == openjson.toJson(obj)
+
+  test "round-trips GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesSeriesResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesSeriesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesSeriesResponse)) == openjson.toJson(obj)
+
 suite "priority_intelligence_requirements endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/v2/priority-intelligence":
     let client = initCloudflareClient("test-key")
@@ -46,6 +58,21 @@ suite "priority_intelligence_requirements endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdCloudforceOneV2PriorityIntelligenceInterestsInterestId("test", "test")
 
+  test "GET /accounts/{account_id}/cloudforce-one/v2/priority-intelligence/matches/aggregate":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2PriorityIntelligenceMatchesAggregate("test", "test", 1, "test", triageStateNew, includeBackfillTrue)
+
+  test "GET /accounts/{account_id}/cloudforce-one/v2/priority-intelligence/profile":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2PriorityIntelligenceProfile("test")
+
+  test "DELETE /accounts/{account_id}/cloudforce-one/v2/priority-intelligence/profile":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdCloudforceOneV2PriorityIntelligenceProfile("test")
+
   test "POST /accounts/{account_id}/cloudforce-one/v2/priority-intelligence/quota":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -65,4 +92,14 @@ suite "priority_intelligence_requirements endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatches("test", "test", "test", 1, triageStateNew)
+
+  test "GET /accounts/{account_id}/cloudforce-one/v2/priority-intelligence/{priority_id}/matches/aggregate":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesAggregate("test", "test", "test", 1, "test", triageStateNew, includeBackfillTrue)
+
+  test "GET /accounts/{account_id}/cloudforce-one/v2/priority-intelligence/{priority_id}/matches/series":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesSeries("test", "test", "test", "test", triageStateNew, includeBackfillTrue)
 

@@ -283,13 +283,11 @@ proc getAccountsAccountIdCloudforceOneEventsTags*(client: CloudflareClient,
                                                   categoryUuid: string = default(string),
                                                   filters: seq[string] = @[],
                                                   cache: TagCacheOption = cacheFromGraph): Future[GetAccountsAccountIdCloudforceOneEventsTagsResponse] {.async.} =
-  ## Returns all Source-of-Truth tags for an account. Supports legacy free-text
-  ## `search` on tag value and `categoryUuid` exact match, plus a structured
-  ## `filters` JSON array for filtering by metadata fields (originCountryISO,
-  ## actorCategory, motive, priority, etc.). The authenticated account owns these
-  ## account-scoped tags and receives their complete owner projection. Country values
-  ## may be passed as alpha-2, alpha-3, name, or common alias. Purple TLP remains
-  ## CFONE-only.
+  ## Lists the account's tags. Use `search` to match tag values, `categoryUuid` to
+  ## limit results to one category, and `filters` (a JSON array) to filter by fields
+  ## such as `originCountryISO`, `actorCategory`, `motive`, or `priority`. Country
+  ## filters accept alpha-2 or alpha-3 codes, names, or common aliases. Tags marked
+  ## TLP:PURPLE are visible only to Cloudforce One.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -312,14 +310,12 @@ proc getAccountsAccountIdCloudforceOneEventsTagsCategoriesActors*(client: Cloudf
                                                                   pageSize: float64 = default(float64),
                                                                   value: string = default(string),
                                                                   filters: seq[string] = @[]): Future[GetAccountsAccountIdCloudforceOneEventsTagsCategoriesActorsResponse] {.async.} =
-  ## Returns all known Actors from the shared CFONE-owned catalog. Accounts other
-  ## than the catalog owner receive a redacted public projection: identity (`uuid`,
-  ## `value`, `categoryUuid`, `categoryName`), metadata (`description`,
-  ## `dateOfDiscovery`, `tlp`, `confidence`, `properties`), origin
-  ## (`originCountryISO`, `originCountryISO_annotated`), and public
-  ## aliases/references (`aliasGroupNames`, `aliases`, `externalReferences`,
-  ## `externalReferences_annotated`). Owner-private fields (internal aliases,
-  ## attribution, motive, opsec level, etc.) are stripped from non-owner responses.
+  ## Lists threat actors from the Cloudforce One actor catalog. Use `value` to match
+  ## actor names and `filters` to filter by fields such as origin country. Accounts
+  ## outside Cloudforce One receive only public fields: identity, description,
+  ## discovery date, TLP, confidence, custom properties, origin country, public
+  ## aliases, and external references. Fields such as internal aliases, attribution,
+  ## motive, and OPSEC level are omitted.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -337,8 +333,7 @@ proc getAccountsAccountIdCloudforceOneEventsTagsCategoriesActors*(client: Cloudf
 proc postAccountsAccountIdCloudforceOneEventsTagsCreate*(client: CloudflareClient,
                                                          accountId: string,
                                                          body: PostAccountsAccountIdCloudforceOneEventsTagsCreateRequest): Future[PostAccountsAccountIdCloudforceOneEventsTagsCreateResponse] {.async.} =
-  ## Creates an account-owned tag for threat events and returns its complete owner
-  ## projection.
+  ## Creates a tag in the account and returns the complete tag.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/tags/create", body)
   let body = await res.body
@@ -351,8 +346,8 @@ proc postAccountsAccountIdCloudforceOneEventsTagsCreate*(client: CloudflareClien
 proc getAccountsAccountIdCloudforceOneEventsTagsTagUuid*(client: CloudflareClient,
                                                          accountId: string,
                                                          tagUuid: string): Future[GetAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse] {.async.} =
-  ## Returns the complete owner projection of an account-scoped Source-of-Truth tag
-  ## by UUID, including custom fields (properties). Purple TLP remains CFONE-only.
+  ## Returns a tag by its UUID, including its custom fields (`properties`). Tags
+  ## marked TLP:PURPLE are visible only to Cloudforce One.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/tags/{tagUuid}")
   let body = await res.body
@@ -365,7 +360,7 @@ proc getAccountsAccountIdCloudforceOneEventsTagsTagUuid*(client: CloudflareClien
 proc deleteAccountsAccountIdCloudforceOneEventsTagsTagUuid*(client: CloudflareClient,
                                                             accountId: string,
                                                             tagUuid: string): Future[DeleteAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse] {.async.} =
-  ## Deletes a Source-of-Truth tag by UUID.
+  ## Deletes a tag by its UUID.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/tags/{tagUuid}")
   let body = await res.body
@@ -379,8 +374,7 @@ proc patchAccountsAccountIdCloudforceOneEventsTagsTagUuid*(client: CloudflareCli
                                                            accountId: string,
                                                            tagUuid: string,
                                                            body: PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidRequest): Future[PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidResponse] {.async.} =
-  ## Updates an account-owned Source-of-Truth tag by UUID and returns its complete
-  ## owner projection.
+  ## Updates the given fields of a tag and returns the complete tag.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/events/tags/{tagUuid}", body)
   let body = await res.body
@@ -399,11 +393,10 @@ proc getAccountsAccountIdCloudforceOneEventsTagsTagUuidIndicators*(client: Cloud
                                                                    indicatorType: string = default(string),
                                                                    relatedEvent: seq[string] = @[],
                                                                    search: seq[string] = @[]): Future[GetAccountsAccountIdCloudforceOneEventsTagsTagUuidIndicatorsResponse] {.async.} =
-  ## Returns indicators associated with the provided tag UUID, with pagination. By
-  ## default fans out across every intelligence (isAnalytics=false) indicator dataset
-  ## the account can read; pass datasetIds to scope to dataset UUIDs or a scope
-  ## value. Analytics datasets do not expose tag associations, so the analytics scope
-  ## returns an empty result.
+  ## Lists the indicators that carry a tag, with pagination. By default, every
+  ## intelligence dataset you can read is searched; use `datasetIds` to limit the
+  ## search to specific datasets or a scope value. Analytics datasets don't store tag
+  ## associations, so the `analytics` scope returns no results.
 
   var q = initOrderedTable[string, string]()
   for v in datasetIds: q["datasetIds"] = $v
@@ -428,10 +421,11 @@ proc getAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationships*(client: Cl
                                                                       expand: seq[string] = @[],
                                                                       cursor: string = default(string),
                                                                       pageSize: int64 = 25): Future[GetAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse] {.async.} =
-  ## Returns sparse relationship edges. Optionally hydrate related entities via
-  ## `expand`. Fans out across accessible intelligence (isAnalytics=false) indicator
-  ## dataset shards; `all` and `operational` are equivalent. Analytics datasets do
-  ## not expose tag associations, so the analytics scope returns an empty result.
+  ## Lists the relationships that start at a tag, across the intelligence datasets
+  ## you can read. Use `datasets` to limit the datasets (`all` and `operational` are
+  ## equivalent here) and `expand` to include the related entities. Analytics
+  ## datasets don't store tag associations, so the `analytics` scope returns no
+  ## results.
 
   var q = initOrderedTable[string, string]()
   for v in datasets: q["datasets"] = $v
@@ -451,8 +445,8 @@ proc postAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationships*(client: C
                                                                        accountId: string,
                                                                        tagUuid: string,
                                                                        body: PostAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRequest): Future[PostAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse] {.async.} =
-  ## Creates a new relationship with the tag as the source entity. Requires a
-  ## datasetId to locate the Indicators DO.
+  ## Creates a relationship from a tag to an event or indicator (`targetType`) in the
+  ## dataset given by `datasetId`. Relationships between two tags are not supported.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/tags/{tagUuid}/relationships", body)
   let body = await res.body
@@ -467,8 +461,8 @@ proc deleteAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuid*(
                                                                                 tagUuid: string,
                                                                                 relUuid: string,
                                                                                 datasetId: string): Future[DeleteAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse] {.async.} =
-  ## Deletes a relationship by UUID. Idempotent: returns deleted=false if not found.
-  ## Requires datasetId query param.
+  ## Deletes a tag relationship by its UUID. `datasetId` is required. Returns
+  ## `deleted: false` if the relationship doesn't exist.
 
   var q = initOrderedTable[string, string]()
   q["datasetId"] = $datasetId
@@ -486,7 +480,8 @@ proc patchAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuid*(c
                                                                                relUuid: string,
                                                                                datasetId: string,
                                                                                body: PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidRequest): Future[PatchAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsRelUuidResponse] {.async.} =
-  ## Partially updates a relationship by UUID. Requires datasetId query param.
+  ## Updates the given fields of a tag relationship and leaves the other fields
+  ## unchanged. `datasetId` is required.
 
   var q = initOrderedTable[string, string]()
   q["datasetId"] = $datasetId

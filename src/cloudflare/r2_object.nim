@@ -29,7 +29,7 @@ proc getAccountsAccountIdR2BucketsBucketNameObjects*(client: CloudflareClient,
   ## etag, last modified date, HTTP metadata, and custom metadata.
   ##
   ## For most workloads, we recommend using R2's [S3-compatible
-  ## API](https://developers.cloudflare.com/r2/api/s3/api/) or a [Worker with an R2b
+  ## API](https://developers.cloudflare.com/r2/api/s3/api/) or a [Worker with an R2 b
   ## inding](https://developers.cloudflare.com/r2/api/workers/workers-api-reference/)
   ## instead.
 
@@ -72,7 +72,7 @@ proc deleteAccountsAccountIdR2BucketsBucketNameObjects*(client: CloudflareClient
   ## and a message pointing to Create Bucket Job.
   ##
   ## For most workloads, we recommend using R2's [S3-compatible
-  ## API](https://developers.cloudflare.com/r2/api/s3/api/) or a [Worker with an R2b
+  ## API](https://developers.cloudflare.com/r2/api/s3/api/) or a [Worker with an R2 b
   ## inding](https://developers.cloudflare.com/r2/api/workers/workers-api-reference/)
   ## instead.
 
@@ -94,7 +94,7 @@ proc getAccountsAccountIdR2BucketsBucketNameObjectsObjectKey*(client: Cloudflare
   ## metadata headers.
   ##
   ## For most workloads, we recommend using R2's [S3-compatible
-  ## API](https://developers.cloudflare.com/r2/api/s3/api/) or a [Worker with an R2b
+  ## API](https://developers.cloudflare.com/r2/api/s3/api/) or a [Worker with an R2 b
   ## inding](https://developers.cloudflare.com/r2/api/workers/workers-api-reference/)
   ## instead.
 
@@ -110,7 +110,7 @@ proc putAccountsAccountIdR2BucketsBucketNameObjectsObjectKey*(client: Cloudflare
   ##
   ## The maximum upload size for this endpoint is 300 MB. For most workloads, we
   ## recommend using R2's [S3-compatible
-  ## API](https://developers.cloudflare.com/r2/api/s3/api/) or a [Worker with an R2b
+  ## API](https://developers.cloudflare.com/r2/api/s3/api/) or a [Worker with an R2 b
   ## inding](https://developers.cloudflare.com/r2/api/workers/workers-api-reference/)
   ## instead.
 
@@ -129,7 +129,7 @@ proc deleteAccountsAccountIdR2BucketsBucketNameObjectsObjectKey*(client: Cloudfl
   ## Deletes an object from an R2 bucket.
   ##
   ## For most workloads, we recommend using R2's [S3-compatible
-  ## API](https://developers.cloudflare.com/r2/api/s3/api/) or a [Worker with an R2b
+  ## API](https://developers.cloudflare.com/r2/api/s3/api/) or a [Worker with an R2 b
   ## inding](https://developers.cloudflare.com/r2/api/workers/workers-api-reference/)
   ## instead.
 
