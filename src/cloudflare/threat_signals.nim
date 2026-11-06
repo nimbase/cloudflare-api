@@ -376,13 +376,13 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdContent*(c
 proc postAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdReprocess*(client: CloudflareClient,
                                                                                   accountId: string,
                                                                                   articleId: string): Future[PostAccountsAccountIdCloudforceOneV2ThreatSignalsArticlesArticleIdReprocessResponse] {.async.} =
-  ## Synchronously re-runs every processing step for a Threat Signals article:
-  ## content acquisition, summary, indicator extraction, CVE tags, IOC context, and
-  ## default tags. Replaces the article's summary, AI tags, and indicators;
-  ## indicators no longer found are removed. Creates a Threat Event only when the
-  ## article has none; an existing Event is never updated. Takes over the article
-  ## from any queued processing. Requires a paid Threat Signals subscription and the
-  ## Cloudforce One Write permission.
+  ## Synchronously re-runs every processing step for a Threat Signals article: pull
+  ## content, clean content, extract IOCs, filter IOCs, summary, CVE tags, IOC
+  ## context, article tags, and Event publication. Replaces the article's summary, AI
+  ## tags, and indicators; indicators no longer found are removed. Creates a Threat
+  ## Event only when the article has none; an existing Event is never updated. Takes
+  ## over the article from any queued processing. Requires a paid Threat Signals
+  ## subscription and the Cloudforce One Write permission.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/articles/{articleId}/reprocess", body)
   let body = await res.body

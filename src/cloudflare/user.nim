@@ -18,7 +18,7 @@ type
   GetUserTenantsResponse* = object
     errors: seq[JsonNode]
     messages: seq[types.OrganizationsApiV4Message]
-    result: seq[types.OrganizationsApiOrganization]
+    result: seq[types.OrganizationsApiLegacyTenant]
     success: bool
 
 proc getUser*(client: CloudflareClient): Future[types.IamSingleUserResponse] {.async.} =
@@ -45,7 +45,12 @@ proc patchUser*(client: CloudflareClient, body: PatchUserRequest): Future[types.
     raise newException(CloudflareClientError, body)
 
 proc getUserTenants*(client: CloudflareClient): Future[GetUserTenantsResponse] {.async.} =
-  ## Retrieves list of tenants the authenticated user / method has access to.
+  ## Lists the Cloudflare tenants in which the authenticated user has direct
+  ## membership using the
+  ## legacy Tenant response shape. Use `GET /organizations` to list Organizations the
+  ## user can
+  ## access, including through hierarchy, using the modern Organization response
+  ## shape.
 
   let res = await client.httpGET("/user/tenants")
   let body = await res.body

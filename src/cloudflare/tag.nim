@@ -9,8 +9,13 @@ import ./private/metaclient
 
 type
   GetAccountsAccountIdCloudforceOneEventsDatasetDatasetIdTagsTagUuidIndicatorsResponse* = object
+    failed_shard_count: float64
+      ## Number of shards that failed or timed out. Present only with partialResults.
     indicators: seq[JsonNode]
     pagination: JsonNode
+    partial_results: bool
+      ## Present and true when one or more shards failed or timed out. Indicators from
+      ## those shards may be missing from this page and from totalCount.
   GetAccountsAccountIdCloudforceOneEventsTagsResponse* = object
     pagination: JsonNode
     tags: seq[JsonNode]
@@ -218,8 +223,13 @@ type
     value: string
     version: float64
   GetAccountsAccountIdCloudforceOneEventsTagsTagUuidIndicatorsResponse* = object
+    failed_shard_count: float64
+      ## Number of shards that failed or timed out. Present only with partialResults.
     indicators: seq[JsonNode]
     pagination: JsonNode
+    partial_results: bool
+      ## Present and true when one or more shards failed or timed out. Indicators from
+      ## those shards may be missing from this page and from totalCount.
   GetAccountsAccountIdCloudforceOneEventsTagsTagUuidRelationshipsResponse* = object
     result: JsonNode
     success: bool

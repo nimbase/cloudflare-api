@@ -262,7 +262,8 @@ proc getAccountsAccountIdResourceLibraryCategories*(client: CloudflareClient,
                                                     limit: int64 = 25,
                                                     offset: int64 = 0,
                                                     cursor: string = default(string)): Future[types.AlexandriaGetCategoriesResponse] {.async.} =
-  ## List the categories available for classifying applications, ordered by name.
+  ## List the categories available for classifying applications, ordered by name,
+  ## ignoring the case of the letters A to Z.
   ## Results are paginated by `offset` or `cursor`.
 
   var q = initOrderedTable[string, string]()

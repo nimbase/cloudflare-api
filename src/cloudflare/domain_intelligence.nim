@@ -32,6 +32,7 @@ proc getAccountsAccountIdIntelDomainBulk*(client: CloudflareClient,
                                           accountId: types.IntelIdentifier,
                                           domain: seq[string] = @[],
                                           includeRanking: bool = false,
+                                          skipDns: bool = false,
                                           skipRanking: bool = default(bool)): Future[types.IntelCollectionResponse] {.async.} =
   ## Returns security details and statistics about multiple domains in a
   ## single request.
@@ -46,6 +47,7 @@ proc getAccountsAccountIdIntelDomainBulk*(client: CloudflareClient,
   var q = initOrderedTable[string, string]()
   for v in domain: q["domain"] = $v
   q["include_ranking"] = $includeRanking
+  q["skip_dns"] = $skipDns
   q["skip_ranking"] = $skipRanking
   let res = await client.httpGET(fmt"/accounts/{accountId}/intel/domain/bulk", q)
   let body = await res.body

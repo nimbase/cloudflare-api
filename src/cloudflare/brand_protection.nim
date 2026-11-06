@@ -12,6 +12,9 @@ type
   GetAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesResponse* = object
     matches: seq[JsonNode]
     total: int64
+      ## Number of matching domains available for pagination. For requests with several
+      ## `query_id` values, matches are deduplicated from at most 5,000 query-domain
+      ## rows, so `total` can be lower than the actual number of matches.
   PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesBulkDismissRequest = object
     action: string
     match_ids: Option[seq[int64]]
@@ -34,6 +37,7 @@ type
   PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesResponse* = object
     message: string
     query_id: int64
+      ## ID of the created or updated domain query.
     success: bool
   DeleteAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesQueryIdResponse* = object
     message: string
@@ -49,6 +53,7 @@ type
   PatchAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesQueryIdResponse* = object
     message: string
     query_id: int64
+      ## ID of the created or updated domain query.
     success: bool
   PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainTrialRequest = object
     brand: string
@@ -122,6 +127,7 @@ type
   PostAccountsAccountIdCloudforceOneV2BrandProtectionLogoQueriesResponse* = object
     message: string
     query_id: int64
+      ## ID of the created logo query.
     success: bool
   DeleteAccountsAccountIdCloudforceOneV2BrandProtectionLogoQueriesQueryIdResponse* = object
     message: string
@@ -366,10 +372,12 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatches*(client: Cl
                                                                       domainSearch: string = default(string),
                                                                       orderBy: BrandProtectionOrderByOption = orderByDomain,
                                                                       order: BrandProtectionOrderOption = orderAsc): Future[GetAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesResponse] {.async.} =
-  ## Get paginated list of domain matches for one or more brand protection queries.
-  ## When multiple query_ids are provided (comma-separated), matches are deduplicated
-  ## across queries and each match includes a match_details array with per-match
-  ## query metadata and individual dismissed state.
+  ## Lists domains that matched one or more saved domain queries, most recently
+  ## matched first by default. When you pass several comma-separated `query_id`
+  ## values, matches are deduplicated by domain and each match includes a
+  ## `match_details` array with per-query dismissed state. Set
+  ## `include_domain_id=true` to get the `domain_id` needed to dismiss or undismiss a
+  ## match.
 
   var q = initOrderedTable[string, string]()
   q["offset"] = $offset
@@ -391,10 +399,11 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatches*(client: Cl
 proc postAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesBulkDismiss*(client: CloudflareClient,
                                                                                   accountId: string,
                                                                                   body: PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesBulkDismissRequest): Future[JsonNode] {.async.} =
-  ## Dismiss or undismiss multiple matches in a single request. Accepts either the
-  ## new format (matches: [{query_id, domain_id}]) for per-query control, or the
-  ## legacy format (match_ids: [number]) which dismisses for all queries sharing each
-  ## match's hash. Returns per-item success/error results.
+  ## Dismisses or undismisses up to 100 domain matches in one request and returns a
+  ## result for each item. Send `matches` as (`query_id`, `domain_id`) pairs to
+  ## change each match for one query. The legacy `match_ids` format is still
+  ## accepted, but it changes each match for every query that shares it; prefer
+  ## `matches`.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/domain/matches/bulk-dismiss", body)
   let body = await res.body
@@ -409,7 +418,10 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueries*(client: Cl
                                                                       id: string = default(string),
                                                                       page: int64 = default(int64),
                                                                       perPage: int64 = default(int64)): Future[GetAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesResponse] {.async.} =
-  ## Get all saved brand protection queries for an account
+  ## Lists the account's saved domain queries, most recently updated first. Set `id`
+  ## to return a single query object instead of an array. Set `page` or `per_page` to
+  ## paginate the list; the response then includes `result_info`. Without them, every
+  ## query is returned.
 
   var q = initOrderedTable[string, string]()
   q["id"] = $id
@@ -426,7 +438,11 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueries*(client: Cl
 proc postAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueries*(client: CloudflareClient,
                                                                        accountId: string,
                                                                        body: PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesRequest): Future[PostAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesResponse] {.async.} =
-  ## Create a new saved brand protection query with string match patterns
+  ## Creates a saved domain query that matches domain names against your brand
+  ## patterns. The tag must be unique among the account's domain queries. By default,
+  ## the new query also searches domains observed in the last 7 days (see
+  ## `search_lookback`). Creation fails when the account has reached its Brand
+  ## Protection query limit, which counts domain and logo queries together.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/domain/queries", body)
   let body = await res.body
@@ -439,9 +455,10 @@ proc postAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueries*(client: C
 proc deleteAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesQueryId*(client: CloudflareClient,
                                                                                 accountId: string,
                                                                                 queryId: string): Future[DeleteAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesQueryIdResponse] {.async.} =
-  ## Delete a saved brand protection domain query from the account_queries table.
-  ## This operation will remove the query from the durable object database. Returns
-  ## 404 if the query ID doesn't exist.
+  ## Deletes a saved domain query. The query stops matching new domains and
+  ## generating alerts, and its matches can no longer be listed. If the query does
+  ## not exist in this account or was already deleted, the request fails with error
+  ## code 404.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/domain/queries/{queryId}")
   let body = await res.body
@@ -455,7 +472,19 @@ proc patchAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesQueryId*(c
                                                                                accountId: string,
                                                                                queryId: string,
                                                                                body: PatchAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesQueryIdRequest): Future[PatchAccountsAccountIdCloudforceOneV2BrandProtectionDomainQueriesQueryIdResponse] {.async.} =
-  ## Update a saved brand protection domain query with string match patterns
+  ## Replaces a saved domain query's tag and patterns. `tag` and `string_matches` are
+  ## required, and the patterns you send replace the existing ones, so include every
+  ## pattern you want to keep. Changing the patterns starts a new set of matches for
+  ## the query: matches listed before the change are no longer returned, and only
+  ## newly observed domains that match the new patterns are listed. Sending the same
+  ## patterns in any order (for example, to change only `tag`) keeps the existing
+  ## matches. If the new patterns are identical to a set already used in this
+  ## account, such as the query's earlier patterns, matches already found for that
+  ## set are listed as well. Omitting both `scan_matches` and its alias `scan` resets
+  ## scanning to `false`. If both are supplied, `scan_matches` takes precedence.
+  ## `search_lookback`, `min_time`, and `max_time` are ignored on update, so changing
+  ## patterns does not search previously observed domains. If the query does not
+  ## exist in this account, the request fails with error code 404.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/domain/queries/{queryId}", body)
   let body = await res.body
@@ -584,7 +613,8 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionLogoMatches*(client: Clou
                                                                     download: string = default(string),
                                                                     orderBy: BrandProtectionOrderByOption = orderByDomain,
                                                                     order: BrandProtectionOrderOption = orderAsc): Future[GetAccountsAccountIdCloudforceOneV2BrandProtectionLogoMatchesResponse] {.async.} =
-  ## Get paginated list of logo matches for a specific brand protection logo query
+  ## Lists images that matched a saved logo query, most recently matched first by
+  ## default. Set `download=true` to include each matched image as base64 data.
 
   var q = initOrderedTable[string, string]()
   q["offset"] = $offset
@@ -605,8 +635,8 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionLogoQueries*(client: Clou
                                                                     accountId: string,
                                                                     id: string = default(string),
                                                                     download: string = default(string)): Future[seq[JsonNode]] {.async.} =
-  ## Get all saved brand protection logo queries for an account. Optionally specify
-  ## id to get a single query. Set download=true to include base64-encoded image
+  ## Lists the account's saved logo queries. Set `id` to return a single query object
+  ## instead of an array. Set `download=true` to include each logo image as base64
   ## data.
 
   var q = initOrderedTable[string, string]()
@@ -623,7 +653,11 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionLogoQueries*(client: Clou
 proc postAccountsAccountIdCloudforceOneV2BrandProtectionLogoQueries*(client: CloudflareClient,
                                                                      accountId: string,
                                                                      body: PostAccountsAccountIdCloudforceOneV2BrandProtectionLogoQueriesRequest): Future[PostAccountsAccountIdCloudforceOneV2BrandProtectionLogoQueriesResponse] {.async.} =
-  ## Create a new saved brand protection logo query for visual similarity matching
+  ## Uploads a logo and creates a saved logo query that finds visually similar images
+  ## on scanned websites. The tag must be unique among the account's logo queries. By
+  ## default, the new query also searches previously scanned images (see
+  ## `search_lookback`). Creation fails when the account has reached its Brand
+  ## Protection query limit, which counts domain and logo queries together.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/logo/queries", body)
   let body = await res.body
@@ -636,8 +670,8 @@ proc postAccountsAccountIdCloudforceOneV2BrandProtectionLogoQueries*(client: Clo
 proc deleteAccountsAccountIdCloudforceOneV2BrandProtectionLogoQueriesQueryId*(client: CloudflareClient,
                                                                               accountId: string,
                                                                               queryId: string): Future[DeleteAccountsAccountIdCloudforceOneV2BrandProtectionLogoQueriesQueryIdResponse] {.async.} =
-  ## Delete a saved brand protection logo query. Returns 404 if the query ID doesn't
-  ## exist.
+  ## Permanently deletes a saved logo query and all of its matches. If the query does
+  ## not exist in this account, the request fails with error code 404.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/logo/queries/{queryId}")
   let body = await res.body
@@ -671,8 +705,11 @@ proc postAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDom
                                                                                               accountId: string,
                                                                                               queryId: int64,
                                                                                               domainId: int64): Future[PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdDismissResponse] {.async.} =
-  ## Mark a specific domain as dismissed for a given query. Dismissals are per-query
-  ## — dismissing a domain in one query does not affect other queries.
+  ## Marks a matched domain as dismissed for one domain query. Dismissals are per
+  ## query: dismissing a domain in one query does not affect other queries. Get
+  ## `domain_id` from List domain matches with `include_domain_id=true`. Dismissing
+  ## an already dismissed match succeeds. If the query or match does not exist, the
+  ## request fails with error code 404.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/queries/{queryId}/matches/{domainId}/dismiss")
   let body = await res.body
@@ -686,9 +723,11 @@ proc postAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDom
                                                                                                 accountId: string,
                                                                                                 queryId: int64,
                                                                                                 domainId: int64): Future[PostAccountsAccountIdCloudforceOneV2BrandProtectionQueriesQueryIdMatchesDomainIdUndismissResponse] {.async.} =
-  ## Remove the dismissed status from a specific domain for a given query.
-  ## Undismissals are per-query — undismissing a domain in one query does not affect
-  ## other queries.
+  ## Removes the dismissed status from a matched domain for one domain query.
+  ## Undismissing a domain in one query does not affect other queries. Get
+  ## `domain_id` from List domain matches with `include_domain_id=true`. Undismissing
+  ## a match that is not dismissed succeeds. If the query or match does not exist,
+  ## the request fails with error code 404.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/queries/{queryId}/matches/{domainId}/undismiss")
   let body = await res.body
@@ -849,8 +888,8 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionTakedownNoticesNoticeIdLe
 
 proc getAccountsAccountIdCloudforceOneV2BrandProtectionTotalQueries*(client: CloudflareClient,
                                                                      accountId: string): Future[seq[JsonNode]] {.async.} =
-  ## Get the total number of saved brand protection queries (domain + logo) for an
-  ## account
+  ## Returns the number of saved domain and logo queries in the account. This is the
+  ## count checked against the account's Brand Protection query limit.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/total-queries")
   let body = await res.body

@@ -15,9 +15,9 @@ suite "user serialization":
     let obj = newIamSingleUserResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamSingleUserResponse)) == openjson.toJson(obj)
 
-  test "round-trips OrganizationsApiOrganization":
-    let obj = newOrganizationsApiOrganization()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiOrganization)) == openjson.toJson(obj)
+  test "round-trips OrganizationsApiLegacyTenant":
+    let obj = newOrganizationsApiLegacyTenant()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiLegacyTenant)) == openjson.toJson(obj)
 
   test "round-trips IamApiResponseCommonFailure":
     let obj = newIamApiResponseCommonFailure()

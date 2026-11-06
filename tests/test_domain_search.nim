@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "domain_search serialization":
+  test "round-trips BrandProtectionApiSavedQueryDeleteUnavailable":
+    let obj = newBrandProtectionApiSavedQueryDeleteUnavailable()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BrandProtectionApiSavedQueryDeleteUnavailable)) == openjson.toJson(obj)
+
   test "round-trips BrandProtectionApiQueryBulk":
     let obj = newBrandProtectionApiQueryBulk()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BrandProtectionApiQueryBulk)) == openjson.toJson(obj)

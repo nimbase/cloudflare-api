@@ -50,12 +50,10 @@ proc getAccountsAccountIdWorkersWorkersWorkerIdPreviews*(client: CloudflareClien
 proc postAccountsAccountIdWorkersWorkersWorkerIdPreviews*(client: CloudflareClient,
                                                           accountId: types.WorkersIdentifier,
                                                           workerId: string,
-                                                          ignoreDefaults: bool = default(bool),
                                                           ignoreBaseConfig: bool = default(bool)): Future[JsonNode] {.async.} =
   ## Create a new Preview for a Worker.
 
   var q = initOrderedTable[string, string]()
-  q["ignore_defaults"] = $ignoreDefaults
   q["ignore_base_config"] = $ignoreBaseConfig
   let res = await client.httpPOST(fmt"/accounts/{accountId}/workers/workers/{workerId}/previews", q)
   let body = await res.body
@@ -83,13 +81,11 @@ proc putAccountsAccountIdWorkersWorkersWorkerIdPreviewsPreviewId*(client: Cloudf
                                                                   accountId: types.WorkersIdentifier,
                                                                   workerId: string,
                                                                   previewId: string,
-                                                                  ignoreDefaults: bool = default(bool),
                                                                   ignoreBaseConfig: bool = default(bool)): Future[JsonNode] {.async.} =
   ## Perform a complete replacement of a Preview, where omitted properties are set to
   ## defaults.
 
   var q = initOrderedTable[string, string]()
-  q["ignore_defaults"] = $ignoreDefaults
   q["ignore_base_config"] = $ignoreBaseConfig
   let res = await client.httpPUT(fmt"/accounts/{accountId}/workers/workers/{workerId}/previews/{previewId}", q)
   let body = await res.body

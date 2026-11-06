@@ -9,85 +9,73 @@ import ./private/metaclient
 import ./private/types
 
 type
-  GetTenantsTenantIdResponse* = object
-    errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiTenant
-    success: bool
-  GetTenantsTenantIdAccountTypesResponse* = object
-    errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: seq[string]
-    success: bool
   GetTenantsTenantIdAccountsResponse* = object
     errors: seq[JsonNode]
     messages: seq[types.OrganizationsApiV4Message]
-    result: seq[types.OrganizationsApiAccount]
+    result: seq[types.OrganizationsApiLegacyAccount]
+    result_info: types.OrganizationsApiAccountListResultInfo
     success: bool
-  GetTenantsTenantIdEntitlementsResponse* = object
-    errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiInnateEntitlements
-    success: bool
-  GetTenantsTenantIdMembershipsResponse* = object
-    errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: seq[types.OrganizationsApiTenantMembership]
-    success: bool
+  TenantStatusOption* = enum
+    statusActive = "active"
+    statusDeleted = "deleted"
 
-proc getTenantsTenantId*(client: CloudflareClient, tenantId: string): Future[GetTenantsTenantIdResponse] {.async.} =
-  ## Retrieves a tenant's identity, status, metadata, contacts, and organizational
-  ## units.
+  TenantOrderByOption* = enum
+    orderByAccountName = "account_name"
 
-  let res = await client.httpGET(fmt"/tenants/{tenantId}")
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, GetTenantsTenantIdResponse)
-  else:
-    raise newException(CloudflareClientError, body)
+  TenantDirectionOption* = enum
+    directionAsc = "asc"
+    directionDesc = "desc"
 
-proc getTenantsTenantIdAccountTypes*(client: CloudflareClient, tenantId: string): Future[GetTenantsTenantIdAccountTypesResponse] {.async.} =
-  ## Lists the account types this tenant is allowed to provision.
 
-  let res = await client.httpGET(fmt"/tenants/{tenantId}/account_types")
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, GetTenantsTenantIdAccountTypesResponse)
-  else:
-    raise newException(CloudflareClientError, body)
+proc getTenantsTenantIdAccounts*(client: CloudflareClient, tenantId: string,
+                                 accountPubname: string = default(string),
+                                 accountPubnameStartsWith: string = default(string),
+                                 accountPubnameEndsWith: string = default(string),
+                                 accountPubnameContains: string = default(string),
+                                 name: string = default(string),
+                                 nameStartsWith: string = default(string),
+                                 nameEndsWith: string = default(string),
+                                 nameContains: string = default(string),
+                                 status: TenantStatusOption = statusActive,
+                                 orderBy: TenantOrderByOption = orderByAccountName,
+                                 direction: TenantDirectionOption = directionAsc,
+                                 includeTotal: bool = true,
+                                 page: int64 = default(int64),
+                                 perPage: int64 = default(int64),
+                                 pageToken: string = default(string),
+                                 pageSize: int64 = default(int64)): Future[GetTenantsTenantIdAccountsResponse] {.async.} =
+  ## Lists all Cloudflare accounts across this tenant's hierarchy using the legacy
+  ## Account
+  ## response shape. Use `GET /organizations/{organization_id}/accounts` to list only
+  ## accounts
+  ## immediately attached to a specific Organization using the modern Account
+  ## response shape.
+  ## Use `page_token` and `page_size` for cursor pagination, or provide `page` and
+  ## `per_page`
+  ## together for legacy offset pagination. Cursor pagination takes precedence when
+  ## requested.
 
-proc getTenantsTenantIdAccounts*(client: CloudflareClient, tenantId: string): Future[GetTenantsTenantIdAccountsResponse] {.async.} =
-  ## Lists the Cloudflare accounts associated with this tenant.
-
-  let res = await client.httpGET(fmt"/tenants/{tenantId}/accounts")
+  var q = initOrderedTable[string, string]()
+  q["account_pubname"] = $accountPubname
+  q["account_pubname.startsWith"] = $accountPubnameStartsWith
+  q["account_pubname.endsWith"] = $accountPubnameEndsWith
+  q["account_pubname.contains"] = $accountPubnameContains
+  q["name"] = $name
+  q["name.startsWith"] = $nameStartsWith
+  q["name.endsWith"] = $nameEndsWith
+  q["name.contains"] = $nameContains
+  q["status"] = $status
+  q["order_by"] = $orderBy
+  q["direction"] = $direction
+  q["include_total"] = $includeTotal
+  q["page"] = $page
+  q["per_page"] = $perPage
+  q["page_token"] = $pageToken
+  q["page_size"] = $pageSize
+  let res = await client.httpGET(fmt"/tenants/{tenantId}/accounts", q)
   let body = await res.body
   case res.code
   of Http200:
     result = fromJson(body, GetTenantsTenantIdAccountsResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc getTenantsTenantIdEntitlements*(client: CloudflareClient, tenantId: string): Future[GetTenantsTenantIdEntitlementsResponse] {.async.} =
-  ## Retrieves the innate and custom entitlement allocations available to this
-  ## tenant.
-
-  let res = await client.httpGET(fmt"/tenants/{tenantId}/entitlements")
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, GetTenantsTenantIdEntitlementsResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc getTenantsTenantIdMemberships*(client: CloudflareClient, tenantId: string): Future[GetTenantsTenantIdMembershipsResponse] {.async.} =
-  ## Lists active Cloudflare users with memberships in this tenant.
-
-  let res = await client.httpGET(fmt"/tenants/{tenantId}/memberships")
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, GetTenantsTenantIdMembershipsResponse)
   else:
     raise newException(CloudflareClientError, body)

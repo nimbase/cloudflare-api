@@ -11,33 +11,33 @@ import cloudflare
 import ./common
 
 suite "target_environments serialization":
-  test "round-trips VulnScannerTargetEnvironment":
-    let obj = newVulnScannerTargetEnvironment()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerTargetEnvironment)) == openjson.toJson(obj)
+  test "round-trips VulnScannerPatchTargetEnvironmentRequest":
+    let obj = newVulnScannerPatchTargetEnvironmentRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerPatchTargetEnvironmentRequest)) == openjson.toJson(obj)
 
   test "round-trips VulnScannerApiResponseCommon":
     let obj = newVulnScannerApiResponseCommon()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCommon)) == openjson.toJson(obj)
 
-  test "round-trips VulnScannerApiResponseCommonFailure":
-    let obj = newVulnScannerApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips VulnScannerEmptyResponse":
+    let obj = newVulnScannerEmptyResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerEmptyResponse)) == openjson.toJson(obj)
 
   test "round-trips VulnScannerApiResponseCollection":
     let obj = newVulnScannerApiResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCollection)) == openjson.toJson(obj)
 
-  test "round-trips VulnScannerPatchTargetEnvironmentRequest":
-    let obj = newVulnScannerPatchTargetEnvironmentRequest()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerPatchTargetEnvironmentRequest)) == openjson.toJson(obj)
-
-  test "round-trips VulnScannerEmptyResponse":
-    let obj = newVulnScannerEmptyResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerEmptyResponse)) == openjson.toJson(obj)
+  test "round-trips VulnScannerTargetEnvironment":
+    let obj = newVulnScannerTargetEnvironment()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerTargetEnvironment)) == openjson.toJson(obj)
 
   test "round-trips VulnScannerUpdateTargetEnvironmentRequest":
     let obj = newVulnScannerUpdateTargetEnvironmentRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerUpdateTargetEnvironmentRequest)) == openjson.toJson(obj)
+
+  test "round-trips VulnScannerApiResponseCommonFailure":
+    let obj = newVulnScannerApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCommonFailure)) == openjson.toJson(obj)
 
   test "round-trips VulnScannerCreateTargetEnvironmentRequest":
     let obj = newVulnScannerCreateTargetEnvironmentRequest()

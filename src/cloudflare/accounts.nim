@@ -9,14 +9,6 @@ import ./private/metaclient
 import ./private/types
 
 type
-  PostAccountsMoveRequest = object
-    account_ids: seq[string]
-    destination_organization_id: string
-  PostAccountsMoveResponse* = object
-    errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiBatchAccountMoveResponse
-    success: bool
   PostAccountsAccountIdMoveRequest = object
     destination_organization_id: string
   PostAccountsAccountIdMoveResponse* = object
@@ -64,25 +56,14 @@ proc postAccounts*(client: CloudflareClient, body: types.IamCreateAccount): Futu
   ## `standalone: true` and omit `unit`. Providing both fields is invalid. If you
   ## omit both fields, Cloudflare can determine the destination only when the User is
   ## an administrator of exactly one Organization. Cloudflare creates the Account in
-  ## that Organization; otherwise, the request returns an error.
+  ## that Organization; otherwise, the request returns an error. Account names are
+  ## limited to 65 UTF-8 bytes.
 
   let res = await client.httpPOST("/accounts", body)
   let body = await res.body
   case res.code
   of Http200:
     result = fromJson(body, types.IamResponseSingleAccount)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc postAccountsMove*(client: CloudflareClient, body: PostAccountsMoveRequest): Future[PostAccountsMoveResponse] {.async.} =
-  ## Batch move a collection of accounts to a specific organization. ⚠️ Not
-  ## implemented.
-
-  let res = await client.httpPOST("/accounts/move", body)
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, PostAccountsMoveResponse)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -101,7 +82,7 @@ proc getAccountsAccountId*(client: CloudflareClient,
 proc putAccountsAccountId*(client: CloudflareClient,
                            accountId: types.IamAccountIdentifier,
                            body: types.IamComponentsSchemasAccount): Future[types.IamResponseSingleAccount] {.async.} =
-  ## Update an existing account.
+  ## Update an existing account. Account names are limited to 65 UTF-8 bytes.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}", body)
   let body = await res.body
@@ -160,11 +141,10 @@ proc getAccountsAccountIdOrganizations*(client: CloudflareClient,
 proc getAccountsAccountIdProfile*(client: CloudflareClient, accountId: string): Future[GetAccountsAccountIdProfileResponse] {.async.} =
   ## Retrieves the business profile (name, email, phone, address, and external
   ## metadata)
-  ## associated with this account's parent organization customer record. Profiles can
-  ## be shared
-  ## across accounts and organizations. Only available to members of an organization
-  ## that
-  ## contains the account.
+  ## associated with this account's customer record. Profiles can be shared across
+  ## accounts and
+  ## organizations. Only available to members of an organization that contains the
+  ## account.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/profile")
   let body = await res.body
@@ -175,14 +155,17 @@ proc getAccountsAccountIdProfile*(client: CloudflareClient, accountId: string): 
     raise newException(CloudflareClientError, body)
 
 proc putAccountsAccountIdProfile*(client: CloudflareClient, accountId: string,
-                                  body: types.OrganizationsApiProfile): Future[AsyncResponse] {.async.} =
-  ## Updates the business profile (name, email, phone, address, and external
-  ## metadata) associated
-  ## with this account's parent organization customer record. Changes apply to every
-  ## account and
-  ## organization sharing that profile. Omitted or empty fields are left unchanged.
-  ## Only
-  ## available to members of an organization that contains the account.
+                                  body: types.OrganizationsApiModifyProfileRequest): Future[AsyncResponse] {.async.} =
+  ## Partially updates the business profile (name, email, phone, address, and
+  ## external metadata)
+  ## associated with this account's parent organization customer record, creating the
+  ## profile if
+  ## it does not exist. Changes apply to every account and organization sharing that
+  ## profile.
+  ## Omitted, empty, or null fields are left unchanged. Each profile field is limited
+  ## to 1,000
+  ## UTF-8 bytes. Only available to members of an organization that contains the
+  ## account.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/profile", body)
   return res

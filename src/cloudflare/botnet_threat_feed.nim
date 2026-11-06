@@ -10,9 +10,9 @@ import ./private/types
 
 
 proc getAccountsAccountIdBotnetFeedAsnAsnIdDayReport*(client: CloudflareClient,
-                                                      accountId: types.DosIdentifier,
-                                                      asnId: types.DosAsn,
-                                                      date: types.DosTimestamp = default(types.DosTimestamp)): Future[JsonNode] {.async.} =
+                                                      accountId: types.BotnetFeedApiIdentifier,
+                                                      asnId: types.BotnetFeedApiAsn,
+                                                      date: types.BotnetFeedApiTimestamp = default(types.BotnetFeedApiTimestamp)): Future[JsonNode] {.async.} =
   ## Gets all the data the botnet tracking database has for a given ASN registered to
   ## user account for given date. If no date is given, it will return results for the
   ## previous day.
@@ -28,8 +28,8 @@ proc getAccountsAccountIdBotnetFeedAsnAsnIdDayReport*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdBotnetFeedAsnAsnIdFullReport*(client: CloudflareClient,
-                                                       accountId: types.DosIdentifier,
-                                                       asnId: types.DosAsn): Future[JsonNode] {.async.} =
+                                                       accountId: types.BotnetFeedApiIdentifier,
+                                                       asnId: types.BotnetFeedApiAsn): Future[JsonNode] {.async.} =
   ## Gets all the data the botnet threat feed tracking database has for a given ASN
   ## registered to user account.
 
@@ -42,7 +42,7 @@ proc getAccountsAccountIdBotnetFeedAsnAsnIdFullReport*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdBotnetFeedConfigsAsn*(client: CloudflareClient,
-                                               accountId: types.DosIdentifier): Future[JsonNode] {.async.} =
+                                               accountId: types.BotnetFeedApiIdentifier): Future[JsonNode] {.async.} =
   ## Gets a list of all ASNs registered for a user for the DDoS Botnet Feed API.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/botnet_feed/configs/asn")
@@ -54,8 +54,8 @@ proc getAccountsAccountIdBotnetFeedConfigsAsn*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteAccountsAccountIdBotnetFeedConfigsAsnAsnId*(client: CloudflareClient,
-                                                       accountId: types.DosIdentifier,
-                                                       asnId: types.DosAsn): Future[JsonNode] {.async.} =
+                                                       accountId: types.BotnetFeedApiIdentifier,
+                                                       asnId: types.BotnetFeedApiAsn): Future[JsonNode] {.async.} =
   ## Delete an ASN from botnet threat feed for a given user.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/botnet_feed/configs/asn/{asnId}")

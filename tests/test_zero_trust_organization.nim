@@ -71,3 +71,8 @@ suite "zero_trust_organization endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdAccessOrganizationsTrustSettings("test")
 
+  test "DELETE /accounts/{account_id}/access/organizations/trust_settings":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdAccessOrganizationsTrustSettings("test")
+

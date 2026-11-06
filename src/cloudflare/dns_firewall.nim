@@ -81,27 +81,27 @@ proc patchAccountsAccountIdDnsFirewallDnsFirewallId*(client: CloudflareClient,
 
 proc getAccountsAccountIdDnsFirewallDnsFirewallIdReverseDns*(client: CloudflareClient,
                                                              dnsFirewallId: types.DnsFirewallIdentifier,
-                                                             accountId: types.DnsFirewallIdentifier): Future[types.DnsFirewallDnsFirewallReverseDnsResponse2] {.async.} =
+                                                             accountId: types.DnsFirewallIdentifier): Future[types.DnsFirewallDnsFirewallReverseDnsResponse] {.async.} =
   ## Show reverse DNS configuration (PTR records) for a DNS Firewall cluster
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/dns_firewall/{dnsFirewallId}/reverse_dns")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.DnsFirewallDnsFirewallReverseDnsResponse2)
+    result = fromJson(body, types.DnsFirewallDnsFirewallReverseDnsResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc patchAccountsAccountIdDnsFirewallDnsFirewallIdReverseDns*(client: CloudflareClient,
                                                                dnsFirewallId: types.DnsFirewallIdentifier,
                                                                accountId: types.DnsFirewallIdentifier,
-                                                               body: types.DnsFirewallDnsFirewallReverseDnsPatch): Future[types.DnsFirewallDnsFirewallReverseDnsResponse2] {.async.} =
+                                                               body: types.DnsFirewallDnsFirewallReverseDnsPatch): Future[types.DnsFirewallDnsFirewallReverseDnsResponse] {.async.} =
   ## Update reverse DNS configuration (PTR records) for a DNS Firewall cluster
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/dns_firewall/{dnsFirewallId}/reverse_dns", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.DnsFirewallDnsFirewallReverseDnsResponse2)
+    result = fromJson(body, types.DnsFirewallDnsFirewallReverseDnsResponse)
   else:
     raise newException(CloudflareClientError, body)

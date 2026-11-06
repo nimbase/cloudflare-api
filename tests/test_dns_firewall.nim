@@ -39,9 +39,9 @@ suite "dns_firewall serialization":
     let obj = newDnsFirewallDnsFirewallClusterPost()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsFirewallDnsFirewallClusterPost)) == openjson.toJson(obj)
 
-  test "round-trips DnsFirewallDnsFirewallReverseDnsResponse2":
-    let obj = newDnsFirewallDnsFirewallReverseDnsResponse2()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsFirewallDnsFirewallReverseDnsResponse2)) == openjson.toJson(obj)
+  test "round-trips DnsFirewallDnsFirewallReverseDnsResponse":
+    let obj = newDnsFirewallDnsFirewallReverseDnsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsFirewallDnsFirewallReverseDnsResponse)) == openjson.toJson(obj)
 
 suite "dns_firewall endpoints":
   test "GET /accounts/{account_id}/dns_firewall":

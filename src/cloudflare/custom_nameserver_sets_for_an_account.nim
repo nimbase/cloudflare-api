@@ -13,7 +13,9 @@ proc getAccountsAccountIdDnsSettingsNameserverSets*(client: CloudflareClient,
                                                     accountId: types.DnsSettingsIdentifier,
                                                     page: types.DnsSettingsPage = default(types.DnsSettingsPage),
                                                     perPage: int64 = 100): Future[types.DnsSettingsNameserverSetResponseCollection] {.async.} =
-  ## Lists an account's Custom Nameserver Sets.
+  ## Lists an account's Custom Nameserver Sets. For details, refer to [Nameserver set
+  ## s](https://developers.cloudflare.com/dns/nameservers/custom-nameservers/nameserv
+  ## er-sets/).
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -31,7 +33,9 @@ proc postAccountsAccountIdDnsSettingsNameserverSets*(client: CloudflareClient,
                                                      body: types.DnsSettingsNameserverSetCreate): Future[types.DnsSettingsNameserverSetResponseSingle] {.async.} =
   ## Creates a named Custom Nameserver Set. Only the customer-defined name can be
   ## changed later. To change nameservers or addresses, create a new set, move any
-  ## zone assignments, and delete the old set.
+  ## zone assignments, and delete the old set. For details, refer to [Nameserver sets
+  ## ](https://developers.cloudflare.com/dns/nameservers/custom-nameservers/nameserve
+  ## r-sets/).
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/dns_settings/nameserver_sets", body)
   let body = await res.body
@@ -44,7 +48,9 @@ proc postAccountsAccountIdDnsSettingsNameserverSets*(client: CloudflareClient,
 proc getAccountsAccountIdDnsSettingsNameserverSetsNameserverSetId*(client: CloudflareClient,
                                                                    accountId: types.DnsSettingsIdentifier,
                                                                    nameserverSetId: types.DnsSettingsNameserverSetId): Future[types.DnsSettingsNameserverSetResponseSingle] {.async.} =
-  ## Gets a Custom Nameserver Set owned by an account.
+  ## Gets a Custom Nameserver Set owned by an account. For details, refer to
+  ## [Nameserver sets](https://developers.cloudflare.com/dns/nameservers/custom-names
+  ## ervers/nameserver-sets/).
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/dns_settings/nameserver_sets/{nameserverSetId}")
   let body = await res.body
@@ -57,7 +63,9 @@ proc getAccountsAccountIdDnsSettingsNameserverSetsNameserverSetId*(client: Cloud
 proc deleteAccountsAccountIdDnsSettingsNameserverSetsNameserverSetId*(client: CloudflareClient,
                                                                       accountId: types.DnsSettingsIdentifier,
                                                                       nameserverSetId: types.DnsSettingsNameserverSetId): Future[types.DnsSettingsNameserverSetDeleteResponse] {.async.} =
-  ## Deletes an unassigned Custom Nameserver Set.
+  ## Deletes an unassigned Custom Nameserver Set. For details, refer to [Nameserver s
+  ## ets](https://developers.cloudflare.com/dns/nameservers/custom-nameservers/namese
+  ## rver-sets/).
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/dns_settings/nameserver_sets/{nameserverSetId}")
   let body = await res.body

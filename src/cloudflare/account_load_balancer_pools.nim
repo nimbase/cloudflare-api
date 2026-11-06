@@ -10,8 +10,10 @@ import ./private/types
 
 type
   PostAccountsAccountIdLoadBalancersPoolsRequest = object
+    check_regions: Option[types.LoadBalancingCheckRegions]
     description: Option[types.LoadBalancingSchemasDescription]
     enabled: Option[types.LoadBalancingEnabled]
+    health_sources: Option[types.LoadBalancingHealthSources]
     latitude: Option[types.LoadBalancingLatitude]
     load_shedding: Option[types.LoadBalancingLoadShedding]
     longitude: Option[types.LoadBalancingLongitude]
@@ -19,6 +21,7 @@ type
     monitor: Option[types.LoadBalancingMonitorId]
     monitor_group: Option[types.LoadBalancingMonitorGroupId]
     name: types.LoadBalancingName
+    networks: Option[types.LoadBalancingNetworks]
     notification_email: Option[types.LoadBalancingNotificationEmail]
     notification_filter: Option[types.LoadBalancingNotificationFilter]
     origin_steering: Option[types.LoadBalancingOriginSteering]
@@ -38,6 +41,7 @@ type
     monitor: Option[types.LoadBalancingMonitorId]
     monitor_group: Option[types.LoadBalancingMonitorGroupId]
     name: types.LoadBalancingName
+    networks: Option[types.LoadBalancingNetworks]
     notification_email: Option[types.LoadBalancingNotificationEmail]
     notification_filter: Option[types.LoadBalancingNotificationFilter]
     origin_steering: Option[types.LoadBalancingOriginSteering]
@@ -55,6 +59,7 @@ type
     monitor: Option[types.LoadBalancingMonitorId]
     monitor_group: Option[types.LoadBalancingMonitorGroupId]
     name: Option[types.LoadBalancingName]
+    networks: Option[types.LoadBalancingNetworks]
     notification_email: Option[types.LoadBalancingNotificationEmail]
     notification_filter: Option[types.LoadBalancingNotificationFilter]
     origin_steering: Option[types.LoadBalancingOriginSteering]

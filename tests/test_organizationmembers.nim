@@ -23,6 +23,10 @@ suite "organizationmembers serialization":
     let obj = newOrganizationsApiMember()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiMember)) == openjson.toJson(obj)
 
+  test "round-trips OrganizationsApiDeleteOrganizationMemberResult":
+    let obj = newOrganizationsApiDeleteOrganizationMemberResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiDeleteOrganizationMemberResult)) == openjson.toJson(obj)
+
   test "round-trips OrganizationsApiV4ErrorResponse":
     let obj = newOrganizationsApiV4ErrorResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiV4ErrorResponse)) == openjson.toJson(obj)
@@ -46,6 +50,10 @@ suite "organizationmembers serialization":
   test "round-trips GetOrganizationsOrganizationIdMembersMemberIdResponse":
     let obj = cloudflare.GetOrganizationsOrganizationIdMembersMemberIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetOrganizationsOrganizationIdMembersMemberIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips DeleteOrganizationsOrganizationIdMembersMemberIdResponse":
+    let obj = cloudflare.DeleteOrganizationsOrganizationIdMembersMemberIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteOrganizationsOrganizationIdMembersMemberIdResponse)) == openjson.toJson(obj)
 
   test "round-trips PostOrganizationsOrganizationIdMembersBatchCreateResponse":
     let obj = cloudflare.PostOrganizationsOrganizationIdMembersBatchCreateResponse()

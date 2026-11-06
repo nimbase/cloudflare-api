@@ -35,9 +35,9 @@ suite "audit_logs serialization":
     let obj = newAaaAuditLogsV2ProductCategoriesResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AaaAuditLogsV2ProductCategoriesResponseCollection)) == openjson.toJson(obj)
 
-  test "round-trips AaaAuditLogsResponseCollection2":
-    let obj = newAaaAuditLogsResponseCollection2()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AaaAuditLogsResponseCollection2)) == openjson.toJson(obj)
+  test "round-trips AaaAuditLogsResponseCollection":
+    let obj = newAaaAuditLogsResponseCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AaaAuditLogsResponseCollection)) == openjson.toJson(obj)
 
   test "round-trips AaaApiResponseCommonFailure2":
     let obj = newAaaApiResponseCommonFailure2()

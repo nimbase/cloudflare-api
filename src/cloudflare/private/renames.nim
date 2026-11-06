@@ -2582,49 +2582,47 @@ proc renameHook*(v: types.VectorizeListMetadataIndexResponse, fieldName: var str
   elif fieldName == "metadata_indexes":
     fieldName = "metadataIndexes"
 
-proc renameHook*(v: types.WorkersObservabilityAgentSession, fieldName: var string) {.inline.} =
-  if fieldName == "conversationId":
-    fieldName = "conversation_id"
-  elif fieldName == "conversation_id":
-    fieldName = "conversationId"
+proc renameHook*(v: types.WorkersObservabilityAgentTraceSummary, fieldName: var string) {.inline.} =
+  if fieldName == "errorCount":
+    fieldName = "error_count"
+  elif fieldName == "error_count":
+    fieldName = "errorCount"
   elif fieldName == "inputTokens":
     fieldName = "input_tokens"
   elif fieldName == "input_tokens":
     fieldName = "inputTokens"
-  elif fieldName == "lastActiveMs":
-    fieldName = "last_active_ms"
-  elif fieldName == "last_active_ms":
-    fieldName = "lastActiveMs"
+  elif fieldName == "llmCallCount":
+    fieldName = "llm_call_count"
+  elif fieldName == "llm_call_count":
+    fieldName = "llmCallCount"
+  elif fieldName == "llmErrorCount":
+    fieldName = "llm_error_count"
+  elif fieldName == "llm_error_count":
+    fieldName = "llmErrorCount"
   elif fieldName == "outputTokens":
     fieldName = "output_tokens"
   elif fieldName == "output_tokens":
     fieldName = "outputTokens"
-  elif fieldName == "sessionDurationMs":
-    fieldName = "session_duration_ms"
-  elif fieldName == "session_duration_ms":
-    fieldName = "sessionDurationMs"
-  elif fieldName == "sessionStartMs":
-    fieldName = "session_start_ms"
-  elif fieldName == "session_start_ms":
-    fieldName = "sessionStartMs"
-  elif fieldName == "traceCount":
-    fieldName = "trace_count"
-  elif fieldName == "trace_count":
-    fieldName = "traceCount"
-
-proc renameHook*(v: types.WorkersObservabilityAgentSessionRun, fieldName: var string) {.inline.} =
-  if fieldName == "conversationId":
-    fieldName = "conversation_id"
-  elif fieldName == "conversation_id":
-    fieldName = "conversationId"
-  elif fieldName == "inputTokens":
-    fieldName = "input_tokens"
-  elif fieldName == "input_tokens":
-    fieldName = "inputTokens"
-  elif fieldName == "outputTokens":
-    fieldName = "output_tokens"
-  elif fieldName == "output_tokens":
-    fieldName = "outputTokens"
+  elif fieldName == "rootSpanName":
+    fieldName = "root_span_name"
+  elif fieldName == "root_span_name":
+    fieldName = "rootSpanName"
+  elif fieldName == "rootTransactionName":
+    fieldName = "root_transaction_name"
+  elif fieldName == "root_transaction_name":
+    fieldName = "rootTransactionName"
+  elif fieldName == "toolCallCount":
+    fieldName = "tool_call_count"
+  elif fieldName == "tool_call_count":
+    fieldName = "toolCallCount"
+  elif fieldName == "toolErrorCount":
+    fieldName = "tool_error_count"
+  elif fieldName == "tool_error_count":
+    fieldName = "toolErrorCount"
+  elif fieldName == "totalTokens":
+    fieldName = "total_tokens"
+  elif fieldName == "total_tokens":
+    fieldName = "totalTokens"
   elif fieldName == "traceDurationMs":
     fieldName = "trace_duration_ms"
   elif fieldName == "trace_duration_ms":
@@ -2641,6 +2639,14 @@ proc renameHook*(v: types.WorkersObservabilityAgentSessionRun, fieldName: var st
     fieldName = "trace_start_ms"
   elif fieldName == "trace_start_ms":
     fieldName = "traceStartMs"
+  elif fieldName == "conversationIds":
+    fieldName = "conversation_ids"
+  elif fieldName == "conversation_ids":
+    fieldName = "conversationIds"
+  elif fieldName == "lastActivityMs":
+    fieldName = "last_activity_ms"
+  elif fieldName == "last_activity_ms":
+    fieldName = "lastActivityMs"
 
 proc renameHook*(v: types.WorkersObservabilityDistributionResult, fieldName: var string) {.inline.} =
   if fieldName == "bucketBoundaries":
@@ -2685,6 +2691,64 @@ proc renameHook*(v: types.WorkersObservabilityTelemetryEvent, fieldName: var str
     fieldName = "workers"
   elif fieldName == "workers":
     fieldName = "$workers"
+
+proc renameHook*(v: types.WorkersObservabilityTraceSummary, fieldName: var string) {.inline.} =
+  if fieldName == "errorCount":
+    fieldName = "error_count"
+  elif fieldName == "error_count":
+    fieldName = "errorCount"
+  elif fieldName == "inputTokens":
+    fieldName = "input_tokens"
+  elif fieldName == "input_tokens":
+    fieldName = "inputTokens"
+  elif fieldName == "llmCallCount":
+    fieldName = "llm_call_count"
+  elif fieldName == "llm_call_count":
+    fieldName = "llmCallCount"
+  elif fieldName == "llmErrorCount":
+    fieldName = "llm_error_count"
+  elif fieldName == "llm_error_count":
+    fieldName = "llmErrorCount"
+  elif fieldName == "outputTokens":
+    fieldName = "output_tokens"
+  elif fieldName == "output_tokens":
+    fieldName = "outputTokens"
+  elif fieldName == "rootSpanName":
+    fieldName = "root_span_name"
+  elif fieldName == "root_span_name":
+    fieldName = "rootSpanName"
+  elif fieldName == "rootTransactionName":
+    fieldName = "root_transaction_name"
+  elif fieldName == "root_transaction_name":
+    fieldName = "rootTransactionName"
+  elif fieldName == "toolCallCount":
+    fieldName = "tool_call_count"
+  elif fieldName == "tool_call_count":
+    fieldName = "toolCallCount"
+  elif fieldName == "toolErrorCount":
+    fieldName = "tool_error_count"
+  elif fieldName == "tool_error_count":
+    fieldName = "toolErrorCount"
+  elif fieldName == "totalTokens":
+    fieldName = "total_tokens"
+  elif fieldName == "total_tokens":
+    fieldName = "totalTokens"
+  elif fieldName == "traceDurationMs":
+    fieldName = "trace_duration_ms"
+  elif fieldName == "trace_duration_ms":
+    fieldName = "traceDurationMs"
+  elif fieldName == "traceEndMs":
+    fieldName = "trace_end_ms"
+  elif fieldName == "trace_end_ms":
+    fieldName = "traceEndMs"
+  elif fieldName == "traceId":
+    fieldName = "trace_id"
+  elif fieldName == "trace_id":
+    fieldName = "traceId"
+  elif fieldName == "traceStartMs":
+    fieldName = "trace_start_ms"
+  elif fieldName == "trace_start_ms":
+    fieldName = "traceStartMs"
 
 proc renameHook*(v: types.WorkersObject, fieldName: var string) {.inline.} =
   if fieldName == "hasStoredData":

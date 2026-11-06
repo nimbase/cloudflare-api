@@ -53,7 +53,7 @@ suite "spend_policies endpoints":
   test "GET /accounts/{account_id}/billing/spend-policies/activity":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdBillingSpendPoliciesActivity("test", 1, "test")
+    discard waitFor client.getAccountsAccountIdBillingSpendPoliciesActivity("test", 1, periodCurrentBillingCycle, "test")
 
   test "GET /accounts/{account_id}/billing/spend-policies/{policy_id}":
     let client = initCloudflareClient("test-key")
@@ -73,5 +73,5 @@ suite "spend_policies endpoints":
   test "GET /accounts/{account_id}/billing/spend-policies/{policy_id}/audit":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdBillingSpendPoliciesPolicyIdAudit("test", "test", 1)
+    discard waitFor client.getAccountsAccountIdBillingSpendPoliciesPolicyIdAudit("test", "test", 1, periodCurrentBillingCycle)
 

@@ -23,6 +23,10 @@ suite "accounts serialization":
     let obj = newIamApiResponseSingleId()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamApiResponseSingleId)) == openjson.toJson(obj)
 
+  test "round-trips OrganizationsApiModifyProfileRequest":
+    let obj = newOrganizationsApiModifyProfileRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiModifyProfileRequest)) == openjson.toJson(obj)
+
   test "round-trips IamAccountIdentifier":
     let obj = newIamAccountIdentifier()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamAccountIdentifier)) == openjson.toJson(obj)
@@ -58,14 +62,6 @@ suite "accounts serialization":
   test "round-trips IamResponseSingleAccount":
     let obj = newIamResponseSingleAccount()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamResponseSingleAccount)) == openjson.toJson(obj)
-
-  test "round-trips OrganizationsApiBatchAccountMoveResponse":
-    let obj = newOrganizationsApiBatchAccountMoveResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiBatchAccountMoveResponse)) == openjson.toJson(obj)
-
-  test "round-trips PostAccountsMoveResponse":
-    let obj = cloudflare.PostAccountsMoveResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsMoveResponse)) == openjson.toJson(obj)
 
   test "round-trips PostAccountsAccountIdMoveResponse":
     let obj = cloudflare.PostAccountsAccountIdMoveResponse()
@@ -118,5 +114,5 @@ suite "accounts endpoints":
   test "PUT /accounts/{account_id}/profile":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdProfile("test", newOrganizationsApiProfile())
+    discard waitFor client.putAccountsAccountIdProfile("test", newOrganizationsApiModifyProfileRequest())
 

@@ -17,6 +17,10 @@ type
     directionAsc = "asc"
     directionDesc = "desc"
 
+  ResourceSharingIncludeTagsFromOption* = enum
+    includeTagsFromApi = "api"
+    includeTagsFromMirror = "mirror"
+
 
 proc getAccountsAccountIdShares*(client: CloudflareClient,
                                  accountId: types.ResourceSharingAccountId,
@@ -29,6 +33,7 @@ proc getAccountsAccountIdShares*(client: CloudflareClient,
                                  page: int64 = 1, perPage: int64 = 20,
                                  includeResources: bool = default(bool),
                                  includeRecipientCounts: bool = default(bool),
+                                 includeTagsFrom: ResourceSharingIncludeTagsFromOption = includeTagsFromApi,
                                  tag: seq[string] = @[]): Future[types.ResourceSharingShareResponseCollection] {.async.} =
   ## Lists all account shares.
 
@@ -43,6 +48,7 @@ proc getAccountsAccountIdShares*(client: CloudflareClient,
   q["per_page"] = $perPage
   q["include_resources"] = $includeResources
   q["include_recipient_counts"] = $includeRecipientCounts
+  q["include_tags_from"] = $includeTagsFrom
   for v in tag: q["tag"] = $v
   let res = await client.httpGET(fmt"/accounts/{accountId}/shares", q)
   let body = await res.body
@@ -55,8 +61,8 @@ proc getAccountsAccountIdShares*(client: CloudflareClient,
 proc postAccountsAccountIdShares*(client: CloudflareClient,
                                   accountId: types.ResourceSharingAccountId,
                                   body: types.ResourceSharingCreateShareRequest): Future[types.ResourceSharingShareResponseSingle] {.async.} =
-  ## Creates a new resource share for sharing Cloudflare resources with other
-  ## accounts or organizations.
+  ## Creates a share that makes a resource available to specific accounts in the
+  ## caller's organization, or to the whole organization.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/shares", body)
   let body = await res.body
@@ -70,12 +76,14 @@ proc getAccountsAccountIdSharesShareId*(client: CloudflareClient,
                                         accountId: types.ResourceSharingAccountId,
                                         shareId: types.ResourceSharingShareId,
                                         includeResources: bool = default(bool),
-                                        includeRecipientCounts: bool = default(bool)): Future[types.ResourceSharingShareResponseSingle] {.async.} =
+                                        includeRecipientCounts: bool = default(bool),
+                                        includeTagsFrom: ResourceSharingIncludeTagsFromOption = includeTagsFromApi): Future[types.ResourceSharingShareResponseSingle] {.async.} =
   ## Fetches share by ID.
 
   var q = initOrderedTable[string, string]()
   q["include_resources"] = $includeResources
   q["include_recipient_counts"] = $includeRecipientCounts
+  q["include_tags_from"] = $includeTagsFrom
   let res = await client.httpGET(fmt"/accounts/{accountId}/shares/{shareId}", q)
   let body = await res.body
   case res.code
@@ -88,20 +96,9 @@ proc putAccountsAccountIdSharesShareId*(client: CloudflareClient,
                                         accountId: types.ResourceSharingAccountId,
                                         shareId: types.ResourceSharingShareId,
                                         body: types.ResourceSharingUpdateShareRequest): Future[types.ResourceSharingShareResponseSingle] {.async.} =
-  ## Updates the share's display name and tags. This endpoint does **not**
-  ## modify recipients or resources — those are managed via dedicated
-  ## subresource endpoints:
-  ##
-  ## - **Recipients**: Use `POST /accounts/{account_id}/shares/{share_id}/recipients`
-  ## to add a single recipient, `PUT
-  ## /accounts/{account_id}/shares/{share_id}/recipients`
-  ## to replace the full recipient list, or
-  ## `DELETE /accounts/{account_id}/shares/{share_id}/recipients/{recipient_id}`
-  ## to remove a recipient.
-  ## - **Resources**: Use the share's resource subresource endpoints.
-  ##
-  ## Updating is not immediate; an updated share object with a new status
-  ## will be returned.
+  ## Updates the share's display name and tags. Omitting `tags` leaves the
+  ## existing tags unchanged. Recipients and resources are managed via their
+  ## subresource endpoints.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/shares/{shareId}", body)
   let body = await res.body
@@ -130,8 +127,8 @@ proc getAccountsAccountIdSharesShareIdExcludedRecipients*(client: CloudflareClie
                                                           shareId: types.ResourceSharingShareId,
                                                           page: int64 = 1,
                                                           perPage: int64 = 20): Future[types.ResourceSharingShareExcludedRecipientResponseCollection] {.async.} =
-  ## Lists the accounts excluded from an organization-targeted share. Only valid for
-  ## shares with `target_type=organization`.
+  ## Lists the accounts excluded from an organization-targeted share. Returns an
+  ## empty list for account-targeted shares.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
@@ -225,7 +222,7 @@ proc getAccountsAccountIdSharesShareIdRecipients*(client: CloudflareClient,
 proc postAccountsAccountIdSharesShareIdRecipients*(client: CloudflareClient,
                                                    accountId: types.ResourceSharingAccountId,
                                                    shareId: types.ResourceSharingShareId,
-                                                   body: types.ResourceSharingCreateShareRecipientRequest): Future[types.ResourceSharingShareRecipientResponseSingle] {.async.} =
+                                                   body: types.ResourceSharingShareRecipientMutationRequest): Future[types.ResourceSharingShareRecipientResponseSingle] {.async.} =
   ## Adds a single recipient to an account-targeted resource share, granting
   ## them access to the shared resources. The recipient account must belong
   ## to the same organization as the share owner.
@@ -251,9 +248,9 @@ proc putAccountsAccountIdSharesShareIdRecipients*(client: CloudflareClient,
   ## disassociation, and unchanged accounts are left as-is.
   ##
   ## Returns an error if the share targets an organization
-  ## (`target_type=organization`); org-targeted shares derive their
-  ## recipients dynamically from org membership and cannot be modified
-  ## through this endpoint.
+  ## (`target_type=organization`) and the list is non-empty; org-targeted
+  ## shares derive their recipients dynamically from org membership and
+  ## cannot be modified through this endpoint.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/shares/{shareId}/recipients", body)
   return res
@@ -354,8 +351,8 @@ proc putAccountsAccountIdSharesShareIdResourcesShareResourceId*(client: Cloudfla
                                                                 shareId: types.ResourceSharingShareId,
                                                                 shareResourceId: types.ResourceSharingResourceId,
                                                                 body: types.ResourceSharingUpdateShareResourceRequest): Future[types.ResourceSharingShareResourceResponseSingle] {.async.} =
-  ## Update is not immediate, an updated share resource object with a new status will
-  ## be returned.
+  ## Updates the resource's `meta`. Only resources with `status=active` can be
+  ## updated.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/shares/{shareId}/resources/{shareResourceId}", body)
   let body = await res.body
@@ -383,9 +380,6 @@ proc deleteAccountsAccountIdSharesShareIdResourcesShareResourceId*(client: Cloud
 proc getOrganizationsOrganizationIdShares*(client: CloudflareClient,
                                            organizationId: types.ResourceSharingOrganizationId,
                                            status: types.ResourceSharingShareStatus = default(types.ResourceSharingShareStatus),
-                                           kind: types.ResourceSharingShareKind = default(types.ResourceSharingShareKind),
-                                           targetType: types.ResourceSharingShareTargetType = default(types.ResourceSharingShareTargetType),
-                                           resourceTypes: seq[string] = @[],
                                            order: ResourceSharingOrderOption = orderCreated,
                                            direction: ResourceSharingDirectionOption = directionAsc,
                                            page: int64 = 1, perPage: int64 = 20): Future[types.ResourceSharingShareResponseCollection] {.async.} =
@@ -393,9 +387,6 @@ proc getOrganizationsOrganizationIdShares*(client: CloudflareClient,
 
   var q = initOrderedTable[string, string]()
   q["status"] = $status
-  q["kind"] = $kind
-  q["target_type"] = $targetType
-  for v in resourceTypes: q["resource_types"] = $v
   q["order"] = $order
   q["direction"] = $direction
   q["page"] = $page

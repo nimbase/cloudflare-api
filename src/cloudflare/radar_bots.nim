@@ -24,22 +24,24 @@ type
     result: JsonNode
     success: bool
   RadarBotBotCategoryOption* = enum
+    botCategoryACADEMICRESEARCH = "ACADEMIC_RESEARCH"
+    botCategoryADVERTISINGANDMARKETING = "ADVERTISING_AND_MARKETING"
+    botCategoryAIASSISTANT = "AI_ASSISTANT"
+    botCategoryAICRAWLER = "AI_CRAWLER"
+    botCategoryCOMMERCE = "COMMERCE"
+    botCategoryFEEDFETCHER = "FEED_FETCHER"
+    botCategoryMONITORINGANDANALYTICS = "MONITORING_AND_ANALYTICS"
+    botCategoryOTHER = "OTHER"
+    botCategoryPAGEPREVIEW = "PAGE_PREVIEW"
     botCategorySEARCHENGINECRAWLER = "SEARCH_ENGINE_CRAWLER"
     botCategorySEARCHENGINEOPTIMIZATION = "SEARCH_ENGINE_OPTIMIZATION"
-    botCategoryMONITORINGANDANALYTICS = "MONITORING_AND_ANALYTICS"
-    botCategoryADVERTISINGANDMARKETING = "ADVERTISING_AND_MARKETING"
-    botCategorySOCIALMEDIAMARKETING = "SOCIAL_MEDIA_MARKETING"
-    botCategoryPAGEPREVIEW = "PAGE_PREVIEW"
-    botCategoryACADEMICRESEARCH = "ACADEMIC_RESEARCH"
     botCategorySECURITY = "SECURITY"
     botCategoryACCESSIBILITY = "ACCESSIBILITY"
-    botCategoryWEBHOOKS = "WEBHOOKS"
-    botCategoryFEEDFETCHER = "FEED_FETCHER"
-    botCategoryAICRAWLER = "AI_CRAWLER"
     botCategoryAGGREGATOR = "AGGREGATOR"
-    botCategoryAIASSISTANT = "AI_ASSISTANT"
     botCategoryAISEARCH = "AI_SEARCH"
     botCategoryARCHIVER = "ARCHIVER"
+    botCategorySOCIALMEDIAMARKETING = "SOCIAL_MEDIA_MARKETING"
+    botCategoryWEBHOOKS = "WEBHOOKS"
 
   RadarBotKindOption* = enum
     kindAGENT = "AGENT"
@@ -61,7 +63,7 @@ type
 
 proc getRadarBots*(client: CloudflareClient, limit: int64 = 5,
                    offset: int64 = default(int64),
-                   botCategory: RadarBotBotCategoryOption = botCategorySEARCHENGINECRAWLER,
+                   botCategory: RadarBotBotCategoryOption = botCategoryACADEMICRESEARCH,
                    botOperator: string = default(string),
                    kind: RadarBotKindOption = kindAGENT,
                    botVerificationStatus: RadarBotBotVerificationStatusOption = botVerificationStatusVERIFIED,

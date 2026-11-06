@@ -14,10 +14,6 @@ type
     is_default: Option[bool]
     is_default_network: Option[types.TunnelIsDefaultNetworkOptional]
     name: types.TunnelVirtualNetworkName
-  GetAccountsAccountIdTeamnetVirtualNetworksVirtualNetworkIdRequest = object
-    comment: Option[types.TunnelVirtualNetworkComment]
-    is_default_network: Option[types.TunnelIsDefaultNetwork]
-    name: Option[types.TunnelVirtualNetworkName]
   PatchAccountsAccountIdTeamnetVirtualNetworksVirtualNetworkIdRequest = object
     comment: Option[types.TunnelVirtualNetworkComment]
     is_default_network: Option[types.TunnelIsDefaultNetworkOptional]
@@ -61,11 +57,10 @@ proc postAccountsAccountIdTeamnetVirtualNetworks*(client: CloudflareClient,
 
 proc getAccountsAccountIdTeamnetVirtualNetworksVirtualNetworkId*(client: CloudflareClient,
                                                                  accountId: types.TunnelAccountId,
-                                                                 virtualNetworkId: types.TunnelVirtualNetworkId,
-                                                                 body: GetAccountsAccountIdTeamnetVirtualNetworksVirtualNetworkIdRequest): Future[types.TunnelVnetResponseSingle] {.async.} =
+                                                                 virtualNetworkId: types.TunnelVirtualNetworkId): Future[types.TunnelVnetResponseSingle] {.async.} =
   ## Get a virtual network.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/teamnet/virtual_networks/{virtualNetworkId}", body)
+  let res = await client.httpGET(fmt"/accounts/{accountId}/teamnet/virtual_networks/{virtualNetworkId}")
   let body = await res.body
   case res.code
   of Http200:

@@ -89,3 +89,8 @@ suite "zaraz endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getZonesZoneIdSettingsZarazWorkflow("test")
 
+  test "PUT /zones/{zone_id}/settings/zaraz/workflow":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.putZonesZoneIdSettingsZarazWorkflow("test")
+

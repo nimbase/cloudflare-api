@@ -19,6 +19,10 @@ suite "access_service_tokens serialization":
     let obj = newAccessCreateResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessCreateResponse)) == openjson.toJson(obj)
 
+  test "round-trips AccessTags":
+    let obj = newAccessTags()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessTags)) == openjson.toJson(obj)
+
   test "round-trips AccessResponseCollection4":
     let obj = newAccessResponseCollection4()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessResponseCollection4)) == openjson.toJson(obj)

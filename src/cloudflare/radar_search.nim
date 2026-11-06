@@ -22,11 +22,11 @@ proc getRadarSearchGlobal*(client: CloudflareClient, limit: int64 = 5,
                            `include`: seq[string] = default(seq[string]),
                            exclude: seq[string] = default(seq[string]),
                            format: RadarSearchFormatOption = formatJSON): Future[GetRadarSearchGlobalResponse] {.async.} =
-  ## Searches for locations, autonomous systems, reports, bots, certificate logs,
-  ## certificate authorities, industries and verticals. Location names can be
-  ## localized by sending an `Accept-Language` HTTP header with a BCP 47 language tag
-  ## (e.g., `Accept-Language: pt-PT`). The full quality-value chain is supported
-  ## (e.g., `pt-PT,pt;q=0.9,en;q=0.8`).
+  ## Searches for locations, autonomous systems, reports, bots, bot operators,
+  ## certificate logs, certificate authorities, industries and verticals. Location
+  ## names can be localized by sending an `Accept-Language` HTTP header with a BCP 47
+  ## language tag (e.g., `Accept-Language: pt-PT`). The full quality-value chain is
+  ## supported (e.g., `pt-PT,pt;q=0.9,en;q=0.8`).
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit

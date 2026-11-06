@@ -15,9 +15,10 @@ proc getAccountsAccountIdCniInterconnects*(client: CloudflareClient,
                                            cursor: int32 = default(int32),
                                            limit: int64 = default(int64),
                                            accountId: types.NscAccountTag): Future[types.NscInterconnectList] {.async.} =
-  ## Lists all network interconnects configured for the account, including physical
-  ## and virtual
-  ## connections.
+  ## Lists network interconnects of a single type configured for the account. The
+  ## `type` query
+  ## parameter selects the type to list; when omitted, only `direct` interconnects
+  ## are returned.
 
   var q = initOrderedTable[string, string]()
   q["site"] = $site

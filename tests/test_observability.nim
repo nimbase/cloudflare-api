@@ -11,6 +11,14 @@ import cloudflare
 import ./common
 
 suite "observability serialization":
+  test "round-trips WorkersObservabilityUsageLimit":
+    let obj = newWorkersObservabilityUsageLimit()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersObservabilityUsageLimit)) == openjson.toJson(obj)
+
+  test "round-trips GetAccountsAccountIdObservabilityUsageLimitResponse":
+    let obj = cloudflare.GetAccountsAccountIdObservabilityUsageLimitResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdObservabilityUsageLimitResponse)) == openjson.toJson(obj)
+
   test "round-trips GetZonesZoneIdObservabilityTracingRulesResponse":
     let obj = cloudflare.GetZonesZoneIdObservabilityTracingRulesResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetZonesZoneIdObservabilityTracingRulesResponse)) == openjson.toJson(obj)
@@ -36,6 +44,11 @@ suite "observability serialization":
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchZonesZoneIdObservabilityTracingSettingsResponse)) == openjson.toJson(obj)
 
 suite "observability endpoints":
+  test "GET /accounts/{account_id}/observability/usage/limit":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdObservabilityUsageLimit("test")
+
   test "GET /zones/{zone_id}/observability/tracing/rules":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

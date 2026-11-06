@@ -37,7 +37,8 @@ proc getAccountsAccountIdSecretsStoreStores*(client: CloudflareClient,
                                              page: int64 = default(int64),
                                              perPage: int64 = default(int64),
                                              order: SecretsStoreOrderOption = orderCreated): Future[types.SecretsStoreStoresResponseCollection] {.async.} =
-  ## Lists all the stores in an account.
+  ## Lists account stores from an eventually consistent projection. Returns retryable
+  ## HTTP 503 until initial backfill completes; empty accounts are ready immediately.
 
   var q = initOrderedTable[string, string]()
   q["direction"] = $direction

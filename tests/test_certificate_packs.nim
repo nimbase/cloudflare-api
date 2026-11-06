@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "certificate_packs serialization":
+  test "round-trips TlsCertificatesAndHostnamesCertificatePackOrderResponseSingle":
+    let obj = newTlsCertificatesAndHostnamesCertificatePackOrderResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TlsCertificatesAndHostnamesCertificatePackOrderResponseSingle)) == openjson.toJson(obj)
+
   test "round-trips TlsCertificatesAndHostnamesDeleteAdvancedCertificatePackResponseSingle":
     let obj = newTlsCertificatesAndHostnamesDeleteAdvancedCertificatePackResponseSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TlsCertificatesAndHostnamesDeleteAdvancedCertificatePackResponseSingle)) == openjson.toJson(obj)

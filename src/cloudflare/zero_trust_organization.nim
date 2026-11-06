@@ -169,6 +169,18 @@ proc putAccountsAccountIdAccessOrganizationsTrustSettings*(client: CloudflareCli
   else:
     raise newException(CloudflareClientError, body)
 
+proc deleteAccountsAccountIdAccessOrganizationsTrustSettings*(client: CloudflareClient,
+                                                              accountId: types.AccessIdentifier): Future[types.AccessTrustSettingsResponse] {.async.} =
+  ## Resets the trust settings for your Zero Trust organization.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/access/organizations/trust_settings")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessTrustSettingsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc patchAccountsAccountIdAccessOrganizationsTrustSettings*(client: CloudflareClient,
                                                              accountId: types.AccessIdentifier,
                                                              body: PatchAccountsAccountIdAccessOrganizationsTrustSettingsRequest): Future[types.AccessTrustSettingsResponse] {.async.} =

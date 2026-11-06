@@ -59,6 +59,7 @@ type
     monitor: Option[types.LoadBalancingMonitorId]
     monitor_group: Option[types.LoadBalancingMonitorGroupId]
     name: Option[types.LoadBalancingName]
+    networks: Option[types.LoadBalancingNetworks]
     notification_email: Option[types.LoadBalancingNotificationEmail]
     notification_filter: Option[types.LoadBalancingNotificationFilter]
     origin_steering: Option[types.LoadBalancingOriginSteering]

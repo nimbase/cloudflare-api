@@ -49,14 +49,14 @@ proc getZonesZoneIdSslCertificatePacks*(client: CloudflareClient,
 
 proc postZonesZoneIdSslCertificatePacksOrder*(client: CloudflareClient,
                                               zoneId: types.TlsCertificatesAndHostnamesIdentifier,
-                                              body: PostZonesZoneIdSslCertificatePacksOrderRequest): Future[types.TlsCertificatesAndHostnamesAdvancedCertificatePackResponseSingle] {.async.} =
+                                              body: PostZonesZoneIdSslCertificatePacksOrderRequest): Future[types.TlsCertificatesAndHostnamesCertificatePackOrderResponseSingle] {.async.} =
   ## For a given zone, order an advanced certificate pack.
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/ssl/certificate_packs/order", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.TlsCertificatesAndHostnamesAdvancedCertificatePackResponseSingle)
+    result = fromJson(body, types.TlsCertificatesAndHostnamesCertificatePackOrderResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 

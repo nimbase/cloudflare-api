@@ -14,10 +14,12 @@ type
     country_pools: Option[types.LoadBalancingCountryPools]
     default_pools: types.LoadBalancingDefaultPools
     description: Option[types.LoadBalancingComponentsSchemasDescription]
+    enabled: Option[types.LoadBalancingComponentsSchemasEnabled]
     fallback_pool: types.LoadBalancingFallbackPool
     location_strategy: Option[types.LoadBalancingLocationStrategy]
     name: types.LoadBalancingComponentsSchemasName
     networks: Option[types.LoadBalancingNetworks]
+    pool_sets: Option[types.LoadBalancingPoolSets]
     pop_pools: Option[types.LoadBalancingPopPools]
     proxied: Option[types.LoadBalancingProxied]
     random_steering: Option[types.LoadBalancingRandomSteering]
@@ -38,6 +40,7 @@ type
     location_strategy: Option[types.LoadBalancingLocationStrategy]
     name: types.LoadBalancingComponentsSchemasName
     networks: Option[types.LoadBalancingNetworks]
+    pool_sets: Option[types.LoadBalancingPoolSets]
     pop_pools: Option[types.LoadBalancingPopPools]
     proxied: Option[types.LoadBalancingProxied]
     random_steering: Option[types.LoadBalancingRandomSteering]
@@ -57,6 +60,8 @@ type
     fallback_pool: Option[types.LoadBalancingFallbackPool]
     location_strategy: Option[types.LoadBalancingLocationStrategy]
     name: Option[types.LoadBalancingComponentsSchemasName]
+    networks: Option[types.LoadBalancingNetworks]
+    pool_sets: Option[types.LoadBalancingPoolSets]
     pop_pools: Option[types.LoadBalancingPopPools]
     proxied: Option[types.LoadBalancingProxied]
     random_steering: Option[types.LoadBalancingRandomSteering]

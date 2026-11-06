@@ -59,7 +59,8 @@ proc getAccountsAccountIdAbuseReports*(client: CloudflareClient,
                                        createdAfter: string = default(string),
                                        status: types.AbuseReportsReportStatus = default(types.AbuseReportsReportStatus),
                                        `type`: types.AbuseReportsReportType = default(types.AbuseReportsReportType),
-                                       mitigationStatus: types.AbuseReportsMitigationStatus = default(types.AbuseReportsMitigationStatus)): Future[GetAccountsAccountIdAbuseReportsResponse] {.async.} =
+                                       mitigationStatus: types.AbuseReportsMitigationStatus = default(types.AbuseReportsMitigationStatus),
+                                       pendingNotice: bool = default(bool)): Future[GetAccountsAccountIdAbuseReportsResponse] {.async.} =
   ## List abuse reports made against domains or other content associated with the
   ## account. To list reports that the account submitted, use the submitted abuse
   ## reports endpoint instead.
@@ -75,6 +76,7 @@ proc getAccountsAccountIdAbuseReports*(client: CloudflareClient,
   q["status"] = $status
   q["type"] = $`type`
   q["mitigation_status"] = $mitigationStatus
+  q["pending_notice"] = $pendingNotice
   let res = await client.httpGET(fmt"/accounts/{accountId}/abuse-reports", q)
   let body = await res.body
   case res.code

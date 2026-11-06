@@ -38,20 +38,24 @@ type
   GetOrganizationsOrganizationIdAccountsResponse* = object
     errors: seq[JsonNode]
     messages: seq[types.OrganizationsApiV4Message]
-    result: seq[types.OrganizationsApiAccount]
-    result_info: types.OrganizationsApiPageTokenResultInfo
+    result: seq[JsonNode]
+    result_info: types.OrganizationsApiAccountListResultInfo
     success: bool
   PutOrganizationsOrganizationIdInvitesMemberCodeResponse* = object
     errors: seq[JsonNode]
     messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiMember
+    result: types.OrganizationsApiOrganizationInviteMember
     success: bool
   OrganizationOrderByOption* = enum
-    orderByAccountName = "account_name"
+    orderByName = "name"
 
   OrganizationDirectionOption* = enum
     directionAsc = "asc"
     directionDesc = "desc"
+
+  OrganizationStatusOption* = enum
+    statusActive = "active"
+    statusDeleted = "deleted"
 
 
 proc getOrganizations*(client: CloudflareClient, id: seq[string] = @[],
@@ -63,9 +67,14 @@ proc getOrganizations*(client: CloudflareClient, id: seq[string] = @[],
                        containingUser: string = default(string),
                        containingOrganization: string = default(string),
                        parentId: JsonNode = default(JsonNode),
+                       memberEmail: string = default(string),
+                       orderBy: OrganizationOrderByOption = orderByName,
+                       direction: OrganizationDirectionOption = directionAsc,
                        pageToken: string = default(string),
                        pageSize: int64 = default(int64)): Future[GetOrganizationsResponse] {.async.} =
-  ## Retrieve a list of organizations a particular user has access to.
+  ## Retrieve a list of organizations a particular user has access to. At most one of
+  ## `containing.account`, `containing.user`, or `containing.organization` may be
+  ## provided.
 
   var q = initOrderedTable[string, string]()
   for v in id: q["id"] = $v
@@ -77,6 +86,9 @@ proc getOrganizations*(client: CloudflareClient, id: seq[string] = @[],
   q["containing.user"] = $containingUser
   q["containing.organization"] = $containingOrganization
   q["parent.id"] = $parentId
+  q["member.email"] = $memberEmail
+  q["order_by"] = $orderBy
+  q["direction"] = $direction
   q["page_token"] = $pageToken
   q["page_size"] = $pageSize
   let res = await client.httpGET("/organizations", q)
@@ -88,10 +100,18 @@ proc getOrganizations*(client: CloudflareClient, id: seq[string] = @[],
     raise newException(CloudflareClientError, body)
 
 proc postOrganizations*(client: CloudflareClient,
-                        body: types.OrganizationsApiOrganization): Future[PostOrganizationsResponse] {.async.} =
+                        body: types.OrganizationsApiCreateOrganizationRequest): Future[PostOrganizationsResponse] {.async.} =
   ## Create a new organization for a user. Sub-organization creation availability
   ## depends on
-  ## the organization's capabilities.
+  ## the organization's capabilities. The optional `profile` object accepts partial
+  ## profile
+  ## details; its individual fields are not required. Organization names are limited
+  ## to 65
+  ## UTF-8 bytes. Each profile field is limited to 1,000 UTF-8 bytes, and a non-empty
+  ## business
+  ## email must be valid. At least one of business name, address, phone, or email
+  ## must be
+  ## non-empty to persist a profile.
 
   let res = await client.httpPOST("/organizations", body)
   let body = await res.body
@@ -115,8 +135,11 @@ proc getOrganizationsOrganizationId*(client: CloudflareClient,
 
 proc putOrganizationsOrganizationId*(client: CloudflareClient,
                                      organizationId: types.OrganizationsApiOrganizationID,
-                                     body: types.OrganizationsApiOrganization): Future[PutOrganizationsOrganizationIdResponse] {.async.} =
-  ## Update an organization's name.
+                                     body: types.OrganizationsApiModifyOrganizationRequest): Future[PutOrganizationsOrganizationIdResponse] {.async.} =
+  ## Update an organization's name. Supplying `parent_id` verifies the current
+  ## parent; this
+  ## endpoint cannot move an organization. Organization names are limited to 65 UTF-8
+  ## bytes.
 
   let res = await client.httpPUT(fmt"/organizations/{organizationId}", body)
   let body = await res.body
@@ -128,12 +151,13 @@ proc putOrganizationsOrganizationId*(client: CloudflareClient,
 
 proc deleteOrganizationsOrganizationId*(client: CloudflareClient,
                                         organizationId: types.OrganizationsApiOrganizationID): Future[DeleteOrganizationsOrganizationIdResponse] {.async.} =
-  ## Delete an organization. The organization MUST be empty before deleting.
-  ## It must not contain any sub-organizations, accounts, members or users.
-  ## Sub-organization
-  ## deletion availability depends on the organization's capabilities.
+  ## Delete an organization. It must not contain active sub-organizations or
+  ## accounts. A root
+  ## organization must also have no active managed users. Sub-organization deletion
+  ## availability
+  ## depends on the organization's capabilities.
   ##
-  ## **Access Control:** Restricted to enterprise organizations.
+  ## **Access Control:** Root deletion is restricted to enterprise organizations.
 
   let res = await client.httpDELETE(fmt"/organizations/{organizationId}")
   let body = await res.body
@@ -153,14 +177,24 @@ proc getOrganizationsOrganizationIdAccounts*(client: CloudflareClient,
                                              nameStartsWith: string = default(string),
                                              nameEndsWith: string = default(string),
                                              nameContains: string = default(string),
-                                             orderBy: OrganizationOrderByOption = orderByAccountName,
+                                             status: OrganizationStatusOption = statusActive,
+                                             orderBy: OrganizationOrderByOption = orderByName,
                                              direction: OrganizationDirectionOption = directionAsc,
                                              includeTags: bool = default(bool),
                                              includeTotal: bool = true,
+                                             page: int64 = default(int64),
+                                             perPage: int64 = default(int64),
                                              pageToken: string = default(string),
                                              pageSize: int64 = default(int64)): Future[GetOrganizationsOrganizationIdAccountsResponse] {.async.} =
   ## Retrieve the accounts immediately attached to a specific organization. Accounts
-  ## attached to sub-organizations are not included.
+  ## attached to sub-organizations are not included. Use `page_token` and `page_size`
+  ## for cursor
+  ## pagination, or provide `page` and `per_page` together for legacy offset
+  ## pagination. Cursor
+  ## pagination takes precedence when requested. The default response uses Account
+  ## fields;
+  ## `Accept: application/json; legacy=true` requests the LegacyAccount
+  ## representation.
 
   var q = initOrderedTable[string, string]()
   q["account_pubname"] = $accountPubname
@@ -171,10 +205,13 @@ proc getOrganizationsOrganizationIdAccounts*(client: CloudflareClient,
   q["name.startsWith"] = $nameStartsWith
   q["name.endsWith"] = $nameEndsWith
   q["name.contains"] = $nameContains
+  q["status"] = $status
   q["order_by"] = $orderBy
   q["direction"] = $direction
   q["include_tags"] = $includeTags
   q["include_total"] = $includeTotal
+  q["page"] = $page
+  q["per_page"] = $perPage
   q["page_token"] = $pageToken
   q["page_size"] = $pageSize
   let res = await client.httpGET(fmt"/organizations/{organizationId}/accounts", q)
@@ -205,7 +242,11 @@ proc putOrganizationsOrganizationIdInvitesMemberCode*(client: CloudflareClient,
 
 proc getOrganizationsOrganizationIdProfile*(client: CloudflareClient,
                                             organizationId: types.OrganizationsApiOrganizationID): Future[types.OrganizationsApiProfileResponse] {.async.} =
-  ## Get an organizations profile if it exists.
+  ## Retrieves the business profile (name, email, phone, address, and external
+  ## metadata)
+  ## associated with this organization's customer record. Profiles can be shared
+  ## across
+  ## accounts and organizations. Only available to members of the organization.
 
   let res = await client.httpGET(fmt"/organizations/{organizationId}/profile")
   let body = await res.body
@@ -217,8 +258,16 @@ proc getOrganizationsOrganizationIdProfile*(client: CloudflareClient,
 
 proc putOrganizationsOrganizationIdProfile*(client: CloudflareClient,
                                             organizationId: types.OrganizationsApiOrganizationID,
-                                            body: types.OrganizationsApiModifyOrganizationProfileRequest): Future[AsyncResponse] {.async.} =
-  ## Modify organization profile.
+                                            body: types.OrganizationsApiModifyProfileRequest): Future[AsyncResponse] {.async.} =
+  ## Partially updates the business profile (name, email, phone, address, and
+  ## external metadata)
+  ## associated with this organization's customer record, creating the profile if it
+  ## does not
+  ## exist. Changes apply to every account and organization sharing that profile.
+  ## Omitted,
+  ## empty, or null fields are left unchanged. Each profile field is limited to 1,000
+  ## UTF-8
+  ## bytes. Only available to members of the organization.
 
   let res = await client.httpPUT(fmt"/organizations/{organizationId}/profile", body)
   return res

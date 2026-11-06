@@ -11,6 +11,7 @@ import ./private/types
 type
   PreviewDeploymentIncludeOption* = enum
     includeModules = "modules"
+    includeModulesSourcemaps = "modules,sourcemaps"
 
 
 proc getAccountsAccountIdWorkersWorkersWorkerIdPreviewsPreviewIdDeployments*(client: CloudflareClient,
@@ -36,13 +37,10 @@ proc postAccountsAccountIdWorkersWorkersWorkerIdPreviewsPreviewIdDeployments*(cl
                                                                               accountId: types.WorkersIdentifier,
                                                                               workerId: string,
                                                                               previewId: string,
-                                                                              ignoreDefaults: bool = default(bool),
                                                                               body: types.WorkersPreviewDeploymentRequest): Future[JsonNode] {.async.} =
   ## Create a new deployment for a Preview.
 
-  var q = initOrderedTable[string, string]()
-  q["ignore_defaults"] = $ignoreDefaults
-  let res = await client.httpPOST(fmt"/accounts/{accountId}/workers/workers/{workerId}/previews/{previewId}/deployments", q)
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/workers/workers/{workerId}/previews/{previewId}/deployments", body)
   let body = await res.body
   case res.code
   of Http200:
@@ -54,16 +52,13 @@ proc patchAccountsAccountIdWorkersWorkersWorkerIdPreviewsPreviewIdDeploymentsLat
                                                                                      accountId: types.WorkersIdentifier,
                                                                                      workerId: string,
                                                                                      previewId: string,
-                                                                                     ignoreDefaults: bool = default(bool),
                                                                                      body: types.WorkersPreviewDeploymentRequest): Future[JsonNode] {.async.} =
   ## Only `/deployments/latest` is supported. Creates a new preview deployment by
   ## applying a JSON Merge Patch (RFC 7396) to the latest deployment. Patching a
   ## specific deployment ID is not supported. Omitted fields are inherited from the
   ## latest deployment. Preview base config is used for the first deployment.
 
-  var q = initOrderedTable[string, string]()
-  q["ignore_defaults"] = $ignoreDefaults
-  let res = await client.httpPATCH(fmt"/accounts/{accountId}/workers/workers/{workerId}/previews/{previewId}/deployments/latest", q)
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/workers/workers/{workerId}/previews/{previewId}/deployments/latest", body)
   let body = await res.body
   case res.code
   of Http200:

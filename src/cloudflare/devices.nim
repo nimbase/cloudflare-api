@@ -4,7 +4,7 @@
 # Nimbase CLI https://github.com/nimbase/nimbase
 #
 # License: MIT
-import std/[strformat, options, json]
+import std/[strformat, options]
 import ./private/metaclient
 import ./private/types
 
@@ -17,7 +17,7 @@ type
     browser_extension_config: Option[types.TeamsDevicesBrowserExtensionConfig]
     captive_portal: Option[types.TeamsDevicesCaptivePortal]
     default: Option[types.TeamsDevicesDefault]
-    description: Option[JsonNode]
+    description: Option[string]
     disable_auto_fallback: Option[types.TeamsDevicesDisableAutoFallback]
     dns_search_suffixes: Option[types.TeamsDevicesDnsSearchSuffixes]
     enable_device_credential_authentication: Option[types.TeamsDevicesEnableDeviceCredentialAuthentication]

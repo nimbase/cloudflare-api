@@ -53,3 +53,15 @@ proc getAccountsAccountIdBuildsAccountLimits*(client: CloudflareClient,
     result = fromJson(body, JsonNode)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdContainersUsage*(client: CloudflareClient): Future[JsonNode] {.async.} =
+  ## Get current live resource usage and maximum account limits for the authenticated
+  ## Cloudchamber account. Usage includes active and assigned instances.
+
+  let res = await client.httpGET("/accounts/{account_id}/containers/usage")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)

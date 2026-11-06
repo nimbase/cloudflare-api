@@ -205,7 +205,7 @@ type
     `when`*: Option[string]
       ## A UTC RFC3339 timestamp that specifies when the action being logged occured.
 
-  AaaAuditLogsResponseCollection* = ref object of RootObj
+  AaaAuditLogsSuccessResponseCollection* = ref object of RootObj
     errors*: Option[AaaMessages2]
     result_info*: Option[AaaResultInfo]
     success*: Option[bool]
@@ -302,7 +302,7 @@ type
       ## Indicates whether the API call was successful
     result*: Option[seq[AaaAuditLogsV2]]
 
-  AaaAuditLogsResponseCollection2* = ref object of RootObj
+  AaaAuditLogsResponseCollection* = ref object of RootObj
 
   AaaBefore* = string
 
@@ -708,6 +708,9 @@ type
       ## (https://www.rfc-editor.org/rfc/rfc3339.html)
     domain*: string
       ## Domain that relates to the report.
+    has_pending_notice*: Option[bool]
+      ## Whether the report is in an open Notice and Takedown notice period: no
+      ## mitigation is placed yet, but one will take effect when the period ends.
     id*: string
       ## Public facing ID of abuse report, aka abuse_rand.
     justification*: Option[string]
@@ -2007,7 +2010,7 @@ type
       ## The URL or domain of the bookmark.
     logo_url*: Option[AccessLogoUrl]
     name*: Option[AccessName8]
-    tags*: Option[AccessTags]
+    tags*: Option[AccessTags2]
     `type`*: Option[JsonNode]
 
   AccessBookmarkProps2* = ref object of RootObj
@@ -3207,7 +3210,7 @@ type
     same_site_cookie_attribute*: Option[AccessSameSiteCookieAttribute]
     scim_config*: Option[AccessScimConfig]
     session_duration*: Option[AccessSessionDuration2]
-    tags*: Option[AccessTags]
+    tags*: Option[AccessTags2]
     `type`*: JsonNode
 
   AccessMcpProps* = ref object of RootObj
@@ -3227,7 +3230,7 @@ type
     same_site_cookie_attribute*: Option[AccessSameSiteCookieAttribute]
     scim_config*: Option[AccessScimConfig]
     session_duration*: Option[AccessSessionDuration2]
-    tags*: Option[AccessTags]
+    tags*: Option[AccessTags2]
     `type`*: JsonNode
 
   AccessMessage* = string
@@ -3874,7 +3877,7 @@ type
     service_auth_401_redirect*: Option[AccessServiceAuth401Redirect]
     session_duration*: Option[AccessSessionDuration2]
     skip_interstitial*: Option[AccessSkipInterstitial]
-    tags*: Option[AccessTags]
+    tags*: Option[AccessTags2]
     `type`*: JsonNode
     use_clientless_isolation_app_launcher_url*: Option[AccessUseClientlessIsolationAppLauncherUrl]
 
@@ -4173,7 +4176,7 @@ type
     name*: Option[AccessName8]
     saas_app*: Option[JsonNode]
     scim_config*: Option[AccessScimConfig]
-    tags*: Option[AccessTags]
+    tags*: Option[AccessTags2]
     `type`*: Option[JsonNode]
 
   AccessSaasProps2* = ref object of RootObj
@@ -4627,7 +4630,7 @@ type
     service_auth_401_redirect*: Option[AccessServiceAuth401Redirect]
     session_duration*: Option[AccessSessionDuration2]
     skip_interstitial*: Option[AccessSkipInterstitial]
-    tags*: Option[AccessTags]
+    tags*: Option[AccessTags2]
     `type`*: JsonNode
     use_clientless_isolation_app_launcher_url*: Option[AccessUseClientlessIsolationAppLauncherUrl]
 
@@ -4666,6 +4669,7 @@ type
     leak_reported_at*: Option[AccessLeakReportedAt]
     leak_reporter*: Option[AccessLeakReporter]
     name*: Option[AccessName2]
+    tags*: Option[AccessTags]
     updated_at*: Option[AccessUpdatedAt]
 
   AccessServiceTokens2* = ref object of RootObj
@@ -4680,6 +4684,7 @@ type
     leak_reported_at*: Option[AccessLeakReportedAt]
     leak_reporter*: Option[AccessLeakReporter]
     name*: Option[AccessName17]
+    tags*: Option[AccessTags]
     updated_at*: Option[AccessTimestamp]
 
   AccessServiceAuth401Redirect* = bool
@@ -4700,6 +4705,11 @@ type
   AccessServiceTokenRule* = ref object of RootObj
     ## Matches a specific Access Service Token
     service_token*: JsonNode
+
+  AccessServiceTokenTagRule* = ref object of RootObj
+    ## Matches an Access service token with the specified tag key and value. Only
+    ## compatible with non_identity decisions.
+    service_token_tag*: JsonNode
 
   AccessSessionDuration* = string
 
@@ -4946,7 +4956,7 @@ type
     service_auth_401_redirect*: Option[AccessServiceAuth401Redirect]
     session_duration*: Option[AccessSessionDuration2]
     skip_interstitial*: Option[AccessSkipInterstitial]
-    tags*: Option[AccessTags]
+    tags*: Option[AccessTags2]
     `type`*: JsonNode
     use_clientless_isolation_app_launcher_url*: Option[AccessUseClientlessIsolationAppLauncherUrl]
 
@@ -4997,7 +5007,11 @@ type
     name*: AccessName13
     updated_at*: Option[AccessUpdatedAt]
 
-  AccessTags* = seq[string]
+  AccessTags* = ref object of RootObj
+    ## Tags associated with the service token, as key-value pairs. On update, replaces
+    ## all existing tags.
+
+  AccessTags2* = seq[string]
 
   AccessTargetAttributes* = ref object of RootObj
     ## Contains a map of target attribute keys to target attribute values.
@@ -5241,7 +5255,7 @@ type
     service_auth_401_redirect*: Option[AccessServiceAuth401Redirect]
     session_duration*: Option[AccessSessionDuration2]
     skip_interstitial*: Option[AccessSkipInterstitial]
-    tags*: Option[AccessTags]
+    tags*: Option[AccessTags2]
     `type`*: JsonNode
     use_clientless_isolation_app_launcher_url*: Option[AccessUseClientlessIsolationAppLauncherUrl]
 
@@ -5409,7 +5423,33 @@ type
 
   AddressingAsn2* = int64
 
+  AddressingAsnOwnershipValidationState* = enum
+    ## State of ASN ownership validation for a customer-owned Autonomous System Number
+    ## (ASN). Returned when an ASN ownership validation result exists. Omitted when
+    ## validation does not apply, such as for Cloudflare-owned ASNs. Verification is
+    ## reused for prefixes with the same account and ASN. Refer to [ASN ownership
+    ## validation states](https://developers.cloudflare.com/byoip/troubleshooting/prefi
+    ## x-validation/#asn-ownership-validation) for state meanings and resolutions.
+    pending = "pending"
+    valid = "valid"
+    missing = "missing"
+    invalid = "invalid"
+
   AddressingAsnPrependCount* = int64
+
+  AddressingAspaValidationState* = enum
+    ## State of Autonomous System Provider Authorization (ASPA) validation for a
+    ## customer-owned ASN. Returned when an ASPA validation result exists. Publishing
+    ## an ASPA is optional. A published ASPA must authorize AS13335 as a provider. An
+    ## invalid result blocks approval. If omitted, no ASPA validation result is
+    ## available. Omission does not indicate successful validation or confirm that no
+    ## ASPA exists. Refer to [ASPA validation states](https://developers.cloudflare.com
+    ## /byoip/troubleshooting/prefix-validation/#aspa-validation) for state meanings
+    ## and resolutions, and [ASPA authorization](https://developers.cloudflare.com/byoi
+    ## p/concepts/route-filtering-rpki/#aspa-authorization) for publication guidance.
+    pending = "pending"
+    valid = "valid"
+    invalid = "invalid"
 
   AddressingAutoAdvertiseWithdraw* = bool
 
@@ -5516,6 +5556,8 @@ type
     advertised_modified_at*: Option[AddressingAdvertisedModifiedAtNullable]
     approved*: Option[AddressingApproved]
     asn*: Option[AddressingAsn]
+    asn_ownership_validation_state*: Option[AddressingAsnOwnershipValidationState]
+    aspa_validation_state*: Option[AddressingAspaValidationState]
     cidr*: Option[AddressingCidr]
     created_at*: Option[AddressingTimestamp]
     delegate_loa_creation*: Option[AddressingDelegateLoaCreation]
@@ -8894,9 +8936,9 @@ type
     threshold_cents*: int64
       ## The policy threshold at evaluation time, in US cents.
     trigger*: string
-      ## The state the balance moved into. `approaching_limit` means the balance is at
-      ## least 80% of the threshold (rounded up to a whole cent), but below the
-      ## threshold. `limit_reached` means the balance reached or exceeded the threshold.
+      ## The trigger recorded at evaluation time. New evaluations record `limit_reached`
+      ## when the balance reaches or exceeds the configured threshold. Earlier entries
+      ## retain their recorded trigger.
 
   BillingSpendPoliciesPolicyAuditResponse* = ref object of RootObj
     ## A successful response containing spend policy audit entries.
@@ -8992,6 +9034,20 @@ type
     workers = "workers"
     durableObjects = "durable_objects"
 
+  BotManagementAiAgentAction* = enum
+    ## Action to apply to one supported personal AI agent.
+    disabled = "disabled"
+    Block = "block"
+    onlyOnAdPages = "only_on_ad_pages"
+
+  BotManagementAiAgents* = ref object of RootObj
+    ## Configure blocking behavior for supported personal AI agents.
+    anthropic_agent*: Option[BotManagementAiAgentAction]
+    google_agent*: Option[BotManagementAiAgentAction]
+    instinct*: Option[BotManagementAiAgentAction]
+    muse*: Option[BotManagementAiAgentAction]
+    openai_agent*: Option[BotManagementAiAgentAction]
+
   BotManagementAiBotsMigrationOptOut* = bool
 
   BotManagementAiBotsProtection* = enum
@@ -9041,6 +9097,7 @@ type
   BotManagementAutoUpdateModel* = bool
 
   BotManagementBaseConfig* = ref object of RootObj
+    ai_agents*: Option[BotManagementAiAgents]
     ai_bots_migration_opt_out*: Option[BotManagementAiBotsMigrationOptOut]
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
     ai_search*: Option[BotManagementAiSearch]
@@ -9058,6 +9115,7 @@ type
   BotManagementBmCookieEnabled* = bool
 
   BotManagementBmSubscriptionConfig* = ref object of RootObj
+    ai_agents*: Option[BotManagementAiAgents]
     ai_bots_migration_opt_out*: Option[BotManagementAiBotsMigrationOptOut]
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
     ai_search*: Option[BotManagementAiSearch]
@@ -9079,6 +9137,7 @@ type
     suppress_session_score*: Option[BotManagementSuppressSessionScore]
 
   BotManagementBotFightModeConfig* = ref object of RootObj
+    ai_agents*: Option[BotManagementAiAgents]
     ai_bots_migration_opt_out*: Option[BotManagementAiBotsMigrationOptOut]
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
     ai_search*: Option[BotManagementAiSearch]
@@ -9185,6 +9244,7 @@ type
   BotManagementSbfmDefinitelyAutomatedTurnedOn* = string
 
   BotManagementSbfmDefinitelyConfig* = ref object of RootObj
+    ai_agents*: Option[BotManagementAiAgents]
     ai_bots_migration_opt_out*: Option[BotManagementAiBotsMigrationOptOut]
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
     ai_search*: Option[BotManagementAiSearch]
@@ -9215,6 +9275,7 @@ type
   BotManagementSbfmLikelyAutomatedTurnedOn* = string
 
   BotManagementSbfmLikelyConfig* = ref object of RootObj
+    ai_agents*: Option[BotManagementAiAgents]
     ai_bots_migration_opt_out*: Option[BotManagementAiBotsMigrationOptOut]
     ai_bots_protection*: Option[BotManagementAiBotsProtection]
     ai_search*: Option[BotManagementAiSearch]
@@ -9254,6 +9315,27 @@ type
 
   BotManagementUsingLatestModel* = bool
 
+  BotnetFeedApiApiResponseCommon* = ref object of RootObj
+    errors*: BotnetFeedApiMessages
+    messages*: BotnetFeedApiMessages
+    success*: bool
+      ## Whether the API call was successful.
+
+  BotnetFeedApiApiResponseCommonFailure* = ref object of RootObj
+    errors*: JsonNode
+    messages*: JsonNode
+    result*: Option[JsonNode]
+    success*: bool
+      ## Whether the API call was successful.
+
+  BotnetFeedApiAsn* = int64
+
+  BotnetFeedApiIdentifier* = string
+
+  BotnetFeedApiMessages* = seq[JsonNode]
+
+  BotnetFeedApiTimestamp* = string
+
   BrandProtectionApiError* = ref object of RootObj
     code*: Option[int64]
       ## Error code.
@@ -9289,6 +9371,12 @@ type
   BrandProtectionApiQueryMatch* = ref object of RootObj
     matches*: Option[seq[JsonNode]]
     total*: Option[int64]
+
+  BrandProtectionApiSavedQueryDeleteUnavailable* = ref object of RootObj
+    errors*: seq[JsonNode]
+    messages*: seq[JsonNode]
+    result*: seq[JsonNode]
+    success*: bool
 
   BrandProtectionApiURLInfo* = ref object of RootObj
     result*: Option[seq[JsonNode]]
@@ -10378,7 +10466,7 @@ type
   CacheSettingsOriginTlsComplianceModesValue* = seq[string]
 
   CacheSettingsPatch* = ref object of RootObj
-    ## Update enablement of Tiered Caching.
+    ## Updates whether Tiered Cache is enabled for a zone.
     value*: CacheSettingsValue
 
   CacheSettingsRegionalTieredCache* = ref object of RootObj
@@ -10466,7 +10554,7 @@ type
     off = "off"
 
   CacheSettingsValue* = enum
-    ## Enables Tiered Caching.
+    ## Enables or disables Tiered Cache.
     on = "on"
     off = "off"
 
@@ -10711,6 +10799,41 @@ type
     uid*: CallsIdentifier
 
   CcAccountID* = string
+
+  CcAccountUsageMaximum* = ref object of RootObj
+    ## Lists account limits for the resources reported in usage.
+    disk_mb*: int64
+      ## Maximum disk in MB for the account.
+    memory_mib*: int64
+      ## Maximum memory in MiB for the account.
+    vcpus*: float64
+      ## Maximum vCPU for the account.
+
+  CcAccountUsageResources* = ref object of RootObj
+    ## Lists current resource consumption for active and assigned instances.
+    disk_mb*: int64
+    instances*: int64
+    memory_mib*: int64
+    vcpus*: float64
+
+  CcAccountUsageResponse* = ref object of RootObj
+    ## Current live usage, maximum limits, and utilization percentages for a
+    ## Cloudchamber account. Usage includes active and assigned instances and is a
+    ## current snapshot, not a historical or billable metric.
+    maximum*: CcAccountUsageMaximum
+    usage*: CcAccountUsageResources
+    utilization*: CcAccountUsageUtilization
+
+  CcAccountUsageUtilization* = ref object of RootObj
+    ## Live resource utilization percentages. A value of 100 represents full
+    ## utilization. Values can exceed 100 when usage exceeds quota. The API omits
+    ## fields whose corresponding maximum is zero.
+    disk_mb*: Option[float64]
+      ## Live disk usage as a percentage of maximum disk.
+    memory_mib*: Option[float64]
+      ## Live memory usage as a percentage of maximum memory.
+    vcpus*: Option[float64]
+      ## Live vCPU usage as a percentage of maximum vCPU.
 
   CcApplication* = ref object of RootObj
     ## Describes an application and the parameters that govern how it places its
@@ -11923,6 +12046,8 @@ type
     success*: CloudflareK2WorkersK2CommonSuccess
 
   CloudflareK2K2StreamWorkerBindingInput* = ref object of RootObj
+    enabled*: bool
+      ## Indicates whether Workers bindings can produce records to the stream.
 
   CloudflareK2K2Subscription* = ref object of RootObj
     created_at*: string
@@ -12230,6 +12355,7 @@ type
     errors*: JsonNode
     messages*: CloudforceOnePortScanApiMessages
     success*: bool
+      ## Whether the API call was successful.
 
   CloudforceOnePortScanApiFrequency* = float64
 
@@ -15961,6 +16087,7 @@ type
     risk_level*: Option[JsonNode]
 
   DlpRiskLevel* = enum
+    info = "info"
     low = "low"
     medium = "medium"
     high = "high"
@@ -16679,7 +16806,7 @@ type
     `ptr`*: Option[JsonNode]
       ## Map of cluster IP addresses to PTR record contents
 
-  DnsFirewallDnsFirewallReverseDnsResponse* = ref object of RootObj
+  DnsFirewallDnsFirewallReverseDnsResponseWithPtr* = ref object of RootObj
     `ptr`*: JsonNode
       ## Map of cluster IP addresses to PTR record contents
 
@@ -16695,12 +16822,12 @@ type
     result_info*: Option[JsonNode]
     result*: Option[seq[DnsFirewallDnsFirewallClusterResponse]]
 
-  DnsFirewallDnsFirewallReverseDnsResponse2* = ref object of RootObj
+  DnsFirewallDnsFirewallReverseDnsResponse* = ref object of RootObj
     errors*: DnsFirewallMessages
     messages*: DnsFirewallMessages
     success*: bool
       ## Whether the API call was successful.
-    result*: Option[DnsFirewallDnsFirewallReverseDnsResponse]
+    result*: Option[DnsFirewallDnsFirewallReverseDnsResponseWithPtr]
 
   DnsFirewallDnsFirewallSingleResponse* = ref object of RootObj
     errors*: DnsFirewallMessages
@@ -17304,7 +17431,6 @@ type
   DnsSettingsDnsSettingsAccountPatch* = ref object of RootObj
     ## Default settings for new zones created in this account.
     flatten_all_cnames*: Option[DnsSettingsFlattenAllCnames]
-    foundation_dns*: Option[DnsSettingsFoundationDns]
     internal_dns*: Option[DnsSettingsInternalDnsBase]
     multi_provider*: Option[DnsSettingsMultiProvider]
     ns_ttl*: Option[DnsSettingsNsTtl]
@@ -17317,7 +17443,6 @@ type
   DnsSettingsDnsSettingsAccountResponse* = ref object of RootObj
     ## Default settings for new zones created in this account.
     flatten_all_cnames*: DnsSettingsFlattenAllCnames
-    foundation_dns*: DnsSettingsFoundationDns
     internal_dns*: DnsSettingsInternalDnsResponse
     multi_provider*: DnsSettingsMultiProvider
     ns_ttl*: DnsSettingsNsTtl
@@ -17329,7 +17454,6 @@ type
 
   DnsSettingsDnsSettingsBase* = ref object of RootObj
     flatten_all_cnames*: Option[DnsSettingsFlattenAllCnames]
-    foundation_dns*: Option[DnsSettingsFoundationDns]
     internal_dns*: Option[DnsSettingsInternalDnsBase]
     multi_provider*: Option[DnsSettingsMultiProvider]
     ns_ttl*: Option[DnsSettingsNsTtl]
@@ -17339,7 +17463,6 @@ type
 
   DnsSettingsDnsSettingsPatch* = ref object of RootObj
     flatten_all_cnames*: Option[DnsSettingsFlattenAllCnames]
-    foundation_dns*: Option[DnsSettingsFoundationDns]
     internal_dns*: Option[DnsSettingsInternalDnsBase]
     multi_provider*: Option[DnsSettingsMultiProvider]
     ns_ttl*: Option[DnsSettingsNsTtl]
@@ -17349,7 +17472,6 @@ type
 
   DnsSettingsDnsSettingsResponse* = ref object of RootObj
     flatten_all_cnames*: DnsSettingsFlattenAllCnames
-    foundation_dns*: DnsSettingsFoundationDns
     internal_dns*: DnsSettingsInternalDnsResponse
     multi_provider*: DnsSettingsMultiProvider
     ns_ttl*: DnsSettingsNsTtl
@@ -17359,7 +17481,6 @@ type
 
   DnsSettingsDnsSettingsZonePatch* = ref object of RootObj
     flatten_all_cnames*: Option[DnsSettingsFlattenAllCnames]
-    foundation_dns*: Option[DnsSettingsFoundationDns]
     internal_dns*: Option[DnsSettingsInternalDnsBase]
     multi_provider*: Option[DnsSettingsMultiProvider]
     ns_ttl*: Option[DnsSettingsNsTtl]
@@ -17370,7 +17491,6 @@ type
 
   DnsSettingsDnsSettingsZoneResponse* = ref object of RootObj
     flatten_all_cnames*: DnsSettingsFlattenAllCnames
-    foundation_dns*: DnsSettingsFoundationDns
     internal_dns*: DnsSettingsInternalDnsResponse
     multi_provider*: DnsSettingsMultiProvider
     ns_ttl*: DnsSettingsNsTtl
@@ -17436,8 +17556,6 @@ type
   DnsSettingsEnforceDnsOnly* = bool
 
   DnsSettingsFlattenAllCnames* = bool
-
-  DnsSettingsFoundationDns* = bool
 
   DnsSettingsIdentifier* = string
 
@@ -17809,27 +17927,6 @@ type
     proxied*: Option[bool]
     status*: Option[int64]
 
-  DosApiResponseCommon* = ref object of RootObj
-    errors*: DosMessages
-    messages*: DosMessages
-    success*: bool
-      ## Whether the API call was successful.
-
-  DosApiResponseCommonFailure* = ref object of RootObj
-    errors*: JsonNode
-    messages*: JsonNode
-    result*: Option[JsonNode]
-    success*: bool
-      ## Whether the API call was successful.
-
-  DosAsn* = int64
-
-  DosIdentifier* = string
-
-  DosMessages* = seq[JsonNode]
-
-  DosTimestamp* = string
-
   EmailAuthApprovedSourceResponse* = ref object of RootObj
     ## A single approved sending source
     created*: Option[string]
@@ -18123,7 +18220,8 @@ type
       ## (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g.
       ## `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the
       ## API rejects private or unique-local, loopback, link-local, unspecified, and IPv4
-      ## broadcast addresses, including their IPv4-mapped IPv6 equivalents.
+      ## broadcast addresses, including their IPv4-mapped IPv6 equivalents. The API also
+      ## rejects a pattern that equals a domain onboarded to the account, ignoring case.
     pattern_type*: Option[EmailSecurityPatternType]
     verify_sender*: Option[bool]
       ## Enforce DMARC, SPF or DKIM authentication. When on, Email Security only honors
@@ -18359,7 +18457,8 @@ type
       ## (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g.
       ## `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the
       ## API rejects private or unique-local, loopback, link-local, unspecified, and IPv4
-      ## broadcast addresses, including their IPv4-mapped IPv6 equivalents.
+      ## broadcast addresses, including their IPv4-mapped IPv6 equivalents. The API also
+      ## rejects a pattern that equals a domain onboarded to the account, ignoring case.
     pattern_type*: EmailSecurityPatternType
     verify_sender*: bool
       ## Enforce DMARC, SPF or DKIM authentication. When on, Email Security only honors
@@ -19066,7 +19165,8 @@ type
       ## (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g.
       ## `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the
       ## API rejects private or unique-local, loopback, link-local, unspecified, and IPv4
-      ## broadcast addresses, including their IPv4-mapped IPv6 equivalents.
+      ## broadcast addresses, including their IPv4-mapped IPv6 equivalents. The API also
+      ## rejects a pattern that equals a domain onboarded to the account, ignoring case.
     pattern_type*: Option[EmailSecurityPatternType]
     verify_sender*: Option[bool]
       ## Enforce DMARC, SPF or DKIM authentication. When on, Email Security only honors
@@ -21504,13 +21604,15 @@ type
     created_on*: Option[string]
       ## Timestamp for the creation of the account
     id*: IamCommonComponentsSchemasIdentifier
+    legacy_flags*: Option[JsonNode]
+      ## Legacy account flags.
     managed_by*: Option[JsonNode]
       ## Parent container details
     name*: string
       ## Account name
     settings*: Option[JsonNode]
       ## Account settings
-    `type`*: IamAccountType
+    `type`*: JsonNode
 
   IamAccountType* = enum
     standard = "standard"
@@ -21520,15 +21622,15 @@ type
     ## Account identifier tag.
 
   IamApiResponseCollection* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
 
   IamApiResponseCommon* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
 
@@ -21540,14 +21642,14 @@ type
       ## Whether the API call was successful.
 
   IamApiResponseSingle* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
 
   IamApiResponseSingleId* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[JsonNode]
@@ -21556,75 +21658,73 @@ type
 
   IamCidrList* = seq[string]
 
-  IamCode* = string
-
   IamCollectionMemberResponseWithPolicies* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
     result*: Option[seq[IamMemberWithPolicies]]
 
   IamCollectionMembershipResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
     result*: Option[seq[IamMembership]]
 
   IamCollectionMembershipResponseWithPolicies* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
     result*: Option[seq[IamMembershipWithPolicies]]
 
   IamCollectionOauthClientResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
     result*: Option[seq[IamOauthClient]]
 
   IamCollectionOauthScopesResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
     result*: Option[seq[IamOauthScope]]
 
   IamCollectionOrganizationResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
     result*: Option[seq[IamOrganization]]
 
   IamCollectionPermissionGroupsResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
     result*: Option[IamPermissionGroups]
 
   IamCollectionRoleResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
     result*: Option[seq[IamRole]]
 
   IamCollectionTokensResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
@@ -21636,12 +21736,15 @@ type
     created_on*: Option[string]
       ## Timestamp for the creation of the account
     id*: IamCommonComponentsSchemasIdentifier
+    legacy_flags*: Option[JsonNode]
+      ## Legacy account flags.
     managed_by*: Option[JsonNode]
       ## Parent container details
     name*: string
+      ## Account name, limited to 65 UTF-8 bytes.
     settings*: Option[JsonNode]
       ## Account settings
-    `type`*: IamAccountType
+    `type`*: JsonNode
 
   IamComponentsSchemasStatus* = enum
     ## Whether the user is a member of the organization or has an invitation pending.
@@ -21655,11 +21758,13 @@ type
 
   IamCreateAccount* = ref object of RootObj
     name*: string
-      ## Account name
+      ## Account name, limited to 65 UTF-8 bytes.
     standalone*: Option[bool]
       ## Set to `true` and omit `unit` to create a standalone Free Account. If provided,
       ## this field must be `true`.
-    `type`*: Option[IamAccountType]
+    `type`*: Option[JsonNode]
+      ## the type of account being created. For self-serve customers, use standard. for
+      ## enterprise customers, use enterprise.
     unit*: Option[JsonNode]
       ## Information related to the tenant unit. Provide its ID and omit `standalone` to
       ## create the Account within an Organization. See
@@ -21814,8 +21919,6 @@ type
 
   IamMessages* = seq[JsonNode]
 
-  IamMessages2* = seq[JsonNode]
-
   IamModifiedOn* = string
 
   IamName* = string
@@ -21936,8 +22039,8 @@ type
   IamOauthClientResponseTypes* = seq[string]
 
   IamOauthClientRotateSecretResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[JsonNode]
@@ -22094,8 +22197,8 @@ type
     zones*: Option[IamGrants]
 
   IamPermissionsGroupResponseCollection* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
@@ -22118,7 +22221,8 @@ type
   IamRequestCreateResourceGroup* = ref object of RootObj
     name*: string
       ## Name of the resource group
-    scope*: IamCreateScope
+    scope*: JsonNode
+      ## The scope associated to the resource group
 
   IamRequestIp* = ref object of RootObj
     ## Client IP restrictions.
@@ -22128,7 +22232,8 @@ type
   IamRequestUpdateResourceGroup* = ref object of RootObj
     name*: Option[string]
       ## Name of the resource group
-    scope*: Option[IamCreateScope]
+    scope*: Option[JsonNode]
+      ## The scope associated to the resource group
 
   IamResourceGroup* = ref object of RootObj
     ## A group of scoped resources.
@@ -22138,7 +22243,8 @@ type
       ## Attributes associated to the resource group.
     name*: Option[string]
       ## Name of the resource group.
-    scope*: IamScope
+    scope*: JsonNode
+      ## The scope associated to the resource group
 
   IamResourceGroupIdentifier* = ref object of RootObj
     ## Resource Group identifier tag.
@@ -22156,46 +22262,24 @@ type
   IamResourcesTypeObjectString* = ref object of RootObj
     ## Map of simple string resource permissions
 
-  IamResponseCollection* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[IamResultInfo]
-    result*: Option[seq[JsonNode]]
-
   IamResponseCollectionAccounts* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
     result*: Option[seq[IamAccount]]
 
-  IamResponseCreate* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[JsonNode]
-
-  IamResponseSingle* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[JsonNode]
-
   IamResponseSingleAccount* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IamAccount]
 
   IamResponseSingleValue* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IamValue]
@@ -22226,17 +22310,19 @@ type
     created_on*: Option[string]
       ## Timestamp for the creation of the account
     id*: IamCommonComponentsSchemasIdentifier
+    legacy_flags*: Option[JsonNode]
+      ## Legacy account flags.
     managed_by*: Option[JsonNode]
       ## Parent container details
     name*: string
       ## Account name
     settings*: Option[JsonNode]
       ## Account settings
-    `type`*: IamAccountType
+    `type`*: JsonNode
 
   IamSchemasCollectionInviteResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
@@ -22434,7 +22520,8 @@ type
     value*: Option[JsonNode]
       ## The value(s) for the operation. For `replace` without a path, this should be an
       ## object of attribute name/value pairs. For member path operations, this should be
-      ## an array of member value objects.
+      ## an array of member value objects. For `replace` with a path, this is the new
+      ## value of the targeted attribute.
       ##
 
   IamScimResourceType* = ref object of RootObj
@@ -22681,85 +22768,78 @@ type
     ## etc.)
 
   IamSingleInviteResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IamUserInvite]
 
   IamSingleMemberResponseWithPolicies* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IamMemberWithPolicies]
 
-  IamSingleMembershipResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[IamMembership]
-
   IamSingleMembershipResponseWithPolicies* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IamMembershipWithPolicies]
 
   IamSingleOauthClientCreateResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IamOauthClientWithSecret]
 
   IamSingleOauthClientResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IamOauthClient]
 
   IamSingleOrganizationResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[JsonNode]
 
   IamSinglePermissionGroupsResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IamPermissionGroup]
 
   IamSingleRoleResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IamRole]
 
   IamSingleTokenCreateResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IamTokenWithValue]
 
   IamSingleTokenResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IamTokenBase]
 
   IamSingleUserResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[JsonNode]
@@ -22776,8 +22856,8 @@ type
     verification*: Option[IamSsoConnectorVerificationInfo]
 
   IamSsoConnectorCollectionResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[IamResultInfo]
@@ -22787,8 +22867,8 @@ type
     ## SSO Connector identifier tag.
 
   IamSsoConnectorResponse* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[IamSsoConnector]
@@ -22849,8 +22929,8 @@ type
   IamTokenSuffix* = string
 
   IamTokenVerifyResponseSingleSegment* = ref object of RootObj
-    errors*: IamMessages2
-    messages*: IamMessages2
+    errors*: IamMessages
+    messages*: IamMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[JsonNode]
@@ -22877,8 +22957,6 @@ type
 
   IamTwoFactorAuthenticationLocked* = bool
 
-  IamUnitIdentifier* = string
-
   IamUpdateMemberWithPolicies* = ref object of RootObj
     policies*: seq[IamCreateMemberPolicy]
       ## Array of policies associated with this member.
@@ -22904,7 +22982,8 @@ type
     ## A group of policies resources.
     created_on*: string
       ## Timestamp for the creation of the user group
-    id*: IamUserGroupIdentifier
+    id*: string
+      ## Identifier of the user group.
     modified_on*: string
       ## Last time the user group was modified.
     name*: string
@@ -24566,6 +24645,7 @@ type
     location_strategy*: Option[LoadBalancingLocationStrategy]
     name*: Option[LoadBalancingComponentsSchemasName]
     networks*: Option[LoadBalancingNetworks]
+    pool_sets*: Option[LoadBalancingPoolSets]
     pop_pools*: Option[LoadBalancingPopPools]
     proxied*: Option[LoadBalancingProxied]
     random_steering*: Option[LoadBalancingRandomSteering]
@@ -24804,8 +24884,6 @@ type
   LoadBalancingOriginHealth* = ref object of RootObj
     ip*: Option[JsonNode]
 
-  LoadBalancingOriginHealthy* = bool
-
   LoadBalancingOriginIp* = string
 
   LoadBalancingOriginFlattenCname* = bool
@@ -24817,7 +24895,7 @@ type
     response_code*: Option[float64]
     rtt*: Option[string]
 
-  LoadBalancingOriginHealthy2* = bool
+  LoadBalancingOriginHealthy* = bool
 
   LoadBalancingOriginPort* = int64
 
@@ -25029,7 +25107,15 @@ type
     pool_weights*: Option[LoadBalancingPoolWeights]
     pools*: Option[LoadBalancingPools]
     pop_pools*: Option[LoadBalancingPopPools]
-    random_steering*: Option[LoadBalancingRandomSteering]
+    random_steering*: Option[JsonNode]
+      ## Configures pool weights for a rule override. An omitted default_weight inherits
+      ## the load balancer's default weight.
+      ## - `steering_policy="random"`: A random pool is selected with probability
+      ## proportional to pool weights.
+      ## - `steering_policy="least_outstanding_requests"`: Use pool weights to scale each
+      ## pool's outstanding requests.
+      ## - `steering_policy="least_connections"`: Use pool weights to scale each pool's
+      ## open connections.
     region_pools*: Option[LoadBalancingRegionPools]
     session_affinity*: Option[LoadBalancingSessionAffinity]
     session_affinity_attributes*: Option[LoadBalancingSessionAffinityAttributes]
@@ -27041,6 +27127,7 @@ type
     name*: Option[string]
     nat*: Option[MagicNat]
     physport*: Option[MagicPort]
+    remote_subnets*: Option[seq[MagicRemoteSubnet]]
     routed_subnets*: Option[seq[MagicRoutedSubnet]]
     site_id*: Option[MagicIdentifier]
     static_addressing*: Option[MagicLanStaticAddressing]
@@ -27120,6 +27207,7 @@ type
     name*: Option[string]
     nat*: Option[MagicNat]
     physport*: Option[MagicPort]
+    remote_subnets*: Option[seq[MagicRemoteSubnet]]
     routed_subnets*: Option[seq[MagicRoutedSubnet]]
     static_addressing*: Option[MagicLanStaticAddressing]
     vlan_tag*: Option[MagicVlanTag]
@@ -27136,6 +27224,7 @@ type
     name*: Option[string]
     nat*: Option[MagicNat]
     physport*: Option[MagicPort]
+    remote_subnets*: Option[seq[MagicRemoteSubnet]]
     routed_subnets*: Option[seq[MagicRoutedSubnet]]
     static_addressing*: Option[MagicLanStaticAddressing]
     vlan_tag*: Option[MagicVlanTag]
@@ -27316,6 +27405,14 @@ type
       ## UUID of the tunnel or interconnect
     `type`*: string
       ## Tunnel type: gre, ipsec, or cni
+
+  MagicRemoteSubnet* = ref object of RootObj
+    ## A remote subnet reachable through Cloudflare that is addressed from this LAN by
+    ## a local alias prefix of the same size. The local alias prefix must not overlap
+    ## other subnets on the LAN, and the remote prefix must not overlap other remote
+    ## prefixes on the LAN.
+    local_alias_prefix*: MagicCidr
+    remote_prefix*: MagicCidr
 
   MagicReplayProtection* = bool
 
@@ -27879,6 +27976,10 @@ type
   ManagedDefenseVulnerabilityDiscoveryReportTraceStep* = ref object of RootObj
     line*: int64
     path*: string
+    repo*: Option[string]
+      ## Repository the step is in, present only when it is not the finding's repository
+      ## (a library or consumer of the same report). `path` is then relative to that
+      ## repository.
     scope*: string
     why*: string
 
@@ -29524,18 +29625,14 @@ type
     next*: Option[int32]
 
   NscInterconnectGcpPartnerBody* = ref object of RootObj
-    account*: string
     name*: string
-    owner*: Option[string]
     `type`*: string
     region*: string
     speed*: Option[NscApiBandwidth]
     virtual_port_reservation_id*: string
 
   NscInterconnectPhysicalBody* = ref object of RootObj
-    account*: string
     name*: string
-    owner*: Option[string]
     `type`*: string
     ccr_device_name*: Option[string]
     facility*: NscFacilityInfo
@@ -29792,6 +29889,59 @@ type
   ObservatoryUrl* = string
 
   ObservatoryUuid* = string
+
+  OhttpGatewayApiError* = ref object of RootObj
+    ## Represents an error that the API returns.
+    code*: int64
+      ## Numeric error code.
+    message*: string
+      ## Human-readable error message.
+
+  OhttpGatewayApiMessage* = ref object of RootObj
+    ## Represents an informational message that the API returns.
+    code*: int64
+      ## Numeric message code.
+    message*: string
+      ## Human-readable message.
+
+  OhttpGatewayApiResponseFailure* = ref object of RootObj
+    ## Standard Cloudflare API failure response.
+    errors*: seq[OhttpGatewayApiError]
+    messages*: seq[OhttpGatewayApiMessage]
+    result*: Option[JsonNode]
+      ## Always null for error responses.
+    success*: bool
+      ## Always false for error responses.
+
+  OhttpGatewayCreateApiSuccessResponse* = ref object of RootObj
+    errors*: seq[OhttpGatewayApiError]
+      ## List of errors, empty on success.
+    messages*: seq[OhttpGatewayApiMessage]
+      ## List of informational messages, empty on success.
+    result*: string
+    success*: bool
+      ## Whether the API call was successful.
+
+  OhttpGatewayDeleteApiSuccessResponse* = ref object of RootObj
+    errors*: seq[OhttpGatewayApiError]
+      ## List of errors, empty on success.
+    messages*: seq[OhttpGatewayApiMessage]
+      ## List of informational messages, empty on success.
+    result*: string
+    success*: bool
+      ## Whether the API call was successful.
+
+  OhttpGatewayGetApiSuccessResponse* = ref object of RootObj
+    ## Standard Cloudflare API response wrapping the result of an operation.
+    errors*: seq[OhttpGatewayApiError]
+      ## List of errors, empty on success.
+    messages*: seq[OhttpGatewayApiMessage]
+      ## List of informational messages, empty on success.
+    result*: string
+    success*: bool
+      ## Whether the API call was successful.
+
+  OhttpGatewayIdentifier* = string
 
   OneApplicationDetail* = ref object of RootObj
     ## Full application detail for onboarding UI.
@@ -30281,29 +30431,38 @@ type
       ## Account tags, present only when `include_tags=true` is requested.
     `type`*: string
 
-  OrganizationsApiBatchAccountMoveResponse* = ref object of RootObj
-    statuses*: JsonNode
+  OrganizationsApiAccountListResultInfo* = ref object of RootObj
 
   OrganizationsApiBatchCreateMembersRequest* = ref object of RootObj
-    members*: seq[OrganizationsApiCreateSingleMember]
-
-  OrganizationsApiBoolAllocation* = ref object of RootObj
-    `type`*: string
-    value*: bool
+    members*: Option[seq[OrganizationsApiCreateSingleMember]]
+      ## Omitted or null members are treated as an empty batch.
 
   OrganizationsApiCreateMemberRequest* = ref object of RootObj
     member*: OrganizationsApiCreateSingleMember
 
+  OrganizationsApiCreateOrganizationProfileRequest* = ref object of RootObj
+    ## Optional profile fields, each limited to 1,000 UTF-8 bytes. An empty profile is
+    ## ignored.
+    business_address*: Option[string]
+    business_email*: Option[string]
+    business_name*: Option[string]
+    business_phone*: Option[string]
+    external_metadata*: Option[string]
+
+  OrganizationsApiCreateOrganizationRequest* = ref object of RootObj
+    name*: string
+      ## The Organization name, limited to 65 UTF-8 bytes.
+    parent*: Option[JsonNode]
+    profile*: Option[OrganizationsApiCreateOrganizationProfileRequest]
+
   OrganizationsApiCreateSingleMember* = ref object of RootObj
-    status*: Option[string]
     user*: JsonNode
+
+  OrganizationsApiDeleteOrganizationMemberResult* = ref object of RootObj
+    id*: string
 
   OrganizationsApiDeleteOrganizationResult* = ref object of RootObj
     id*: string
-
-  OrganizationsApiEntitlement* = ref object of RootObj
-    allocation*: JsonNode
-    feature*: OrganizationsApiFeature
 
   OrganizationsApiFeature* = ref object of RootObj
     key*: string
@@ -30311,27 +30470,66 @@ type
   OrganizationsApiHandleOrganizationInviteRequest* = ref object of RootObj
     status*: string
 
-  OrganizationsApiInnateEntitlements* = ref object of RootObj
-    allow_add_subdomain*: OrganizationsApiBoolAllocation
-    allow_auto_accept_invites*: OrganizationsApiBoolAllocation
-    cname_setup_allowed*: OrganizationsApiBoolAllocation
-    custom_entitlements*: Option[seq[OrganizationsApiEntitlement]]
-    mhs_certificate_count*: OrganizationsApiMaxCountAllocation
-    partial_setup_allowed*: OrganizationsApiBoolAllocation
+  OrganizationsApiLegacyAccount* = ref object of RootObj
+    account_pubname*: Option[string]
+    account_tag*: string
+    account_type*: string
+    created_on*: string
+    settings*: JsonNode
 
-  OrganizationsApiMaxCountAllocation* = ref object of RootObj
-    `type`*: string
-    value*: int64
+  OrganizationsApiLegacyPaginationResultInfo* = ref object of RootObj
+    count*: int64
+    page*: int64
+    per_page*: int64
+    total_count*: int64
+
+  OrganizationsApiLegacyTenant* = ref object of RootObj
+    cdate*: string
+    customer_id*: Option[string]
+    edate*: string
+    tenant_contacts*: JsonNode
+    tenant_labels*: Option[seq[string]]
+    tenant_metadata*: JsonNode
+    tenant_name*: string
+    tenant_network*: JsonNode
+    tenant_status*: string
+    tenant_tag*: string
+    tenant_type*: string
+    tenant_units*: Option[seq[OrganizationsApiTenantUnit]]
+    ui_flags*: JsonNode
+      ## Which top-level dashboard experiences to render for this tenant; both may be
+      ## true.
 
   OrganizationsApiMember* = ref object of RootObj
     create_time*: string
     id*: OrganizationsApiMemberID
     meta*: JsonNode
+    policies*: Option[seq[OrganizationsApiMemberPolicy]]
+      ## Direct policies of the membership. Present only for DSR members enrolled in
+      ## Organization Roles.
     status*: string
     update_time*: string
     user*: OrganizationsApiMemberSubjectUser
 
   OrganizationsApiMemberID* = string
+
+  OrganizationsApiMemberPolicy* = ref object of RootObj
+    id*: Option[string]
+      ## Omit to create a policy. An unchanged policy keeps its ID; a changed policy is
+      ## replaced under a new ID.
+    roles*: seq[OrganizationsApiMemberPolicyRole]
+    scopes*: seq[OrganizationsApiMemberPolicyScope]
+
+  OrganizationsApiMemberPolicyRole* = ref object of RootObj
+    id*: string
+
+  OrganizationsApiMemberPolicyScope* = ref object of RootObj
+    key*: string
+      ## An Organization (`com.cloudflare.api.tenant.unit.<tag>`) or Account
+      ## (`com.cloudflare.api.account.<tag>`) key.
+    subset_of*: Option[seq[OrganizationsApiMemberPolicyScope]]
+      ## The route Organization for Account scopes. Optional in requests and always
+      ## returned for Account scopes.
 
   OrganizationsApiMemberSubjectUser* = ref object of RootObj
     email*: string
@@ -30339,21 +30537,29 @@ type
     name*: string
     two_factor_authentication_enabled*: bool
 
-  OrganizationsApiModifyOrganizationProfileRequest* = ref object of RootObj
-    business_address*: string
-    business_email*: string
-    business_name*: string
-    business_phone*: string
-    external_metadata*: string
+  OrganizationsApiModifyOrganizationRequest* = ref object of RootObj
+    name*: Option[string]
+      ## The Organization's display name, limited to 65 UTF-8 bytes. An omitted, empty,
+      ## or unchanged value is a no-op.
+    parent_id*: Option[JsonNode]
+      ## The current parent Organization ID. A different value is rejected; this endpoint
+      ## cannot move an Organization.
+
+  OrganizationsApiModifyProfileRequest* = ref object of RootObj
+    ## Partial business profile update. Omitted, empty, or null fields remain
+    ## unchanged. At least
+    ## one of business name, address, phone, or email must be non-empty.
+    business_address*: Option[string]
+    business_email*: Option[string]
+    business_name*: Option[string]
+    business_phone*: Option[string]
+    external_metadata*: Option[string]
 
   OrganizationsApiMoveAccountResult* = ref object of RootObj
     account_id*: string
     destination_organization_id*: string
     source_organization_id*: string
-
-  OrganizationsApiNullAllocation* = ref object of RootObj
-    `type`*: string
-    value*: Option[JsonNode]
+      ## Empty string when the account did not belong to an organization before the move.
 
   OrganizationsApiOrganization* = ref object of RootObj
     ## References an Organization in the Cloudflare data model.
@@ -30376,6 +30582,18 @@ type
     sub_org_creation*: string
 
   OrganizationsApiOrganizationID* = string
+
+  OrganizationsApiOrganizationInviteMember* = ref object of RootObj
+    ## Membership returned after handling an Organization invitation. Invite handling
+    ## populates
+    ## user ID and email; name, two-factor status, and timestamps contain placeholder
+    ## values.
+    create_time*: string
+    id*: OrganizationsApiMemberID
+    meta*: Option[JsonNode]
+    status*: string
+    update_time*: string
+    user*: OrganizationsApiMemberSubjectUser
 
   OrganizationsApiPageTokenResultInfo* = ref object of RootObj
     next_page_token*: Option[string]
@@ -30401,31 +30619,27 @@ type
     result*: OrganizationsApiProfile
     success*: bool
 
-  OrganizationsApiTenant* = ref object of RootObj
-    cdate*: string
-    customer_id*: Option[string]
-    edate*: string
-    tenant_contacts*: JsonNode
-    tenant_labels*: seq[string]
-    tenant_metadata*: JsonNode
-    tenant_name*: string
-    tenant_network*: JsonNode
-    tenant_status*: string
-    tenant_tag*: string
-    tenant_type*: string
-    tenant_units*: seq[OrganizationsApiTenantUnit]
-
-  OrganizationsApiTenantMembership* = ref object of RootObj
-    user_email*: string
-    user_name*: string
-    user_tag*: string
-
   OrganizationsApiTenantUnit* = ref object of RootObj
-    unit_memberships*: seq[JsonNode]
+    unit_memberships*: Option[seq[OrganizationsApiTenantUnitMembership]]
     unit_metadata*: JsonNode
     unit_name*: string
     unit_status*: string
     unit_tag*: string
+
+  OrganizationsApiTenantUnitMembership* = ref object of RootObj
+    member_metadata*: JsonNode
+    member_status*: string
+    member_tag*: string
+
+  OrganizationsApiUserTenantAllocation* = ref object of RootObj
+    `type`*: string
+    value*: OrganizationsApiUserTenantAllocationValue
+
+  OrganizationsApiUserTenantAllocationValue* = ref object of RootObj
+
+  OrganizationsApiUserTenantEntitlement* = ref object of RootObj
+    allocation*: OrganizationsApiUserTenantAllocation
+    feature*: OrganizationsApiFeature
 
   OrganizationsApiV4ErrorResponse* = ref object of RootObj
     errors*: seq[OrganizationsApiV4Message]
@@ -30948,7 +31162,7 @@ type
   PayPerCrawlPPUPriceResponse* = ref object of RootObj
     errors*: Option[seq[PayPerCrawlMsg]]
     messages*: Option[seq[PayPerCrawlMsg]]
-    result*: Option[PayPerCrawlPPUPrice]
+    result*: Option[JsonNode]
     result_info*: Option[PayPerCrawlResultInfo]
     success*: Option[bool]
 
@@ -32638,7 +32852,7 @@ type
   PrecursorMessages* = seq[JsonNode]
 
   PrecursorPrecursorConfig* = ref object of RootObj
-    mode*: Option[PrecursorPrecursorMode]
+    mode*: Option[JsonNode]
     rules*: Option[PrecursorPrecursorRules]
     show_interstitial*: Option[PrecursorShowInterstitial]
 
@@ -33086,7 +33300,7 @@ type
 
   R2SlurperR2SourceSchema* = ref object of RootObj
     bucket*: string
-    jurisdiction*: Option[R2SlurperJurisdiction]
+    jurisdiction*: Option[JsonNode]
     keys*: Option[seq[string]]
     path_prefix*: Option[string]
     secret*: R2SlurperS3LikeCredsSchema
@@ -33094,7 +33308,7 @@ type
 
   R2SlurperR2TargetSchema* = ref object of RootObj
     bucket*: string
-    jurisdiction*: Option[R2SlurperJurisdiction]
+    jurisdiction*: Option[JsonNode]
     secret*: R2SlurperS3LikeCredsSchema
     vendor*: string
 
@@ -34842,18 +35056,6 @@ type
       ##
     updated_at*: string
 
-  RegistrarApiAddress* = string
-
-  RegistrarApiAddress2* = string
-
-  RegistrarApiApiResponseCollection* = ref object of RootObj
-    errors*: RegistrarApiMessages
-    messages*: RegistrarApiMessages
-    result*: Option[seq[JsonNode]]
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[RegistrarApiResultInfo]
-
   RegistrarApiApiResponseCommon* = ref object of RootObj
     errors*: RegistrarApiMessages
     messages*: RegistrarApiMessages
@@ -34867,59 +35069,6 @@ type
     result*: Option[JsonNode]
     success*: bool
       ## Whether the API call was successful.
-
-  RegistrarApiApiResponseSingle* = ref object of RootObj
-    errors*: RegistrarApiMessages
-    messages*: RegistrarApiMessages
-    result*: Option[JsonNode]
-    success*: bool
-      ## Whether the API call was successful.
-
-  RegistrarApiAutoRenew* = bool
-
-  RegistrarApiAvailable* = bool
-
-  RegistrarApiCanRegister* = bool
-
-  RegistrarApiCity* = string
-
-  RegistrarApiContactIdentifier* = string
-
-  RegistrarApiContactProperties* = ref object of RootObj
-    address*: RegistrarApiAddress
-    address2*: Option[RegistrarApiAddress2]
-    city*: RegistrarApiCity
-    country*: Option[RegistrarApiCountry]
-    email*: Option[RegistrarApiEmail]
-    fax*: Option[RegistrarApiFax]
-    first_name*: Option[RegistrarApiFirstName]
-    id*: Option[RegistrarApiContactIdentifier]
-    last_name*: Option[RegistrarApiLastName]
-    organization*: RegistrarApiOrganization
-    phone*: Option[RegistrarApiTelephone]
-    state*: RegistrarApiState
-    zip*: Option[RegistrarApiZipcode]
-
-  RegistrarApiContacts* = ref object of RootObj
-    address*: RegistrarApiAddress
-    address2*: Option[RegistrarApiAddress2]
-    city*: RegistrarApiCity
-    country*: Option[RegistrarApiCountry]
-    email*: Option[RegistrarApiEmail]
-    fax*: Option[RegistrarApiFax]
-    first_name*: Option[RegistrarApiFirstName]
-    id*: Option[RegistrarApiContactIdentifier]
-    last_name*: Option[RegistrarApiLastName]
-    organization*: RegistrarApiOrganization
-    phone*: Option[RegistrarApiTelephone]
-    state*: RegistrarApiState
-    zip*: Option[RegistrarApiZipcode]
-
-  RegistrarApiCountry* = string
-
-  RegistrarApiCreatedAt* = string
-
-  RegistrarApiCurrentRegistrar* = string
 
   RegistrarApiCursorResultInfo* = ref object of RootObj
     ## Provides cursor-based pagination metadata. List endpoints use this
@@ -34995,38 +35144,7 @@ type
       ## - `standard`: Standard registry pricing.
       ## - `premium`: Premium domain with higher pricing from the registry.
 
-  RegistrarApiDomainIdentifier* = string
-
   RegistrarApiDomainName* = string
-
-  RegistrarApiDomainProperties* = ref object of RootObj
-    available*: Option[RegistrarApiAvailable]
-    can_register*: Option[RegistrarApiCanRegister]
-    created_at*: Option[RegistrarApiCreatedAt]
-    current_registrar*: Option[RegistrarApiCurrentRegistrar]
-    expires_at*: Option[RegistrarApiExpiresAt]
-    id*: Option[RegistrarApiDomainIdentifier]
-    locked*: Option[RegistrarApiLocked]
-    registrant_contact*: Option[RegistrarApiRegistrantContact]
-    registry_statuses*: Option[RegistrarApiRegistryStatuses]
-    supported_tld*: Option[RegistrarApiSupportedTld]
-    transfer_in*: Option[RegistrarApiTransferIn]
-    updated_at*: Option[RegistrarApiUpdatedAt]
-
-  RegistrarApiDomainResponseCollection* = ref object of RootObj
-    errors*: RegistrarApiMessages
-    messages*: RegistrarApiMessages
-    result*: seq[RegistrarApiDomains]
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[RegistrarApiResultInfo]
-
-  RegistrarApiDomainResponseSingle* = ref object of RootObj
-    errors*: RegistrarApiMessages
-    messages*: RegistrarApiMessages
-    result*: JsonNode
-    success*: bool
-      ## Whether the API call was successful.
 
   RegistrarApiDomainSearchResponse* = ref object of RootObj
     errors*: RegistrarApiMessages
@@ -35146,29 +35264,6 @@ type
       ## - `false`: One or more prerequisites fail. See `reasons`.
       ##
 
-  RegistrarApiDomainUpdateProperties* = ref object of RootObj
-    auto_renew*: Option[RegistrarApiAutoRenew]
-    locked*: Option[RegistrarApiLocked]
-    privacy*: Option[RegistrarApiPrivacy]
-
-  RegistrarApiDomains* = ref object of RootObj
-    available*: Option[RegistrarApiAvailable]
-    can_register*: Option[RegistrarApiCanRegister]
-    created_at*: Option[RegistrarApiCreatedAt]
-    current_registrar*: Option[RegistrarApiCurrentRegistrar]
-    expires_at*: Option[RegistrarApiExpiresAt]
-    id*: Option[RegistrarApiDomainIdentifier]
-    locked*: Option[RegistrarApiLocked]
-    registrant_contact*: Option[RegistrarApiRegistrantContact]
-    registry_statuses*: Option[RegistrarApiRegistryStatuses]
-    supported_tld*: Option[RegistrarApiSupportedTld]
-    transfer_in*: Option[RegistrarApiTransferIn]
-    updated_at*: Option[RegistrarApiUpdatedAt]
-
-  RegistrarApiEmail* = string
-
-  RegistrarApiExpiresAt* = string
-
   RegistrarApiExtensionItem* = ref object of RootObj
     ## Extension entry with metadata and JSON Schema documents for registration and
     ## transfer operations.
@@ -35197,19 +35292,9 @@ type
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiFax* = string
-
-  RegistrarApiFirstName* = string
-
   RegistrarApiIdentifier* = string
 
-  RegistrarApiLastName* = string
-
-  RegistrarApiLocked* = bool
-
   RegistrarApiMessages* = seq[JsonNode]
-
-  RegistrarApiOrganization* = string
 
   RegistrarApiPricingBase* = ref object of RootObj
     ## Provides annual pricing information for a given domain.
@@ -35259,24 +35344,6 @@ type
       ##
     transfer_cost*: string
       ## The first-year cost to transfer this domain.
-
-  RegistrarApiPrivacy* = bool
-
-  RegistrarApiRegistrantContact* = ref object of RootObj
-    ## Shows contact information for domain registrant.
-    address*: RegistrarApiAddress
-    address2*: Option[RegistrarApiAddress2]
-    city*: RegistrarApiCity
-    country*: Option[RegistrarApiCountry]
-    email*: Option[RegistrarApiEmail]
-    fax*: Option[RegistrarApiFax]
-    first_name*: Option[RegistrarApiFirstName]
-    id*: Option[RegistrarApiContactIdentifier]
-    last_name*: Option[RegistrarApiLastName]
-    organization*: RegistrarApiOrganization
-    phone*: Option[RegistrarApiTelephone]
-    state*: RegistrarApiState
-    zip*: Option[RegistrarApiZipcode]
 
   RegistrarApiRegistration* = ref object of RootObj
     ## A domain registration resource representing the current state of a registered
@@ -35467,39 +35534,6 @@ type
       ## time based on registry pricing.
       ##
 
-  RegistrarApiRegistryStatuses* = string
-
-  RegistrarApiResultInfo* = ref object of RootObj
-    count*: Option[float64]
-      ## Total number of results for the requested service.
-    page*: Option[float64]
-      ## Current page within paginated list of results.
-    per_page*: Option[float64]
-      ## Number of results per page of results.
-    total_count*: Option[float64]
-      ## Total results available without any search parameters.
-
-  RegistrarApiState* = string
-
-  RegistrarApiSupportedTld* = bool
-
-  RegistrarApiTelephone* = string
-
-  RegistrarApiTransferIn* = ref object of RootObj
-    ## Statuses for domain transfers into Cloudflare Registrar.
-    accept_foa*: Option[string]
-      ## Status of the registrant authorization step.
-    approve_transfer*: Option[string]
-      ## Status of the registry transfer-approval step.
-    can_cancel_transfer*: Option[bool]
-      ## Indicates if cancellation is still possible.
-    disable_privacy*: Option[string]
-      ## Status of the privacy-guard disabling step at the foreign registrar.
-    enter_auth_code*: Option[string]
-      ## Status of the auth-code entry and verification step.
-    unlock_domain*: Option[string]
-      ## Status of the domain-unlock step at the foreign registrar.
-
   RegistrarApiTransferInCreateRequest* = ref object of RootObj
     auth_code*: Option[string]
       ## The EPP/authorization code from your current registrar, base64-encoded
@@ -35525,8 +35559,6 @@ type
       ## WHOIS privacy mode to apply after transfer completes. Defaults to
       ## the extension's default privacy mode (typically `redaction`).
       ##
-
-  RegistrarApiUpdatedAt* = string
 
   RegistrarApiWorkflowStatusResponseSingle* = ref object of RootObj
     errors*: RegistrarApiMessages
@@ -35587,8 +35619,6 @@ type
       ## user review before retrying.
       ##
     updated_at*: string
-
-  RegistrarApiZipcode* = string
 
   ReportsAccountIndustryErrorResponse* = ref object of RootObj
     errors*: seq[ReportsError]
@@ -35789,13 +35819,19 @@ type
       ## The account that will receive the share.
 
   ResourceSharingCreateShareRequest* = ref object of RootObj
+    excluded_recipients*: Option[seq[ResourceSharingCreateShareExcludedRecipientRequest]]
+      ## Accounts to exclude from an organization-targeted share. Only allowed when
+      ## `recipients` contains no account entries. The share owner cannot be excluded.
+      ## Duplicate entries are ignored.
     name*: ResourceSharingShareName
-    recipients*: seq[ResourceSharingCreateShareRecipientRequest]
-    resources*: seq[ResourceSharingCreateShareResourceRequest]
+    recipients*: Option[seq[ResourceSharingCreateShareRecipientRequest]]
+    resources*: Option[seq[ResourceSharingCreateShareResourceRequest]]
+    tags*: Option[ResourceSharingShareTags]
 
   ResourceSharingCreateShareResourceRequest* = ref object of RootObj
     meta*: ResourceSharingResourceMeta
-    resource_account_id*: ResourceSharingAccountId
+    resource_account_id*: JsonNode
+      ## The account that owns the resource. Must match the `account_id` in the path.
     resource_id*: ResourceSharingResourceResourceId
     resource_type*: ResourceSharingResourceType
 
@@ -35834,6 +35870,8 @@ type
 
   ResourceSharingRecipientResourceErrorTerminal* = bool
 
+  ResourceSharingRecipientResourceVersion* = int64
+
   ResourceSharingResourceId* = string
 
   ResourceSharingResourceMeta* = ref object of RootObj
@@ -35860,15 +35898,15 @@ type
   ResourceSharingResourceVersion* = int64
 
   ResourceSharingResultInfo* = ref object of RootObj
-    count*: Option[float64]
-      ## Total number of results for the requested service.
-    page*: Option[float64]
+    count*: Option[int64]
+      ## Number of results on the current page.
+    page*: Option[int64]
       ## Current page within paginated list of results.
-    per_page*: Option[float64]
+    per_page*: Option[int64]
       ## Number of results per page of results.
-    total_count*: Option[float64]
-      ## Total results available without any search parameters.
-    total_pages*: Option[float64]
+    total_count*: Option[int64]
+      ## Total number of results matching the current filters before pagination.
+    total_pages*: Option[int64]
       ## Total number of pages using the given per page.
 
   ResourceSharingShareExcludedRecipientObject* = ref object of RootObj
@@ -35929,7 +35967,26 @@ type
       ## A list of resources that are part of the share. This field is only included when
       ## requested via the 'include_resources' parameter.
     status*: ResourceSharingShareStatus
+    tags*: Option[JsonNode]
+      ## Tags associated with the share. Included in create and update responses when
+      ## tags are supplied, and in read responses when the `include_tags_from` parameter
+      ## is set.
     target_type*: ResourceSharingShareTargetType
+
+  ResourceSharingShareRecipientMutationRequest* = ref object of RootObj
+    ## Specify the account receiving the share using `recipient_account_id`.
+    ## The legacy field `account_id` is accepted as a synonym during the deprecation
+    ## period (see `x-sunset` on that field).
+    ##
+    account_id*: Option[JsonNode]
+      ## Deprecated alias for `recipient_account_id`. Use `recipient_account_id` instead.
+      ## The body field collided with the URL path parameter of the same name, which
+      ## prevented SDK generators from distinguishing the source account (in the URL)
+      ## from the recipient account (in the body). Both names will continue to be
+      ## accepted until 2027-05-26 (see `x-sunset`).
+      ##
+    recipient_account_id*: Option[JsonNode]
+      ## The account that will receive the share.
 
   ResourceSharingShareRecipientObject* = ref object of RootObj
     ## A recipient of a share. The `association_status` field tracks the
@@ -35947,8 +36004,8 @@ type
   ResourceSharingShareRecipientResourceObject* = ref object of RootObj
     error*: ResourceSharingRecipientResourceError
     resource_id*: ResourceSharingResourceResourceId
-    resource_version*: ResourceSharingResourceVersion
-    terminal*: ResourceSharingRecipientResourceErrorTerminal
+    resource_version*: Option[ResourceSharingRecipientResourceVersion]
+    terminal*: Option[ResourceSharingRecipientResourceErrorTerminal]
 
   ResourceSharingShareRecipientResponseCollection* = ref object of RootObj
     errors*: ResourceSharingV4errors
@@ -36023,13 +36080,16 @@ type
     deleting = "deleting"
     deleted = "deleted"
 
+  ResourceSharingShareTags* = ref object of RootObj
+    ## Tags associated with the share.
+
   ResourceSharingShareTargetType* = enum
     account = "account"
     organization = "organization"
 
   ResourceSharingUpdateShareExcludedRecipientsRequest* = seq[ResourceSharingCreateShareExcludedRecipientRequest]
 
-  ResourceSharingUpdateShareRecipientsRequest* = seq[ResourceSharingCreateShareRecipientRequest]
+  ResourceSharingUpdateShareRecipientsRequest* = seq[ResourceSharingShareRecipientMutationRequest]
 
   ResourceSharingUpdateShareRequest* = ref object of RootObj
     ## Request body for `PUT /accounts/{account_id}/shares/{share_id}`. The
@@ -36039,6 +36099,7 @@ type
     ## endpoints (POST, PUT, DELETE).
     ##
     name*: ResourceSharingShareName
+    tags*: Option[ResourceSharingShareTags]
 
   ResourceSharingUpdateShareResourceRequest* = ref object of RootObj
     meta*: ResourceSharingResourceMeta
@@ -38518,6 +38579,14 @@ type
 
   SecurityCenterPage* = int64
 
+  SecurityCenterPartnerAssetResultInfo* = ref object of RootObj
+    count*: int64
+      ## Number of items in the current page.
+    cursor*: Option[string]
+      ## Opaque cursor for the next page. Absent when there are no more results.
+    per_page*: int64
+      ## Requested maximum number of items per page.
+
   SecurityCenterPartnerEntitlement* = enum
     ## The account's feature level for the partner integration.
     baseline = "baseline"
@@ -38606,6 +38675,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result*: Option[JsonNode]
+    result_info*: Option[SecurityCenterPartnerAssetResultInfo]
 
   SecurityCenterShadowZone* = ref object of RootObj
     discovered_at*: string
@@ -38622,6 +38692,7 @@ type
     success*: bool
       ## Whether the API call was successful.
     result*: Option[JsonNode]
+    result_info*: Option[SecurityCenterPartnerAssetResultInfo]
 
   SecurityCenterSource* = enum
     ## Who generated the insight. `cloudflare` for Cloudflare-generated insights,
@@ -39079,6 +39150,8 @@ type
     origin_dns*: Option[SpectrumConfigOriginDns]
     origin_port*: Option[SpectrumConfigOriginPort]
     origin_worker_id*: Option[SpectrumConfigOriginWorkerId]
+    origin_worker_name*: Option[SpectrumConfigOriginWorkerName]
+    origin_worker_status*: Option[SpectrumConfigOriginWorkerStatus]
     protocol*: SpectrumConfigProtocol
     proxy_protocol*: Option[SpectrumConfigProxyProtocol]
     tls*: Option[SpectrumConfigTls]
@@ -39173,6 +39246,15 @@ type
     ## the number of ports specified in the "protocol" field.
 
   SpectrumConfigOriginWorkerId* = string
+
+  SpectrumConfigOriginWorkerName* = string
+
+  SpectrumConfigOriginWorkerStatus* = enum
+    ## Lookup status of the Worker origin. Unknown indicates that its name could not be
+    ## resolved. Only returned for Worker origins.
+    available = "available"
+    notFound = "not_found"
+    unknown = "unknown"
 
   SpectrumConfigPaygoAppConfig* = ref object of RootObj
     created_on*: SpectrumConfigCreated
@@ -41681,6 +41763,7 @@ type
 
   TlsCertificatesAndHostnamesCertificateAuthority3* = enum
     ## The Certificate Authority that Total TLS certificates will be issued through.
+    ## Not returned in responses when Total TLS is disabled.
     google = "google"
     letsEncrypt = "lets_encrypt"
     sslCom = "ssl_com"
@@ -41738,6 +41821,24 @@ type
     zone_id*: Option[TlsCertificatesAndHostnamesIdentifier]
 
   TlsCertificatesAndHostnamesCertificatePackIdentifier* = string
+
+  TlsCertificatesAndHostnamesCertificatePackOrder* = ref object of RootObj
+    ## A newly ordered certificate pack. Certificates are not included until they are
+    ## issued; get the certificate pack to retrieve them.
+    certificate_authority*: Option[TlsCertificatesAndHostnamesCertificateAuthority2]
+    hosts*: TlsCertificatesAndHostnamesHosts2
+    id*: TlsCertificatesAndHostnamesCertificatePackIdentifier
+    status*: TlsCertificatesAndHostnamesStatus5
+    `type`*: TlsCertificatesAndHostnamesType2
+    validation_method*: Option[TlsCertificatesAndHostnamesValidationMethod]
+    validity_days*: Option[TlsCertificatesAndHostnamesValidityDays]
+
+  TlsCertificatesAndHostnamesCertificatePackOrderResponseSingle* = ref object of RootObj
+    errors*: TlsCertificatesAndHostnamesMessages
+    messages*: TlsCertificatesAndHostnamesMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[TlsCertificatesAndHostnamesCertificatePackOrder]
 
   TlsCertificatesAndHostnamesCertificatePackQuotaResponse* = ref object of RootObj
     errors*: TlsCertificatesAndHostnamesMessages
@@ -41865,12 +41966,16 @@ type
 
   TlsCertificatesAndHostnamesCertificates* = ref object of RootObj
     certificate*: Option[TlsCertificatesAndHostnamesCertificate4]
-    csr*: TlsCertificatesAndHostnamesCsr
+    csr*: Option[TlsCertificatesAndHostnamesCsr]
     expires_on*: Option[TlsCertificatesAndHostnamesExpiresOn3]
-    hostnames*: TlsCertificatesAndHostnamesHostnames
+    hostnames*: Option[TlsCertificatesAndHostnamesHostnames]
     id*: Option[TlsCertificatesAndHostnamesOriginCaCertificateIdentifier]
-    request_type*: TlsCertificatesAndHostnamesRequestType
-    requested_validity*: TlsCertificatesAndHostnamesRequestedValidity
+    request_type*: Option[TlsCertificatesAndHostnamesRequestType]
+    requested_validity*: Option[JsonNode]
+      ## The number of days for which the certificate was requested to be valid. Only
+      ## returned in the Create Certificate response, where it echoes the requested
+      ## value. Not returned when getting or listing certificates.
+    revoked_at*: Option[TlsCertificatesAndHostnamesRevokedAt]
 
   TlsCertificatesAndHostnamesCertificates2* = string
 
@@ -41893,6 +41998,8 @@ type
     state*: Option[TlsCertificatesAndHostnamesState]
     status*: Option[TlsCertificatesAndHostnamesStatus11]
     validity_days*: Option[TlsCertificatesAndHostnamesValidityDays2]
+
+  TlsCertificatesAndHostnamesClientCertificateHostname* = string
 
   TlsCertificatesAndHostnamesClientCertificateIdentifier* = string
 
@@ -41989,7 +42096,7 @@ type
     issuer*: TlsCertificatesAndHostnamesIssuer
     signature*: TlsCertificatesAndHostnamesSignature
     status*: TlsCertificatesAndHostnamesStatus7
-    updated_at*: TlsCertificatesAndHostnamesUpdatedAt2
+    updated_at*: Option[TlsCertificatesAndHostnamesUpdatedAt2]
     uploaded_on*: TlsCertificatesAndHostnamesUploadedOn
 
   TlsCertificatesAndHostnamesCustomCertAndKey* = ref object of RootObj
@@ -42411,7 +42518,7 @@ type
 
   TlsCertificatesAndHostnamesHostnames* = seq[string]
 
-  TlsCertificatesAndHostnamesHostnames2* = seq[string]
+  TlsCertificatesAndHostnamesHostnames2* = seq[TlsCertificatesAndHostnamesClientCertificateHostname]
 
   TlsCertificatesAndHostnamesHosts* = seq[string]
 
@@ -42556,7 +42663,10 @@ type
     originEcc = "origin-ecc"
     keylessCertificate = "keyless-certificate"
 
-  TlsCertificatesAndHostnamesRequestedValidity* = float64
+  TlsCertificatesAndHostnamesRequestedValidity* = ref object of RootObj
+    ## The number of days for which the certificate should be valid.
+
+  TlsCertificatesAndHostnamesRequestedValidityDays* = float64
 
   TlsCertificatesAndHostnamesResultInfo* = ref object of RootObj
     count*: Option[float64]
@@ -45522,72 +45632,80 @@ type
   WorkersKvValue* = ref object of RootObj
     ## A byte sequence to be stored, up to 25 MiB in length.
 
-  WorkersObservabilityAgentSession* = ref object of RootObj
-    conversation_id*: string
-      ## OpenTelemetry gen_ai.conversation.id value that identifies the session within
-      ## the account.
-    input_tokens*: Option[float64]
-      ## Sum of input tokens reported by chat spans attributed to the session. Omitted
-      ## when no span reports input-token usage.
-    last_active_ms*: int64
-      ## End of the latest observed agent invocation in the session, as Unix epoch
-      ## milliseconds. Sessions are ordered by this value.
-    models*: seq[string]
-      ## Distinct models reported by chat spans attributed to the session.
-    output_tokens*: Option[float64]
-      ## Sum of output tokens reported by chat spans attributed to the session. Omitted
-      ## when no span reports output-token usage.
-    providers*: seq[string]
-      ## Distinct generative AI providers reported by chat spans attributed to the
-      ## session.
-    session_duration_ms*: int64
-      ## Elapsed time from sessionStartMs to lastActiveMs, in milliseconds.
-    session_start_ms*: int64
-      ## Start of the earliest observed agent invocation in the session, as Unix epoch
-      ## milliseconds.
-    status*: string
-      ## Observed status of agent invocation and chat spans attributed to the session.
-      ## error means at least one span reported an error; observed_no_error means no
-      ## error was observed. This does not guarantee that the session completed
-      ## successfully.
-    trace_count*: int64
-      ## Number of distinct traces associated with the session during the requested time
-      ## range.
+  WorkersObservabilityAgentResultInfo* = ref object of RootObj
+    count*: int64
+      ## Items returned on this page. Not a total: a page can be short or empty while
+      ## more results remain.
+    cursors*: JsonNode
+    `from`*: int64
+      ## Effective start of the time window, after defaults and retention clamping.
+    per_page*: int64
+      ## Maximum items requested for this page.
+    to*: int64
+      ## Effective end of the time window.
 
-  WorkersObservabilityAgentSessionRun* = ref object of RootObj
-    conversation_id*: string
-      ## OpenTelemetry gen_ai.conversation.id value that identifies the session
-      ## containing the run.
-    errors*: seq[string]
-      ## Distinct errors reported by the observed spans in the trace.
+  WorkersObservabilityAgentTraceSummary* = ref object of RootObj
+    error_count*: int64
+      ## Recorded spans with a nonempty error or ERROR status. Counts spans, not distinct
+      ## messages or incidents.
+    errors*: Option[seq[string]]
+      ## Error messages encountered during the trace, if any.
     input_tokens*: Option[float64]
-      ## Sum of input tokens reported by chat spans attributed to the session within this
-      ## trace. Omitted when none report input-token usage.
+      ## Input tokens reported by chat spans in the authorized Trace window; null when
+      ## none report input usage. Informational, not billing data.
+    llm_call_count*: int64
+      ## Recorded chat spans in the authorized Trace window.
+    llm_error_count*: int64
+      ## Recorded chat spans with a nonempty error or ERROR status.
     models*: seq[string]
-      ## Distinct models reported by chat spans attributed to the session within this
-      ## trace.
+      ## Sorted distinct response models, falling back to request models, from chat spans
+      ## in the authorized Trace window.
     output_tokens*: Option[float64]
-      ## Sum of output tokens reported by chat spans attributed to the session within
-      ## this trace. Omitted when none report output-token usage.
+      ## Output tokens reported by chat spans in the authorized Trace window; null when
+      ## none report output usage. Informational, not billing data.
     providers*: seq[string]
-      ## Distinct generative AI providers reported by chat spans attributed to the
-      ## session within this trace.
+      ## Sorted distinct GenAI providers from chat spans in the authorized Trace window.
+    root_span_name*: string
+      ## Name of the root span that initiated the trace.
+    root_transaction_name*: string
+      ## Logical transaction name for the root span.
     services*: seq[string]
-      ## Distinct Worker services represented by the observed spans in the trace.
-    spans*: int64
-      ## Number of observed spans in the trace during the requested time range.
-    status*: string
-      ## Observed trace status. error means at least one observed span reported an error;
-      ## completed means no error was observed. This does not guarantee that the complete
-      ## trace was observed.
-    trace_duration_ms*: int64
-      ## Elapsed time from traceStartMs to traceEndMs, in milliseconds.
-    trace_end_ms*: int64
-      ## End of the latest observed span in the trace, as Unix epoch milliseconds.
+      ## Authorized Worker services represented in the trace.
+    spans*: float64
+      ## Total number of spans in the trace.
+    tool_call_count*: int64
+      ## Recorded execute_tool spans in the authorized Trace window. Custom-named
+      ## approval spans are not counted.
+    tool_error_count*: int64
+      ## Recorded execute_tool spans with a nonempty error or ERROR status.
+    total_tokens*: Option[float64]
+      ## Input plus output tokens; null if either direction is unreported. Does not add
+      ## cache or reasoning breakdowns.
+    trace_duration_ms*: float64
+      ## Total duration of the trace in milliseconds.
+    trace_end_ms*: float64
+      ## Trace end time as a Unix epoch in milliseconds.
     trace_id*: string
-      ## Trace identifier for the run.
-    trace_start_ms*: int64
-      ## Start of the earliest observed span in the trace, as Unix epoch milliseconds.
+      ## Unique identifier for the distributed trace.
+    trace_start_ms*: float64
+      ## Trace start time as a Unix epoch in milliseconds.
+    agents*: seq[string]
+      ## Sorted distinct gen_ai.agent.name values of authorized Agent invocations in the
+      ## Trace within the effective window. Includes every Agent in the Trace, not only
+      ## those matching the agent filter.
+    conversation_ids*: seq[string]
+      ## Sorted distinct gen_ai.conversation.id values of authorized Agent invocations in
+      ## the Trace within the effective window. Empty when none are recorded.
+    last_activity_ms*: int64
+      ## Latest start of an authorized Agent invocation in the Trace within the effective
+      ## window, as Unix epoch milliseconds. The Trace list is ordered by this value,
+      ## newest first.
+
+  WorkersObservabilityAgentWindowInfo* = ref object of RootObj
+    `from`*: int64
+      ## Effective start of the time window, after defaults and retention clamping.
+    to*: int64
+      ## Effective end of the time window.
 
   WorkersObservabilityDistributionResult* = ref object of RootObj
     ## Bucketed 2D histogram of a numeric field over time. Present when chartType is
@@ -45747,6 +45865,74 @@ type
       ## was emitted.
     timestamp*: int64
       ## Event timestamp as a Unix epoch in milliseconds.
+
+  WorkersObservabilityTraceSummary* = ref object of RootObj
+    error_count*: int64
+      ## Recorded spans with a nonempty error or ERROR status. Counts spans, not distinct
+      ## messages or incidents.
+    errors*: Option[seq[string]]
+      ## Error messages encountered during the trace, if any.
+    input_tokens*: Option[float64]
+      ## Input tokens reported by chat spans in the authorized Trace window; null when
+      ## none report input usage. Informational, not billing data.
+    llm_call_count*: int64
+      ## Recorded chat spans in the authorized Trace window.
+    llm_error_count*: int64
+      ## Recorded chat spans with a nonempty error or ERROR status.
+    models*: seq[string]
+      ## Sorted distinct response models, falling back to request models, from chat spans
+      ## in the authorized Trace window.
+    output_tokens*: Option[float64]
+      ## Output tokens reported by chat spans in the authorized Trace window; null when
+      ## none report output usage. Informational, not billing data.
+    providers*: seq[string]
+      ## Sorted distinct GenAI providers from chat spans in the authorized Trace window.
+    root_span_name*: string
+      ## Name of the root span that initiated the trace.
+    root_transaction_name*: string
+      ## Logical transaction name for the root span.
+    services*: seq[string]
+      ## Authorized Worker services represented in the trace.
+    spans*: float64
+      ## Total number of spans in the trace.
+    tool_call_count*: int64
+      ## Recorded execute_tool spans in the authorized Trace window. Custom-named
+      ## approval spans are not counted.
+    tool_error_count*: int64
+      ## Recorded execute_tool spans with a nonempty error or ERROR status.
+    total_tokens*: Option[float64]
+      ## Input plus output tokens; null if either direction is unreported. Does not add
+      ## cache or reasoning breakdowns.
+    trace_duration_ms*: float64
+      ## Total duration of the trace in milliseconds.
+    trace_end_ms*: float64
+      ## Trace end time as a Unix epoch in milliseconds.
+    trace_id*: string
+      ## Unique identifier for the distributed trace.
+    trace_start_ms*: float64
+      ## Trace start time as a Unix epoch in milliseconds.
+
+  WorkersObservabilityUsageLimit* = ref object of RootObj
+    limit*: JsonNode
+      ## The plan's daily limit.
+    plan*: string
+      ## free: the account has no Workers Paid or Enterprise plan. paid: it has one of
+      ## them.
+    resets_at*: Option[string]
+      ## When a limited free account is expected to start keeping events again, at the
+      ## daily limit reset. Not guaranteed if the account was limited for another reason.
+      ## null otherwise, including for paid accounts, which are brought back in stages.
+    sample_rate*: float64
+      ## Share of the account's events being kept, from 0 to 1.
+    status*: string
+      ## Whether telemetry is being dropped, and why. More values may be added; treat
+      ## unknown values like normal.
+      ## - normal: every event is kept.
+      ## - limited: the account keeps only sample_rate of its events, usually because it
+      ## passed its daily limit. A free account over its limit keeps none until
+      ## resets_at; a paid one keeps about 10 events a second and is brought back in
+      ## stages after 00:00 UTC.
+      ## - restricted: events are dropped for another reason. Contact support.
 
   WorkersDomain* = ref object of RootObj
     cert_id*: string
@@ -45936,6 +46122,13 @@ type
       ## Usage model for the deployment.
     modules*: Option[seq[JsonNode]]
       ## Code, sourcemaps, and other content used at runtime.
+      ##
+      ## Source maps use content type `application/source-map`. Responses include them
+      ## only when requested with
+      ## `include=modules,sourcemaps`. Workers stores the source map fields used to remap
+      ## stack traces, so a
+      ## returned source map is equivalent to the uploaded file but not byte-identical.
+      ##
     author_email*: string
       ## Email of the user who created the deployment. May be empty for deployments
       ## created using an API token.
@@ -46042,6 +46235,13 @@ type
       ## Usage model for the deployment.
     modules*: Option[seq[JsonNode]]
       ## Code, sourcemaps, and other content used at runtime.
+      ##
+      ## Source maps use content type `application/source-map`. Responses include them
+      ## only when requested with
+      ## `include=modules,sourcemaps`. Workers stores the source map fields used to remap
+      ## stack traces, so a
+      ## returned source map is equivalent to the uploaded file but not byte-identical.
+      ##
 
   WorkersPreviewsBaseConfig* = ref object of RootObj
     cache_options*: Option[JsonNode]
@@ -46079,7 +46279,14 @@ type
     bindings*: Option[WorkersBindings]
     cache_options*: Option[WorkersCacheOptions]
     compatibility_date*: Option[WorkersCompatibilityDate]
-    compatibility_flags*: Option[WorkersCompatibilityFlags]
+    compatibility_flags*: Option[JsonNode]
+      ## Enables or disables specific Workers runtime features, such as upcoming features
+      ## or changes outside the `compatibility_date`.
+      ##
+      ## Responses list only the flags this version sets explicitly and exclude behavior
+      ## that `compatibility_date` enables. Responses omit the field when the list is
+      ## empty, so a missing field means the version sets zero flags.
+      ##
     containers*: Option[WorkersContainers]
     created_on*: string
       ## When the version was created.
@@ -46112,6 +46319,12 @@ type
       ## applied when the version is deployed.
     modules*: Option[seq[JsonNode]]
       ## Code, sourcemaps, and other content used at runtime.
+      ##
+      ## Source maps use content type `application/source-map`. Responses include them
+      ## only when requested with
+      ## `include=modules,sourcemaps`. Workers stores the source map fields used to remap
+      ## stack traces, so a returned
+      ## source map is equivalent to the uploaded file but not byte-identical.
       ##
       ## This includes [`_headers`](https://developers.cloudflare.com/workers/static-asse
       ## ts/headers/#custom-headers) and
@@ -46550,6 +46763,11 @@ type
     `type`*: string
       ## The kind of resource that the binding provides.
 
+  WorkersBindingKindWorkerLoader* = ref object of RootObj
+    name*: WorkersBindingName
+    `type`*: string
+      ## The kind of resource that the binding provides.
+
   WorkersBindingKindWorkflow* = ref object of RootObj
     class_name*: Option[string]
       ## Class name of the Workflow. Should only be provided if the Workflow belongs to
@@ -46622,6 +46840,7 @@ type
 
   WorkersDeployment* = ref object of RootObj
     annotations*: Option[JsonNode]
+      ## Metadata attached to the deployment.
     author_email*: Option[string]
     code_update_strategy*: Option[JsonNode]
       ## Choose whether to apply Durable Object code updates immediately or defer them.
@@ -46630,6 +46849,8 @@ type
     id*: string
     source*: string
     strategy*: string
+      ## Strategy for routing traffic across the listed versions. `percentage` splits
+      ## traffic according to each version's `percentage`.
     versions*: seq[JsonNode]
       ## Worker versions included in this deployment. Each object must contain a
       ## `version_id` UUID and a `percentage`; percentages across all objects must total
@@ -47913,6 +48134,7 @@ type
     resolve = "resolve"
     quarantine = "quarantine"
     redirect = "redirect"
+    forward = "forward"
 
   ZeroTrustGatewayActivityLogSettings* = ref object of RootObj
     ## Specify activity log settings.
@@ -48704,6 +48926,9 @@ type
     forensic_copy*: Option[JsonNode]
       ## Configure whether a copy of the HTTP request will be sent to storage when the
       ## rule matches.
+    forward*: Option[JsonNode]
+      ## Forward matching HTTP requests to a Worker. Required for `http` rules with the
+      ## action set to `forward`.
     ignore_cname_category_matches*: Option[bool]
       ## Ignore category matches at CNAME domains in a response. When off, evaluate
       ## categories in this rule against all CNAME domain categories in the response.
@@ -49407,6 +49632,24 @@ type
     wp_plugin*: bool
       ## Indicates whether or not [Cloudflare for WordPress
       ## plugin](https://wordpress.org/plugins/cloudflare/) is installed.
+
+  ZonesAvif* = ref object of RootObj
+    ## When the client requesting the image supports the AVIF image codec, and AVIF
+    ## offers a performance advantage over the original image format, Cloudflare will
+    ## serve an AVIF version of the original image.
+    editable*: Option[bool]
+      ## Whether or not this setting can be modified for this zone (based on your
+      ## Cloudflare plan level).
+    id*: string
+      ## ID of the zone setting.
+    modified_on*: Option[string]
+      ## last time this setting was modified.
+    value*: ZonesAvifValue
+
+  ZonesAvifValue* = enum
+    ## Value of the zone setting.
+    off = "off"
+    on = "on"
 
   ZonesBase* = ref object of RootObj
     editable*: Option[bool]

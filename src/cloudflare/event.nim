@@ -649,9 +649,10 @@ proc getAccountsAccountIdCloudforceOneEventsByIdEventIdRelationships*(client: Cl
 proc postAccountsAccountIdCloudforceOneEventsCreate*(client: CloudflareClient,
                                                      accountId: string,
                                                      body: PostAccountsAccountIdCloudforceOneEventsCreateRequest): Future[PostAccountsAccountIdCloudforceOneEventsCreateResponse] {.async.} =
-  ## Creates an event. Without `datasetId`, the event is created in the default
-  ## Cloudforce One Threat Events dataset. To create a dataset, use `threat-intel
-  ## datasets create`.
+  ## Creates an event in the dataset given by `datasetId`. Omitting `datasetId` is
+  ## deprecated: the event is created in the default Cloudforce One Threat Events
+  ## dataset, and a future release will reject the request. To create a dataset, use
+  ## `threat-intel datasets create`.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/create", body)
   let body = await res.body

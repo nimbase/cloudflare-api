@@ -15,6 +15,10 @@ suite "resource_sharing serialization":
     let obj = newResourceSharingShareResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceSharingShareResponseCollection)) == openjson.toJson(obj)
 
+  test "round-trips ResourceSharingApiResponseCommonFailure":
+    let obj = newResourceSharingApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceSharingApiResponseCommonFailure)) == openjson.toJson(obj)
+
   test "round-trips ResourceSharingShareExcludedRecipientResponseSingle":
     let obj = newResourceSharingShareExcludedRecipientResponseSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceSharingShareExcludedRecipientResponseSingle)) == openjson.toJson(obj)
@@ -26,6 +30,10 @@ suite "resource_sharing serialization":
   test "round-trips ResourceSharingShareResourceResponseCollection":
     let obj = newResourceSharingShareResourceResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceSharingShareResourceResponseCollection)) == openjson.toJson(obj)
+
+  test "round-trips ResourceSharingShareRecipientMutationRequest":
+    let obj = newResourceSharingShareRecipientMutationRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceSharingShareRecipientMutationRequest)) == openjson.toJson(obj)
 
   test "round-trips ResourceSharingShareRecipientResponseSingle":
     let obj = newResourceSharingShareRecipientResponseSingle()
@@ -51,10 +59,6 @@ suite "resource_sharing serialization":
     let obj = newResourceSharingCreateShareResourceRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceSharingCreateShareResourceRequest)) == openjson.toJson(obj)
 
-  test "round-trips ResourceSharingCreateShareRecipientRequest":
-    let obj = newResourceSharingCreateShareRecipientRequest()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceSharingCreateShareRecipientRequest)) == openjson.toJson(obj)
-
   test "round-trips ResourceSharingUpdateShareResourceRequest":
     let obj = newResourceSharingUpdateShareResourceRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceSharingUpdateShareResourceRequest)) == openjson.toJson(obj)
@@ -67,10 +71,6 @@ suite "resource_sharing serialization":
     let obj = newResourceSharingCreateShareRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceSharingCreateShareRequest)) == openjson.toJson(obj)
 
-  test "round-trips ResourceSharingApiResponseCommonFailure":
-    let obj = newResourceSharingApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceSharingApiResponseCommonFailure)) == openjson.toJson(obj)
-
 suite "resource_sharing endpoints":
   test "POST /accounts/{account_id}/shares":
     let client = initCloudflareClient("test-key")
@@ -80,7 +80,7 @@ suite "resource_sharing endpoints":
   test "GET /accounts/{account_id}/shares/{share_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdSharesShareId("test", "test", true, true)
+    discard waitFor client.getAccountsAccountIdSharesShareId("test", "test", true, true, includeTagsFromApi)
 
   test "PUT /accounts/{account_id}/shares/{share_id}":
     let client = initCloudflareClient("test-key")
@@ -120,7 +120,7 @@ suite "resource_sharing endpoints":
   test "POST /accounts/{account_id}/shares/{share_id}/recipients":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdSharesShareIdRecipients("test", "test", newResourceSharingCreateShareRecipientRequest())
+    discard waitFor client.postAccountsAccountIdSharesShareIdRecipients("test", "test", newResourceSharingShareRecipientMutationRequest())
 
   test "GET /accounts/{account_id}/shares/{share_id}/recipients/{recipient_id}":
     let client = initCloudflareClient("test-key")

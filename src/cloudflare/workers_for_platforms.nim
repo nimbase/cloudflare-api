@@ -156,9 +156,20 @@ proc putAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceScriptsScript
                                                                                       dispatchNamespace: types.WorkersDispatchNamespaceName,
                                                                                       scriptName: types.WorkersScriptName,
                                                                                       bindingsInherit: WorkersForPlatformBindingsInheritOption = bindingsInheritStrict): Future[JsonNode] {.async.} =
-  ## Upload a Workers for Platforms script module to a dispatch namespace. You can
-  ## find more about the multipart metadata on our docs: https://developers.cloudflar
-  ## e.com/workers/configuration/multipart-upload-metadata/.
+  ## Upload Worker code and configuration to a Workers for Platforms dispatch
+  ## namespace. For ES module and other module-based Workers, use
+  ## `multipart/form-data` with a JSON `metadata` part whose `main_module`
+  ## field names the entrypoint file. Upload each module as a separate file
+  ## part; JavaScript ES module parts use the `application/javascript+module`
+  ## content type.
+  ##
+  ## Raw `application/javascript` and `text/javascript` request bodies accept
+  ## only legacy service-worker syntax using `addEventListener`. They do not
+  ## accept ES module syntax such as `export default`. To upload a module
+  ## Worker, use the multipart request format instead.
+  ##
+  ## Learn more about multipart metadata in the [documentation](https://developers.cl
+  ## oudflare.com/workers/configuration/multipart-upload-metadata/).
 
   var q = initOrderedTable[string, string]()
   q["bindings_inherit"] = $bindingsInherit

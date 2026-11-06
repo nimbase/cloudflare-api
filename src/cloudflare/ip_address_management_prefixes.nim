@@ -118,8 +118,10 @@ proc patchAccountsAccountIdAddressingPrefixesPrefixId*(client: CloudflareClient,
 proc postAccountsAccountIdAddressingPrefixesPrefixIdValidate*(client: CloudflareClient,
                                                               prefixId: types.AddressingPrefixIdentifier,
                                                               accountId: types.AddressingAccountIdentifier): Future[types.AddressingSingleResponse] {.async.} =
-  ## Triggers a new prefix validation. The checks are run asynchronously and include
-  ## IRR, RPKI, and prefix ownership.
+  ## Triggers a new prefix validation. The checks run asynchronously and include IRR,
+  ## RPKI, prefix ownership, and, when applicable, ASN ownership and Autonomous
+  ## System Provider Authorization (ASPA). Use Prefix Details to monitor the results.
+  ## Approval does not advertise the prefix or activate traffic.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/addressing/prefixes/{prefixId}/validate")
   let body = await res.body

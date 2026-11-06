@@ -32,5 +32,5 @@ suite "domain_intelligence endpoints":
   test "GET /accounts/{account_id}/intel/domain/bulk":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdIntelDomainBulk("test", @["test"], true, true)
+    discard waitFor client.getAccountsAccountIdIntelDomainBulk("test", @["test"], true, true, true)
 

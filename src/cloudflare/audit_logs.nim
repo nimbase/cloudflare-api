@@ -27,7 +27,7 @@ proc getAccountsAccountIdAuditLogs*(client: CloudflareClient,
                                     direction: AuditLogDirectionOption = directionDesc,
                                     perPage: float64 = default(float64),
                                     page: float64 = default(float64),
-                                    hideUserLogs: bool = false): Future[types.AaaAuditLogsResponseCollection2] {.async.} =
+                                    hideUserLogs: bool = false): Future[types.AaaAuditLogsResponseCollection] {.async.} =
   ## Gets a list of audit logs for an account. Can be filtered by who made the
   ## change, on which zone, and the timeframe of the change.
 
@@ -48,7 +48,7 @@ proc getAccountsAccountIdAuditLogs*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AaaAuditLogsResponseCollection2)
+    result = fromJson(body, types.AaaAuditLogsResponseCollection)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -358,7 +358,7 @@ proc getUserAuditLogs*(client: CloudflareClient, id: string = default(string),
                        direction: AuditLogDirectionOption = directionDesc,
                        perPage: float64 = default(float64),
                        page: float64 = default(float64),
-                       hideUserLogs: bool = false): Future[types.AaaAuditLogsResponseCollection2] {.async.} =
+                       hideUserLogs: bool = false): Future[types.AaaAuditLogsResponseCollection] {.async.} =
   ## Gets a list of audit logs for a user account. Can be filtered by who made the
   ## change, on which zone, and the timeframe of the change.
 
@@ -379,6 +379,6 @@ proc getUserAuditLogs*(client: CloudflareClient, id: string = default(string),
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.AaaAuditLogsResponseCollection2)
+    result = fromJson(body, types.AaaAuditLogsResponseCollection)
   else:
     raise newException(CloudflareClientError, body)

@@ -11,41 +11,41 @@ import cloudflare
 import ./common
 
 suite "scans serialization":
-  test "round-trips VulnScannerDeleteScanResponse":
-    let obj = newVulnScannerDeleteScanResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerDeleteScanResponse)) == openjson.toJson(obj)
+  test "round-trips VulnScannerCreateScanRequest":
+    let obj = newVulnScannerCreateScanRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerCreateScanRequest)) == openjson.toJson(obj)
 
   test "round-trips VulnScannerApiResponseCommon":
     let obj = newVulnScannerApiResponseCommon()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCommon)) == openjson.toJson(obj)
 
+  test "round-trips VulnScannerApiResponseCollection":
+    let obj = newVulnScannerApiResponseCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCollection)) == openjson.toJson(obj)
+
   test "round-trips CloudforceOnePortScanApiScanConfig":
     let obj = newCloudforceOnePortScanApiScanConfig()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOnePortScanApiScanConfig)) == openjson.toJson(obj)
 
-  test "round-trips VulnScannerApiResponseCommonFailure":
-    let obj = newVulnScannerApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCommonFailure)) == openjson.toJson(obj)
-
-  test "round-trips VulnScannerApiResponseCollection":
-    let obj = newVulnScannerApiResponseCollection()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCollection)) == openjson.toJson(obj)
+  test "round-trips VulnScannerDeleteScanResponse":
+    let obj = newVulnScannerDeleteScanResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerDeleteScanResponse)) == openjson.toJson(obj)
 
   test "round-trips CloudforceOnePortScanApiApiResponseCommon":
     let obj = newCloudforceOnePortScanApiApiResponseCommon()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOnePortScanApiApiResponseCommon)) == openjson.toJson(obj)
 
-  test "round-trips VulnScannerScan":
-    let obj = newVulnScannerScan()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerScan)) == openjson.toJson(obj)
-
   test "round-trips CloudforceOnePortScanApiPort":
     let obj = newCloudforceOnePortScanApiPort()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOnePortScanApiPort)) == openjson.toJson(obj)
 
-  test "round-trips VulnScannerCreateScanRequest":
-    let obj = newVulnScannerCreateScanRequest()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerCreateScanRequest)) == openjson.toJson(obj)
+  test "round-trips VulnScannerApiResponseCommonFailure":
+    let obj = newVulnScannerApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCommonFailure)) == openjson.toJson(obj)
+
+  test "round-trips VulnScannerScan":
+    let obj = newVulnScannerScan()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerScan)) == openjson.toJson(obj)
 
   test "round-trips CloudforceOnePortScanApiApiResponseCommonFailure":
     let obj = newCloudforceOnePortScanApiApiResponseCommonFailure()

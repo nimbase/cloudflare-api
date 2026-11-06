@@ -23,6 +23,7 @@ type
   RadarTopLevelDomainTldTypeOption* = enum
     tldTypeGENERIC = "GENERIC"
     tldTypeCOUNTRYCODE = "COUNTRY_CODE"
+    tldTypeSPECIALUSE = "SPECIAL_USE"
     tldTypeGENERICRESTRICTED = "GENERIC_RESTRICTED"
     tldTypeINFRASTRUCTURE = "INFRASTRUCTURE"
     tldTypeSPONSORED = "SPONSORED"

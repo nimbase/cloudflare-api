@@ -15,12 +15,14 @@ type
     enabled: Option[types.AccessEnabled]
     name: types.AccessName17
     previous_client_secret_expires_at: Option[types.AccessPreviousClientSecretExpiresAt]
+    tags: Option[types.AccessTags]
   PutZonesZoneIdAccessServiceTokensServiceTokenIdRequest = object
     client_secret_version: Option[types.AccessClientSecretVersion]
     duration: Option[types.AccessDuration2]
     enabled: Option[types.AccessEnabled]
     name: Option[types.AccessName17]
     previous_client_secret_expires_at: Option[types.AccessPreviousClientSecretExpiresAt]
+    tags: Option[types.AccessTags]
 
 proc getZonesZoneIdAccessServiceTokens*(client: CloudflareClient,
                                         zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection20] {.async.} =

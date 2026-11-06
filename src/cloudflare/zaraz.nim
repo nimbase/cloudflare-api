@@ -146,11 +146,10 @@ proc getZonesZoneIdSettingsZarazWorkflow*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc putZonesZoneIdSettingsZarazWorkflow*(client: CloudflareClient,
-                                          zoneId: types.ZarazIdentifier,
-                                          body: types.ZarazZarazWorkflow): Future[types.ZarazZarazWorkflowResponse] {.async.} =
+                                          zoneId: types.ZarazIdentifier): Future[types.ZarazZarazWorkflowResponse] {.async.} =
   ## Updates Zaraz workflow for a zone.
 
-  let res = await client.httpPUT(fmt"/zones/{zoneId}/settings/zaraz/workflow", body)
+  let res = await client.httpPUT(fmt"/zones/{zoneId}/settings/zaraz/workflow")
   let body = await res.body
   case res.code
   of Http200:

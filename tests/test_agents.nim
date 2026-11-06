@@ -11,30 +11,47 @@ import cloudflare
 import ./common
 
 suite "agents serialization":
-  test "round-trips WorkersObservabilityAgentSessionRun":
-    let obj = newWorkersObservabilityAgentSessionRun()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersObservabilityAgentSessionRun)) == openjson.toJson(obj)
+  test "round-trips WorkersObservabilityAgentWindowInfo":
+    let obj = newWorkersObservabilityAgentWindowInfo()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersObservabilityAgentWindowInfo)) == openjson.toJson(obj)
 
-  test "round-trips WorkersObservabilityAgentSession":
-    let obj = newWorkersObservabilityAgentSession()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersObservabilityAgentSession)) == openjson.toJson(obj)
+  test "round-trips WorkersObservabilityAgentTraceSummary":
+    let obj = newWorkersObservabilityAgentTraceSummary()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersObservabilityAgentTraceSummary)) == openjson.toJson(obj)
 
-  test "round-trips GetAccountsAccountIdWorkersObservabilityAgentsSessionsResponse":
-    let obj = cloudflare.GetAccountsAccountIdWorkersObservabilityAgentsSessionsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkersObservabilityAgentsSessionsResponse)) == openjson.toJson(obj)
+  test "round-trips WorkersObservabilityTelemetryEvent":
+    let obj = newWorkersObservabilityTelemetryEvent()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersObservabilityTelemetryEvent)) == openjson.toJson(obj)
 
-  test "round-trips GetAccountsAccountIdWorkersObservabilityAgentsSessionsConversationIdRunsResponse":
-    let obj = cloudflare.GetAccountsAccountIdWorkersObservabilityAgentsSessionsConversationIdRunsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkersObservabilityAgentsSessionsConversationIdRunsResponse)) == openjson.toJson(obj)
+  test "round-trips WorkersObservabilityAgentResultInfo":
+    let obj = newWorkersObservabilityAgentResultInfo()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.WorkersObservabilityAgentResultInfo)) == openjson.toJson(obj)
+
+  test "round-trips GetAccountsAccountIdWorkersObservabilityAgentsTracesResponse":
+    let obj = cloudflare.GetAccountsAccountIdWorkersObservabilityAgentsTracesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkersObservabilityAgentsTracesResponse)) == openjson.toJson(obj)
+
+  test "round-trips GetAccountsAccountIdWorkersObservabilityAgentsTracesTraceIdResponse":
+    let obj = cloudflare.GetAccountsAccountIdWorkersObservabilityAgentsTracesTraceIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkersObservabilityAgentsTracesTraceIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips GetAccountsAccountIdWorkersObservabilityAgentsTracesTraceIdEventsResponse":
+    let obj = cloudflare.GetAccountsAccountIdWorkersObservabilityAgentsTracesTraceIdEventsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkersObservabilityAgentsTracesTraceIdEventsResponse)) == openjson.toJson(obj)
 
 suite "agents endpoints":
-  test "GET /accounts/{account_id}/workers/observability/agents/sessions":
+  test "GET /accounts/{account_id}/workers/observability/agents/traces":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersObservabilityAgentsSessions("test", "test", 1, 1, "test", 1)
+    discard waitFor client.getAccountsAccountIdWorkersObservabilityAgentsTraces("test", "test", 1, 1, 1, "test")
 
-  test "GET /accounts/{account_id}/workers/observability/agents/sessions/{conversationId}/runs":
+  test "GET /accounts/{account_id}/workers/observability/agents/traces/{traceId}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdWorkersObservabilityAgentsSessionsConversationIdRuns("test", "test", "test", 1, 1, "test", 1)
+    discard waitFor client.getAccountsAccountIdWorkersObservabilityAgentsTracesTraceId("test", 1, 1)
+
+  test "GET /accounts/{account_id}/workers/observability/agents/traces/{traceId}/events":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdWorkersObservabilityAgentsTracesTraceIdEvents("test", 1, 1, 1, "test")
 

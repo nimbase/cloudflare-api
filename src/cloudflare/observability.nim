@@ -6,8 +6,14 @@
 # License: MIT
 import std/[strformat, options, json]
 import ./private/metaclient
+import ./private/types
 
 type
+  GetAccountsAccountIdObservabilityUsageLimitResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: types.WorkersObservabilityUsageLimit
+    success: bool
   GetZonesZoneIdObservabilityTracingRulesResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
@@ -47,6 +53,20 @@ type
     messages: seq[JsonNode]
     result: JsonNode
     success: bool
+
+proc getAccountsAccountIdObservabilityUsageLimit*(client: CloudflareClient,
+                                                  accountId: string): Future[GetAccountsAccountIdObservabilityUsageLimitResponse] {.async.} =
+  ## Whether Workers Observability is keeping fewer of the account's events, usually
+  ## because it passed its daily limit, and what that limit is. Daily limits reset at
+  ## 00:00 UTC; paid accounts are brought back in stages over the following hours.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/observability/usage/limit")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdObservabilityUsageLimitResponse)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdObservabilityTracingRules*(client: CloudflareClient,
                                               zoneId: string): Future[GetZonesZoneIdObservabilityTracingRulesResponse] {.async.} =

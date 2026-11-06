@@ -11,7 +11,7 @@ import ./private/types
 proc getUserLoadBalancingAnalyticsEvents*(client: CloudflareClient,
                                           until: types.LoadBalancingUntil = default(types.LoadBalancingUntil),
                                           poolName: types.LoadBalancingPoolName = default(types.LoadBalancingPoolName),
-                                          originHealthy: types.LoadBalancingOriginHealthy2 = default(types.LoadBalancingOriginHealthy2),
+                                          originHealthy: types.LoadBalancingOriginHealthy = default(types.LoadBalancingOriginHealthy),
                                           poolId: types.LoadBalancingSchemasIdentifier = default(types.LoadBalancingSchemasIdentifier),
                                           since: string = default(string),
                                           originName: string = default(string),

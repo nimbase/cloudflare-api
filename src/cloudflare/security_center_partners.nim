@@ -43,14 +43,14 @@ proc postAccountsAccountIdSecurityCenterPartnersPartnerSettings*(client: Cloudfl
 proc getAccountsAccountIdSecurityCenterPartnersPartnerShadowZones*(client: CloudflareClient,
                                                                    accountId: types.SecurityCenterIdentifier,
                                                                    partner: Partner,
-                                                                   page: int64 = 1,
+                                                                   cursor: string = default(string),
                                                                    perPage: int64 = 25): Future[types.SecurityCenterShadowZonesResponse] {.async.} =
   ## Lists domains discovered by the selected partner that are not in the account.
   ## Baseline accounts receive the total count only; premium accounts receive
   ## paginated items and may request CSV output.
 
   var q = initOrderedTable[string, string]()
-  q["page"] = $page
+  q["cursor"] = $cursor
   q["per_page"] = $perPage
   let res = await client.httpGET(fmt"/accounts/{accountId}/security-center/partners/{partner}/shadow-zones", q)
   let body = await res.body
@@ -64,13 +64,13 @@ proc getAccountsAccountIdSecurityCenterPartnersPartnerShadowZonesDomainHosts*(cl
                                                                               accountId: types.SecurityCenterIdentifier,
                                                                               partner: Partner,
                                                                               domain: string,
-                                                                              page: int64 = 1,
+                                                                              cursor: string = default(string),
                                                                               perPage: int64 = 25): Future[types.SecurityCenterShadowHostsResponse] {.async.} =
   ## Lists hosts discovered beneath a shadow-zone domain. This endpoint is available
   ## only to premium accounts and supports JSON and CSV output.
 
   var q = initOrderedTable[string, string]()
-  q["page"] = $page
+  q["cursor"] = $cursor
   q["per_page"] = $perPage
   let res = await client.httpGET(fmt"/accounts/{accountId}/security-center/partners/{partner}/shadow-zones/{domain}/hosts", q)
   let body = await res.body
@@ -83,12 +83,12 @@ proc getAccountsAccountIdSecurityCenterPartnersPartnerShadowZonesDomainHosts*(cl
 proc getZonesZoneIdSecurityCenterPartnersPartnerShadowHosts*(client: CloudflareClient,
                                                              zoneId: types.SecurityCenterIdentifier,
                                                              partner: Partner,
-                                                             page: int64 = 1,
+                                                             cursor: string = default(string),
                                                              perPage: int64 = 25): Future[types.SecurityCenterShadowHostsResponse] {.async.} =
   ## Lists partner-discovered hosts beneath the zone that are not in the account.
 
   var q = initOrderedTable[string, string]()
-  q["page"] = $page
+  q["cursor"] = $cursor
   q["per_page"] = $perPage
   let res = await client.httpGET(fmt"/zones/{zoneId}/security-center/partners/{partner}/shadow-hosts", q)
   let body = await res.body

@@ -11,6 +11,7 @@ import ./private/types
 type
   VersionIncludeOption* = enum
     includeModules = "modules"
+    includeModulesSourcemaps = "modules,sourcemaps"
 
 
 proc getAccountsAccountIdWorkersWorkersWorkerIdVersions*(client: CloudflareClient,

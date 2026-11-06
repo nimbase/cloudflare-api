@@ -36,7 +36,7 @@ suite "previews endpoints":
   test "POST /accounts/{account_id}/workers/workers/{worker_id}/previews":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdWorkersWorkersWorkerIdPreviews("test", "test", true, true)
+    discard waitFor client.postAccountsAccountIdWorkersWorkersWorkerIdPreviews("test", "test", true)
 
   test "GET /accounts/{account_id}/workers/workers/{worker_id}/previews/{preview_id}":
     let client = initCloudflareClient("test-key")
@@ -46,7 +46,7 @@ suite "previews endpoints":
   test "PUT /accounts/{account_id}/workers/workers/{worker_id}/previews/{preview_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdWorkersWorkersWorkerIdPreviewsPreviewId("test", "test", "test", true, true)
+    discard waitFor client.putAccountsAccountIdWorkersWorkersWorkerIdPreviewsPreviewId("test", "test", "test", true)
 
   test "DELETE /accounts/{account_id}/workers/workers/{worker_id}/previews/{preview_id}":
     let client = initCloudflareClient("test-key")

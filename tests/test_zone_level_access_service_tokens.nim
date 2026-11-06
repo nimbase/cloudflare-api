@@ -27,6 +27,10 @@ suite "zone_level_access_service_tokens serialization":
     let obj = newAccessCreateResponse2()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessCreateResponse2)) == openjson.toJson(obj)
 
+  test "round-trips AccessTags":
+    let obj = newAccessTags()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessTags)) == openjson.toJson(obj)
+
 suite "zone_level_access_service_tokens endpoints":
   test "GET /zones/{zone_id}/access/service_tokens":
     let client = initCloudflareClient("test-key")

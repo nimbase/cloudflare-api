@@ -11,37 +11,37 @@ import cloudflare
 import ./common
 
 suite "credentials serialization":
-  test "round-trips VulnScannerPatchCredentialRequest":
-    let obj = newVulnScannerPatchCredentialRequest()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerPatchCredentialRequest)) == openjson.toJson(obj)
-
-  test "round-trips VulnScannerCredential":
-    let obj = newVulnScannerCredential()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerCredential)) == openjson.toJson(obj)
-
   test "round-trips VulnScannerApiResponseCommon":
     let obj = newVulnScannerApiResponseCommon()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCommon)) == openjson.toJson(obj)
-
-  test "round-trips VulnScannerApiResponseCommonFailure":
-    let obj = newVulnScannerApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCommonFailure)) == openjson.toJson(obj)
-
-  test "round-trips VulnScannerApiResponseCollection":
-    let obj = newVulnScannerApiResponseCollection()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCollection)) == openjson.toJson(obj)
-
-  test "round-trips VulnScannerEmptyResponse":
-    let obj = newVulnScannerEmptyResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerEmptyResponse)) == openjson.toJson(obj)
 
   test "round-trips VulnScannerUpdateCredentialRequest":
     let obj = newVulnScannerUpdateCredentialRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerUpdateCredentialRequest)) == openjson.toJson(obj)
 
+  test "round-trips VulnScannerPatchCredentialRequest":
+    let obj = newVulnScannerPatchCredentialRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerPatchCredentialRequest)) == openjson.toJson(obj)
+
+  test "round-trips VulnScannerEmptyResponse":
+    let obj = newVulnScannerEmptyResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerEmptyResponse)) == openjson.toJson(obj)
+
   test "round-trips VulnScannerCreateCredentialRequest":
     let obj = newVulnScannerCreateCredentialRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerCreateCredentialRequest)) == openjson.toJson(obj)
+
+  test "round-trips VulnScannerApiResponseCollection":
+    let obj = newVulnScannerApiResponseCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCollection)) == openjson.toJson(obj)
+
+  test "round-trips VulnScannerCredential":
+    let obj = newVulnScannerCredential()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerCredential)) == openjson.toJson(obj)
+
+  test "round-trips VulnScannerApiResponseCommonFailure":
+    let obj = newVulnScannerApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.VulnScannerApiResponseCommonFailure)) == openjson.toJson(obj)
 
 suite "credentials endpoints":
   test "GET /accounts/{account_id}/vuln_scanner/credential_sets/{credential_set_id}/credentials":

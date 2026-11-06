@@ -8,6 +8,11 @@ import std/[strformat]
 import ./private/metaclient
 import ./private/types
 
+type
+  SpendPoliciePeriodOption* = enum
+    periodCurrentBillingCycle = "current_billing_cycle"
+    periodAll = "all"
+
 
 proc getAccountsAccountIdBillingSpendPolicies*(client: CloudflareClient,
                                                accountId: types.BillingSpendPoliciesIdentifier): Future[types.BillingSpendPoliciesPolicyListResponse] {.async.} =
@@ -40,15 +45,25 @@ proc postAccountsAccountIdBillingSpendPolicies*(client: CloudflareClient,
 proc getAccountsAccountIdBillingSpendPoliciesActivity*(client: CloudflareClient,
                                                        accountId: types.BillingSpendPoliciesIdentifier,
                                                        limit: int64 = 50,
+                                                       period: SpendPoliciePeriodOption = periodCurrentBillingCycle,
                                                        cursor: string = default(string)): Future[types.BillingSpendPoliciesPolicyActivityResponse] {.async.} =
   ## Returns configuration history from immutable policy revisions for the account,
   ## including deleted policies. Entries contain before/after values and verified
   ## actor attribution. Pages use descending revision IDs, not event or commit order;
   ## refresh the first page for new entries. This cursor is not an incremental
-  ## consumer checkpoint.
+  ## consumer checkpoint. Defaults to `period=current_billing_cycle`: each revision's
+  ## timestamp must be within its product's current subscription cycle (inclusive
+  ## start, exclusive end). Each product's cycle is resolved independently from
+  ## canonical aggregates, including for disabled or deleted policies. Set
+  ## `period=all` for history across cycles. Filtering happens before pagination. No
+  ## current cycles returns an empty page; unavailable or disabled cycle resolution
+  ## returns `503` with code `1013`. Cursors pin resolved cycle bounds across pages
+  ## and must be used with the same period selection. Cursors obtained before this
+  ## filter was introduced must be refreshed.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
+  q["period"] = $period
   q["cursor"] = $cursor
   let res = await client.httpGET(fmt"/accounts/{accountId}/billing/spend-policies/activity", q)
   let body = await res.body
@@ -107,16 +122,23 @@ proc deleteAccountsAccountIdBillingSpendPoliciesPolicyId*(client: CloudflareClie
 proc getAccountsAccountIdBillingSpendPoliciesPolicyIdAudit*(client: CloudflareClient,
                                                             accountId: types.BillingSpendPoliciesIdentifier,
                                                             policyId: types.BillingSpendPoliciesPolicyId,
-                                                            limit: int64 = 50): Future[types.BillingSpendPoliciesPolicyAuditResponse] {.async.} =
-  ## Returns the policy's evaluation history, newest first. At most one entry is
-  ## recorded per trigger (`approaching_limit` or `limit_reached`), policy version
-  ## and billing period, so a policy update can record a new entry without any change
-  ## in balance. Disabled policies still return their history; deleted policies
-  ## return `404`. There is no pagination: use `limit` to set how many entries come
-  ## back.
+                                                            limit: int64 = 50,
+                                                            period: SpendPoliciePeriodOption = periodCurrentBillingCycle): Future[types.BillingSpendPoliciesPolicyAuditResponse] {.async.} =
+  ## Returns the policy's evaluation history, newest first. At most one
+  ## threshold-crossing entry (`limit_reached`) is recorded per policy version and
+  ## billing period, so a policy update can record a new entry without any change in
+  ## balance. Disabled policies still return their history; deleted policies return
+  ## `404`. There is no pagination: use `limit` to set how many entries come back.
+  ## Defaults to `period=current_billing_cycle`, resolved from the product's
+  ## canonical aggregates, not calendar months. Crossings match their recorded
+  ## billing-period bounds, even if recorded late. Set `period=all` for history
+  ## across cycles. Filtering happens before LIMIT. No current cycle returns an empty
+  ## array; unavailable or disabled cycle resolution returns `503` with code `1013`,
+  ## never an empty success.
 
   var q = initOrderedTable[string, string]()
   q["limit"] = $limit
+  q["period"] = $period
   let res = await client.httpGET(fmt"/accounts/{accountId}/billing/spend-policies/{policyId}/audit", q)
   let body = await res.body
   case res.code

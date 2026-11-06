@@ -29,7 +29,8 @@ proc getAccountsAccountIdAccessUserPopulations*(client: CloudflareClient,
 proc postAccountsAccountIdAccessUserPopulations*(client: CloudflareClient,
                                                  accountId: types.AccessIdentifier,
                                                  body: types.AccessUserPopulationRequest): Future[types.AccessSingleResponse5] {.async.} =
-  ## Creates a user population in an account.
+  ## Creates a user population in an account. Requires permission to update the
+  ## account's Access organization.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/access/user_populations", body)
   let body = await res.body

@@ -15,12 +15,14 @@ type
     enabled: Option[types.AccessEnabled]
     name: types.AccessName2
     previous_client_secret_expires_at: Option[types.AccessPreviousClientSecretExpiresAt]
+    tags: Option[types.AccessTags]
   PutAccountsAccountIdAccessServiceTokensServiceTokenIdRequest = object
     client_secret_version: Option[types.AccessClientSecretVersion]
     duration: Option[types.AccessDuration]
     enabled: Option[types.AccessEnabled]
     name: Option[types.AccessName2]
     previous_client_secret_expires_at: Option[types.AccessPreviousClientSecretExpiresAt]
+    tags: Option[types.AccessTags]
   PostAccountsAccountIdAccessServiceTokensServiceTokenIdRotateRequest = object
     previous_client_secret_expires_at: Option[string]
 

@@ -44,12 +44,12 @@ suite "preview_deployments endpoints":
   test "POST /accounts/{account_id}/workers/workers/{worker_id}/previews/{preview_id}/deployments":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdWorkersWorkersWorkerIdPreviewsPreviewIdDeployments("test", "test", "test", true, newWorkersPreviewDeploymentRequest())
+    discard waitFor client.postAccountsAccountIdWorkersWorkersWorkerIdPreviewsPreviewIdDeployments("test", "test", "test", newWorkersPreviewDeploymentRequest())
 
   test "PATCH /accounts/{account_id}/workers/workers/{worker_id}/previews/{preview_id}/deployments/latest":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchAccountsAccountIdWorkersWorkersWorkerIdPreviewsPreviewIdDeploymentsLatest("test", "test", "test", true, newWorkersPreviewDeploymentRequest())
+    discard waitFor client.patchAccountsAccountIdWorkersWorkersWorkerIdPreviewsPreviewIdDeploymentsLatest("test", "test", "test", newWorkersPreviewDeploymentRequest())
 
   test "GET /accounts/{account_id}/workers/workers/{worker_id}/previews/{preview_id}/deployments/{deployment_id}":
     let client = initCloudflareClient("test-key")
