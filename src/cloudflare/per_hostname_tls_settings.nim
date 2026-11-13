@@ -14,10 +14,19 @@ type
 
 proc getZonesZoneIdHostnamesSettingsSettingId*(client: CloudflareClient,
                                                zoneId: types.TlsCertificatesAndHostnamesIdentifier,
-                                               settingId: types.TlsCertificatesAndHostnamesSettingId): Future[types.TlsCertificatesAndHostnamesPerHostnameSettingsResponseCollection] {.async.} =
+                                               settingId: types.TlsCertificatesAndHostnamesSettingId,
+                                               page: int64 = default(int64),
+                                               perPage: int64 = default(int64),
+                                               limit: int64 = default(int64),
+                                               offset: int64 = default(int64)): Future[types.TlsCertificatesAndHostnamesPerHostnameSettingsResponseCollection] {.async.} =
   ## List the requested TLS setting for the hostnames under this zone.
 
-  let res = await client.httpGET(fmt"/zones/{zoneId}/hostnames/settings/{settingId}")
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  q["limit"] = $limit
+  q["offset"] = $offset
+  let res = await client.httpGET(fmt"/zones/{zoneId}/hostnames/settings/{settingId}", q)
   let body = await res.body
   case res.code
   of Http200:

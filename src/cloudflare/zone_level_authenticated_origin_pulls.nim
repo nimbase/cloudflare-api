@@ -16,11 +16,20 @@ type
     enabled: types.TlsCertificatesAndHostnamesEnabled4
 
 proc getZonesZoneIdOriginTlsClientAuth*(client: CloudflareClient,
-                                        zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateResponseCollection3] {.async.} =
+                                        zoneId: types.TlsCertificatesAndHostnamesIdentifier,
+                                        page: int64 = default(int64),
+                                        perPage: int64 = default(int64),
+                                        limit: int64 = default(int64),
+                                        offset: int64 = default(int64)): Future[types.TlsCertificatesAndHostnamesCertificateResponseCollection3] {.async.} =
   ## Lists all client certificates configured for zone-level authenticated origin
   ## pulls.
 
-  let res = await client.httpGET(fmt"/zones/{zoneId}/origin_tls_client_auth")
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  q["limit"] = $limit
+  q["offset"] = $offset
+  let res = await client.httpGET(fmt"/zones/{zoneId}/origin_tls_client_auth", q)
   let body = await res.body
   case res.code
   of Http200:

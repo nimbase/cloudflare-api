@@ -11,13 +11,13 @@ import cloudflare
 import ./common
 
 suite "zone_level_access_short_lived_certificate_cas serialization":
+  test "round-trips AccessIdResponse2":
+    let obj = newAccessIdResponse2()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessIdResponse2)) == openjson.toJson(obj)
+
   test "round-trips AccessSingleResponse20":
     let obj = newAccessSingleResponse20()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessSingleResponse20)) == openjson.toJson(obj)
-
-  test "round-trips AccessIdResponse5":
-    let obj = newAccessIdResponse5()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AccessIdResponse5)) == openjson.toJson(obj)
 
   test "round-trips AccessApiResponseCommonFailure":
     let obj = newAccessApiResponseCommonFailure()

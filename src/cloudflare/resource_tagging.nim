@@ -44,10 +44,16 @@ proc putAccountsAccountIdTags*(client: CloudflareClient,
 
 proc deleteAccountsAccountIdTags*(client: CloudflareClient,
                                   accountId: types.ResourceTaggingAccountId,
-                                  body: types.ResourceTaggingDeleteTagsRequestAccountLevel): Future[AsyncResponse] {.async.} =
+                                  resourceId: types.ResourceTaggingResourceId,
+                                  resourceType: types.ResourceTaggingAccountResourceType,
+                                  workerId: types.ResourceTaggingWorkerId = default(types.ResourceTaggingWorkerId)): Future[AsyncResponse] {.async.} =
   ## Removes all tags from a specific account-level resource.
 
-  let res = await client.httpDELETE(fmt"/accounts/{accountId}/tags", body)
+  var q = initOrderedTable[string, string]()
+  q["resource_id"] = $resourceId
+  q["resource_type"] = $resourceType
+  q["worker_id"] = $workerId
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/tags", q)
   return res
 
 proc getAccountsAccountIdTagsKeys*(client: CloudflareClient,
@@ -162,8 +168,14 @@ proc putZonesZoneIdTags*(client: CloudflareClient,
 
 proc deleteZonesZoneIdTags*(client: CloudflareClient,
                             zoneId: types.ResourceTaggingZoneId,
-                            body: types.ResourceTaggingDeleteTagsRequestZoneLevel): Future[AsyncResponse] {.async.} =
+                            resourceId: types.ResourceTaggingResourceId,
+                            resourceType: types.ResourceTaggingZoneResourceType,
+                            accessApplicationId: types.ResourceTaggingAccessApplicationId = default(types.ResourceTaggingAccessApplicationId)): Future[AsyncResponse] {.async.} =
   ## Removes all tags from a specific zone-level resource.
 
-  let res = await client.httpDELETE(fmt"/zones/{zoneId}/tags", body)
+  var q = initOrderedTable[string, string]()
+  q["resource_id"] = $resourceId
+  q["resource_type"] = $resourceType
+  q["access_application_id"] = $accessApplicationId
+  let res = await client.httpDELETE(fmt"/zones/{zoneId}/tags", q)
   return res

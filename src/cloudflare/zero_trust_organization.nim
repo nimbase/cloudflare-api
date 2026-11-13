@@ -50,6 +50,27 @@ type
     user_seat_expiration_inactive_time: Option[types.AccessUserSeatExpirationInactiveTime]
     warp_auth_non_browser_401: Option[types.AccessWarpAuthNonBrowser401]
     warp_auth_session_duration: Option[types.AccessWarpAuthSessionDuration]
+  PatchAccountsAccountIdAccessOrganizationsRequest = object
+    allow_authenticate_via_warp: Option[types.AccessAllowAuthenticateViaWarp]
+    auth_domain: Option[types.AccessAuthDomain]
+    auto_redirect_to_identity: Option[types.AccessAutoRedirectToIdentity]
+    custom_pages: Option[types.AccessCustomPages]
+    deny_unmatched_requests: Option[types.AccessDenyUnmatchedRequests]
+    deny_unmatched_requests_exempted_zone_names: Option[types.AccessDenyUnmatchedRequestsExemptedZoneNames]
+    disable_end_user_app_creation: Option[types.AccessDisableEndUserAppCreation]
+    is_ui_read_only: Option[types.AccessIsUiReadOnly]
+    login_design: Option[types.AccessLoginDesign]
+    mfa_config: Option[types.AccessOrgMfaConfig]
+    mfa_piv_key_requirements: Option[types.AccessMfaPivKeyRequirements]
+    mfa_required_for_all_apps: Option[types.AccessMfaRequiredForAllApps]
+    name: Option[types.AccessName]
+    service_token_inactivity: Option[types.AccessServiceTokenInactivity]
+    session_duration: Option[types.AccessSessionDuration]
+    strict_service_token_auth: Option[types.AccessStrictServiceTokenAuth]
+    ui_read_only_toggle_reason: Option[types.AccessUiReadOnlyToggleReason]
+    user_seat_expiration_inactive_time: Option[types.AccessUserSeatExpirationInactiveTime]
+    warp_auth_non_browser_401: Option[types.AccessWarpAuthNonBrowser401]
+    warp_auth_session_duration: Option[types.AccessWarpAuthSessionDuration]
   PutAccountsAccountIdAccessOrganizationsDohRequest = object
     doh_jwt_duration: Option[types.AccessDohJwtDuration]
     service_token_id: Option[string]
@@ -96,6 +117,21 @@ proc putAccountsAccountIdAccessOrganizations*(client: CloudflareClient,
   ## Updates the configuration for your Zero Trust organization.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/access/organizations", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessSingleResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdAccessOrganizations*(client: CloudflareClient,
+                                                accountId: types.AccessIdentifier,
+                                                body: PatchAccountsAccountIdAccessOrganizationsRequest): Future[types.AccessSingleResponse] {.async.} =
+  ## Updates only the fields included in the request body. Omitted fields keep their
+  ## current values. To clear `mfa_config` or `mfa_piv_key_requirements`, send the
+  ## field as `{}`.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/access/organizations", body)
   let body = await res.body
   case res.code
   of Http200:

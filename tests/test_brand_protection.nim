@@ -139,6 +139,14 @@ suite "brand_protection serialization":
     let obj = cloudflare.DeleteAccountsAccountIdCloudforceOneV2BrandProtectionTakedownNoticesNoticeIdLettersLetterIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdCloudforceOneV2BrandProtectionTakedownNoticesNoticeIdLettersLetterIdResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdCloudforceOneV2BrandProtectionUrlInfoResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2BrandProtectionUrlInfoResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneV2BrandProtectionUrlInfoResponse)) == openjson.toJson(obj)
+
+  test "round-trips PostAccountsAccountIdCloudforceOneV2BrandProtectionUrlSubmitResponse":
+    let obj = cloudflare.PostAccountsAccountIdCloudforceOneV2BrandProtectionUrlSubmitResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneV2BrandProtectionUrlSubmitResponse)) == openjson.toJson(obj)
+
 suite "brand_protection endpoints":
   test "GET /accounts/{account_id}/brand-protection/alerts":
     let client = initCloudflareClient("test-key")
@@ -243,7 +251,7 @@ suite "brand_protection endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/v2/brand-protection/domain/matches":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatches("test", "test", "test", @["test"], "test", "test", "test", orderByDomain, orderAsc)
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatches("test", "test", "test", @["test"], "test", "test", "test", qualityHigh, orderByDomain, orderAsc)
 
   test "GET /accounts/{account_id}/cloudforce-one/v2/brand-protection/domain/queries":
     let client = initCloudflareClient("test-key")
@@ -339,6 +347,16 @@ suite "brand_protection endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdCloudforceOneV2BrandProtectionTotalQueries("test")
+
+  test "GET /accounts/{account_id}/cloudforce-one/v2/brand-protection/url/info":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2BrandProtectionUrlInfo("test", "test", "test")
+
+  test "POST /accounts/{account_id}/cloudforce-one/v2/brand-protection/url/submit":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdCloudforceOneV2BrandProtectionUrlSubmit("test", "test")
 
   test "POST /internal/submit":
     let client = initCloudflareClient("test-key")

@@ -12,7 +12,7 @@ import ./private/types
 proc getZonesZoneIdFirewallPayloadLoggingKey*(client: CloudflareClient,
                                               zoneId: types.FirewallIdentifier): Future[types.FirewallPayloadLoggingKeyResponseSingle] {.async.} =
   ## Fetches the public key that payload logging uses to encrypt matched payloads for
-  ## the zone.
+  ## the zone
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/firewall/payload_logging/key")
   let body = await res.body

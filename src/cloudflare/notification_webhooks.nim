@@ -15,8 +15,6 @@ type
     url: types.AaaUrl
   PutAccountsAccountIdAlertingV3DestinationsWebhooksWebhookIdRequest = object
     name: types.AaaComponentsSchemasName
-    secret: Option[types.AaaSecret]
-    url: types.AaaUrl
 
 proc getAccountsAccountIdAlertingV3DestinationsWebhooks*(client: CloudflareClient,
                                                          accountId: types.AaaAccountId): Future[types.AaaWebhooksComponentsSchemasResponseCollection] {.async.} =
@@ -60,7 +58,8 @@ proc putAccountsAccountIdAlertingV3DestinationsWebhooksWebhookId*(client: Cloudf
                                                                   webhookId: types.AaaWebhookId,
                                                                   accountId: types.AaaAccountId,
                                                                   body: PutAccountsAccountIdAlertingV3DestinationsWebhooksWebhookIdRequest): Future[types.AaaIdResponse] {.async.} =
-  ## Update a webhook destination.
+  ## Update a webhook destination. Only `name` can be updated. `url` and `secret` are
+  ## immutable; to change them, delete the webhook and create a new one.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/alerting/v3/destinations/webhooks/{webhookId}", body)
   let body = await res.body

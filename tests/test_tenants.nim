@@ -15,10 +15,6 @@ suite "tenants serialization":
     let obj = newOrganizationsApiV4ErrorResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiV4ErrorResponse)) == openjson.toJson(obj)
 
-  test "round-trips OrganizationsApiAccountListResultInfo":
-    let obj = newOrganizationsApiAccountListResultInfo()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiAccountListResultInfo)) == openjson.toJson(obj)
-
   test "round-trips OrganizationsApiLegacyAccount":
     let obj = newOrganizationsApiLegacyAccount()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiLegacyAccount)) == openjson.toJson(obj)
@@ -26,6 +22,10 @@ suite "tenants serialization":
   test "round-trips OrganizationsApiV4Message":
     let obj = newOrganizationsApiV4Message()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiV4Message)) == openjson.toJson(obj)
+
+  test "round-trips OrganizationsApiPageTokenResultInfo":
+    let obj = newOrganizationsApiPageTokenResultInfo()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiPageTokenResultInfo)) == openjson.toJson(obj)
 
   test "round-trips GetTenantsTenantIdAccountsResponse":
     let obj = cloudflare.GetTenantsTenantIdAccountsResponse()
@@ -35,5 +35,5 @@ suite "tenants endpoints":
   test "GET /tenants/{tenant_id}/accounts":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getTenantsTenantIdAccounts("test", "test", "test", "test", "test", "test", "test", "test", "test", statusActive, orderByAccountName, directionAsc, true, 1, 1, "test", 1)
+    discard waitFor client.getTenantsTenantIdAccounts("test", "test", "test", "test", "test", "test", "test", "test", "test", statusActive, orderByAccountName, directionAsc, true, "test", 1)
 

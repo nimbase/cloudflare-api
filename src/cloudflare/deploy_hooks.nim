@@ -11,7 +11,7 @@ import ./private/types
 
 proc getAccountsAccountIdBuildsWorkersScriptNameDeployHooks*(client: CloudflareClient,
                                                              accountId: types.BuildsAccountId,
-                                                             scriptName: types.BuildsScriptName): Future[JsonNode] {.async.} =
+                                                             scriptName: string): Future[JsonNode] {.async.} =
   ## List the branch-specific deploy hooks configured for a Worker.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/builds/workers/{scriptName}/deploy_hooks")
@@ -24,7 +24,7 @@ proc getAccountsAccountIdBuildsWorkersScriptNameDeployHooks*(client: CloudflareC
 
 proc postAccountsAccountIdBuildsWorkersScriptNameDeployHooks*(client: CloudflareClient,
                                                               accountId: types.BuildsAccountId,
-                                                              scriptName: types.BuildsScriptName,
+                                                              scriptName: string,
                                                               body: types.BuildsCreateDeployHookRequest): Future[JsonNode] {.async.} =
   ## Create an HTTP hook that starts a build for a selected Worker branch.
 
@@ -38,7 +38,7 @@ proc postAccountsAccountIdBuildsWorkersScriptNameDeployHooks*(client: Cloudflare
 
 proc getAccountsAccountIdBuildsWorkersScriptNameDeployHooksDeployHookUuid*(client: CloudflareClient,
                                                                            accountId: types.BuildsAccountId,
-                                                                           scriptName: types.BuildsScriptName,
+                                                                           scriptName: string,
                                                                            deployHookUuid: types.BuildsDeployHookUuid): Future[JsonNode] {.async.} =
   ## Retrieve the name, branch, Worker identifier, and timestamps for a deploy hook.
 
@@ -52,7 +52,7 @@ proc getAccountsAccountIdBuildsWorkersScriptNameDeployHooksDeployHookUuid*(clien
 
 proc putAccountsAccountIdBuildsWorkersScriptNameDeployHooksDeployHookUuid*(client: CloudflareClient,
                                                                            accountId: types.BuildsAccountId,
-                                                                           scriptName: types.BuildsScriptName,
+                                                                           scriptName: string,
                                                                            deployHookUuid: types.BuildsDeployHookUuid,
                                                                            body: types.BuildsCreateDeployHookRequest): Future[JsonNode] {.async.} =
   ## Replace the name and target branch for a deploy hook.
@@ -67,7 +67,7 @@ proc putAccountsAccountIdBuildsWorkersScriptNameDeployHooksDeployHookUuid*(clien
 
 proc deleteAccountsAccountIdBuildsWorkersScriptNameDeployHooksDeployHookUuid*(client: CloudflareClient,
                                                                               accountId: types.BuildsAccountId,
-                                                                              scriptName: types.BuildsScriptName,
+                                                                              scriptName: string,
                                                                               deployHookUuid: types.BuildsDeployHookUuid): Future[JsonNode] {.async.} =
   ## Delete a deploy hook so its UUID can no longer start builds.
 

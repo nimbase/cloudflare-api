@@ -11,10 +11,6 @@ import cloudflare
 import ./common
 
 suite "resource_tagging serialization":
-  test "round-trips ResourceTaggingDeleteTagsRequestZoneLevel":
-    let obj = newResourceTaggingDeleteTagsRequestZoneLevel()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceTaggingDeleteTagsRequestZoneLevel)) == openjson.toJson(obj)
-
   test "round-trips ResourceTaggingAccountId":
     let obj = newResourceTaggingAccountId()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceTaggingAccountId)) == openjson.toJson(obj)
@@ -26,10 +22,6 @@ suite "resource_tagging serialization":
   test "round-trips ResourceTaggingApiResponseCommonFailure":
     let obj = newResourceTaggingApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceTaggingApiResponseCommonFailure)) == openjson.toJson(obj)
-
-  test "round-trips ResourceTaggingDeleteTagsRequestAccountLevel":
-    let obj = newResourceTaggingDeleteTagsRequestAccountLevel()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ResourceTaggingDeleteTagsRequestAccountLevel)) == openjson.toJson(obj)
 
   test "round-trips ResourceTaggingTagValuesResponseCollection":
     let obj = newResourceTaggingTagValuesResponseCollection()
@@ -61,11 +53,6 @@ suite "resource_tagging endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.putAccountsAccountIdTags(newResourceTaggingAccountId(), newResourceTaggingSetTagsRequestAccountLevel())
 
-  test "DELETE /accounts/{account_id}/tags":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteAccountsAccountIdTags(newResourceTaggingAccountId(), newResourceTaggingDeleteTagsRequestAccountLevel())
-
   test "GET /accounts/{account_id}/tags/keys":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -85,9 +72,4 @@ suite "resource_tagging endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.putZonesZoneIdTags("test", newResourceTaggingSetTagsRequestZoneLevel())
-
-  test "DELETE /zones/{zone_id}/tags":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.deleteZonesZoneIdTags("test", newResourceTaggingDeleteTagsRequestZoneLevel())
 

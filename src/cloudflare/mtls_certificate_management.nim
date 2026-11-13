@@ -17,6 +17,10 @@ type
 
 proc getAccountsAccountIdMtlsCertificates*(client: CloudflareClient,
                                            accountId: types.TlsCertificatesAndHostnamesIdentifier,
+                                           page: int64 = default(int64),
+                                           perPage: int64 = default(int64),
+                                           limit: int64 = default(int64),
+                                           offset: int64 = default(int64),
                                            `type`: seq[string] = default(seq[string])): Future[types.TlsCertificatesAndHostnamesCertificateResponseCollection5] {.async.} =
   ## Lists all mTLS certificates uploaded to your account, such as Bring Your Own CA
   ## (BYO-CA) for mTLS. To list certificates issued by the Cloudflare managed CA, use
@@ -24,6 +28,10 @@ proc getAccountsAccountIdMtlsCertificates*(client: CloudflareClient,
   ## endpoint](/api/resources/client_certificates/methods/list/).
 
   var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  q["limit"] = $limit
+  q["offset"] = $offset
   q["type"] = $`type`
   let res = await client.httpGET(fmt"/accounts/{accountId}/mtls_certificates", q)
   let body = await res.body

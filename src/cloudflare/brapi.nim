@@ -352,6 +352,25 @@ type
     errors: seq[JsonNode]
     success: bool
       ## Response status.
+  PostAccountsAccountIdBrowserRenderingScriptRequest = object
+    code: string
+    library: Option[string]
+    timeout: Option[int64]
+  PostAccountsAccountIdBrowserRenderingScriptResponse* = object
+    result: JsonNode
+      ## The script's return value, or null when it returned nothing. Arrays nested
+      ## inside arrays are also returned, but this schema does not describe them.
+    success: bool
+  PostAccountsAccountIdBrowserRenderingScriptSessionIdRequest = object
+    code: string
+    library: Option[string]
+    target_id: Option[string]
+    timeout: Option[int64]
+  PostAccountsAccountIdBrowserRenderingScriptSessionIdResponse* = object
+    result: JsonNode
+      ## The script's return value, or null when it returned nothing. Arrays nested
+      ## inside arrays are also returned, but this schema does not describe them.
+    success: bool
   PostAccountsAccountIdBrowserRenderingSnapshotRequest = object
     action_timeout: Option[float64]
     add_script_tag: Option[seq[JsonNode]]
@@ -828,6 +847,46 @@ proc postAccountsAccountIdBrowserRenderingScreenshot*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, PostAccountsAccountIdBrowserRenderingScreenshotResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdBrowserRenderingScript*(client: CloudflareClient,
+                                                  accountId: string,
+                                                  keepAlive: float64 = default(float64),
+                                                  lab: bool = false,
+                                                  recording: bool = false,
+                                                  browser: BrapiBrowserOption = browserKitesurf,
+                                                  body: PostAccountsAccountIdBrowserRenderingScriptRequest): Future[PostAccountsAccountIdBrowserRenderingScriptResponse] {.async.} =
+  ## Acquires a browser session and runs the provided code in it. The session stays
+  ## open for reuse; close it with `DELETE /devtools/browser/:sessionId` or
+  ## `browser.close()`, otherwise it ends at the idle timeout.
+
+  var q = initOrderedTable[string, string]()
+  q["keep_alive"] = $keepAlive
+  q["lab"] = $lab
+  q["recording"] = $recording
+  q["browser"] = $browser
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/browser-rendering/script", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdBrowserRenderingScriptResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdBrowserRenderingScriptSessionId*(client: CloudflareClient,
+                                                           accountId: string,
+                                                           sessionId: string,
+                                                           body: PostAccountsAccountIdBrowserRenderingScriptSessionIdRequest): Future[PostAccountsAccountIdBrowserRenderingScriptSessionIdResponse] {.async.} =
+  ## Runs the provided code in an existing browser session. The session stays open;
+  ## close it with `DELETE /devtools/browser/:sessionId` or `browser.close()`,
+  ## otherwise it ends at the idle timeout.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/browser-rendering/script/{sessionId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdBrowserRenderingScriptSessionIdResponse)
   else:
     raise newException(CloudflareClientError, body)
 

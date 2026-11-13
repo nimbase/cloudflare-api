@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "workers_pipelines_other serialization":
+  test "round-trips CloudflarePipelinesPipelineExtended":
+    let obj = newCloudflarePipelinesPipelineExtended()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudflarePipelinesPipelineExtended)) == openjson.toJson(obj)
+
   test "round-trips CloudflarePipelinesWorkersPipelinesPipeline":
     let obj = newCloudflarePipelinesWorkersPipelinesPipeline()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudflarePipelinesWorkersPipelinesPipeline)) == openjson.toJson(obj)
@@ -22,6 +26,10 @@ suite "workers_pipelines_other serialization":
   test "round-trips CloudflarePipelinesFormat":
     let obj = newCloudflarePipelinesFormat()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudflarePipelinesFormat)) == openjson.toJson(obj)
+
+  test "round-trips CloudflarePipelinesSink":
+    let obj = newCloudflarePipelinesSink()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudflarePipelinesSink)) == openjson.toJson(obj)
 
   test "round-trips CloudflarePipelinesPipelineGraph":
     let obj = newCloudflarePipelinesPipelineGraph()
@@ -55,6 +63,10 @@ suite "workers_pipelines_other serialization":
     let obj = cloudflare.DeleteAccountsAccountIdPipelinesV1PipelinesPipelineIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdPipelinesV1PipelinesPipelineIdResponse)) == openjson.toJson(obj)
 
+  test "round-trips PostAccountsAccountIdPipelinesV1PipelinesPipelineIdUpdateTablesResponse":
+    let obj = cloudflare.PostAccountsAccountIdPipelinesV1PipelinesPipelineIdUpdateTablesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdPipelinesV1PipelinesPipelineIdUpdateTablesResponse)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdPipelinesV1SinksResponse":
     let obj = cloudflare.GetAccountsAccountIdPipelinesV1SinksResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdPipelinesV1SinksResponse)) == openjson.toJson(obj)
@@ -70,6 +82,10 @@ suite "workers_pipelines_other serialization":
   test "round-trips DeleteAccountsAccountIdPipelinesV1SinksSinkIdResponse":
     let obj = cloudflare.DeleteAccountsAccountIdPipelinesV1SinksSinkIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdPipelinesV1SinksSinkIdResponse)) == openjson.toJson(obj)
+
+  test "round-trips PatchAccountsAccountIdPipelinesV1SinksSinkIdResponse":
+    let obj = cloudflare.PatchAccountsAccountIdPipelinesV1SinksSinkIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdPipelinesV1SinksSinkIdResponse)) == openjson.toJson(obj)
 
   test "round-trips GetAccountsAccountIdPipelinesV1StreamsResponse":
     let obj = cloudflare.GetAccountsAccountIdPipelinesV1StreamsResponse()
@@ -123,6 +139,11 @@ suite "workers_pipelines_other endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdPipelinesV1PipelinesPipelineId("test", "test")
+
+  test "POST /accounts/{account_id}/pipelines/v1/pipelines/{pipeline_id}/update_tables":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdPipelinesV1PipelinesPipelineIdUpdateTables("test", "test")
 
   test "GET /accounts/{account_id}/pipelines/v1/sinks":
     let client = initCloudflareClient("test-key")

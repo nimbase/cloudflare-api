@@ -62,11 +62,20 @@ proc putZonesZoneIdOriginTlsClientAuthHostnames*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdOriginTlsClientAuthHostnamesCertificates*(client: CloudflareClient,
-                                                             zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCertificateResponseCollection4] {.async.} =
+                                                             zoneId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                             page: int64 = default(int64),
+                                                             perPage: int64 = default(int64),
+                                                             limit: int64 = default(int64),
+                                                             offset: int64 = default(int64)): Future[types.TlsCertificatesAndHostnamesCertificateResponseCollection4] {.async.} =
   ## Lists all client certificates configured for per-hostname authenticated origin
   ## pulls on the zone.
 
-  let res = await client.httpGET(fmt"/zones/{zoneId}/origin_tls_client_auth/hostnames/certificates")
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  q["limit"] = $limit
+  q["offset"] = $offset
+  let res = await client.httpGET(fmt"/zones/{zoneId}/origin_tls_client_auth/hostnames/certificates", q)
   let body = await res.body
   case res.code
   of Http200:

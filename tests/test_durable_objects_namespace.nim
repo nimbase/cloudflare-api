@@ -41,6 +41,11 @@ suite "durable_objects_namespace endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdWorkersDurableObjectsNamespaces("test", 1, 1)
 
+  test "GET /accounts/{account_id}/workers/durable_objects/namespaces/{id}/export":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdWorkersDurableObjectsNamespacesIdExport("test", "test", "test", "test", jurisdictionFedramp)
+
   test "GET /accounts/{account_id}/workers/durable_objects/namespaces/{id}/objects":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())

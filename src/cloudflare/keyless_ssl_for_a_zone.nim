@@ -24,10 +24,14 @@ type
     tunnel: Option[types.TlsCertificatesAndHostnamesKeylessTunnel]
 
 proc getZonesZoneIdKeylessCertificates*(client: CloudflareClient,
-                                        zoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesKeylessResponseCollection] {.async.} =
+                                        zoneId: types.TlsCertificatesAndHostnamesIdentifier,
+                                        page: int64 = 1, perPage: int64 = 20): Future[types.TlsCertificatesAndHostnamesKeylessResponseCollection] {.async.} =
   ## List all Keyless SSL configurations for a given zone.
 
-  let res = await client.httpGET(fmt"/zones/{zoneId}/keyless_certificates")
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/zones/{zoneId}/keyless_certificates", q)
   let body = await res.body
   case res.code
   of Http200:

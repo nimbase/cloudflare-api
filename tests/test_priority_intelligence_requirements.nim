@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "priority_intelligence_requirements serialization":
+  test "round-trips CloudforceOneEventsPirDefinition":
+    let obj = newCloudforceOneEventsPirDefinition()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneEventsPirDefinition)) == openjson.toJson(obj)
+
   test "round-trips PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateResponse":
     let obj = cloudflare.PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceFiltersGenerateResponse)) == openjson.toJson(obj)
@@ -68,6 +72,11 @@ suite "priority_intelligence_requirements endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdCloudforceOneV2PriorityIntelligenceProfile("test")
 
+  test "PUT /accounts/{account_id}/cloudforce-one/v2/priority-intelligence/profile":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.putAccountsAccountIdCloudforceOneV2PriorityIntelligenceProfile("test")
+
   test "DELETE /accounts/{account_id}/cloudforce-one/v2/priority-intelligence/profile":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -77,6 +86,11 @@ suite "priority_intelligence_requirements endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdCloudforceOneV2PriorityIntelligenceQuota("test")
+
+  test "GET /accounts/{account_id}/cloudforce-one/v2/priority-intelligence/topics":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2PriorityIntelligenceTopics("test")
 
   test "GET /accounts/{account_id}/cloudforce-one/v2/priority-intelligence/{priority_id}":
     let client = initCloudflareClient("test-key")

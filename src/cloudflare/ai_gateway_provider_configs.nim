@@ -33,6 +33,9 @@ type
   DeleteAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdResponse* = object
     result: JsonNode
     success: bool
+  PostAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdTestResponse* = object
+    result: JsonNode
+    success: bool
 
 proc getAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigs*(client: CloudflareClient,
                                                                     accountId: string,
@@ -112,5 +115,27 @@ proc deleteAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsId*(client:
   case res.code
   of Http200:
     result = fromJson(body, DeleteAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdTest*(client: CloudflareClient,
+                                                                           accountId: string,
+                                                                           gatewayId: string,
+                                                                           id: string): Future[PostAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdTestResponse] {.async.} =
+  ## Checks whether stored credentials can list models through the provider
+  ## implementation in AI Gateway. Requires AI Gateway content update permission.
+  ## Does not run inference, check credits or inference permissions, or return
+  ## provider response bodies. HTTP 401 from the model-list request is classified as
+  ## invalid, as is AWS Bedrock HTTP 403 with an UnrecognizedClientException error
+  ## type. Other failures are inconclusive, including other HTTP 400 or 403
+  ## responses; a 403 alone does not distinguish rejected credentials from
+  ## insufficient permissions. Unsupported providers or credential formats also
+  ## return an inconclusive result.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/provider_configs/{id}/test", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdTestResponse)
   else:
     raise newException(CloudflareClientError, body)

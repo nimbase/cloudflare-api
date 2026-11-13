@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "devices serialization":
+  test "round-trips TeamsDevicesSplitTunnelRequest":
+    let obj = newTeamsDevicesSplitTunnelRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesSplitTunnelRequest)) == openjson.toJson(obj)
+
   test "round-trips TeamsDevicesOverrideCodesResponse":
     let obj = newTeamsDevicesOverrideCodesResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesOverrideCodesResponse)) == openjson.toJson(obj)
@@ -26,6 +30,10 @@ suite "devices serialization":
   test "round-trips TeamsDevicesSplitTunnelIncludeResponseCollection":
     let obj = newTeamsDevicesSplitTunnelIncludeResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesSplitTunnelIncludeResponseCollection)) == openjson.toJson(obj)
+
+  test "round-trips TeamsDevicesSplitTunnelIncludeRequest":
+    let obj = newTeamsDevicesSplitTunnelIncludeRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesSplitTunnelIncludeRequest)) == openjson.toJson(obj)
 
   test "round-trips TeamsDevicesServiceModeV2":
     let obj = newTeamsDevicesServiceModeV2()
@@ -54,14 +62,6 @@ suite "devices serialization":
   test "round-trips TeamsDevicesSplitTunnelResponseCollection":
     let obj = newTeamsDevicesSplitTunnelResponseCollection()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesSplitTunnelResponseCollection)) == openjson.toJson(obj)
-
-  test "round-trips TeamsDevicesSplitTunnelInclude":
-    let obj = newTeamsDevicesSplitTunnelInclude()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesSplitTunnelInclude)) == openjson.toJson(obj)
-
-  test "round-trips TeamsDevicesSplitTunnel":
-    let obj = newTeamsDevicesSplitTunnel()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TeamsDevicesSplitTunnel)) == openjson.toJson(obj)
 
   test "round-trips TeamsDevicesDeviceResponse":
     let obj = newTeamsDevicesDeviceResponse()

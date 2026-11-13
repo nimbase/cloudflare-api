@@ -35,7 +35,7 @@ suite "keyless_ssl_for_a_zone endpoints":
   test "GET /zones/{zone_id}/keyless_certificates":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdKeylessCertificates("test")
+    discard waitFor client.getZonesZoneIdKeylessCertificates("test", 1, 1)
 
   test "GET /zones/{zone_id}/keyless_certificates/{keyless_certificate_id}":
     let client = initCloudflareClient("test-key")

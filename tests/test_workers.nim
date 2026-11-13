@@ -47,13 +47,13 @@ suite "workers serialization":
     let obj = newBuildsErrorResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsErrorResponse)) == openjson.toJson(obj)
 
-  test "round-trips BuildsUpdateWorkerRequest":
-    let obj = newBuildsUpdateWorkerRequest()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsUpdateWorkerRequest)) == openjson.toJson(obj)
-
   test "round-trips BuildsCreateBuildRequest":
     let obj = newBuildsCreateBuildRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsCreateBuildRequest)) == openjson.toJson(obj)
+
+  test "round-trips BuildsUpdateWorkerRequest":
+    let obj = newBuildsUpdateWorkerRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BuildsUpdateWorkerRequest)) == openjson.toJson(obj)
 
   test "round-trips BuildsBuildResponse":
     let obj = newBuildsBuildResponse()
@@ -102,6 +102,11 @@ suite "workers endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdBuildsWorkersExternalScriptIdBuilds("test", "test", 1, 1)
 
+  test "POST /accounts/{account_id}/builds/workers/{external_script_id}/builds":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdBuildsWorkersExternalScriptIdBuilds("test", "test", newBuildsCreateBuildRequest())
+
   test "GET /accounts/{account_id}/builds/workers/{external_script_id}/triggers":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -121,6 +126,11 @@ suite "workers endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.patchAccountsAccountIdBuildsWorkersScriptTag("test", "test", patchExistingPreviewsTrue, newBuildsUpdateWorkerRequest())
+
+  test "POST /accounts/{account_id}/builds/workers/{script_tag}/builds/{build_uuid}/retry":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdBuildsWorkersScriptTagBuildsBuildUuidRetry("test", "test", "test")
 
   test "POST /accounts/{account_id}/builds/workers/{script_tag}/migrate_to_previews":
     let client = initCloudflareClient("test-key")
@@ -151,6 +161,11 @@ suite "workers endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewIdBuilds("test", "test", "test", newBuildsCreateBuildRequest())
+
+  test "POST /accounts/{account_id}/builds/workers/{script_tag}/purge_build_cache":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdBuildsWorkersScriptTagPurgeBuildCache("test", "test")
 
   test "GET /accounts/{account_id}/workers/workers":
     let client = initCloudflareClient("test-key")

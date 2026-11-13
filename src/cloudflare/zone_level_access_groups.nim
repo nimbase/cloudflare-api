@@ -12,12 +12,12 @@ type
   PostZonesZoneIdAccessGroupsRequest = object
     exclude: Option[types.AccessExclude]
     `include`: types.AccessInclude
-    name: types.AccessName16
+    name: types.AccessName6
     require: Option[types.AccessRequire]
   PutZonesZoneIdAccessGroupsGroupIdRequest = object
     exclude: Option[types.AccessExclude]
     `include`: types.AccessInclude
-    name: types.AccessName16
+    name: types.AccessName6
     require: Option[types.AccessRequire]
 
 proc getZonesZoneIdAccessGroups*(client: CloudflareClient,

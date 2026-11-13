@@ -129,10 +129,15 @@ proc patchAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesId*(client: Cloudflar
 proc getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeployments*(client: CloudflareClient,
                                                                         accountId: string,
                                                                         gatewayId: string,
-                                                                        id: string): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeploymentsResponse] {.async.} =
+                                                                        id: string,
+                                                                        page: int64 = default(int64),
+                                                                        perPage: int64 = default(int64)): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeploymentsResponse] {.async.} =
   ## Lists the deployment history of a dynamic route.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/routes/{id}/deployments")
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/routes/{id}/deployments", q)
   let body = await res.body
   case res.code
   of Http200:
@@ -159,10 +164,15 @@ proc postAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeployments*(client:
 proc getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersions*(client: CloudflareClient,
                                                                      accountId: string,
                                                                      gatewayId: string,
-                                                                     id: string): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersionsResponse] {.async.} =
+                                                                     id: string,
+                                                                     page: int64 = default(int64),
+                                                                     perPage: int64 = default(int64)): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersionsResponse] {.async.} =
   ## Lists the saved versions of a dynamic route.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/routes/{id}/versions")
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/gateways/{gatewayId}/routes/{id}/versions", q)
   let body = await res.body
   case res.code
   of Http200:

@@ -11,6 +11,10 @@ import cloudflare
 import ./common
 
 suite "cloudflare_tunnel_configuration serialization":
+  test "round-trips TunnelApiResponseSingle2":
+    let obj = newTunnelApiResponseSingle2()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TunnelApiResponseSingle2)) == openjson.toJson(obj)
+
   test "round-trips TunnelConfigurationResponse":
     let obj = newTunnelConfigurationResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TunnelConfigurationResponse)) == openjson.toJson(obj)
@@ -36,6 +40,11 @@ suite "cloudflare_tunnel_configuration endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdCfdTunnelTunnelIdConfigurations("test", "test")
+
+  test "DELETE /accounts/{account_id}/cfd_tunnel/{tunnel_id}/configurations":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdCfdTunnelTunnelIdConfigurations("test", "test")
 
   test "GET /accounts/{account_id}/warp_connector/{tunnel_id}/configurations":
     let client = initCloudflareClient("test-key")

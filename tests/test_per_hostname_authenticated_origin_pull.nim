@@ -44,7 +44,7 @@ suite "per_hostname_authenticated_origin_pull endpoints":
   test "GET /zones/{zone_id}/origin_tls_client_auth/hostnames/certificates":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdOriginTlsClientAuthHostnamesCertificates("test")
+    discard waitFor client.getZonesZoneIdOriginTlsClientAuthHostnamesCertificates("test", 1, 1, 1, 1)
 
   test "GET /zones/{zone_id}/origin_tls_client_auth/hostnames/certificates/{certificate_id}":
     let client = initCloudflareClient("test-key")

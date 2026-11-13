@@ -8,20 +8,6 @@ import std/[strformat, options, json]
 import ./private/metaclient
 
 type
-  GetAccountsAccountIdEmailSendingSuppressionResponse* = object
-    page: int64
-    per_page: int64
-    result: seq[JsonNode]
-    total: int64
-  PostAccountsAccountIdEmailSendingSuppressionRequest = object
-    email: string
-    expires_at: Option[string]
-  PostAccountsAccountIdEmailSendingSuppressionResponse* = object
-    result: JsonNode
-  GetAccountsAccountIdEmailSendingSuppressionSuppressionIdResponse* = object
-    result: JsonNode
-  DeleteAccountsAccountIdEmailSendingSuppressionSuppressionIdResponse* = object
-    success: bool
   GetAccountsAccountIdEmailSendingSuppressionsResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
@@ -65,29 +51,6 @@ type
     messages: seq[JsonNode]
     result: JsonNode
     success: bool
-  GetZonesZoneIdEmailSendingSuppressionResponse* = object
-    page: int64
-    per_page: int64
-    result: seq[JsonNode]
-    total: int64
-  PostZonesZoneIdEmailSendingSuppressionRequest = object
-    email: string
-    expires_at: Option[string]
-  PostZonesZoneIdEmailSendingSuppressionResponse* = object
-    result: JsonNode
-  GetZonesZoneIdEmailSendingSuppressionSuppressionIdResponse* = object
-    result: JsonNode
-  DeleteZonesZoneIdEmailSendingSuppressionSuppressionIdResponse* = object
-    success: bool
-  EmailSendingSuppressionOrderOption* = enum
-    orderEmail = "email"
-    orderExpiresAt = "expires_at"
-    orderCreatedAt = "created_at"
-
-  EmailSendingSuppressionDirectionOption* = enum
-    directionAsc = "asc"
-    directionDesc = "desc"
-
   EmailSendingSuppressionReasonOption* = enum
     reasonManual = "manual"
     reasonComplaint = "complaint"
@@ -100,66 +63,6 @@ type
     scopeTypeSendingDomain = "sending_domain"
 
 
-proc getAccountsAccountIdEmailSendingSuppression*(client: CloudflareClient,
-                                                  accountId: string,
-                                                  page: int64 = 1,
-                                                  perPage: int64 = 100,
-                                                  order: EmailSendingSuppressionOrderOption = orderCreatedAt,
-                                                  direction: EmailSendingSuppressionDirectionOption = directionDesc): Future[GetAccountsAccountIdEmailSendingSuppressionResponse] {.async.} =
-  ## Lists email suppressions for the specified account.
-
-  var q = initOrderedTable[string, string]()
-  q["page"] = $page
-  q["per_page"] = $perPage
-  q["order"] = $order
-  q["direction"] = $direction
-  let res = await client.httpGET(fmt"/accounts/{accountId}/email/sending/suppression", q)
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, GetAccountsAccountIdEmailSendingSuppressionResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc postAccountsAccountIdEmailSendingSuppression*(client: CloudflareClient,
-                                                   accountId: string,
-                                                   body: PostAccountsAccountIdEmailSendingSuppressionRequest): Future[PostAccountsAccountIdEmailSendingSuppressionResponse] {.async.} =
-  ## Creates a new email suppression for the specified account.
-
-  let res = await client.httpPOST(fmt"/accounts/{accountId}/email/sending/suppression", body)
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, PostAccountsAccountIdEmailSendingSuppressionResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc getAccountsAccountIdEmailSendingSuppressionSuppressionId*(client: CloudflareClient,
-                                                               accountId: string,
-                                                               suppressionId: string): Future[GetAccountsAccountIdEmailSendingSuppressionSuppressionIdResponse] {.async.} =
-  ## Retrieves a single email suppression for the specified account.
-
-  let res = await client.httpGET(fmt"/accounts/{accountId}/email/sending/suppression/{suppressionId}")
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, GetAccountsAccountIdEmailSendingSuppressionSuppressionIdResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc deleteAccountsAccountIdEmailSendingSuppressionSuppressionId*(client: CloudflareClient,
-                                                                  accountId: string,
-                                                                  suppressionId: string): Future[DeleteAccountsAccountIdEmailSendingSuppressionSuppressionIdResponse] {.async.} =
-  ## Deletes an email suppression for the specified account.
-
-  let res = await client.httpDELETE(fmt"/accounts/{accountId}/email/sending/suppression/{suppressionId}")
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, DeleteAccountsAccountIdEmailSendingSuppressionSuppressionIdResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
 proc getAccountsAccountIdEmailSendingSuppressions*(client: CloudflareClient,
                                                    accountId: string,
                                                    perPage: int64 = 100,
@@ -170,8 +73,10 @@ proc getAccountsAccountIdEmailSendingSuppressions*(client: CloudflareClient,
                                                    scopeType: EmailSendingSuppressionScopeTypeOption = scopeTypeAccount,
                                                    scopeValue: string = default(string)): Future[GetAccountsAccountIdEmailSendingSuppressionsResponse] {.async.} =
   ## Lists every active Email Sending suppression owned by the account:
-  ## sending-domain suppressions first, then account-wide suppressions (including
-  ## legacy rows with internal zone memberships). Each group is newest first.
+  ## sending-domain suppressions and account-wide suppressions (including legacy rows
+  ## with internal zone memberships). Each scope is listed newest first. The order
+  ## between sending-domain and account-wide suppressions is not fixed; use
+  ## `scope_type` to list one scope.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
@@ -194,8 +99,8 @@ proc postAccountsAccountIdEmailSendingSuppressions*(client: CloudflareClient,
                                                     body: PostAccountsAccountIdEmailSendingSuppressionsRequest): Future[PostAccountsAccountIdEmailSendingSuppressionsResponse] {.async.} =
   ## Creates a suppression for every sending domain of the account (default) or for
   ## one sending domain (`scope.type = sending_domain`). Creating an existing active
-  ## suppression returns its identifier. If a mutable legacy zone-linked account row
-  ## already exists, it is promoted without changing its identifier.
+  ## suppression returns its identifier. If a legacy zone-linked account row already
+  ## exists, it is promoted without changing its identifier.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/email/sending/suppressions", body)
   let body = await res.body
@@ -258,64 +163,5 @@ proc patchAccountsAccountIdEmailSendingSuppressionsSuppressionId*(client: Cloudf
   case res.code
   of Http200:
     result = fromJson(body, PatchAccountsAccountIdEmailSendingSuppressionsSuppressionIdResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc getZonesZoneIdEmailSendingSuppression*(client: CloudflareClient,
-                                            zoneId: string, page: int64 = 1,
-                                            perPage: int64 = 100,
-                                            order: EmailSendingSuppressionOrderOption = orderCreatedAt,
-                                            direction: EmailSendingSuppressionDirectionOption = directionDesc): Future[GetZonesZoneIdEmailSendingSuppressionResponse] {.async.} =
-  ## Lists email suppressions for the specified zone.
-
-  var q = initOrderedTable[string, string]()
-  q["page"] = $page
-  q["per_page"] = $perPage
-  q["order"] = $order
-  q["direction"] = $direction
-  let res = await client.httpGET(fmt"/zones/{zoneId}/email/sending/suppression", q)
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, GetZonesZoneIdEmailSendingSuppressionResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc postZonesZoneIdEmailSendingSuppression*(client: CloudflareClient,
-                                             zoneId: string,
-                                             body: PostZonesZoneIdEmailSendingSuppressionRequest): Future[PostZonesZoneIdEmailSendingSuppressionResponse] {.async.} =
-  ## Creates a new email suppression for the specified zone.
-
-  let res = await client.httpPOST(fmt"/zones/{zoneId}/email/sending/suppression", body)
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, PostZonesZoneIdEmailSendingSuppressionResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc getZonesZoneIdEmailSendingSuppressionSuppressionId*(client: CloudflareClient,
-                                                         zoneId: string,
-                                                         suppressionId: string): Future[GetZonesZoneIdEmailSendingSuppressionSuppressionIdResponse] {.async.} =
-  ## Retrieves a single email suppression for the specified zone.
-
-  let res = await client.httpGET(fmt"/zones/{zoneId}/email/sending/suppression/{suppressionId}")
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, GetZonesZoneIdEmailSendingSuppressionSuppressionIdResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc deleteZonesZoneIdEmailSendingSuppressionSuppressionId*(client: CloudflareClient,
-                                                            zoneId: string,
-                                                            suppressionId: string): Future[DeleteZonesZoneIdEmailSendingSuppressionSuppressionIdResponse] {.async.} =
-  ## Deletes an email suppression for the specified zone.
-
-  let res = await client.httpDELETE(fmt"/zones/{zoneId}/email/sending/suppression/{suppressionId}")
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, DeleteZonesZoneIdEmailSendingSuppressionSuppressionIdResponse)
   else:
     raise newException(CloudflareClientError, body)

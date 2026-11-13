@@ -47,10 +47,6 @@ suite "organizations serialization":
     let obj = newOrganizationsApiModifyOrganizationRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiModifyOrganizationRequest)) == openjson.toJson(obj)
 
-  test "round-trips OrganizationsApiAccountListResultInfo":
-    let obj = newOrganizationsApiAccountListResultInfo()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiAccountListResultInfo)) == openjson.toJson(obj)
-
   test "round-trips OrganizationsApiV4Message":
     let obj = newOrganizationsApiV4Message()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiV4Message)) == openjson.toJson(obj)
@@ -116,7 +112,7 @@ suite "organizations endpoints":
   test "GET /organizations/{organization_id}/accounts":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getOrganizationsOrganizationIdAccounts("test", "test", "test", "test", "test", "test", "test", "test", "test", statusActive, orderByName, directionAsc, true, true, 1, 1, "test", 1)
+    discard waitFor client.getOrganizationsOrganizationIdAccounts("test", "test", "test", "test", "test", "test", "test", "test", "test", statusActive, orderByName, directionAsc, true, true, "test", 1)
 
   test "PUT /organizations/{organization_id}/invites/{member_code}":
     let client = initCloudflareClient("test-key")

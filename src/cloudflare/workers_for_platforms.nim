@@ -11,6 +11,7 @@ import ./private/types
 type
   PostAccountsAccountIdWorkersDispatchNamespacesRequest = object
     name: Option[string]
+    trusted_workers: Option[types.WorkersTrustedWorkers]
   PutAccountsAccountIdWorkersDispatchNamespacesDispatchNamespaceRequest = object
     name: Option[string]
     trusted_workers: Option[types.WorkersTrustedWorkers]

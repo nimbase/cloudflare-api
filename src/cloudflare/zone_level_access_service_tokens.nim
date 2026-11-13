@@ -11,16 +11,16 @@ import ./private/types
 type
   PostZonesZoneIdAccessServiceTokensRequest = object
     client_secret_version: Option[types.AccessClientSecretVersion]
-    duration: Option[types.AccessDuration2]
+    duration: Option[types.AccessDuration]
     enabled: Option[types.AccessEnabled]
-    name: types.AccessName17
+    name: types.AccessName2
     previous_client_secret_expires_at: Option[types.AccessPreviousClientSecretExpiresAt]
     tags: Option[types.AccessTags]
   PutZonesZoneIdAccessServiceTokensServiceTokenIdRequest = object
     client_secret_version: Option[types.AccessClientSecretVersion]
-    duration: Option[types.AccessDuration2]
+    duration: Option[types.AccessDuration]
     enabled: Option[types.AccessEnabled]
-    name: Option[types.AccessName17]
+    name: Option[types.AccessName2]
     previous_client_secret_expires_at: Option[types.AccessPreviousClientSecretExpiresAt]
     tags: Option[types.AccessTags]
 

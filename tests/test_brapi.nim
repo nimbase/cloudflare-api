@@ -99,6 +99,14 @@ suite "brapi serialization":
     let obj = cloudflare.PostAccountsAccountIdBrowserRenderingScreenshotResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdBrowserRenderingScreenshotResponse)) == openjson.toJson(obj)
 
+  test "round-trips PostAccountsAccountIdBrowserRenderingScriptResponse":
+    let obj = cloudflare.PostAccountsAccountIdBrowserRenderingScriptResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdBrowserRenderingScriptResponse)) == openjson.toJson(obj)
+
+  test "round-trips PostAccountsAccountIdBrowserRenderingScriptSessionIdResponse":
+    let obj = cloudflare.PostAccountsAccountIdBrowserRenderingScriptSessionIdResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdBrowserRenderingScriptSessionIdResponse)) == openjson.toJson(obj)
+
   test "round-trips PostAccountsAccountIdBrowserRenderingSnapshotResponse":
     let obj = cloudflare.PostAccountsAccountIdBrowserRenderingSnapshotResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdBrowserRenderingSnapshotResponse)) == openjson.toJson(obj)

@@ -17,6 +17,8 @@ type
     amount: int64
     payment_method_id: Option[string]
   PostAccountsAccountIdAiGatewayBillingTopupEligibilityRequest = object
+    contract_version: Option[float64]
+    payment_method_id: Option[string]
     payment_methods: Option[seq[JsonNode]]
   PostAccountsAccountIdAiGatewayBillingTopupStatusRequest = object
     payment_intent_id: string
@@ -177,9 +179,10 @@ proc deleteAccountsAccountIdAiGatewayBillingTopupConfig*(client: CloudflareClien
 proc postAccountsAccountIdAiGatewayBillingTopupEligibility*(client: CloudflareClient,
                                                             accountId: string,
                                                             body: PostAccountsAccountIdAiGatewayBillingTopupEligibilityRequest): Future[types.AigBillingGetTopupEligibilityResponse] {.async.} =
-  ## Determine whether an account can self-serve a credit top-up, and if not, why.
-  ## The dashboard forwards the account's payment-method list in the body; the reason
-  ## logic is owned here.
+  ## Determine top-up eligibility. Requests without contract_version retain the
+  ## legacy forwarded-method contract. Explicit contract_version: 2 opts into the
+  ## gated, read-only authoritative advisory API; forwarded method metadata is not
+  ## authoritative. No response authorizes a charge.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/billing/topup/eligibility", body)
   let body = await res.body

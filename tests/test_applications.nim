@@ -125,7 +125,7 @@ suite "applications endpoints":
   test "GET /accounts/{account_id}/one/applications":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdOneApplications("test", "test", 1, 1)
+    discard waitFor client.getAccountsAccountIdOneApplications("test", environmentFedramp, 1, 1)
 
   test "GET /accounts/{account_id}/resource-library/applications":
     let client = initCloudflareClient("test-key")

@@ -8,6 +8,12 @@ import std/[strformat, json]
 import ./private/metaclient
 import ./private/types
 
+type
+  DurableObjectsNamespaceJurisdictionOption* = enum
+    jurisdictionFedramp = "fedramp"
+    jurisdictionEu = "eu"
+    jurisdictionNone = "none"
+
 
 proc getAccountsAccountIdWorkersDurableObjectsNamespaces*(client: CloudflareClient,
                                                           accountId: types.WorkersIdentifier,
@@ -25,6 +31,24 @@ proc getAccountsAccountIdWorkersDurableObjectsNamespaces*(client: CloudflareClie
     result = fromJson(body, JsonNode)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdWorkersDurableObjectsNamespacesIdExport*(client: CloudflareClient,
+                                                                  accountId: types.WorkersIdentifier,
+                                                                  id: types.WorkersSchemasId,
+                                                                  durableObjectId: string = default(string),
+                                                                  durableObjectName: string = default(string),
+                                                                  jurisdiction: DurableObjectsNamespaceJurisdictionOption = jurisdictionFedramp): Future[AsyncResponse] {.async.} =
+  ## Downloads a SQLite-backed Durable Object's database as a zip of main.sqlite and
+  ## main.sqlite-wal, as of its last write to durable storage. If the export could
+  ## not read all of the object's history, it holds the last state it could read and
+  ## an INCOMPLETE.txt. Select the object by ID, or by name and jurisdiction.
+
+  var q = initOrderedTable[string, string]()
+  q["durable_object_id"] = $durableObjectId
+  q["durable_object_name"] = $durableObjectName
+  q["jurisdiction"] = $jurisdiction
+  let res = await client.httpGET(fmt"/accounts/{accountId}/workers/durable_objects/namespaces/{id}/export", q)
+  return res
 
 proc getAccountsAccountIdWorkersDurableObjectsNamespacesIdObjects*(client: CloudflareClient,
                                                                    accountId: types.WorkersIdentifier,

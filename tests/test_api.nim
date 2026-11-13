@@ -19,6 +19,10 @@ suite "api serialization":
     let obj = newDomainConnectPostData()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DomainConnectPostData)) == openjson.toJson(obj)
 
+  test "round-trips DomainConnectHttpStatus":
+    let obj = newDomainConnectHttpStatus()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DomainConnectHttpStatus)) == openjson.toJson(obj)
+
   test "round-trips DomainConnectNeededByStratus":
     let obj = newDomainConnectNeededByStratus()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DomainConnectNeededByStratus)) == openjson.toJson(obj)

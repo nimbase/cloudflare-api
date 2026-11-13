@@ -28,9 +28,11 @@ proc postAccountsAccountIdSecurityCenterPartnersPartnerSettings*(client: Cloudfl
                                                                  accountId: types.SecurityCenterIdentifier,
                                                                  partner: Partner,
                                                                  body: types.SecurityCenterPartnerSettings): Future[types.SecurityCenterPartnerSettingsPostResponse] {.async.} =
-  ## Enables or disables the selected partner integration for the account. Enabling
-  ## the integration for the first time also schedules an account scan for that
-  ## partner.
+  ## Enables or disables the selected partner integration for the account.
+  ## Enabling the integration for the first time also schedules an account scan for
+  ## that partner.
+  ## Disabling the integration will purge all partner integration-related data,
+  ## including partner insights, shadow zones, and shadow hosts.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/security-center/partners/{partner}/settings", body)
   let body = await res.body

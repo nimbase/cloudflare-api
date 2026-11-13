@@ -39,15 +39,29 @@ proc postAccountsAccountIdBuildsWorkers*(client: CloudflareClient,
 
 proc getAccountsAccountIdBuildsWorkersExternalScriptIdBuilds*(client: CloudflareClient,
                                                               accountId: types.BuildsAccountId,
-                                                              externalScriptId: types.BuildsExternalScriptId,
+                                                              externalScriptId: string,
                                                               page: int64 = 1,
                                                               perPage: int64 = 50): Future[JsonNode] {.async.} =
-  ## List paginated build records associated with a Worker tag.
+  ## List paginated build records associated with a Worker.
 
   var q = initOrderedTable[string, string]()
   q["page"] = $page
   q["per_page"] = $perPage
   let res = await client.httpGET(fmt"/accounts/{accountId}/builds/workers/{externalScriptId}/builds", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdBuildsWorkersExternalScriptIdBuilds*(client: CloudflareClient,
+                                                               accountId: types.BuildsAccountId,
+                                                               externalScriptId: string,
+                                                               body: types.BuildsCreateBuildRequest): Future[JsonNode] {.async.} =
+  ## Start a production build for a branch or commit.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/builds/workers/{externalScriptId}/builds", body)
   let body = await res.body
   case res.code
   of Http200:
@@ -70,7 +84,7 @@ proc getAccountsAccountIdBuildsWorkersExternalScriptIdTriggers*(client: Cloudfla
 
 proc getAccountsAccountIdBuildsWorkersScriptTag*(client: CloudflareClient,
                                                  accountId: types.BuildsAccountId,
-                                                 scriptTag: types.BuildsExternalScriptId): Future[JsonNode] {.async.} =
+                                                 scriptTag: string): Future[JsonNode] {.async.} =
   ## Retrieve the repository and production build settings associated with a Worker
   ## tag.
 
@@ -84,7 +98,7 @@ proc getAccountsAccountIdBuildsWorkersScriptTag*(client: CloudflareClient,
 
 proc deleteAccountsAccountIdBuildsWorkersScriptTag*(client: CloudflareClient,
                                                     accountId: types.BuildsAccountId,
-                                                    scriptTag: types.BuildsExternalScriptId): Future[JsonNode] {.async.} =
+                                                    scriptTag: string): Future[JsonNode] {.async.} =
   ## Delete build settings and triggers for a Worker tag and cancel unfinished
   ## builds. The Worker is not deleted.
 
@@ -98,7 +112,7 @@ proc deleteAccountsAccountIdBuildsWorkersScriptTag*(client: CloudflareClient,
 
 proc patchAccountsAccountIdBuildsWorkersScriptTag*(client: CloudflareClient,
                                                    accountId: types.BuildsAccountId,
-                                                   scriptTag: types.BuildsExternalScriptId,
+                                                   scriptTag: string,
                                                    patchExistingPreviews: WorkerPatchExistingPreviewsOption = patchExistingPreviewsFalse,
                                                    body: types.BuildsUpdateWorkerRequest): Future[JsonNode] {.async.} =
   ## Update the build configuration for a Worker script. Supports partial updates to
@@ -114,9 +128,23 @@ proc patchAccountsAccountIdBuildsWorkersScriptTag*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc postAccountsAccountIdBuildsWorkersScriptTagBuildsBuildUuidRetry*(client: CloudflareClient,
+                                                                      accountId: types.BuildsAccountId,
+                                                                      scriptTag: string,
+                                                                      buildUuid: types.BuildsBuildUuid): Future[JsonNode] {.async.} =
+  ## Start a new build from the branch and commit of a stopped build.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/builds/workers/{scriptTag}/builds/{buildUuid}/retry")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc postAccountsAccountIdBuildsWorkersScriptTagMigrateToPreviews*(client: CloudflareClient,
                                                                    accountId: types.BuildsAccountId,
-                                                                   scriptTag: types.BuildsExternalScriptId,
+                                                                   scriptTag: string,
                                                                    body: types.BuildsMigrateToPreviewsRequest): Future[JsonNode] {.async.} =
   ## Migrate a Worker's legacy non-production trigger to Previews. The legacy build
   ## settings become the Previews base config and the legacy trigger is removed.
@@ -131,7 +159,7 @@ proc postAccountsAccountIdBuildsWorkersScriptTagMigrateToPreviews*(client: Cloud
 
 proc getAccountsAccountIdBuildsWorkersScriptTagPreviews*(client: CloudflareClient,
                                                          accountId: types.BuildsAccountId,
-                                                         scriptTag: types.BuildsExternalScriptId,
+                                                         scriptTag: string,
                                                          page: int64 = 1,
                                                          perPage: int64 = 50): Future[JsonNode] {.async.} =
   ## List the Previews of a Worker with pagination.
@@ -149,8 +177,8 @@ proc getAccountsAccountIdBuildsWorkersScriptTagPreviews*(client: CloudflareClien
 
 proc getAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewId*(client: CloudflareClient,
                                                                   accountId: types.BuildsAccountId,
-                                                                  scriptTag: types.BuildsExternalScriptId,
-                                                                  previewId: types.BuildsExternalScriptId): Future[JsonNode] {.async.} =
+                                                                  scriptTag: string,
+                                                                  previewId: string): Future[JsonNode] {.async.} =
   ## Retrieve a single Preview of a Worker, including the build settings it currently
   ## uses.
 
@@ -164,8 +192,8 @@ proc getAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewId*(client: Cloudf
 
 proc patchAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewId*(client: CloudflareClient,
                                                                     accountId: types.BuildsAccountId,
-                                                                    scriptTag: types.BuildsExternalScriptId,
-                                                                    previewId: types.BuildsExternalScriptId,
+                                                                    scriptTag: string,
+                                                                    previewId: string,
                                                                     body: types.BuildsUpdatePreviewRequest): Future[JsonNode] {.async.} =
   ## Update a single Preview of a Worker. Supports partial updates to the tracked
   ## branch, the automation flags, and the build settings.
@@ -180,8 +208,8 @@ proc patchAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewId*(client: Clou
 
 proc getAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewIdBuilds*(client: CloudflareClient,
                                                                         accountId: types.BuildsAccountId,
-                                                                        scriptTag: types.BuildsExternalScriptId,
-                                                                        previewId: types.BuildsExternalScriptId,
+                                                                        scriptTag: string,
+                                                                        previewId: string,
                                                                         page: int64 = 1,
                                                                         perPage: int64 = 50): Future[JsonNode] {.async.} =
   ## List the builds of a single Preview with pagination.
@@ -199,8 +227,8 @@ proc getAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewIdBuilds*(client: 
 
 proc postAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewIdBuilds*(client: CloudflareClient,
                                                                          accountId: types.BuildsAccountId,
-                                                                         scriptTag: types.BuildsExternalScriptId,
-                                                                         previewId: types.BuildsExternalScriptId,
+                                                                         scriptTag: string,
+                                                                         previewId: string,
                                                                          body: types.BuildsCreateBuildRequest): Future[JsonNode] {.async.} =
   ## Trigger a build for a single Preview.
 
@@ -209,6 +237,20 @@ proc postAccountsAccountIdBuildsWorkersScriptTagPreviewsPreviewIdBuilds*(client:
   case res.code
   of Http200:
     result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdBuildsWorkersScriptTagPurgeBuildCache*(client: CloudflareClient,
+                                                                 accountId: types.BuildsAccountId,
+                                                                 scriptTag: string): Future[types.BuildsAPIResponse] {.async.} =
+  ## Delete cached dependencies and build artifacts for a Worker's production and
+  ## Preview builds.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/builds/workers/{scriptTag}/purge_build_cache")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.BuildsAPIResponse)
   else:
     raise newException(CloudflareClientError, body)
 

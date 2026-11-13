@@ -118,7 +118,7 @@ proc getAccountsAccountIdContainersApplicationsApplicationIdVersions*(client: Cl
 
 proc getAccountsAccountIdOneApplications*(client: CloudflareClient,
                                           accountId: string,
-                                          environment: string = default(string),
+                                          environment: ApplicationEnvironmentOption = environmentFedramp,
                                           page: int64 = default(int64),
                                           pageSize: int64 = default(int64)): Future[types.OnePaginatedApplicationListList] {.async.} =
   ## Returns a list of available applications with use cases and permissions.
@@ -137,11 +137,14 @@ proc getAccountsAccountIdOneApplications*(client: CloudflareClient,
 
 proc getAccountsAccountIdOneApplicationsApplicationId*(client: CloudflareClient,
                                                        accountId: string,
-                                                       applicationId: ApplicationId): Future[types.OneApplicationDetailResponse] {.async.} =
+                                                       applicationId: ApplicationId,
+                                                       environment: ApplicationEnvironmentOption = environmentFedramp): Future[types.OneApplicationDetailResponse] {.async.} =
   ## Returns full application details including auth methods, use cases, and
   ## permissions.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/one/applications/{applicationId}")
+  var q = initOrderedTable[string, string]()
+  q["environment"] = $environment
+  let res = await client.httpGET(fmt"/accounts/{accountId}/one/applications/{applicationId}", q)
   let body = await res.body
   case res.code
   of Http200:
@@ -152,6 +155,7 @@ proc getAccountsAccountIdOneApplicationsApplicationId*(client: CloudflareClient,
 proc getAccountsAccountIdOneApplicationsApplicationIdAuthMethods*(client: CloudflareClient,
                                                                   accountId: string,
                                                                   applicationId: ApplicationId,
+                                                                  environment: ApplicationEnvironmentOption = environmentFedramp,
                                                                   page: int64 = default(int64),
                                                                   pageSize: int64 = default(int64)): Future[types.OnePaginatedAuthMethodDetailList] {.async.} =
   ## Returns available auth methods for the specified vendor, including credential
@@ -159,6 +163,7 @@ proc getAccountsAccountIdOneApplicationsApplicationIdAuthMethods*(client: Cloudf
   ## credentials are required before calling POST /v2/integrations.
 
   var q = initOrderedTable[string, string]()
+  q["environment"] = $environment
   q["page"] = $page
   q["page_size"] = $pageSize
   let res = await client.httpGET(fmt"/accounts/{accountId}/one/applications/{applicationId}/auth-methods", q)

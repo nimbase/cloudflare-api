@@ -40,6 +40,34 @@ type
     is_public: bool
     name: string
     uuid: string
+  GetAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse* = object
+    account: JsonNode
+      ## The account's default datasets, or null if they are not set.
+    effective: JsonNode
+      ## The datasets that event searches use when `datasetId` is omitted.
+    user: JsonNode
+      ## Your default datasets, or null if you have not set them.
+  PutAccountsAccountIdCloudforceOneEventsDatasetsPreferencesRequest = object
+    dataset_ids: seq[string]
+    scope: string
+  PutAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse* = object
+    account: JsonNode
+      ## The account's default datasets, or null if they are not set.
+    effective: JsonNode
+      ## The datasets that event searches use when `datasetId` is omitted.
+    user: JsonNode
+      ## Your default datasets, or null if you have not set them.
+  DeleteAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse* = object
+    account: JsonNode
+      ## The account's default datasets, or null if they are not set.
+    effective: JsonNode
+      ## The datasets that event searches use when `datasetId` is omitted.
+    user: JsonNode
+      ## Your default datasets, or null if you have not set them.
+  DatasetScopeOption* = enum
+    scopeUser = "user"
+    scopeAccount = "account"
+
 
 proc getAccountsAccountIdCloudforceOneEventsDataset*(client: CloudflareClient,
                                                      accountId: string,
@@ -122,5 +150,52 @@ proc patchAccountsAccountIdCloudforceOneEventsDatasetDatasetId*(client: Cloudfla
   case res.code
   of Http200:
     result = fromJson(body, PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdCloudforceOneEventsDatasetsPreferences*(client: CloudflareClient,
+                                                                 accountId: string): Future[GetAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse] {.async.} =
+  ## Returns your default datasets, the account's default datasets, and the datasets
+  ## that event searches currently use when `datasetId` is omitted.
+  ## `unresolvableDatasetIds` lists saved datasets you can no longer read.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/events/datasets/preferences")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountsAccountIdCloudforceOneEventsDatasetsPreferences*(client: CloudflareClient,
+                                                                 accountId: string,
+                                                                 body: PutAccountsAccountIdCloudforceOneEventsDatasetsPreferencesRequest): Future[PutAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse] {.async.} =
+  ## Sets the datasets to use when a request omits `datasetId`, for you (`scope`
+  ## `user`) or for the account (`scope` `account`). Your own default datasets take
+  ## precedence over the account's. Every dataset must exist and be readable by the
+  ## account, and the list cannot mix analytics and intelligence datasets.
+
+  let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/events/datasets/preferences", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PutAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdCloudforceOneEventsDatasetsPreferences*(client: CloudflareClient,
+                                                                    accountId: string,
+                                                                    scope: DatasetScopeOption): Future[DeleteAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse] {.async.} =
+  ## Removes your default datasets (`scope` `user`) or the account's (`scope`
+  ## `account`). After you remove your own, requests that omit `datasetId` use the
+  ## account's default datasets, if set.
+
+  var q = initOrderedTable[string, string]()
+  q["scope"] = $scope
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/cloudforce-one/events/datasets/preferences", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, DeleteAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse)
   else:
     raise newException(CloudflareClientError, body)

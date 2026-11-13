@@ -6,10 +6,13 @@
 # License: MIT
 import std/[strformat, options, json]
 import ./private/metaclient
+import ./private/types
 
 type
   PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceRequest = object
+    based_on: Option[JsonNode]
     dataset_scope: Option[JsonNode]
+    definition: Option[types.CloudforceOneEventsPirDefinition]
     digest_interval_hours: Option[int64]
     intent: Option[JsonNode]
     labels: Option[seq[string]]
@@ -18,7 +21,7 @@ type
     priority: Option[int64]
     query: Option[JsonNode]
     query_source: Option[string]
-    requirement: string
+    requirement: Option[string]
     status: Option[string]
     title: Option[string]
     tlp: Option[string]
@@ -60,11 +63,13 @@ type
     priorities: seq[JsonNode]
       ## Each active priority's own counts, newest priority first. Counts are never
       ## summed.
-  PutAccountsAccountIdCloudforceOneV2PriorityIntelligenceProfileRequest = object
-    profile: string
+  PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceResolveRequest = object
+    definition: types.CloudforceOneEventsPirDefinition
   PutAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdRequest = object
+    based_on: Option[JsonNode]
     confirm_query: Option[bool]
     dataset_scope: Option[JsonNode]
+    definition: Option[JsonNode]
     digest_interval_hours: Option[int64]
     intent: Option[JsonNode]
     labels: Option[seq[string]]
@@ -74,6 +79,7 @@ type
     query: Option[JsonNode]
     query_source: Option[string]
     requirement: Option[string]
+    revision: Option[int64]
     status: Option[string]
     title: Option[string]
     tlp: Option[string]
@@ -132,7 +138,9 @@ proc postAccountsAccountIdCloudforceOneV2PriorityIntelligence*(client: Cloudflar
   ## Creates a new PIR for the account. The
   ## cfone.priority_intelligence_requirement_limit entitlement sets how many PIRs can
   ## be active; drafts do not count, but the account can hold at most five times that
-  ## many PIRs in total. An active PIR requires a query.
+  ## many PIRs in total. A free-form PIR has a `requirement`, and an active one
+  ## requires a query. A structured PIR has a `definition` instead; its requirement
+  ## and event query are generated, and the response includes them in `resolved`.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence", body)
   return res
@@ -281,12 +289,16 @@ proc getAccountsAccountIdCloudforceOneV2PriorityIntelligenceProfile*(client: Clo
   return res
 
 proc putAccountsAccountIdCloudforceOneV2PriorityIntelligenceProfile*(client: CloudflareClient,
-                                                                     accountId: string,
-                                                                     body: PutAccountsAccountIdCloudforceOneV2PriorityIntelligenceProfileRequest): Future[AsyncResponse] {.async.} =
+                                                                     accountId: string): Future[AsyncResponse] {.async.} =
   ## Creates or replaces the account's organization profile: who the organization is,
   ## such as its name, brands, domains, sector, regions, key systems and suppliers.
   ## All of the account's Priority Intelligence Requirements share it. An account has
-  ## at most one profile, and it does not count against the PIR quota.
+  ## at most one profile, and it does not count against the PIR quota. Send
+  ## structured `organization` facts, which structured PIRs inherit and from which
+  ## the profile text is generated, or free `profile` text. `revision` must match the
+  ## stored profile's, or 0 when there is none; it is required with `organization`.
+  ## Free `profile` text cannot replace structured facts; delete the profile first to
+  ## switch back.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/profile", body)
   return res
@@ -309,11 +321,35 @@ proc postAccountsAccountIdCloudforceOneV2PriorityIntelligenceQuota*(client: Clou
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/quota")
   return res
 
+proc postAccountsAccountIdCloudforceOneV2PriorityIntelligenceResolve*(client: CloudflareClient,
+                                                                      accountId: string,
+                                                                      body: PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceResolveRequest): Future[AsyncResponse] {.async.} =
+  ## Returns the requirement and event query that saving `definition` would generate,
+  ## using the account's current organization profile and topic. `resolved.issues`
+  ## lists problems that would block saving, and `resolved.notices` inputs that would
+  ## be ignored. Search events with `resolved.event_plan.branches`. Send
+  ## `resolved.based_on` with the save so it fails with 409 if the profile or topic
+  ## changes in between. Nothing is saved, and no model is called.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/resolve", body)
+  return res
+
+proc getAccountsAccountIdCloudforceOneV2PriorityIntelligenceTopics*(client: CloudflareClient,
+                                                                    accountId: string): Future[AsyncResponse] {.async.} =
+  ## Returns the managed topics a structured PIR can follow, with their default
+  ## question, relevance criteria, suggested actors and event rules. Suggested actors
+  ## the account cannot see are left out. Topics change centrally; PIRs follow a
+  ## topic's defaults wherever the customer has not changed them.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/topics")
+  return res
+
 proc getAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityId*(client: CloudflareClient,
                                                                         accountId: string,
                                                                         priorityId: string): Future[AsyncResponse] {.async.} =
-  ## Returns a single free-form Priority Intelligence Requirement for the
-  ## authenticated account.
+  ## Returns a single Priority Intelligence Requirement for the authenticated
+  ## account. For a structured PIR, `resolved` has its current generated requirement
+  ## and event query, which follow later topic and profile changes.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/{priorityId}")
   return res
@@ -326,7 +362,8 @@ proc putAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityId*(client: 
   ## Changing the query increments its version; editing the requirement without
   ## saving a query marks the query stale. Activating a draft needs a free slot in
   ## the active PIR quota; setting `active` on a PIR the matcher paused resumes it
-  ## without one.
+  ## without one. Updates to a structured PIR must send its `revision` and change its
+  ## answers through `definition`; its requirement, title and query are generated.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/{priorityId}", body)
   return res

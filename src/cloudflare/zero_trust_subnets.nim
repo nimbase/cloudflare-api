@@ -26,7 +26,6 @@ type
     comment: Option[types.TunnelSubnetComment]
     is_default_network: Option[types.TunnelSubnetIsDefaultNetwork]
     name: Option[types.TunnelSubnetName]
-    network: Option[types.TunnelSubnetIpNetwork]
   ZeroTrustSubnetSortOrderOption* = enum
     sortOrderAsc = "asc"
     sortOrderDesc = "desc"

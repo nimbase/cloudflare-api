@@ -141,7 +141,7 @@ proc putAccountsAccountIdAiGatewayGatewaysId*(client: CloudflareClient,
                                               accountId: string, id: string,
                                               body: PutAccountsAccountIdAiGatewayGatewaysIdRequest): Future[PutAccountsAccountIdAiGatewayGatewaysIdResponse] {.async.} =
   ## Updates the configuration of an AI Gateway, such as its caching, rate limiting,
-  ## logging, and authentication settings.
+  ## spend limits, logging, and authentication settings.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/ai-gateway/gateways/{id}", body)
   let body = await res.body

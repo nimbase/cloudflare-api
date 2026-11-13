@@ -216,6 +216,20 @@ type
   DeleteAccountsAccountIdCloudforceOneV2BrandProtectionTakedownNoticesNoticeIdLettersLetterIdResponse* = object
     message: string
     success: bool
+  GetAccountsAccountIdCloudforceOneV2BrandProtectionUrlInfoResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: seq[JsonNode]
+    success: bool
+  PostAccountsAccountIdCloudforceOneV2BrandProtectionUrlSubmitResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: seq[JsonNode]
+    success: bool
+  BrandProtectionQualityOption* = enum
+    qualityHigh = "high"
+    qualityLow = "low"
+
   BrandProtectionOrderByOption* = enum
     orderByDomain = "domain"
     orderByFirstSeen = "first_seen"
@@ -370,6 +384,7 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatches*(client: Cl
                                                                       includeDomainId: string = "false",
                                                                       includeDismissed: string = default(string),
                                                                       domainSearch: string = default(string),
+                                                                      quality: BrandProtectionQualityOption = qualityHigh,
                                                                       orderBy: BrandProtectionOrderByOption = orderByDomain,
                                                                       order: BrandProtectionOrderOption = orderAsc): Future[GetAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatchesResponse] {.async.} =
   ## Lists domains that matched one or more saved domain queries, most recently
@@ -386,6 +401,7 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionDomainMatches*(client: Cl
   q["include_domain_id"] = $includeDomainId
   q["include_dismissed"] = $includeDismissed
   q["domain_search"] = $domainSearch
+  q["quality"] = $quality
   q["orderBy"] = $orderBy
   q["order"] = $order
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/domain/matches", q)
@@ -896,6 +912,43 @@ proc getAccountsAccountIdCloudforceOneV2BrandProtectionTotalQueries*(client: Clo
   case res.code
   of Http200:
     result = fromJson(body, seq[JsonNode])
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdCloudforceOneV2BrandProtectionUrlInfo*(client: CloudflareClient,
+                                                                accountId: string,
+                                                                url: string = default(string),
+                                                                urlId: string = default(string)): Future[GetAccountsAccountIdCloudforceOneV2BrandProtectionUrlInfoResponse] {.async.} =
+  ## Get account-scoped URL Scanner summaries by submitted URL or scan UUID. Lookups
+  ## cover scans submitted within about the last 30 days; a daily cleanup at 00:00
+  ## UTC removes older ownership records. Completed results may be served from a
+  ## cache that is cleared daily, so a cached copy is kept for at most about 48
+  ## hours. The response is a v2 migration contract, not the v1 enrichment shape.
+
+  var q = initOrderedTable[string, string]()
+  q["url"] = $url
+  q["url_id"] = $urlId
+  let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/url/info", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneV2BrandProtectionUrlInfoResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdCloudforceOneV2BrandProtectionUrlSubmit*(client: CloudflareClient,
+                                                                   accountId: string,
+                                                                   url: string): Future[PostAccountsAccountIdCloudforceOneV2BrandProtectionUrlSubmitResponse] {.async.} =
+  ## Submit one unlisted URL Scanner scan. The returned URL Scanner UUID replaces the
+  ## numeric v1 URL ID.
+
+  var q = initOrderedTable[string, string]()
+  q["url"] = $url
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/brand-protection/url/submit", q)
+  let body = await res.body
+  case res.code
+  of Http201:
+    result = fromJson(body, PostAccountsAccountIdCloudforceOneV2BrandProtectionUrlSubmitResponse)
   else:
     raise newException(CloudflareClientError, body)
 

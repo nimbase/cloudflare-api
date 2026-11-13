@@ -11,6 +11,7 @@ import ./private/types
 type
   PostAccountsAccountIdRealtimeKitAppIdMeetingsRequest = object
     ai_config: Option[types.RealtimekitAIConfig]
+    enable_sip: Option[bool]
     live_stream_on_start: Option[bool]
     persist_chat: Option[bool]
     record_on_start: Option[bool]
@@ -21,6 +22,7 @@ type
     transcribe_on_end: Option[bool]
   PutAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdRequest = object
     ai_config: Option[types.RealtimekitAIConfig]
+    enable_sip: Option[bool]
     live_stream_on_start: Option[bool]
     persist_chat: Option[bool]
     record_on_start: Option[bool]
@@ -31,6 +33,7 @@ type
     transcribe_on_end: Option[bool]
   PatchAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdRequest = object
     ai_config: Option[types.RealtimekitAIConfig]
+    enable_sip: Option[bool]
     live_stream_on_start: Option[bool]
     persist_chat: Option[bool]
     record_on_start: Option[bool]

@@ -31,6 +31,10 @@ suite "ai_gateway_provider_configs serialization":
     let obj = cloudflare.DeleteAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdResponse)) == openjson.toJson(obj)
 
+  test "round-trips PostAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdTestResponse":
+    let obj = cloudflare.PostAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdTestResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdTestResponse)) == openjson.toJson(obj)
+
 suite "ai_gateway_provider_configs endpoints":
   test "GET /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/provider_configs":
     let client = initCloudflareClient("test-key")
@@ -46,4 +50,9 @@ suite "ai_gateway_provider_configs endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsId("test", "test", "test")
+
+  test "POST /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/provider_configs/{id}/test":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdAiGatewayGatewaysGatewayIdProviderConfigsIdTest("test", "test", "test")
 

@@ -70,12 +70,12 @@ suite "ai_gateway_dynamic_routes endpoints":
   test "GET /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/routes/{id}/deployments":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeployments("test", "test", "test")
+    discard waitFor client.getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeployments("test", "test", "test", 1, 1)
 
   test "GET /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/routes/{id}/versions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersions("test", "test", "test")
+    discard waitFor client.getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersions("test", "test", "test", 1, 1)
 
   test "GET /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/routes/{id}/versions/{version_id}":
     let client = initCloudflareClient("test-key")

@@ -20,6 +20,11 @@ type
     output_format: string
   PostAccountsAccountIdD1DatabaseDatabaseIdUndeleteRequest = object
     new_name: Option[JsonNode]
+  D1OrderByOption* = enum
+    orderByRowsRead = "rows_read"
+    orderByRowsWritten = "rows_written"
+    orderByQueries = "queries"
+
 
 proc getAccountsAccountIdD1Database*(client: CloudflareClient,
                                      accountId: types.D1AccountIdentifier,
@@ -230,6 +235,93 @@ proc postAccountsAccountIdD1DatabaseDatabaseIdUndelete*(client: CloudflareClient
   ## restored.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/d1/database/{databaseId}/undelete", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdD1InsightsDatabases*(client: CloudflareClient,
+                                              accountId: types.D1AccountIdentifier,
+                                              orderBy: D1OrderByOption = orderByRowsRead,
+                                              databaseName: string = default(string),
+                                              exact: bool = false,
+                                              since: string = default(string),
+                                              until: string = default(string),
+                                              limit: int64 = 20): Future[JsonNode] {.async.} =
+  ## List the databases in your account with the highest usage in a time window,
+  ## sorted by `order_by`
+  ## from highest to lowest.
+  ##
+  ## Totals are computed from the same data as D1 billing and the GraphQL Analytics
+  ## API. They include
+  ## every batch in the window: queries, imports and exports, successful and failed.
+  ## Totals from other
+  ## insights endpoints that read per-statement data can be lower than these numbers.
+  ##
+  ## Deleted databases are included if they had usage in the window. Databases with
+  ## no usage in the
+  ## window are not included.
+  ##
+  ## Usage is available a few minutes after a batch completes.
+  ##
+  ## For more complex filtering, or other metrics, groupings or time windows, run
+  ## your own SQL on the
+  ## `events.d1Queries` dataset with `cf sql query`. For examples, see
+  ## https://developers.cloudflare.com/d1/observability/find-expensive-queries/
+
+  var q = initOrderedTable[string, string]()
+  q["order_by"] = $orderBy
+  q["database_name"] = $databaseName
+  q["exact"] = $exact
+  q["since"] = $since
+  q["until"] = $until
+  q["limit"] = $limit
+  let res = await client.httpGET(fmt"/accounts/{accountId}/d1/insights/databases", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdD1InsightsQueries*(client: CloudflareClient,
+                                            accountId: types.D1AccountIdentifier,
+                                            orderBy: D1OrderByOption = orderByRowsRead,
+                                            databaseId: types.D1DatabaseIdentifier = default(types.D1DatabaseIdentifier),
+                                            since: string = default(string),
+                                            until: string = default(string),
+                                            limit: int64 = 20): Future[JsonNode] {.async.} =
+  ## List the SQL statements with the highest usage in a time window, across all
+  ## databases in your
+  ## account or for one database, sorted by `order_by` from highest to lowest.
+  ##
+  ## Each item is one query text in one database. The same text run in two databases
+  ## is two items.
+  ##
+  ## Values are estimates computed from sampled per-statement data. They include
+  ## statements that
+  ## failed with a SQL error, and deleted databases. They do not include imports and
+  ## exports, so they
+  ## can be lower than the totals from `GET
+  ## /accounts/{account_id}/d1/insights/databases`, billing, and
+  ## the GraphQL Analytics API.
+  ##
+  ## Usage is available a few minutes after a query completes.
+  ##
+  ## For more complex filtering, or other metrics, groupings or time windows, run
+  ## your own SQL on the
+  ## `events.d1Queries` dataset with `cf sql query`. For examples, see
+  ## https://developers.cloudflare.com/d1/observability/find-expensive-queries/
+
+  var q = initOrderedTable[string, string]()
+  q["order_by"] = $orderBy
+  q["database_id"] = $databaseId
+  q["since"] = $since
+  q["until"] = $until
+  q["limit"] = $limit
+  let res = await client.httpGET(fmt"/accounts/{accountId}/d1/insights/queries", q)
   let body = await res.body
   case res.code
   of Http200:

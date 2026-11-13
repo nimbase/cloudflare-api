@@ -10,14 +10,14 @@ import ./private/types
 
 type
   PostZonesZoneIdAccessCertificatesRequest = object
-    associated_hostnames: Option[types.AccessAssociatedHostnames2]
+    associated_hostnames: Option[types.AccessAssociatedHostnames]
     certificate: string
-    name: types.AccessName18
+    name: types.AccessName7
   PutZonesZoneIdAccessCertificatesSettingsRequest = object
     settings: seq[types.AccessSettings2]
   PutZonesZoneIdAccessCertificatesCertificateIdRequest = object
-    associated_hostnames: types.AccessAssociatedHostnames2
-    name: Option[types.AccessName18]
+    associated_hostnames: types.AccessAssociatedHostnames
+    name: Option[types.AccessName7]
 
 proc getZonesZoneIdAccessCertificates*(client: CloudflareClient,
                                        zoneId: types.AccessIdentifier): Future[types.AccessResponseCollection22] {.async.} =

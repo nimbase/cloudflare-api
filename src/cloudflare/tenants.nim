@@ -13,7 +13,7 @@ type
     errors: seq[JsonNode]
     messages: seq[types.OrganizationsApiV4Message]
     result: seq[types.OrganizationsApiLegacyAccount]
-    result_info: types.OrganizationsApiAccountListResultInfo
+    result_info: types.OrganizationsApiPageTokenResultInfo
     success: bool
   TenantStatusOption* = enum
     statusActive = "active"
@@ -40,8 +40,6 @@ proc getTenantsTenantIdAccounts*(client: CloudflareClient, tenantId: string,
                                  orderBy: TenantOrderByOption = orderByAccountName,
                                  direction: TenantDirectionOption = directionAsc,
                                  includeTotal: bool = true,
-                                 page: int64 = default(int64),
-                                 perPage: int64 = default(int64),
                                  pageToken: string = default(string),
                                  pageSize: int64 = default(int64)): Future[GetTenantsTenantIdAccountsResponse] {.async.} =
   ## Lists all Cloudflare accounts across this tenant's hierarchy using the legacy
@@ -50,10 +48,7 @@ proc getTenantsTenantIdAccounts*(client: CloudflareClient, tenantId: string,
   ## accounts
   ## immediately attached to a specific Organization using the modern Account
   ## response shape.
-  ## Use `page_token` and `page_size` for cursor pagination, or provide `page` and
-  ## `per_page`
-  ## together for legacy offset pagination. Cursor pagination takes precedence when
-  ## requested.
+  ## Use `page_token` and `page_size` for cursor pagination.
 
   var q = initOrderedTable[string, string]()
   q["account_pubname"] = $accountPubname
@@ -68,8 +63,6 @@ proc getTenantsTenantIdAccounts*(client: CloudflareClient, tenantId: string,
   q["order_by"] = $orderBy
   q["direction"] = $direction
   q["include_total"] = $includeTotal
-  q["page"] = $page
-  q["per_page"] = $perPage
   q["page_token"] = $pageToken
   q["page_size"] = $pageSize
   let res = await client.httpGET(fmt"/tenants/{tenantId}/accounts", q)

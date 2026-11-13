@@ -31,6 +31,18 @@ suite "dataset serialization":
     let obj = cloudflare.PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PatchAccountsAccountIdCloudforceOneEventsDatasetDatasetIdResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse)) == openjson.toJson(obj)
+
+  test "round-trips PutAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse":
+    let obj = cloudflare.PutAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PutAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse)) == openjson.toJson(obj)
+
+  test "round-trips DeleteAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse":
+    let obj = cloudflare.DeleteAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdCloudforceOneEventsDatasetsPreferencesResponse)) == openjson.toJson(obj)
+
 suite "dataset endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/events/dataset":
     let client = initCloudflareClient("test-key")
@@ -46,4 +58,14 @@ suite "dataset endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdCloudforceOneEventsDatasetDatasetId("test", "test")
+
+  test "GET /accounts/{account_id}/cloudforce-one/events/datasets/preferences":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdCloudforceOneEventsDatasetsPreferences("test")
+
+  test "DELETE /accounts/{account_id}/cloudforce-one/events/datasets/preferences":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdCloudforceOneEventsDatasetsPreferences("test", scopeUser)
 

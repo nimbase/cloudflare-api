@@ -267,8 +267,9 @@ proc postAccountsAccountIdAbuseReportsReportParam*(client: CloudflareClient,
   ## is not entitled, the request is rejected with an HTTP `401` response
   ## (see below).
   ##
-  ## Delegated reports: In limited circumstances, Cloudflare works with
-  ## select customers who have established abuse-handling programs. For
+  ## Delegated reports: In limited circumstances, Cloudflare delegates
+  ## processing of abuse reports to select customers who have established
+  ## abuse-handling programs. For
   ## these customers, Cloudflare may forward abuse reports directly and in
   ## full—including reporter contact information, comments, and supporting
   ## evidence—without redaction or preprocessing by Cloudflare. This allows

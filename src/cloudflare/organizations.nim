@@ -39,7 +39,7 @@ type
     errors: seq[JsonNode]
     messages: seq[types.OrganizationsApiV4Message]
     result: seq[JsonNode]
-    result_info: types.OrganizationsApiAccountListResultInfo
+    result_info: types.OrganizationsApiPageTokenResultInfo
     success: bool
   PutOrganizationsOrganizationIdInvitesMemberCodeResponse* = object
     errors: seq[JsonNode]
@@ -182,17 +182,12 @@ proc getOrganizationsOrganizationIdAccounts*(client: CloudflareClient,
                                              direction: OrganizationDirectionOption = directionAsc,
                                              includeTags: bool = default(bool),
                                              includeTotal: bool = true,
-                                             page: int64 = default(int64),
-                                             perPage: int64 = default(int64),
                                              pageToken: string = default(string),
                                              pageSize: int64 = default(int64)): Future[GetOrganizationsOrganizationIdAccountsResponse] {.async.} =
   ## Retrieve the accounts immediately attached to a specific organization. Accounts
   ## attached to sub-organizations are not included. Use `page_token` and `page_size`
   ## for cursor
-  ## pagination, or provide `page` and `per_page` together for legacy offset
-  ## pagination. Cursor
-  ## pagination takes precedence when requested. The default response uses Account
-  ## fields;
+  ## pagination. The default response uses Account fields;
   ## `Accept: application/json; legacy=true` requests the LegacyAccount
   ## representation.
 
@@ -210,8 +205,6 @@ proc getOrganizationsOrganizationIdAccounts*(client: CloudflareClient,
   q["direction"] = $direction
   q["include_tags"] = $includeTags
   q["include_total"] = $includeTotal
-  q["page"] = $page
-  q["per_page"] = $perPage
   q["page_token"] = $pageToken
   q["page_size"] = $pageSize
   let res = await client.httpGET(fmt"/organizations/{organizationId}/accounts", q)

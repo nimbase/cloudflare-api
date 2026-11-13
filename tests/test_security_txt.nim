@@ -15,6 +15,10 @@ suite "security_txt serialization":
     let obj = newSecurityCenterApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterApiResponseCommonFailure)) == openjson.toJson(obj)
 
+  test "round-trips SecurityCenterExternalApiResponseSingleNoTerraform":
+    let obj = newSecurityCenterExternalApiResponseSingleNoTerraform()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterExternalApiResponseSingleNoTerraform)) == openjson.toJson(obj)
+
   test "round-trips SecurityCenterApiResponseCommon":
     let obj = newSecurityCenterApiResponseCommon()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SecurityCenterApiResponseCommon)) == openjson.toJson(obj)

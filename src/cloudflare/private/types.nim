@@ -16,13 +16,19 @@ type
   AaaAlertType* = enum
     ## Refers to which event will trigger a Notification dispatch. You can use the
     ## endpoint to get available alert types which then will give you a list of
-    ## possible values.
+    ## possible values. This enum lists every alert type, not the ones a given account
+    ## can create, since some types depend on entitlements or account type. To get the
+    ## alert types an account can create, call `GET
+    ## /accounts/{account_id}/alerting/v3/available_alerts`.
     abuseReportAlert = "abuse_report_alert"
     accessCustomCertificateExpirationType = "access_custom_certificate_expiration_type"
     advancedDdosAttackL4Alert = "advanced_ddos_attack_l4_alert"
     advancedDdosAttackL7Alert = "advanced_ddos_attack_l7_alert"
     advancedHttpAlertError = "advanced_http_alert_error"
+    attackLifecycle = "attack_lifecycle"
+    bgpAdvertisementChange = "bgp_advertisement_change"
     bgpHijackNotification = "bgp_hijack_notification"
+    billingBudgetAlert = "billing_budget_alert"
     billingUsageAlert = "billing_usage_alert"
     blockNotificationBlockRemoved = "block_notification_block_removed"
     blockNotificationNewBlock = "block_notification_new_block"
@@ -30,17 +36,25 @@ type
     botTrafficBasicAlert = "bot_traffic_basic_alert"
     brandProtectionAlert = "brand_protection_alert"
     brandProtectionDigest = "brand_protection_digest"
+    casbWeeklyDigest = "casb_weekly_digest"
     clickhouseAlertFwAnomaly = "clickhouse_alert_fw_anomaly"
     clickhouseAlertFwEntAnomaly = "clickhouse_alert_fw_ent_anomaly"
+    closedPortScanAlert = "closed_port_scan_alert"
     cloudforceOneRequestNotification = "cloudforce_one_request_notification"
+    cmdManagedDefenseNotification = "cmd_managed_defense_notification"
     cniMaintenanceNotification = "cni_maintenance_notification"
+    containersSecurityAlert = "containers_security_alert"
     customAnalytics = "custom_analytics"
     customBotDetectionAlert = "custom_bot_detection_alert"
     customSslCertificateEventType = "custom_ssl_certificate_event_type"
     dedicatedSslCertificateEventType = "dedicated_ssl_certificate_event_type"
     deviceConnectivityAnomalyAlert = "device_connectivity_anomaly_alert"
+    dexDeviceConnectivityAlert = "dex_device_connectivity_alert"
+    dexSyntheticTestAvailabilityAlert = "dex_synthetic_test_availability_alert"
+    dexSyntheticTestLatencyAlert = "dex_synthetic_test_latency_alert"
     dosAttackL4 = "dos_attack_l4"
     dosAttackL7 = "dos_attack_l7"
+    executiveCommunications = "executive_communications"
     expiringServiceTokenAlert = "expiring_service_token_alert"
     failingLogpushJobDisabledAlert = "failing_logpush_job_disabled_alert"
     fbmAutoAdvertisement = "fbm_auto_advertisement"
@@ -53,13 +67,18 @@ type
     imageNotification = "image_notification"
     imageResizingNotification = "image_resizing_notification"
     incidentAlert = "incident_alert"
+    leakedServiceTokenAlert = "leaked_service_token_alert"
     loadBalancingHealthAlert = "load_balancing_health_alert"
     loadBalancingPoolEnablementAlert = "load_balancing_pool_enablement_alert"
+    logExplorerIngestRateLimit = "log_explorer_ingest_rate_limit"
+    logExplorerScheduledQueryResultsAlert = "log_explorer_scheduled_query_results_alert"
     logoMatchAlert = "logo_match_alert"
+    magicEndpointHealthcheckAlert = "magic_endpoint_healthcheck_alert"
     magicTunnelHealthCheckEvent = "magic_tunnel_health_check_event"
     magicWanTunnelHealth = "magic_wan_tunnel_health"
     maintenanceEventNotification = "maintenance_event_notification"
     mtlsCertificateStoreCertificateExpirationType = "mtls_certificate_store_certificate_expiration_type"
+    openPortScanAlert = "open_port_scan_alert"
     pagesEventAlert = "pages_event_alert"
     radarNotification = "radar_notification"
     realOriginMonitoring = "real_origin_monitoring"
@@ -77,6 +96,9 @@ type
     secondaryDnsZoneValidationWarning = "secondary_dns_zone_validation_warning"
     securityInsightsAlert = "security_insights_alert"
     sentinelAlert = "sentinel_alert"
+    stakeoutCredentialLeakAlert = "stakeout_credential_leak_alert"
+    stakeoutSavedQueryDailyDigestAlert = "stakeout_saved_query_daily_digest_alert"
+    stakeoutSavedQueryImmediateAlert = "stakeout_saved_query_immediate_alert"
     streamLiveNotifications = "stream_live_notifications"
     syntheticTestLatencyAlert = "synthetic_test_latency_alert"
     syntheticTestLowAvailabilityAlert = "synthetic_test_low_availability_alert"
@@ -85,6 +107,9 @@ type
     tunnelUpdateEvent = "tunnel_update_event"
     universalSslEventType = "universal_ssl_event_type"
     webAnalyticsMetricsUpdate = "web_analytics_metrics_update"
+    workersForPlatformsSecurityAlert = "workers_for_platforms_security_alert"
+    workersObservabilityAlert = "workers_observability_alert"
+    workersObservabilityRealTimeIssue = "workers_observability_real_time_issue"
     zoneAopCustomCertificateExpirationType = "zone_aop_custom_certificate_expiration_type"
 
   AaaAlertsResponseCollection* = ref object of RootObj
@@ -363,6 +388,11 @@ type
       ## Usage depends on specific alert type
     alert_trigger_preferences_value*: Option[seq[string]]
       ## Usage depends on specific alert type
+    check_id*: Option[seq[string]]
+      ## Used for configuring magic_endpoint_healthcheck_alert. Takes one or more health
+      ## check IDs, each a UUID. That alert type requires check_id together with
+      ## alert_trigger_preferences set to slo, a numeric alert_trigger_preferences_value,
+      ## and selectors set to failures.
     enabled*: Option[seq[string]]
       ## Used for configuring load_balancing_pool_enablement_alert
     environment*: Option[seq[string]]
@@ -405,6 +435,10 @@ type
       ## Used for configuring pages_event_alert
     protocol*: Option[seq[string]]
       ## Used for configuring advanced_ddos_attack_l4_alert
+    query_id*: Option[seq[string]]
+      ## Used for configuring stakeout_saved_query_daily_digest_alert and
+      ## stakeout_saved_query_immediate_alert, which require it. Takes exactly one value,
+      ## the saved query ID.
     query_tag*: Option[seq[string]]
       ## Usage depends on specific alert type
     requests_per_second*: Option[seq[string]]
@@ -426,6 +460,9 @@ type
     token_id*: Option[seq[string]]
       ## Access service token IDs to include for expiring_service_token_alert. Omit this
       ## property to include all current and future service tokens.
+    total_spend_dollars*: Option[seq[string]]
+      ## Used for configuring billing_budget_alert. Takes exactly one value, the budget
+      ## threshold in US dollars, as a string greater than zero.
     traffic_exclusions*: Option[seq[string]]
       ## Used for configuring traffic_anomalies_alert
     tunnel_id*: Option[seq[string]]
@@ -800,9 +837,10 @@ type
     act*: AbuseReportsSubmissionReportType
     comments*: Option[string]
       ## Any additional comments about the infringement not exceeding 2000 characters.
-      ## Comments are kept internal to Cloudflare and not shared with the host or
-      ## customer as part of regular processing. For delegated reports, comments may be
-      ## shared in full.
+      ## With the exception of delegated reports, comments are kept internal to
+      ## Cloudflare and not shared with the host or customer as part of regular
+      ## processing. For the limited circumstances where we delegate reports to customers
+      ## with established abuse-handling programs, comments may be shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -833,9 +871,10 @@ type
     act*: string
     comments*: Option[string]
       ## Any additional comments about the infringement not exceeding 2000 characters.
-      ## Comments are kept internal to Cloudflare and not shared with the host or
-      ## customer as part of regular processing. For delegated reports, comments may be
-      ## shared in full.
+      ## With the exception of delegated reports, comments are kept internal to
+      ## Cloudflare and not shared with the host or customer as part of regular
+      ## processing. For the limited circumstances where we delegate reports to customers
+      ## with established abuse-handling programs, comments may be shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -925,9 +964,10 @@ type
     act*: string
     comments*: Option[string]
       ## Any additional comments about the infringement not exceeding 2000 characters.
-      ## Comments are kept internal to Cloudflare and not shared with the host or
-      ## customer as part of regular processing. For delegated reports, comments may be
-      ## shared in full.
+      ## With the exception of delegated reports, comments are kept internal to
+      ## Cloudflare and not shared with the host or customer as part of regular
+      ## processing. For the limited circumstances where we delegate reports to customers
+      ## with established abuse-handling programs, comments may be shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -1030,9 +1070,10 @@ type
     act*: string
     comments*: Option[string]
       ## Any additional comments about the infringement not exceeding 2000 characters.
-      ## Comments are kept internal to Cloudflare and not shared with the host or
-      ## customer as part of regular processing. For delegated reports, comments may be
-      ## shared in full.
+      ## With the exception of delegated reports, comments are kept internal to
+      ## Cloudflare and not shared with the host or customer as part of regular
+      ## processing. For the limited circumstances where we delegate reports to customers
+      ## with established abuse-handling programs, comments may be shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -1103,6 +1144,7 @@ type
     urlPattern = "url_pattern"
     account = "account"
     zone = "zone"
+    domain = "domain"
     customExpression = "custom_expression"
 
   AbuseReportsMitigationAppeal* = ref object of RootObj
@@ -1173,9 +1215,10 @@ type
     act*: string
     comments*: Option[string]
       ## Any additional comments about the infringement not exceeding 2000 characters.
-      ## Comments are kept internal to Cloudflare and not shared with the host or
-      ## customer as part of regular processing. For delegated reports, comments may be
-      ## shared in full.
+      ## With the exception of delegated reports, comments are kept internal to
+      ## Cloudflare and not shared with the host or customer as part of regular
+      ## processing. For the limited circumstances where we delegate reports to customers
+      ## with established abuse-handling programs, comments may be shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -1230,9 +1273,10 @@ type
     act*: string
     comments*: Option[string]
       ## Any additional comments about the infringement not exceeding 2000 characters.
-      ## Comments are kept internal to Cloudflare and not shared with the host or
-      ## customer as part of regular processing. For delegated reports, comments may be
-      ## shared in full.
+      ## With the exception of delegated reports, comments are kept internal to
+      ## Cloudflare and not shared with the host or customer as part of regular
+      ## processing. For the limited circumstances where we delegate reports to customers
+      ## with established abuse-handling programs, comments may be shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -1316,9 +1360,10 @@ type
     act*: string
     comments*: Option[string]
       ## Any additional comments about the infringement not exceeding 2000 characters.
-      ## Comments are kept internal to Cloudflare and not shared with the host or
-      ## customer as part of regular processing. For delegated reports, comments may be
-      ## shared in full.
+      ## With the exception of delegated reports, comments are kept internal to
+      ## Cloudflare and not shared with the host or customer as part of regular
+      ## processing. For the limited circumstances where we delegate reports to customers
+      ## with established abuse-handling programs, comments may be shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -1510,9 +1555,10 @@ type
     act*: string
     comments*: Option[string]
       ## Any additional comments about the infringement not exceeding 2000 characters.
-      ## Comments are kept internal to Cloudflare and not shared with the host or
-      ## customer as part of regular processing. For delegated reports, comments may be
-      ## shared in full.
+      ## With the exception of delegated reports, comments are kept internal to
+      ## Cloudflare and not shared with the host or customer as part of regular
+      ## processing. For the limited circumstances where we delegate reports to customers
+      ## with established abuse-handling programs, comments may be shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -1560,9 +1606,10 @@ type
     act*: string
     comments*: Option[string]
       ## Any additional comments about the infringement not exceeding 2000 characters.
-      ## Comments are kept internal to Cloudflare and not shared with the host or
-      ## customer as part of regular processing. For delegated reports, comments may be
-      ## shared in full.
+      ## With the exception of delegated reports, comments are kept internal to
+      ## Cloudflare and not shared with the host or customer as part of regular
+      ## processing. For the limited circumstances where we delegate reports to customers
+      ## with established abuse-handling programs, comments may be shared in full.
     company*: Option[string]
       ## Text not exceeding 100 characters. This field may be released by Cloudflare to
       ## third parties such as the Lumen Database (https://lumendatabase.org/).
@@ -1873,8 +1920,6 @@ type
 
   AccessAssociatedHostnames* = seq[string]
 
-  AccessAssociatedHostnames2* = seq[string]
-
   AccessAud* = string
 
   AccessAud2* = string
@@ -2028,7 +2073,7 @@ type
     domain*: Option[AccessDomain2]
     id*: Option[string]
       ## The unique identifier for the Bookmark application.
-    logo_url*: Option[AccessLogoUrl2]
+    logo_url*: Option[AccessLogoUrl]
     name*: Option[AccessName12]
     updated_at*: Option[AccessUpdatedAt]
 
@@ -2043,7 +2088,7 @@ type
 
   AccessCa2* = ref object of RootObj
     aud*: Option[AccessAud3]
-    id*: Option[AccessId3]
+    id*: Option[AccessId2]
     public_key*: Option[AccessPublicKey]
 
   AccessCentrify* = ref object of RootObj
@@ -2122,13 +2167,13 @@ type
       ## The public key of this certificate.
 
   AccessCertificates3* = ref object of RootObj
-    associated_hostnames*: Option[AccessAssociatedHostnames2]
+    associated_hostnames*: Option[AccessAssociatedHostnames]
     created_at*: Option[AccessTimestamp]
     expires_on*: Option[AccessTimestamp]
     fingerprint*: Option[AccessFingerprint]
     id*: Option[string]
       ## The ID of the application that will use this certificate.
-    name*: Option[AccessName18]
+    name*: Option[AccessName7]
     updated_at*: Option[AccessTimestamp]
 
   AccessCfResourceId* = seq[string]
@@ -2410,8 +2455,6 @@ type
     `type`*: string
 
   AccessDuration* = string
-
-  AccessDuration2* = string
 
   AccessEagerRedirectCookieSetting* = bool
 
@@ -2776,7 +2819,7 @@ type
     exclude*: Option[AccessExclude]
     id*: Option[AccessUuid]
     `include`*: Option[AccessInclude]
-    name*: Option[AccessName16]
+    name*: Option[AccessName6]
     require*: Option[AccessRequire]
     updated_at*: Option[AccessTimestamp]
 
@@ -2792,8 +2835,6 @@ type
   AccessId* = string
 
   AccessId2* = string
-
-  AccessId3* = string
 
   AccessIdResponse* = ref object of RootObj
     errors*: AccessMessages
@@ -2817,13 +2858,6 @@ type
     result*: Option[JsonNode]
 
   AccessIdResponse4* = ref object of RootObj
-    errors*: AccessMessages
-    messages*: AccessMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result*: Option[JsonNode]
-
-  AccessIdResponse5* = ref object of RootObj
     errors*: AccessMessages
     messages*: AccessMessages
     success*: bool
@@ -3188,8 +3222,6 @@ type
 
   AccessLogoUrl* = string
 
-  AccessLogoUrl2* = string
-
   AccessMaxAge* = float64
 
   AccessMcpPortalProps* = ref object of RootObj
@@ -3290,12 +3322,6 @@ type
   AccessName14* = string
 
   AccessName15* = string
-
-  AccessName16* = string
-
-  AccessName17* = string
-
-  AccessName18* = string
 
   AccessName2* = string
 
@@ -4675,7 +4701,7 @@ type
   AccessServiceTokens2* = ref object of RootObj
     client_id*: Option[AccessClientId]
     created_at*: Option[AccessTimestamp]
-    duration*: Option[AccessDuration2]
+    duration*: Option[AccessDuration]
     enabled*: Option[AccessEnabled]
     expires_at*: Option[AccessTimestamp]
     id*: Option[JsonNode]
@@ -4683,7 +4709,7 @@ type
     leak_report_url*: Option[AccessLeakReportUrl]
     leak_reported_at*: Option[AccessLeakReportedAt]
     leak_reporter*: Option[AccessLeakReporter]
-    name*: Option[AccessName17]
+    name*: Option[AccessName2]
     tags*: Option[AccessTags]
     updated_at*: Option[AccessTimestamp]
 
@@ -6209,6 +6235,14 @@ type
     result*: Option[JsonNode]
     success*: bool
 
+  AigBillingGetAuthoritativeTopupEligibilityResult* = ref object of RootObj
+    advisory*: bool
+    auto_topup*: JsonNode
+    contract_version*: float64
+    evaluated_at*: string
+    manual_topup*: JsonNode
+    payment_methods*: seq[JsonNode]
+
   AigBillingGetCreditBalanceResponse* = ref object of RootObj
     errors*: seq[JsonNode]
     messages*: seq[JsonNode]
@@ -6280,7 +6314,7 @@ type
   AigBillingGetTopupEligibilityResponse* = ref object of RootObj
     errors*: seq[JsonNode]
     messages*: seq[JsonNode]
-    result*: AigBillingGetTopupEligibilityResult
+    result*: JsonNode
     result_info*: Option[JsonNode]
     success*: bool
 
@@ -9725,6 +9759,10 @@ type
   BuildsConfigAutofillResponse* = ref object of RootObj
     config_file*: Option[string]
     default_worker_name*: Option[string]
+    deploy_tool*: Option[string]
+      ## Deployment CLI detected in the selected root directory. A Wrangler config takes
+      ## precedence. `cf` requires `cloudflare.config.ts` and a `cf` dependency or dev
+      ## dependency in `package.json`.
     env_worker_names*: Option[JsonNode]
     package_manager*: Option[string]
       ## Package manager inferred from repository lockfiles; defaults to npm when none is
@@ -10093,8 +10131,6 @@ type
   BuildsRepoName* = string
 
   BuildsRootDirectory* = string
-
-  BuildsScriptName* = string
 
   BuildsStoppedOn* = string
 
@@ -10499,7 +10535,8 @@ type
 
   CacheSettingsSettingId* = string
 
-  CacheSettingsSettingValue* = string
+  CacheSettingsSettingValue* = ref object of RootObj
+    ## The value of the setting.
 
   CacheSettingsSmartTieredCache* = ref object of RootObj
     id*: string
@@ -10793,9 +10830,9 @@ type
 
   CallsTurnKeyWithKey* = ref object of RootObj
     created*: CallsCreated
-    key*: CallsTurnKey
     modified*: CallsModified
     name*: CallsTurnKeyName
+    secret*: CallsTurnKey
     uid*: CallsIdentifier
 
   CcAccountID* = string
@@ -10817,9 +10854,9 @@ type
     vcpus*: float64
 
   CcAccountUsageResponse* = ref object of RootObj
-    ## Current live usage, maximum limits, and utilization percentages for a
-    ## Cloudchamber account. Usage includes active and assigned instances and is a
-    ## current snapshot, not a historical or billable metric.
+    ## Current live usage, maximum limits, and utilization percentages for your
+    ## account. Usage includes active and assigned instances and is a current snapshot,
+    ## not a historical or billable metric.
     maximum*: CcAccountUsageMaximum
     usage*: CcAccountUsageResources
     utilization*: CcAccountUsageUtilization
@@ -11203,8 +11240,11 @@ type
       ##
     constraints*: Option[CcApplicationConstraints]
     durable_objects*: Option[JsonNode]
-      ## Optionally associates this scheduler-backed application with a Durable Object
-      ## namespace.
+      ## Associates this scheduler-backed application with a Durable Object namespace.
+      ## Required
+      ## for default scheduling on private-network-only accounts unless the account has a
+      ## temporary standalone-application exception.
+      ##
     instances*: int64
       ## The initial number of deployments to create.
     max_instances*: int64
@@ -12046,6 +12086,7 @@ type
     success*: CloudflareK2WorkersK2CommonSuccess
 
   CloudflareK2K2StreamWorkerBindingInput* = ref object of RootObj
+    ## Configures whether Workers bindings can produce records to the stream.
     enabled*: bool
       ## Indicates whether Workers bindings can produce records to the stream.
 
@@ -12147,6 +12188,25 @@ type
     src_id*: int32
     value_type*: string
 
+  CloudflarePipelinesPipelineExtended* = ref object of RootObj
+    created_at*: string
+    failure_reason*: Option[string]
+      ## Indicates the reason for the failure of the Pipeline.
+    id*: string
+      ## Indicates a unique identifier for this pipeline.
+    modified_at*: string
+    name*: string
+      ## Indicates the name of the Pipeline.
+    outdated*: bool
+      ## Indicates that a stream or sink has a newer version than the one this pipeline
+      ## uses. Update Pipeline Tables moves the pipeline to the latest versions.
+    sql*: string
+      ## Specifies SQL for the Pipeline processing flow.
+    status*: string
+      ## Indicates the current status of the Pipeline.
+    tables*: seq[JsonNode]
+      ## List of streams and sinks used by this pipeline.
+
   CloudflarePipelinesPipelineGraph* = ref object of RootObj
     ## Indicates the processing flow to implement the SQL.
     edges*: seq[CloudflarePipelinesPipelineEdge]
@@ -12157,6 +12217,26 @@ type
     node_id*: int32
     operator*: string
     parallelism*: int32
+
+  CloudflarePipelinesSink* = ref object of RootObj
+    config*: Option[JsonNode]
+      ## Defines the configuration of the R2 Sink.
+    created_at*: string
+    format*: Option[CloudflarePipelinesSinkFormat]
+    id*: string
+      ## Indicates a unique identifier for this sink.
+    latest*: int64
+      ## Indicates the latest version of this sink.
+    modified_at*: string
+    name*: string
+      ## Defines the name of the Sink.
+    schema*: Option[CloudflarePipelinesConnectionSchema]
+    `type`*: string
+      ## Specifies the type of sink.
+    used_by*: Option[seq[JsonNode]]
+      ## Lists the pipelines that use this sink. Omitted when no pipeline uses it.
+    version*: int64
+      ## Indicates the version of this sink.
 
   CloudflarePipelinesSinkFormat* = ref object of RootObj
     ## Defines the output data format of a sink.
@@ -12172,6 +12252,15 @@ type
     compression*: Option[CloudflarePipelinesParquetCompression]
     row_group_bytes*: Option[int64]
     `type`*: string
+
+  CloudflarePipelinesSinkRollingPolicy* = ref object of RootObj
+    ## Rolling policy for file sinks (when & why to close a file and open a new one).
+    file_size_bytes*: Option[int64]
+      ## Files will be rolled after reaching this number of bytes
+    inactivity_seconds*: Option[int64]
+      ## Number of seconds of inactivity to wait before rolling over to a new file
+    interval_seconds*: Option[int64]
+      ## Number of seconds to wait before rolling over to a new file
 
   CloudflarePipelinesSourceField* = ref object of RootObj
     metadata_key*: Option[string]
@@ -12196,6 +12285,13 @@ type
     microsecond = "microsecond"
     nanosecond = "nanosecond"
 
+  CloudflarePipelinesBasinCatalogTableUpdate* = ref object of RootObj
+    ## Mutable configuration of a Basin Catalog Sink, including Sinks created with the
+    ## legacy `r2_data_catalog` type. Omitted fields keep their current values.
+    rolling_policy*: Option[CloudflarePipelinesSinkRollingPolicy]
+    token*: Option[string]
+      ## Authentication token
+
   CloudflarePipelinesR2Table* = ref object of RootObj
     account_id*: string
       ## Cloudflare Account ID for the bucket
@@ -12210,8 +12306,7 @@ type
       ## Data-layout partitioning for sinks.
     path*: Option[string]
       ## Subpath within the bucket to write to
-    rolling_policy*: Option[JsonNode]
-      ## Rolling policy for file sinks (when & why to close a file and open a new one).
+    rolling_policy*: Option[CloudflarePipelinesSinkRollingPolicy]
 
   CloudflarePipelinesR2TablePublic* = ref object of RootObj
     ## R2 Sink public configuration.
@@ -12227,8 +12322,13 @@ type
       ## Data-layout partitioning for sinks.
     path*: Option[string]
       ## Subpath within the bucket to write to
-    rolling_policy*: Option[JsonNode]
-      ## Rolling policy for file sinks (when & why to close a file and open a new one).
+    rolling_policy*: Option[CloudflarePipelinesSinkRollingPolicy]
+
+  CloudflarePipelinesR2TableUpdate* = ref object of RootObj
+    ## Mutable configuration of an R2 Sink. Omitted fields keep their current values.
+    credentials*: Option[JsonNode]
+      ## R2 credentials to change. Omitted fields keep their current values.
+    rolling_policy*: Option[CloudflarePipelinesSinkRollingPolicy]
 
   CloudflarePipelinesR2DataCatalogTable* = ref object of RootObj
     ## R2 Data Catalog Sink
@@ -12238,8 +12338,7 @@ type
       ## The R2 Bucket that hosts this catalog
     namespace*: Option[string]
       ## Table namespace
-    rolling_policy*: Option[JsonNode]
-      ## Rolling policy for file sinks (when & why to close a file and open a new one).
+    rolling_policy*: Option[CloudflarePipelinesSinkRollingPolicy]
     table_name*: string
       ## Table name
     token*: string
@@ -12253,8 +12352,7 @@ type
       ## The R2 Bucket that hosts this catalog
     namespace*: Option[string]
       ## Table namespace
-    rolling_policy*: Option[JsonNode]
-      ## Rolling policy for file sinks (when & why to close a file and open a new one).
+    rolling_policy*: Option[CloudflarePipelinesSinkRollingPolicy]
     table_name*: string
       ## Table name
 
@@ -12325,6 +12423,44 @@ type
   CloudforceOneEventsHydratedEntity* = ref object of RootObj
     ## Hydrated event, indicator, or tag entity.
 
+  CloudforceOneEventsPirDefinition* = ref object of RootObj
+    ## Structured PIR answers. `managed` follows a topic from `GET /topics`; `custom`
+    ## has its own question and criteria. The requirement text and event query are
+    ## generated from it.
+
+  CloudforceOneEventsPirOrganizationProfile* = ref object of RootObj
+    ## Structured organization facts. Structured PIRs inherit them, and the profile
+    ## text is generated from them.
+    additional_context*: Option[string]
+    facts*: JsonNode
+    schema_version*: float64
+
+  CloudforceOneEventsPirOrganizationReference* = ref object of RootObj
+    domains*: Option[seq[string]]
+    name*: string
+
+  CloudforceOneEventsPirRelevanceCriterion* = ref object of RootObj
+    band*: string
+    id*: string
+    text*: string
+
+  CloudforceOneEventsPirSelections* = ref object of RootObj
+    actor_notes*: Option[string]
+    actor_types*: Option[JsonNode]
+    actors*: Option[JsonNode]
+    attributed_countries*: Option[seq[string]]
+    countries*: Option[JsonNode]
+    cves*: Option[seq[string]]
+    excluded_actors*: Option[seq[string]]
+    key_suppliers*: Option[JsonNode]
+    malware_tools*: Option[seq[string]]
+    motivations*: Option[JsonNode]
+    peers*: Option[JsonNode]
+    sectors*: Option[JsonNode]
+    targets*: Option[JsonNode]
+    technique_ids*: Option[seq[string]]
+    technologies*: Option[JsonNode]
+
   CloudforceOneEventsRelationshipEdge* = ref object of RootObj
     confidence*: Option[int64]
       ## Confidence score 0–100, or null.
@@ -12388,6 +12524,7 @@ type
     errors*: JsonNode
     messages*: CloudforceOneRequestsMessages
     success*: bool
+      ## Whether the API call was successful.
 
   CloudforceOneRequestsAssetContent* = string
 
@@ -14415,6 +14552,35 @@ type
 
   D1FileSize* = float64
 
+  D1InsightsDatabaseUsage* = ref object of RootObj
+    database_id*: Option[D1DatabaseIdentifier]
+    database_name*: Option[string]
+      ## The database name recorded with its usage in the window. Null when no usage in
+      ## the window recorded a name, for example usage before 2026-10-30.
+    queries*: Option[int64]
+      ## Number of queries (read and write) in the window.
+    rows_read*: Option[int64]
+      ## Number of rows read in the window.
+    rows_written*: Option[int64]
+      ## Number of rows written in the window.
+
+  D1InsightsQueryUsage* = ref object of RootObj
+    avg_duration_ms*: Option[float64]
+      ## Average execution time, in milliseconds: `total_duration_ms` / `executions`.
+    database_id*: Option[D1DatabaseIdentifier]
+    executions*: Option[int64]
+      ## Estimated number of times the statement ran in the window.
+    query*: Option[string]
+      ## The SQL statement text, as sent to the database (at most 4096 characters).
+    rows_read*: Option[int64]
+      ## Estimated number of rows read in the window.
+    rows_returned*: Option[int64]
+      ## Estimated number of rows returned in the window.
+    rows_written*: Option[int64]
+      ## Estimated number of rows written in the window.
+    total_duration_ms*: Option[float64]
+      ## Estimated total execution time in the window, in milliseconds.
+
   D1Jurisdiction* = enum
     ## Specify the location to restrict the D1 database to run and store data. If this
     ## option is present, the location hint is ignored.
@@ -14572,6 +14738,28 @@ type
     success*: bool
       ## Whether the API call was successful.
 
+  DigitalExperienceMonitoringClientNotification* = ref object of RootObj
+    created_at*: JsonNode
+      ## Time at which the notification sendout was created.
+    id*: JsonNode
+      ## Unique identifier for the notification sendout.
+    message*: string
+      ## Plain-text notification message.
+    outcome_counts*: Option[JsonNode]
+      ## Weighted delivery outcome counts derived from sampled delivery events.
+    recipient_count*: Option[int64]
+      ## Number of targeted device registrations. Omitted for account-wide notifications.
+    scope*: string
+      ## Whether the notification was sent account-wide or to selected device
+      ## registrations.
+    status*: string
+      ## Dispatch status indicating whether the notification was accepted for delivery,
+      ## not a device delivery outcome.
+    support_url*: Option[string]
+      ## URL supplied to recipients for additional information.
+    title*: string
+      ## Plain-text notification title.
+
   DigitalExperienceMonitoringColo* = string
 
   DigitalExperienceMonitoringColosResponse* = seq[JsonNode]
@@ -14587,6 +14775,17 @@ type
       ## CPU usage percentage, on a scale of 0 to 100.
     name*: Option[string]
       ## Application name.
+
+  DigitalExperienceMonitoringCreateNotificationRequest* = ref object of RootObj
+    message*: string
+      ## Plain-text notification message.
+    registration_ids*: Option[seq[DigitalExperienceMonitoringUuid]]
+      ## Device registration IDs to notify. Omit to send an account-wide notification.
+    support_url*: Option[string]
+      ## URL supplied to recipients for additional information. Required when
+      ## registration_ids is set.
+    title*: string
+      ## Plain-text notification title.
 
   DigitalExperienceMonitoringCreateRuleBody* = ref object of RootObj
     description*: Option[string]
@@ -14837,6 +15036,14 @@ type
   DigitalExperienceMonitoringGetCommandsResponse* = ref object of RootObj
     commands*: Option[seq[JsonNode]]
 
+  DigitalExperienceMonitoringGetNotificationOutcomesResponse* = ref object of RootObj
+    outcomes*: seq[DigitalExperienceMonitoringNotificationOutcome]
+      ## Observed notification outcomes ordered from newest to oldest.
+
+  DigitalExperienceMonitoringGetNotificationsResponse* = ref object of RootObj
+    notifications*: seq[DigitalExperienceMonitoringClientNotification]
+      ## Notification sendouts ordered from newest to oldest.
+
   DigitalExperienceMonitoringHttpDetailsPercentilesResponse* = ref object of RootObj
     dns_response_time_ms*: Option[DigitalExperienceMonitoringPercentiles]
     resource_fetch_time_ms*: Option[DigitalExperienceMonitoringPercentiles]
@@ -14901,6 +15108,29 @@ type
   DigitalExperienceMonitoringMessages* = seq[JsonNode]
 
   DigitalExperienceMonitoringMode* = string
+
+  DigitalExperienceMonitoringNotificationOutcome* = ref object of RootObj
+    duration_ms*: int64
+      ## Active notification duration in milliseconds. Expired outcomes report zero.
+    registration_id*: string
+      ## Registration ID of the device that produced the outcome.
+    sample_interval*: int64
+      ## Sampling interval for this event. Values above one indicate a sampled result.
+    status*: string
+      ## Observed notification delivery status.
+    timestamp*: JsonNode
+      ## Time when the outcome was observed.
+
+  DigitalExperienceMonitoringNotificationOutcomeCounts* = ref object of RootObj
+    delivered*: int64
+      ## Number of delivered outcomes.
+    estimated*: bool
+      ## Whether these weighted counts may be affected by equitable sampling before
+      ## full-resolution storage.
+    expired*: int64
+      ## Number of expired outcomes.
+    failed*: int64
+      ## Number of failed outcomes.
 
   DigitalExperienceMonitoringPage* = float64
 
@@ -19986,6 +20216,10 @@ type
     quota*: Option[JsonNode]
       ## The resolved daily sending quota for the account. Null when the quota is not yet
       ## available.
+    recipient_mode*: Option[string]
+      ## Which recipients the account can send to, derived from the account's Email
+      ## Sending entitlement. arbitrary: any recipient. verified_only: only the account's
+      ## verified destination addresses.
     usage*: Option[JsonNode]
       ## The account's current daily sending usage. Null when there is no resolved quota
       ## or usage is temporarily unavailable.
@@ -21609,7 +21843,8 @@ type
     managed_by*: Option[JsonNode]
       ## Parent container details
     name*: string
-      ## Account name
+      ## Account name. When creating or updating an account, the name is limited to 65
+      ## UTF-8 bytes.
     settings*: Option[JsonNode]
       ## Account settings
     `type`*: JsonNode
@@ -21741,7 +21976,8 @@ type
     managed_by*: Option[JsonNode]
       ## Parent container details
     name*: string
-      ## Account name, limited to 65 UTF-8 bytes.
+      ## Account name. When creating or updating an account, the name is limited to 65
+      ## UTF-8 bytes.
     settings*: Option[JsonNode]
       ## Account settings
     `type`*: JsonNode
@@ -22315,7 +22551,8 @@ type
     managed_by*: Option[JsonNode]
       ## Parent container details
     name*: string
-      ## Account name
+      ## Account name. When creating or updating an account, the name is limited to 65
+      ## UTF-8 bytes.
     settings*: Option[JsonNode]
       ## Account settings
     `type`*: JsonNode
@@ -25449,6 +25686,8 @@ type
       ## Whether the API call was successful.
     result*: Option[JsonNode]
 
+  LogpushDestinationName* = string
+
   LogpushEnabled* = bool
 
   LogpushErrorMessage* = string
@@ -25523,6 +25762,7 @@ type
   LogpushLogpushJob* = ref object of RootObj
     dataset*: Option[LogpushDataset]
     destination_conf*: Option[LogpushDestinationConf]
+    destination_name*: Option[LogpushDestinationName]
     enabled*: Option[LogpushEnabled]
     error_message*: Option[LogpushErrorMessage]
     filter_attack_traffic*: Option[LogpushFilterAttackTraffic]
@@ -29572,8 +29812,15 @@ type
 
   NscCni* = ref object of RootObj
     account*: NscAccountTag
-    bgp*: Option[NscBgpControl]
-    bgp_mode*: Option[NscBgpMode]
+    bgp*: Option[JsonNode]
+      ## BGP Control settings. For non-GCP CNIs, null disables BGP Control. GCP CNIs
+      ## require BGP configuration, so explicit null is rejected; omission preserves
+      ## stored settings or repairs missing settings with the Google defaults.
+    bgp_mode*: Option[JsonNode]
+      ## Controls the customer-facing route exchange behavior. Omitting this field during
+      ## an update preserves the current mode. When enabling BGP on a BGP-disabled CNI,
+      ## an omitted or null mode defaults to AdvertiseOnly. Otherwise, null clears the
+      ## explicitly selected mode.
     cust_ip*: string
       ## Customer end of the point-to-point link
       ##
@@ -29587,7 +29834,10 @@ type
 
   NscCniCreate* = ref object of RootObj
     account*: NscAccountTag
-    bgp*: Option[NscBgpControl]
+    bgp*: Option[JsonNode]
+      ## BGP Control settings. For GCP CNIs, omitting this field or setting it to null
+      ## enables BGP with the Google ASN and AdvertiseOnly mode by default. For other CNI
+      ## types, omission or null leaves BGP disabled.
     interconnect*: string
     magic*: NscMagicSettings
 
@@ -30431,7 +30681,7 @@ type
       ## Account tags, present only when `include_tags=true` is requested.
     `type`*: string
 
-  OrganizationsApiAccountListResultInfo* = ref object of RootObj
+  OrganizationsApiAccountListResultInfo* = OrganizationsApiPageTokenResultInfo
 
   OrganizationsApiBatchCreateMembersRequest* = ref object of RootObj
     members*: Option[seq[OrganizationsApiCreateSingleMember]]
@@ -30476,12 +30726,6 @@ type
     account_type*: string
     created_on*: string
     settings*: JsonNode
-
-  OrganizationsApiLegacyPaginationResultInfo* = ref object of RootObj
-    count*: int64
-    page*: int64
-    per_page*: int64
-    total_count*: int64
 
   OrganizationsApiLegacyTenant* = ref object of RootObj
     cdate*: string
@@ -30539,8 +30783,8 @@ type
 
   OrganizationsApiModifyOrganizationRequest* = ref object of RootObj
     name*: Option[string]
-      ## The Organization's display name, limited to 65 UTF-8 bytes. An omitted, empty,
-      ## or unchanged value is a no-op.
+      ## The Organization name, limited to 65 UTF-8 bytes. An omitted, empty, or
+      ## unchanged value is a no-op.
     parent_id*: Option[JsonNode]
       ## The current parent Organization ID. A different value is rejected; this endpoint
       ## cannot move an Organization.
@@ -32951,6 +33195,9 @@ type
     ## Contains catalog information.
     bucket*: string
       ## Specifies the associated R2 bucket name.
+    catalog_uri*: Option[string]
+      ## Specifies the Iceberg REST catalog URI that clients use to connect to the
+      ## catalog.
     credential_status*: Option[string]
       ## Shows the credential configuration status.
     id*: string
@@ -32974,6 +33221,9 @@ type
 
   R2DataCatalogCatalogActivationResponse* = ref object of RootObj
     ## Contains response from activating an R2 bucket as a catalog.
+    catalog_uri*: Option[string]
+      ## Specifies the Iceberg REST catalog URI that clients use to connect to the
+      ## catalog.
     id*: string
       ## Use this to uniquely identify the activated catalog.
     name*: string
@@ -33127,6 +33377,17 @@ type
       ## A null or absent value indicates the last page.
       ##
 
+  R2DataCatalogNextEligibleReason* = enum
+    ## Why the operation is not eligible to run before next_eligible_at. Returned by
+    ## the per-table GET only, and absent from the update response.
+    ## `held_after_user_error` means a customer-caused failure holds the lease until it
+    ## expires.
+    disabled = "disabled"
+    heldAfterUserError = "held_after_user_error"
+    running = "running"
+    noCredential = "no_credential"
+    scheduled = "scheduled"
+
   R2DataCatalogQueueMaintenanceRequest* = ref object of RootObj
     request_id*: Option[string]
 
@@ -33161,6 +33422,7 @@ type
     ## Configures compaction settings for table optimization.
     next_eligible_at*: Option[string]
       ## Earliest time when the scheduler can claim this operation. Null when disabled.
+    next_eligible_reason*: Option[R2DataCatalogNextEligibleReason]
     state*: R2DataCatalogCatalogMaintenanceState
     target_size_mb*: R2DataCatalogCatalogTargetFileSize
 
@@ -33240,6 +33502,7 @@ type
       ## Specifies the minimum number of snapshots to retain. Defaults to 100.
     next_eligible_at*: Option[string]
       ## Earliest time when the scheduler can claim this operation. Null when disabled.
+    next_eligible_reason*: Option[R2DataCatalogNextEligibleReason]
     state*: R2DataCatalogCatalogMaintenanceState
 
   R2SlurperConnectivityResponse* = ref object of RootObj
@@ -34063,6 +34326,7 @@ type
     session_keep_alive_time_in_secs*: Option[float64]
       ## Time in seconds, for which a session remains active, after the last participant
       ## has left the meeting.
+    sip*: Option[RealtimekitMeetingSip]
     status*: Option[string]
       ## Whether the meeting is `ACTIVE` or `INACTIVE`. Users will not be able to join an
       ## `INACTIVE` meeting.
@@ -34075,6 +34339,15 @@ type
       ## Automatically generate transcripts when the meeting ends.
     updated_at*: string
       ## Timestamp the object was updated at. The time is returned in ISO format.
+
+  RealtimekitMeetingSip* = ref object of RootObj
+    ## SIP dial-in details. `null` if SIP is not enabled for the meeting.
+    password*: string
+      ## Password for SIP digest authentication. Keep it secret.
+    sip_uri*: string
+      ## SIP URI to dial. Configure it in your SIP provider or PBX.
+    username*: string
+      ## Username for SIP digest authentication.
 
   RealtimekitPacketLossCumulative* = ref object of RootObj
     ## Cumulative packet loss distribution.
@@ -36214,10 +36487,6 @@ type
       ## Provides a cursor for the next page of results. Include this value in the next
       ## request to continue pagination.
 
-  ResourceTaggingDeleteTagsRequestAccountLevel* = ref object of RootObj
-    ## Request body schema for deleting tags from account-level resources. Use
-    ## /zones/{zone_id}/tags for zone-level resources.
-
   ResourceTaggingDeleteTagsRequestAccountLevelBase* = ref object of RootObj
     ## Request body schema for deleting tags from account-level resources.
     resource_id*: ResourceTaggingResourceId
@@ -36228,9 +36497,6 @@ type
     resource_id*: ResourceTaggingResourceId
     resource_type*: ResourceTaggingAccountResourceTypeWorkerVersionEnum
     worker_id*: ResourceTaggingWorkerId
-
-  ResourceTaggingDeleteTagsRequestZoneLevel* = ref object of RootObj
-    ## Request body schema for deleting tags from zone-level resources.
 
   ResourceTaggingDeleteTagsRequestZoneLevelAccessApplicationPolicy* = ref object of RootObj
     ## Request body schema for deleting tags from access_application_policy resources.
@@ -38467,7 +38733,15 @@ type
 
   SecurityCenterExternalApiResponseCommonFailure* = SecurityCenterApiResponseCommonFailure
 
+  SecurityCenterExternalApiResponseMessages* = SecurityCenterMessages
+
   SecurityCenterExternalApiResponseSingle* = SecurityCenterApiResponseSingle
+
+  SecurityCenterExternalApiResponseSingleNoTerraform* = ref object of RootObj
+    errors*: JsonNode
+    messages*: JsonNode
+    success*: bool
+      ## Whether the API call was successful.
 
   SecurityCenterAccountId* = SecurityCenterIdentifier
 
@@ -38602,6 +38876,10 @@ type
   SecurityCenterPartnerSettings* = ref object of RootObj
     enabled*: bool
       ## Whether the partner integration is enabled for the account.
+      ## Enabling the integration for the first time also schedules an account scan for
+      ## that partner.
+      ## Disabling the integration will purge all partner integration-related data,
+      ## including partner insights, shadow zones, and shadow hosts.
 
   SecurityCenterPartnerSettingsGetResponse* = ref object of RootObj
     errors*: SecurityCenterMessages
@@ -38643,15 +38921,32 @@ type
       ## List of on-demand scans.
 
   SecurityCenterSecurityTxt* = ref object of RootObj
+    ## Configuration of the zone security.txt file
     acknowledgments*: Option[seq[string]]
+      ## Link(s) to a page where security researchers are recognised for their reports.
     canonical*: Option[seq[string]]
-    contact*: Option[seq[string]]
+      ## Canonical URI where the security.txt file is located.
+    contact*: seq[string]
+      ## Methods that researchers should use for reporting vulnerabilities. Can be a URI
+      ## for an email address, phone number, or URL.
     enabled*: Option[bool]
+      ## Whether or not to serve the security.txt file in this zone. If false,
+      ## security.txt requests will pass through to the origin server.
     encryption*: Option[seq[string]]
-    expires*: Option[string]
+      ## URI(s) pointing to a location where an encryption key that researchers should
+      ## use for encrypted communications can be retrieved. The key itself must not
+      ## appear in this field.
+    expires*: string
+      ## RFC3339-formatted date and time string indicating the time that, after which,
+      ## the contents of the security.txt file should be considered stale. It is
+      ## recommended that this value is less than a year into the future.
     hiring*: Option[seq[string]]
+      ## Link(s) to any security-related job positions.
     policy*: Option[seq[string]]
+      ## Link(s) to where a vulnerability disclosure policy is located.
     preferred_languages*: Option[string]
+      ## Comma-separated list of natural languages that are preferred when submitting
+      ## security reports. Language codes should be as defined in RFC5646.
 
   SecurityCenterSeverityQueryParam* = seq[string]
 
@@ -39680,7 +39975,7 @@ type
     require_signed_u_r_ls*: Option[StreamRequireSignedURLs]
     scheduled_deletion*: Option[StreamScheduledDeletion]
     thumbnail_timestamp_pct*: Option[StreamThumbnailTimestampPct]
-    watermark*: Option[StreamWatermarkAtUpload2]
+    watermark*: Option[StreamWatermarkAtUpload]
 
   StreamDirectUploadResponse* = ref object of RootObj
     errors*: StreamMessages
@@ -40175,7 +40470,7 @@ type
       ## requests and `HTTP GET` range requests. The server should respond to `HTTP HEAD`
       ## requests with a `content-range` header that includes the size of the file. This
       ## field is deprecated in favor of `input`.
-    watermark*: Option[StreamWatermarkAtUpload2]
+    watermark*: Option[StreamWatermarkAtUpload]
 
   StreamVideoName* = string
 
@@ -40246,10 +40541,6 @@ type
     watermark*: Option[StreamWatermarks]
 
   StreamWatermarkAtUpload* = ref object of RootObj
-    uid*: Option[string]
-      ## The unique identifier for the watermark profile.
-
-  StreamWatermarkAtUpload2* = ref object of RootObj
     uid*: Option[string]
       ## The unique identifier for the watermark profile.
 
@@ -40531,6 +40822,7 @@ type
     disable_auto_fallback*: Option[TeamsDevicesDisableAutoFallback]
     dns_search_suffixes*: Option[TeamsDevicesDnsSearchSuffixes]
     enable_device_credential_authentication*: Option[TeamsDevicesEnableDeviceCredentialAuthentication]
+    enable_netbt*: Option[TeamsDevicesEnableNetbt]
     enabled*: Option[bool]
       ## Whether the policy will be applied to matching devices.
     exclude*: Option[TeamsDevicesExclude]
@@ -40539,6 +40831,8 @@ type
     gateway_unique_id*: Option[TeamsDevicesGatewayUniqueId]
     global_acceleration*: Option[TeamsDevicesGlobalAcceleration]
     `include`*: Option[TeamsDevicesInclude]
+    lan_allow_minutes*: Option[TeamsDevicesLanAllowMinutes]
+    lan_allow_subnet_size*: Option[TeamsDevicesLanAllowSubnetSize]
     policy_id*: Option[TeamsDevicesSchemasUuid]
     profile_type*: Option[TeamsDevicesProfileType]
     register_interface_ip_with_dns*: Option[TeamsDevicesRegisterInterfaceIpWithDns]
@@ -40663,6 +40957,7 @@ type
     disable_auto_fallback*: Option[TeamsDevicesDisableAutoFallback]
     dns_search_suffixes*: Option[TeamsDevicesDnsSearchSuffixes]
     enable_device_credential_authentication*: Option[TeamsDevicesEnableDeviceCredentialAuthentication]
+    enable_netbt*: Option[TeamsDevicesEnableNetbt]
     enabled*: Option[bool]
       ## Whether the policy will be applied to matching devices.
     exclude*: Option[TeamsDevicesExclude]
@@ -40788,18 +41083,28 @@ type
 
   TeamsDevicesEnableDeviceCredentialAuthentication* = bool
 
+  TeamsDevicesEnableNetbt* = bool
+
   TeamsDevicesExclude* = seq[TeamsDevicesSplitTunnel]
 
   TeamsDevicesExcludeOfficeIps* = bool
 
-  TeamsDevicesExcludeRequest* = seq[TeamsDevicesSplitTunnel]
+  TeamsDevicesExcludeRequest* = seq[TeamsDevicesSplitTunnelRequest]
 
   TeamsDevicesExcludeSplitTunnelWithAddress* = ref object of RootObj
     address*: TeamsDevicesSplitTunnelAddress
     description*: Option[TeamsDevicesSplitTunnelDescription]
 
+  TeamsDevicesExcludeSplitTunnelWithAddressRequest* = ref object of RootObj
+    address*: TeamsDevicesSplitTunnelAddress
+    description*: Option[TeamsDevicesSplitTunnelDescriptionRequest]
+
   TeamsDevicesExcludeSplitTunnelWithHost* = ref object of RootObj
     description*: Option[TeamsDevicesSplitTunnelDescription]
+    host*: TeamsDevicesSplitTunnelHost
+
+  TeamsDevicesExcludeSplitTunnelWithHostRequest* = ref object of RootObj
+    description*: Option[TeamsDevicesSplitTunnelDescriptionRequest]
     host*: TeamsDevicesSplitTunnelHost
 
   TeamsDevicesExpiration* = string
@@ -40896,11 +41201,13 @@ type
 
   TeamsDevicesInclude* = seq[TeamsDevicesSplitTunnelInclude]
 
-  TeamsDevicesIncludeRequest* = seq[TeamsDevicesSplitTunnelInclude]
+  TeamsDevicesIncludeRequest* = seq[TeamsDevicesSplitTunnelIncludeRequest]
 
   TeamsDevicesIncludeSplitTunnelAddress* = string
 
   TeamsDevicesIncludeSplitTunnelDescription* = string
+
+  TeamsDevicesIncludeSplitTunnelDescriptionRequest* = string
 
   TeamsDevicesIncludeSplitTunnelHost* = string
 
@@ -40908,8 +41215,16 @@ type
     address*: TeamsDevicesIncludeSplitTunnelAddress
     description*: Option[TeamsDevicesIncludeSplitTunnelDescription]
 
+  TeamsDevicesIncludeSplitTunnelWithAddressRequest* = ref object of RootObj
+    address*: TeamsDevicesIncludeSplitTunnelAddress
+    description*: Option[TeamsDevicesIncludeSplitTunnelDescriptionRequest]
+
   TeamsDevicesIncludeSplitTunnelWithHost* = ref object of RootObj
     description*: Option[TeamsDevicesIncludeSplitTunnelDescription]
+    host*: TeamsDevicesIncludeSplitTunnelHost
+
+  TeamsDevicesIncludeSplitTunnelWithHostRequest* = ref object of RootObj
+    description*: Option[TeamsDevicesIncludeSplitTunnelDescriptionRequest]
     host*: TeamsDevicesIncludeSplitTunnelHost
 
   TeamsDevicesInput* = ref object of RootObj
@@ -41006,7 +41321,11 @@ type
 
   TeamsDevicesLanAllowMinutes* = float64
 
+  TeamsDevicesLanAllowMinutesRequest* = float64
+
   TeamsDevicesLanAllowSubnetSize* = float64
+
+  TeamsDevicesLanAllowSubnetSizeRequest* = float64
 
   TeamsDevicesLastSeen* = string
 
@@ -41362,9 +41681,13 @@ type
 
   TeamsDevicesSplitTunnelDescription* = string
 
+  TeamsDevicesSplitTunnelDescriptionRequest* = string
+
   TeamsDevicesSplitTunnelHost* = string
 
   TeamsDevicesSplitTunnelInclude* = ref object of RootObj
+
+  TeamsDevicesSplitTunnelIncludeRequest* = ref object of RootObj
 
   TeamsDevicesSplitTunnelIncludeResponseCollection* = ref object of RootObj
     errors*: TeamsDevicesMessages
@@ -41373,6 +41696,8 @@ type
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[TeamsDevicesResultInfo]
+
+  TeamsDevicesSplitTunnelRequest* = ref object of RootObj
 
   TeamsDevicesSplitTunnelResponseCollection* = ref object of RootObj
     errors*: TeamsDevicesMessages
@@ -43033,6 +43358,28 @@ type
 
   TunnelAccountId* = string
 
+  TunnelAccountRegion* = ref object of RootObj
+    region_key*: TunnelRegionKey
+
+  TunnelAccountRegionResponseCollection* = ref object of RootObj
+    errors*: TunnelMessages
+    messages*: TunnelMessages
+    result*: seq[TunnelAccountRegion]
+    success*: bool
+      ## Whether the API call was successful
+
+  TunnelActiveAccountRegion* = ref object of RootObj
+    region_key*: Option[string]
+      ## The key of the account's active Data Localization Suite region, or `null` if the
+      ## account has not selected a region.
+
+  TunnelActiveAccountRegionResponseSingle* = ref object of RootObj
+    errors*: TunnelMessages
+    messages*: TunnelMessages
+    result*: TunnelActiveAccountRegion
+    success*: bool
+      ## Whether the API call was successful
+
   TunnelAddressFamily* = enum
     ## IP address family, either `v4` (IPv4) or `v6` (IPv6)
     v4 = "v4"
@@ -43368,6 +43715,11 @@ type
   TunnelPageNumber* = float64
 
   TunnelPerPage* = float64
+
+  TunnelPutAccountRegionBody* = ref object of RootObj
+    region_key*: TunnelRegionKey
+
+  TunnelRegionKey* = string
 
   TunnelRemoteConfig* = bool
 
@@ -45646,10 +45998,9 @@ type
 
   WorkersObservabilityAgentTraceSummary* = ref object of RootObj
     error_count*: int64
-      ## Recorded spans with a nonempty error or ERROR status. Counts spans, not distinct
-      ## messages or incidents.
+      ## Agent spans that recorded an error.
     errors*: Option[seq[string]]
-      ## Error messages encountered during the trace, if any.
+      ## Distinct error messages from the Trace's Agent spans.
     input_tokens*: Option[float64]
       ## Input tokens reported by chat spans in the authorized Trace window; null when
       ## none report input usage. Informational, not billing data.
@@ -45666,13 +46017,13 @@ type
     providers*: seq[string]
       ## Sorted distinct GenAI providers from chat spans in the authorized Trace window.
     root_span_name*: string
-      ## Name of the root span that initiated the trace.
+      ## Name of the first Agent span in the Trace.
     root_transaction_name*: string
-      ## Logical transaction name for the root span.
+      ## Transaction name of the first Agent span in the Trace.
     services*: seq[string]
-      ## Authorized Worker services represented in the trace.
+      ## Worker services with Agent activity in the Trace.
     spans*: float64
-      ## Total number of spans in the trace.
+      ## Agent spans in the Trace.
     tool_call_count*: int64
       ## Recorded execute_tool spans in the authorized Trace window. Custom-named
       ## approval spans are not counted.
@@ -45682,13 +46033,13 @@ type
       ## Input plus output tokens; null if either direction is unreported. Does not add
       ## cache or reasoning breakdowns.
     trace_duration_ms*: float64
-      ## Total duration of the trace in milliseconds.
+      ## Duration of the Trace's Agent activity, in milliseconds.
     trace_end_ms*: float64
-      ## Trace end time as a Unix epoch in milliseconds.
+      ## End of the Trace's Agent activity, as Unix epoch milliseconds.
     trace_id*: string
       ## Unique identifier for the distributed trace.
     trace_start_ms*: float64
-      ## Trace start time as a Unix epoch in milliseconds.
+      ## Start of the Trace's Agent activity, as Unix epoch milliseconds.
     agents*: seq[string]
       ## Sorted distinct gen_ai.agent.name values of authorized Agent invocations in the
       ## Trace within the effective window. Includes every Agent in the Trace, not only
@@ -45919,20 +46270,20 @@ type
       ## free: the account has no Workers Paid or Enterprise plan. paid: it has one of
       ## them.
     resets_at*: Option[string]
-      ## When a limited free account is expected to start keeping events again, at the
-      ## daily limit reset. Not guaranteed if the account was limited for another reason.
-      ## null otherwise, including for paid accounts, which are brought back in stages.
+      ## When a limited free account starts keeping events again, at the daily limit
+      ## reset. null otherwise, including for paid accounts, which are brought back in
+      ## stages.
     sample_rate*: float64
       ## Share of the account's events being kept, from 0 to 1.
     status*: string
       ## Whether telemetry is being dropped, and why. More values may be added; treat
       ## unknown values like normal.
       ## - normal: every event is kept.
-      ## - limited: the account keeps only sample_rate of its events, usually because it
-      ## passed its daily limit. A free account over its limit keeps none until
-      ## resets_at; a paid one keeps about 10 events a second and is brought back in
-      ## stages after 00:00 UTC.
-      ## - restricted: events are dropped for another reason. Contact support.
+      ## - limited: the account passed its daily limit and keeps only sample_rate of its
+      ## events. A free account keeps none until resets_at; a paid one keeps about 10
+      ## events a second and is brought back in stages after 00:00 UTC.
+      ## - restricted: the account keeps only sample_rate of its events for another
+      ## reason. Contact support.
 
   WorkersDomain* = ref object of RootObj
     cert_id*: string
@@ -47345,6 +47696,8 @@ type
 
   WorkersObservability* = ref object of RootObj
     ## Observability settings for the Worker.
+    agents*: Option[JsonNode]
+      ## Agents observability settings for the Worker.
     enabled*: Option[bool]
       ## Whether observability is enabled for the Worker.
     head_sampling_rate*: Option[float64]
@@ -47360,6 +47713,8 @@ type
 
   WorkersObservability2* = ref object of RootObj
     ## Observability settings for the Worker.
+    agents*: Option[JsonNode]
+      ## Agents observability settings for the Worker.
     enabled*: bool
       ## Whether observability is enabled for the Worker.
     head_sampling_rate*: Option[float64]
@@ -48737,6 +49092,8 @@ type
     updated_at*: Option[ZeroTrustGatewayReadOnlyTimestamp]
     url*: Option[ZeroTrustGatewayUrl]
 
+  ZeroTrustGatewayPatchDescription* = string
+
   ZeroTrustGatewayPrecedence* = int64
 
   ZeroTrustGatewayProtocolDetection* = ref object of RootObj
@@ -49440,6 +49797,8 @@ type
 
   Zones0rtt* = ref object of RootObj
     ## 0-RTT session resumption enabled for this zone.
+    ## Changing this setting does not enable or disable TLS 1.3. Writing the `tls_1_3`
+    ## setting also changes 0-RTT: `zrt` enables it, and `on` or `off` disables it.
     editable*: Option[bool]
       ## Whether or not this setting can be modified for this zone (based on your
       ## Cloudflare plan level).
@@ -50556,7 +50915,7 @@ type
     off = "off"
 
   ZonesProxyReadTimeout* = ref object of RootObj
-    ## Maximum time between two read operations from origin.
+    ## Maximum time in seconds between two read operations from origin.
     editable*: Option[bool]
       ## Whether or not this setting can be modified for this zone (based on your
       ## Cloudflare plan level).
@@ -50956,6 +51315,10 @@ type
 
   ZonesTls13* = ref object of RootObj
     ## Enables Crypto TLS 1.3 feature for a zone.
+    ## This setting also controls 0-RTT. `zrt` enables TLS 1.3 and 0-RTT, `on` enables
+    ## TLS 1.3 and disables 0-RTT, and `off` disables both.
+    ## Reads return `zrt` when TLS 1.3 and 0-RTT are both enabled, so setting `on`
+    ## while 0-RTT is enabled turns 0-RTT off.
     editable*: Option[bool]
       ## Whether or not this setting can be modified for this zone (based on your
       ## Cloudflare plan level).

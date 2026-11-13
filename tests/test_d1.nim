@@ -55,9 +55,17 @@ suite "d1 serialization":
     let obj = newD1RawResultResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.D1RawResultResponse)) == openjson.toJson(obj)
 
+  test "round-trips D1InsightsQueryUsage":
+    let obj = newD1InsightsQueryUsage()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.D1InsightsQueryUsage)) == openjson.toJson(obj)
+
   test "round-trips D1DatabaseUpdatePartialRequestBody":
     let obj = newD1DatabaseUpdatePartialRequestBody()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.D1DatabaseUpdatePartialRequestBody)) == openjson.toJson(obj)
+
+  test "round-trips D1InsightsDatabaseUsage":
+    let obj = newD1InsightsDatabaseUsage()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.D1InsightsDatabaseUsage)) == openjson.toJson(obj)
 
 suite "d1 endpoints":
   test "GET /accounts/{account_id}/d1/database":
@@ -104,4 +112,14 @@ suite "d1 endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postAccountsAccountIdD1DatabaseDatabaseIdTimeTravelRestore("test", "test", "test", "test")
+
+  test "GET /accounts/{account_id}/d1/insights/databases":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdD1InsightsDatabases("test", orderByRowsRead, "test", true, "test", "test", 1)
+
+  test "GET /accounts/{account_id}/d1/insights/queries":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdD1InsightsQueries("test", orderByRowsRead, "test", "test", "test", 1)
 

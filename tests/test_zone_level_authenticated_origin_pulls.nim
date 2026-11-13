@@ -31,7 +31,7 @@ suite "zone_level_authenticated_origin_pulls endpoints":
   test "GET /zones/{zone_id}/origin_tls_client_auth":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdOriginTlsClientAuth("test")
+    discard waitFor client.getZonesZoneIdOriginTlsClientAuth("test", 1, 1, 1, 1)
 
   test "GET /zones/{zone_id}/origin_tls_client_auth/settings":
     let client = initCloudflareClient("test-key")

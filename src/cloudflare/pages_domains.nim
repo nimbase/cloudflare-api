@@ -14,10 +14,15 @@ type
 
 proc getAccountsAccountIdPagesProjectsProjectNameDomains*(client: CloudflareClient,
                                                           projectName: types.PagesProjectName,
-                                                          accountId: types.PagesIdentifier): Future[JsonNode] {.async.} =
+                                                          accountId: types.PagesIdentifier,
+                                                          page: int64 = 1,
+                                                          perPage: int64 = 20): Future[JsonNode] {.async.} =
   ## List the custom domains associated with a Cloudflare Pages project.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/pages/projects/{projectName}/domains")
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/accounts/{accountId}/pages/projects/{projectName}/domains", q)
   let body = await res.body
   case res.code
   of Http200:

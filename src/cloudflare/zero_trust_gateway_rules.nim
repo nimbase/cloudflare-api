@@ -36,7 +36,7 @@ type
     schedule: Option[types.ZeroTrustGatewaySchedule]
     traffic: Option[types.ZeroTrustGatewayTraffic]
   PatchAccountsAccountIdGatewayRulesRuleIdRequest = object
-    description: Option[types.ZeroTrustGatewayDescription2]
+    description: Option[types.ZeroTrustGatewayPatchDescription]
     enabled: Option[types.ZeroTrustGatewayEnabled]
     name: Option[types.ZeroTrustGatewayName3]
     precedence: Option[types.ZeroTrustGatewayPrecedence]

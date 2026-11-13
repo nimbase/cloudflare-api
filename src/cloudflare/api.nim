@@ -9,11 +9,16 @@ import ./private/metaclient
 import ./private/types
 
 
-proc postV1Verify*(client: CloudflareClient, body: types.DomainConnectPostData): Future[AsyncResponse] {.async.} =
+proc postV1Verify*(client: CloudflareClient, body: types.DomainConnectPostData): Future[types.DomainConnectHttpStatus] {.async.} =
   ## Validates a Domain Connect signed request using DNS TXT public keys.
 
   let res = await client.httpPOST("/v1/verify", body)
-  return res
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.DomainConnectHttpStatus)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc getV2DomainTemplatesProvidersProviderServicesService*(client: CloudflareClient,
                                                            provider: string,

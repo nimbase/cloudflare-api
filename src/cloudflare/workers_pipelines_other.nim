@@ -31,10 +31,13 @@ type
     result: JsonNode
     success: types.CloudflarePipelinesWorkerPipelinesCommonSuccess
   GetAccountsAccountIdPipelinesV1PipelinesPipelineIdResponse* = object
-    result: JsonNode
+    result: types.CloudflarePipelinesPipelineExtended
     success: types.CloudflarePipelinesWorkerPipelinesCommonSuccess
   DeleteAccountsAccountIdPipelinesV1PipelinesPipelineIdResponse* = object
     result: JsonNode
+    success: types.CloudflarePipelinesWorkerPipelinesCommonSuccess
+  PostAccountsAccountIdPipelinesV1PipelinesPipelineIdUpdateTablesResponse* = object
+    result: types.CloudflarePipelinesPipelineExtended
     success: types.CloudflarePipelinesWorkerPipelinesCommonSuccess
   GetAccountsAccountIdPipelinesV1SinksResponse* = object
     result: seq[JsonNode]
@@ -50,10 +53,15 @@ type
     result: JsonNode
     success: types.CloudflarePipelinesWorkerPipelinesCommonSuccess
   GetAccountsAccountIdPipelinesV1SinksSinkIdResponse* = object
-    result: JsonNode
+    result: types.CloudflarePipelinesSink
     success: types.CloudflarePipelinesWorkerPipelinesCommonSuccess
   DeleteAccountsAccountIdPipelinesV1SinksSinkIdResponse* = object
     result: JsonNode
+    success: types.CloudflarePipelinesWorkerPipelinesCommonSuccess
+  PatchAccountsAccountIdPipelinesV1SinksSinkIdRequest = object
+    config: JsonNode
+  PatchAccountsAccountIdPipelinesV1SinksSinkIdResponse* = object
+    result: types.CloudflarePipelinesSink
     success: types.CloudflarePipelinesWorkerPipelinesCommonSuccess
   GetAccountsAccountIdPipelinesV1StreamsResponse* = object
     result: seq[JsonNode]
@@ -195,6 +203,21 @@ proc deleteAccountsAccountIdPipelinesV1PipelinesPipelineId*(client: CloudflareCl
   else:
     raise newException(CloudflareClientError, body)
 
+proc postAccountsAccountIdPipelinesV1PipelinesPipelineIdUpdateTables*(client: CloudflareClient,
+                                                                      accountId: types.CloudflarePipelinesWorkersPipelinesAccountId,
+                                                                      pipelineId: types.CloudflarePipelinesWorkersPipelinesPipelineId): Future[PostAccountsAccountIdPipelinesV1PipelinesPipelineIdUpdateTablesResponse] {.async.} =
+  ## Move a Pipeline to the latest version of every stream and sink it uses, such as
+  ## after updating a Sink. A running Pipeline restarts on the latest versions from a
+  ## final checkpoint; a paused or stopped Pipeline uses them once it starts.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/pipelines/v1/pipelines/{pipelineId}/update_tables")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PostAccountsAccountIdPipelinesV1PipelinesPipelineIdUpdateTablesResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdPipelinesV1Sinks*(client: CloudflareClient,
                                            accountId: types.CloudflarePipelinesWorkersPipelinesAccountId,
                                            pipelineId: string = default(string),
@@ -256,6 +279,26 @@ proc deleteAccountsAccountIdPipelinesV1SinksSinkId*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, DeleteAccountsAccountIdPipelinesV1SinksSinkIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountsAccountIdPipelinesV1SinksSinkId*(client: CloudflareClient,
+                                                   accountId: types.CloudflarePipelinesWorkersPipelinesAccountId,
+                                                   sinkId: types.CloudflarePipelinesWorkersPipelinesSinkId,
+                                                   body: PatchAccountsAccountIdPipelinesV1SinksSinkIdRequest): Future[PatchAccountsAccountIdPipelinesV1SinksSinkIdResponse] {.async.} =
+  ## Update a Sink's credentials or rolling policy, creating a new version of the
+  ## Sink. Only `credentials` and `rolling_policy` (R2) or `token` and
+  ## `rolling_policy` (Basin Catalog, including Sinks created with the legacy
+  ## `r2_data_catalog` type) can be changed; omitted fields keep their current
+  ## values. Secrets are never returned in responses. Pipelines that use the Sink
+  ## keep their current version until they are moved to the latest one with Update
+  ## Pipeline Tables.
+
+  let res = await client.httpPATCH(fmt"/accounts/{accountId}/pipelines/v1/sinks/{sinkId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, PatchAccountsAccountIdPipelinesV1SinksSinkIdResponse)
   else:
     raise newException(CloudflareClientError, body)
 
