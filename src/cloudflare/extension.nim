@@ -20,12 +20,12 @@ type
 
 
 proc getAccountsAccountIdRegistrarSandboxExtensions*(client: CloudflareClient,
-                                                     accountId: types.RegistrarApiSandboxIdentifier,
+                                                     accountId: types.RegistrarSandboxIdentifier,
                                                      name: string = default(string),
                                                      cursor: string = default(string),
                                                      perPage: int64 = 20,
                                                      direction: ExtensionDirectionOption = directionAsc,
-                                                     sortBy: ExtensionSortByOption = sortByName): Future[types.RegistrarApiSandboxExtensionResponseCollection] {.async.} =
+                                                     sortBy: ExtensionSortByOption = sortByName): Future[types.RegistrarSandboxExtensionResponseCollection] {.async.} =
   ## Returns metadata and JSON Schema documents describing the expected input
   ## structure for registration and transfer operations on each supported
   ## extension (TLD).
@@ -50,13 +50,13 @@ proc getAccountsAccountIdRegistrarSandboxExtensions*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiSandboxExtensionResponseCollection)
+    result = fromJson(body, types.RegistrarSandboxExtensionResponseCollection)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdRegistrarSandboxExtensionsExtension*(client: CloudflareClient,
-                                                              accountId: types.RegistrarApiSandboxIdentifier,
-                                                              extension: string): Future[types.RegistrarApiSandboxExtensionResponseSingle] {.async.} =
+                                                              accountId: types.RegistrarSandboxIdentifier,
+                                                              extension: string): Future[types.RegistrarSandboxExtensionResponseSingle] {.async.} =
   ## Returns metadata and JSON Schema documents describing the expected input
   ## structure for registration and transfer operations on a specific
   ## extension (TLD).
@@ -69,17 +69,17 @@ proc getAccountsAccountIdRegistrarSandboxExtensionsExtension*(client: Cloudflare
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiSandboxExtensionResponseSingle)
+    result = fromJson(body, types.RegistrarSandboxExtensionResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdRegistrarExtensions*(client: CloudflareClient,
-                                              accountId: types.RegistrarApiIdentifier,
+                                              accountId: types.RegistrarIdentifier,
                                               name: string = default(string),
                                               cursor: string = default(string),
                                               perPage: int64 = 20,
                                               direction: ExtensionDirectionOption = directionAsc,
-                                              sortBy: ExtensionSortByOption = sortByName): Future[types.RegistrarApiExtensionResponseCollection] {.async.} =
+                                              sortBy: ExtensionSortByOption = sortByName): Future[types.RegistrarExtensionResponseCollection] {.async.} =
   ## Returns metadata and JSON Schema documents describing the expected input
   ## structure for registration and transfer operations on each supported
   ## extension (TLD).
@@ -104,13 +104,13 @@ proc getAccountsAccountIdRegistrarExtensions*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiExtensionResponseCollection)
+    result = fromJson(body, types.RegistrarExtensionResponseCollection)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdRegistrarExtensionsExtension*(client: CloudflareClient,
-                                                       accountId: types.RegistrarApiIdentifier,
-                                                       extension: string): Future[types.RegistrarApiExtensionResponseSingle] {.async.} =
+                                                       accountId: types.RegistrarIdentifier,
+                                                       extension: string): Future[types.RegistrarExtensionResponseSingle] {.async.} =
   ## Returns metadata and JSON Schema documents describing the expected input
   ## structure for registration and transfer operations on a specific
   ## extension (TLD).
@@ -123,6 +123,6 @@ proc getAccountsAccountIdRegistrarExtensionsExtension*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiExtensionResponseSingle)
+    result = fromJson(body, types.RegistrarExtensionResponseSingle)
   else:
     raise newException(CloudflareClientError, body)

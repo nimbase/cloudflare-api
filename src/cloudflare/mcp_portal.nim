@@ -66,7 +66,8 @@ proc getAccountsAccountIdAccessAiControlsMcpPortals*(client: CloudflareClient,
 proc postAccountsAccountIdAccessAiControlsMcpPortals*(client: CloudflareClient,
                                                       accountId: string,
                                                       body: PostAccountsAccountIdAccessAiControlsMcpPortalsRequest): Future[PostAccountsAccountIdAccessAiControlsMcpPortalsResponse] {.async.} =
-  ## Creates a new MCP portal for managing AI tool access through Cloudflare Access.
+  ## Creates a new MCP portal. Each account supports up to 50 portals, including
+  ## disabled portals.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/access/ai-controls/mcp/portals", body)
   let body = await res.body

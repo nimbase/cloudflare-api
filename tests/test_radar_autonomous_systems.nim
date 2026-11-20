@@ -54,7 +54,7 @@ suite "radar_autonomous_systems endpoints":
   test "GET /radar/entities/asns/{asn}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarEntitiesAsnsAsn(1, formatJSON)
+    discard waitFor client.getRadarEntitiesAsnsAsn(1, true, formatJSON)
 
   test "GET /radar/entities/asns/{asn}/as_set":
     let client = initCloudflareClient("test-key")

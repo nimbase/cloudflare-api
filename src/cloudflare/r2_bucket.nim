@@ -244,6 +244,77 @@ proc deleteAccountsAccountIdR2BucketsBucketNameCors*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc getAccountsAccountIdR2BucketsBucketNameCustomDomains*(client: CloudflareClient,
+                                                           accountId: types.R2AccountIdentifier,
+                                                           bucketName: types.R2BucketName): Future[JsonNode] {.async.} =
+  ## Gets a list of all custom domains registered with an existing R2 bucket. Unlike
+  ## the replacement endpoint, the response does not say whether each domain is
+  ## enabled.
+  ##
+  ## Deprecated: use [List Custom Domains of Bucket](https://developers.cloudflare.co
+  ## m/api/resources/r2/subresources/buckets/subresources/domains/subresources/custom
+  ## /methods/list/) (`GET
+  ## /accounts/{account_id}/r2/buckets/{bucket_name}/domains/custom`) instead. This
+  ## endpoint will be removed.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/custom_domains")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdR2BucketsBucketNameCustomDomains*(client: CloudflareClient,
+                                                            accountId: types.R2AccountIdentifier,
+                                                            bucketName: types.R2BucketName,
+                                                            body: types.R2AddCustomDomainLegacyRequest): Future[JsonNode] {.async.} =
+  ## Registers a new custom domain for an existing R2 bucket. This endpoint does not
+  ## change whether the domain is enabled; enable it with [Configure Custom Domain Se
+  ## ttings](https://developers.cloudflare.com/api/resources/r2/subresources/buckets/
+  ## subresources/domains/subresources/custom/methods/update/). A domain that was
+  ## enabled on this bucket and then removed with the deprecated remove endpoint is
+  ## enabled again as soon as it is attached.
+  ##
+  ## Deprecated: use [Attach Custom Domain To Bucket](https://developers.cloudflare.c
+  ## om/api/resources/r2/subresources/buckets/subresources/domains/subresources/custo
+  ## m/methods/create/) (`POST
+  ## /accounts/{account_id}/r2/buckets/{bucket_name}/domains/custom`) instead. This
+  ## endpoint will be removed.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/custom_domains", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdR2BucketsBucketNameCustomDomainsDomain*(client: CloudflareClient,
+                                                                    accountId: types.R2AccountIdentifier,
+                                                                    bucketName: types.R2BucketName,
+                                                                    domain: types.R2DomainName): Future[JsonNode] {.async.} =
+  ## Disconnects a custom domain from an R2 bucket and removes its configuration.
+  ## Unlike the replacement endpoint, it does not reset whether the domain is
+  ## enabled, so attaching the same domain to this bucket again restores its previous
+  ## state: a domain that was enabled before removal is enabled again immediately. It
+  ## succeeds when the account has no such domain, and fails with 409 when the domain
+  ## is attached to a different bucket.
+  ##
+  ## Deprecated: use [Remove Custom Domain From Bucket](https://developers.cloudflare
+  ## .com/api/resources/r2/subresources/buckets/subresources/domains/subresources/cus
+  ## tom/methods/delete/) (`DELETE
+  ## /accounts/{account_id}/r2/buckets/{bucket_name}/domains/custom/{domain}`)
+  ## instead. This endpoint will be removed.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/r2/buckets/{bucketName}/custom_domains/{domain}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdR2BucketsBucketNameDomainsCustom*(client: CloudflareClient,
                                                            accountId: types.R2AccountIdentifier,
                                                            bucketName: types.R2BucketName): Future[JsonNode] {.async.} =
@@ -589,7 +660,8 @@ proc postAccountsAccountIdR2TempAccessCredentials*(client: CloudflareClient,
                                                    accountId: types.R2AccountIdentifier,
                                                    body: types.R2TempAccessCredsRequest): Future[JsonNode] {.async.} =
   ## Creates temporary access credentials on a bucket that can be optionally scoped
-  ## to prefixes or objects.
+  ## to prefixes or objects. The credentials grant either a permission level or an
+  ## explicit list of S3 actions.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/r2/temp-access-credentials", body)
   let body = await res.body

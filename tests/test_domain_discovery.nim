@@ -11,51 +11,51 @@ import cloudflare
 import ./common
 
 suite "domain_discovery serialization":
-  test "round-trips RegistrarApiDomainSearchResponse":
-    let obj = newRegistrarApiDomainSearchResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiDomainSearchResponse)) == openjson.toJson(obj)
+  test "round-trips RegistrarSandboxApiResponseCommonFailure":
+    let obj = newRegistrarSandboxApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarSandboxApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiDomainCheckResponse":
-    let obj = newRegistrarApiDomainCheckResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiDomainCheckResponse)) == openjson.toJson(obj)
+  test "round-trips RegistrarSandboxDomainCheckRequest":
+    let obj = newRegistrarSandboxDomainCheckRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarSandboxDomainCheckRequest)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiApiResponseCommonFailure":
-    let obj = newRegistrarApiApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips RegistrarDomainTransferCheckRequest":
+    let obj = newRegistrarDomainTransferCheckRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarDomainTransferCheckRequest)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiDomainCheckRequest":
-    let obj = newRegistrarApiDomainCheckRequest()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiDomainCheckRequest)) == openjson.toJson(obj)
+  test "round-trips RegistrarSandboxDomainSearchResponse":
+    let obj = newRegistrarSandboxDomainSearchResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarSandboxDomainSearchResponse)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiSandboxDomainCheckRequest":
-    let obj = newRegistrarApiSandboxDomainCheckRequest()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiSandboxDomainCheckRequest)) == openjson.toJson(obj)
+  test "round-trips RegistrarDomainTransferCheckResponse":
+    let obj = newRegistrarDomainTransferCheckResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarDomainTransferCheckResponse)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiDomainTransferCheckResponse":
-    let obj = newRegistrarApiDomainTransferCheckResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiDomainTransferCheckResponse)) == openjson.toJson(obj)
+  test "round-trips RegistrarSandboxDomainCheckResponse":
+    let obj = newRegistrarSandboxDomainCheckResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarSandboxDomainCheckResponse)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiSandboxApiResponseCommonFailure":
-    let obj = newRegistrarApiSandboxApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiSandboxApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips RegistrarDomainCheckRequest":
+    let obj = newRegistrarDomainCheckRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarDomainCheckRequest)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiDomainTransferCheckRequest":
-    let obj = newRegistrarApiDomainTransferCheckRequest()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiDomainTransferCheckRequest)) == openjson.toJson(obj)
+  test "round-trips RegistrarDomainSearchResponse":
+    let obj = newRegistrarDomainSearchResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarDomainSearchResponse)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiSandboxDomainCheckResponse":
-    let obj = newRegistrarApiSandboxDomainCheckResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiSandboxDomainCheckResponse)) == openjson.toJson(obj)
+  test "round-trips RegistrarDomainCheckResponse":
+    let obj = newRegistrarDomainCheckResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarDomainCheckResponse)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiSandboxDomainSearchResponse":
-    let obj = newRegistrarApiSandboxDomainSearchResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiSandboxDomainSearchResponse)) == openjson.toJson(obj)
+  test "round-trips RegistrarApiResponseCommonFailure":
+    let obj = newRegistrarApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiResponseCommonFailure)) == openjson.toJson(obj)
 
 suite "domain_discovery endpoints":
   test "POST /accounts/{account_id}/registrar-sandbox/domain-check":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdRegistrarSandboxDomainCheck("test", newRegistrarApiSandboxDomainCheckRequest())
+    discard waitFor client.postAccountsAccountIdRegistrarSandboxDomainCheck("test", newRegistrarSandboxDomainCheckRequest())
 
   test "GET /accounts/{account_id}/registrar-sandbox/domain-search":
     let client = initCloudflareClient("test-key")
@@ -65,7 +65,7 @@ suite "domain_discovery endpoints":
   test "POST /accounts/{account_id}/registrar/domain-check":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdRegistrarDomainCheck("test", newRegistrarApiDomainCheckRequest())
+    discard waitFor client.postAccountsAccountIdRegistrarDomainCheck("test", newRegistrarDomainCheckRequest())
 
   test "GET /accounts/{account_id}/registrar/domain-search":
     let client = initCloudflareClient("test-key")
@@ -75,5 +75,5 @@ suite "domain_discovery endpoints":
   test "POST /accounts/{account_id}/registrar/domain-transfer-check":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdRegistrarDomainTransferCheck("test", newRegistrarApiDomainTransferCheckRequest())
+    discard waitFor client.postAccountsAccountIdRegistrarDomainTransferCheck("test", newRegistrarDomainTransferCheckRequest())
 

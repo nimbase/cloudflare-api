@@ -20,11 +20,11 @@ type
 
 
 proc getAccountsAccountIdRegistrarSandboxRegistrations*(client: CloudflareClient,
-                                                        accountId: types.RegistrarApiSandboxIdentifier,
+                                                        accountId: types.RegistrarSandboxIdentifier,
                                                         cursor: string = default(string),
                                                         perPage: int64 = 20,
                                                         direction: RegistrarRegistrationDirectionOption = directionAsc,
-                                                        sortBy: RegistrarRegistrationSortByOption = sortByRegistryCreatedAt): Future[types.RegistrarApiSandboxRegistrationResponseCollection] {.async.} =
+                                                        sortBy: RegistrarRegistrationSortByOption = sortByRegistryCreatedAt): Future[types.RegistrarSandboxRegistrationResponseCollection] {.async.} =
   ## Returns a paginated list of domain registrations owned by the account.
   ##
   ## This endpoint uses cursor-based pagination. Results are ordered by registration
@@ -42,13 +42,13 @@ proc getAccountsAccountIdRegistrarSandboxRegistrations*(client: CloudflareClient
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiSandboxRegistrationResponseCollection)
+    result = fromJson(body, types.RegistrarSandboxRegistrationResponseCollection)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdRegistrarSandboxRegistrations*(client: CloudflareClient,
-                                                         accountId: types.RegistrarApiSandboxIdentifier,
-                                                         body: types.RegistrarApiSandboxRegistrationCreateRequest): Future[types.RegistrarApiSandboxWorkflowStatusResponseSingle] {.async.} =
+                                                         accountId: types.RegistrarSandboxIdentifier,
+                                                         body: types.RegistrarSandboxRegistrationCreateRequest): Future[types.RegistrarSandboxWorkflowStatusResponseSingle] {.async.} =
   ## Starts a domain registration workflow.
   ##
   ## ### Prerequisites
@@ -89,13 +89,13 @@ proc postAccountsAccountIdRegistrarSandboxRegistrations*(client: CloudflareClien
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, types.RegistrarApiSandboxWorkflowStatusResponseSingle)
+    result = fromJson(body, types.RegistrarSandboxWorkflowStatusResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdRegistrarSandboxRegistrationsDomainName*(client: CloudflareClient,
-                                                                  accountId: types.RegistrarApiSandboxIdentifier,
-                                                                  domainName: types.RegistrarApiSandboxDomainName): Future[types.RegistrarApiSandboxRegistrationResponseSingle] {.async.} =
+                                                                  accountId: types.RegistrarSandboxIdentifier,
+                                                                  domainName: types.RegistrarSandboxDomainName): Future[types.RegistrarSandboxRegistrationResponseSingle] {.async.} =
   ## Returns the current state of a domain registration.
   ##
   ## This is the canonical read endpoint for a domain you own. It returns
@@ -107,14 +107,14 @@ proc getAccountsAccountIdRegistrarSandboxRegistrationsDomainName*(client: Cloudf
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiSandboxRegistrationResponseSingle)
+    result = fromJson(body, types.RegistrarSandboxRegistrationResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc patchAccountsAccountIdRegistrarSandboxRegistrationsDomainName*(client: CloudflareClient,
-                                                                    accountId: types.RegistrarApiSandboxIdentifier,
-                                                                    domainName: types.RegistrarApiSandboxDomainName,
-                                                                    body: types.RegistrarApiSandboxRegistrationUpdateRequest): Future[types.RegistrarApiSandboxWorkflowStatusResponseSingle] {.async.} =
+                                                                    accountId: types.RegistrarSandboxIdentifier,
+                                                                    domainName: types.RegistrarSandboxDomainName,
+                                                                    body: types.RegistrarSandboxRegistrationUpdateRequest): Future[types.RegistrarSandboxWorkflowStatusResponseSingle] {.async.} =
   ## Updates an existing domain registration.
   ##
   ## By default, the server holds the connection for a bounded, server-defined
@@ -132,13 +132,13 @@ proc patchAccountsAccountIdRegistrarSandboxRegistrationsDomainName*(client: Clou
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiSandboxWorkflowStatusResponseSingle)
+    result = fromJson(body, types.RegistrarSandboxWorkflowStatusResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdRegistrarSandboxRegistrationsDomainNameRegistrationStatus*(client: CloudflareClient,
-                                                                                    accountId: types.RegistrarApiSandboxIdentifier,
-                                                                                    domainName: types.RegistrarApiSandboxDomainName): Future[types.RegistrarApiSandboxWorkflowStatusResponseSingle] {.async.} =
+                                                                                    accountId: types.RegistrarSandboxIdentifier,
+                                                                                    domainName: types.RegistrarSandboxDomainName): Future[types.RegistrarSandboxWorkflowStatusResponseSingle] {.async.} =
   ## Returns the current status of a domain registration workflow.
   ##
   ## Use this endpoint to poll for completion when the POST response
@@ -187,13 +187,13 @@ proc getAccountsAccountIdRegistrarSandboxRegistrationsDomainNameRegistrationStat
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiSandboxWorkflowStatusResponseSingle)
+    result = fromJson(body, types.RegistrarSandboxWorkflowStatusResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdRegistrarSandboxRegistrationsDomainNameUpdateStatus*(client: CloudflareClient,
-                                                                              accountId: types.RegistrarApiSandboxIdentifier,
-                                                                              domainName: types.RegistrarApiSandboxDomainName): Future[types.RegistrarApiSandboxWorkflowStatusResponseSingle] {.async.} =
+                                                                              accountId: types.RegistrarSandboxIdentifier,
+                                                                              domainName: types.RegistrarSandboxDomainName): Future[types.RegistrarSandboxWorkflowStatusResponseSingle] {.async.} =
   ## Returns the current status of a domain update workflow.
   ##
   ## Use this endpoint to poll for completion when the PATCH response
@@ -210,16 +210,16 @@ proc getAccountsAccountIdRegistrarSandboxRegistrationsDomainNameUpdateStatus*(cl
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiSandboxWorkflowStatusResponseSingle)
+    result = fromJson(body, types.RegistrarSandboxWorkflowStatusResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdRegistrarRegistrations*(client: CloudflareClient,
-                                                 accountId: types.RegistrarApiIdentifier,
+                                                 accountId: types.RegistrarIdentifier,
                                                  cursor: string = default(string),
                                                  perPage: int64 = 20,
                                                  direction: RegistrarRegistrationDirectionOption = directionAsc,
-                                                 sortBy: RegistrarRegistrationSortByOption = sortByRegistryCreatedAt): Future[types.RegistrarApiRegistrationResponseCollection] {.async.} =
+                                                 sortBy: RegistrarRegistrationSortByOption = sortByRegistryCreatedAt): Future[types.RegistrarRegistrationResponseCollection] {.async.} =
   ## Returns a paginated list of domain registrations owned by the account.
   ##
   ## This endpoint uses cursor-based pagination. Results are ordered by registration
@@ -237,13 +237,13 @@ proc getAccountsAccountIdRegistrarRegistrations*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiRegistrationResponseCollection)
+    result = fromJson(body, types.RegistrarRegistrationResponseCollection)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdRegistrarRegistrations*(client: CloudflareClient,
-                                                  accountId: types.RegistrarApiIdentifier,
-                                                  body: types.RegistrarApiRegistrationCreateRequest): Future[types.RegistrarApiWorkflowStatusResponseSingle] {.async.} =
+                                                  accountId: types.RegistrarIdentifier,
+                                                  body: types.RegistrarRegistrationCreateRequest): Future[types.RegistrarWorkflowStatusResponseSingle] {.async.} =
   ## Starts a domain registration workflow. This is a billable operation — successful
   ## registration charges the account's default payment method. All successful
   ## domain registrations are non-refundable — once the workflow completes with
@@ -307,13 +307,13 @@ proc postAccountsAccountIdRegistrarRegistrations*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http201:
-    result = fromJson(body, types.RegistrarApiWorkflowStatusResponseSingle)
+    result = fromJson(body, types.RegistrarWorkflowStatusResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdRegistrarRegistrationsDomainName*(client: CloudflareClient,
-                                                           accountId: types.RegistrarApiIdentifier,
-                                                           domainName: types.RegistrarApiDomainName): Future[types.RegistrarApiRegistrationResponseSingle] {.async.} =
+                                                           accountId: types.RegistrarIdentifier,
+                                                           domainName: types.RegistrarDomainName): Future[types.RegistrarRegistrationResponseSingle] {.async.} =
   ## Returns the current state of a domain registration.
   ##
   ## This is the canonical read endpoint for a domain you own. It returns
@@ -325,14 +325,14 @@ proc getAccountsAccountIdRegistrarRegistrationsDomainName*(client: CloudflareCli
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiRegistrationResponseSingle)
+    result = fromJson(body, types.RegistrarRegistrationResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc patchAccountsAccountIdRegistrarRegistrationsDomainName*(client: CloudflareClient,
-                                                             accountId: types.RegistrarApiIdentifier,
-                                                             domainName: types.RegistrarApiDomainName,
-                                                             body: types.RegistrarApiRegistrationUpdateRequest): Future[types.RegistrarApiWorkflowStatusResponseSingle] {.async.} =
+                                                             accountId: types.RegistrarIdentifier,
+                                                             domainName: types.RegistrarDomainName,
+                                                             body: types.RegistrarRegistrationUpdateRequest): Future[types.RegistrarWorkflowStatusResponseSingle] {.async.} =
   ## Updates an existing domain registration.
   ##
   ## By default, the server holds the connection for a bounded, server-defined
@@ -350,13 +350,13 @@ proc patchAccountsAccountIdRegistrarRegistrationsDomainName*(client: CloudflareC
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiWorkflowStatusResponseSingle)
+    result = fromJson(body, types.RegistrarWorkflowStatusResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdRegistrarRegistrationsDomainNameRegistrationStatus*(client: CloudflareClient,
-                                                                             accountId: types.RegistrarApiIdentifier,
-                                                                             domainName: types.RegistrarApiDomainName): Future[types.RegistrarApiWorkflowStatusResponseSingle] {.async.} =
+                                                                             accountId: types.RegistrarIdentifier,
+                                                                             domainName: types.RegistrarDomainName): Future[types.RegistrarWorkflowStatusResponseSingle] {.async.} =
   ## Returns the current status of a domain registration workflow.
   ##
   ## Use this endpoint to poll for completion when the POST response
@@ -405,13 +405,13 @@ proc getAccountsAccountIdRegistrarRegistrationsDomainNameRegistrationStatus*(cli
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiWorkflowStatusResponseSingle)
+    result = fromJson(body, types.RegistrarWorkflowStatusResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdRegistrarRegistrationsDomainNameUpdateStatus*(client: CloudflareClient,
-                                                                       accountId: types.RegistrarApiIdentifier,
-                                                                       domainName: types.RegistrarApiDomainName): Future[types.RegistrarApiWorkflowStatusResponseSingle] {.async.} =
+                                                                       accountId: types.RegistrarIdentifier,
+                                                                       domainName: types.RegistrarDomainName): Future[types.RegistrarWorkflowStatusResponseSingle] {.async.} =
   ## Returns the current status of a domain update workflow.
   ##
   ## Use this endpoint to poll for completion when the PATCH response
@@ -428,6 +428,6 @@ proc getAccountsAccountIdRegistrarRegistrationsDomainNameUpdateStatus*(client: C
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiWorkflowStatusResponseSingle)
+    result = fromJson(body, types.RegistrarWorkflowStatusResponseSingle)
   else:
     raise newException(CloudflareClientError, body)

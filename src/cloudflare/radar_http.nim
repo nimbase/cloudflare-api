@@ -513,6 +513,7 @@ proc getRadarHttpSummaryDimension*(client: CloudflareClient,
                                    continent: seq[string] = @[],
                                    geoId: seq[string] = @[],
                                    apiTraffic: seq[string] = default(seq[string]),
+                                   asCategory: seq[string] = default(seq[string]),
                                    botClass: seq[string] = default(seq[string]),
                                    contentType: seq[string] = default(seq[string]),
                                    deviceType: seq[string] = default(seq[string]),
@@ -535,6 +536,7 @@ proc getRadarHttpSummaryDimension*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
   q["apiTraffic"] = $apiTraffic
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["contentType"] = $contentType
   q["deviceType"] = $deviceType
@@ -564,6 +566,7 @@ proc getRadarHttpTimeseries*(client: CloudflareClient,
                              geoId: seq[string] = @[],
                              normalization: RadarHttpNormalizationOption = normalizationPERCENTAGECHANGE,
                              apiTraffic: seq[string] = default(seq[string]),
+                             asCategory: seq[string] = default(seq[string]),
                              botClass: seq[string] = default(seq[string]),
                              contentType: seq[string] = default(seq[string]),
                              deviceType: seq[string] = default(seq[string]),
@@ -588,6 +591,7 @@ proc getRadarHttpTimeseries*(client: CloudflareClient,
   for v in geoId: q["geoId"] = $v
   q["normalization"] = $normalization
   q["apiTraffic"] = $apiTraffic
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["contentType"] = $contentType
   q["deviceType"] = $deviceType
@@ -1089,6 +1093,7 @@ proc getRadarHttpTimeseriesGroupsDimension*(client: CloudflareClient,
                                             continent: seq[string] = @[],
                                             geoId: seq[string] = @[],
                                             apiTraffic: seq[string] = default(seq[string]),
+                                            asCategory: seq[string] = default(seq[string]),
                                             botClass: seq[string] = default(seq[string]),
                                             contentType: seq[string] = default(seq[string]),
                                             limitPerGroup: int64 = default(int64),
@@ -1113,6 +1118,7 @@ proc getRadarHttpTimeseriesGroupsDimension*(client: CloudflareClient,
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
   q["apiTraffic"] = $apiTraffic
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["contentType"] = $contentType
   q["limitPerGroup"] = $limitPerGroup
@@ -1138,6 +1144,7 @@ proc getRadarHttpTopAses*(client: CloudflareClient, limit: int64 = 5,
                           dateEnd: seq[string] = @[], asn: seq[string] = @[],
                           location: seq[string] = @[],
                           continent: seq[string] = @[], geoId: seq[string] = @[],
+                          asCategory: seq[string] = default(seq[string]),
                           botClass: seq[string] = default(seq[string]),
                           deviceType: seq[string] = default(seq[string]),
                           httpProtocol: seq[string] = default(seq[string]),
@@ -1159,6 +1166,7 @@ proc getRadarHttpTopAses*(client: CloudflareClient, limit: int64 = 5,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol
@@ -1186,6 +1194,7 @@ proc getRadarHttpTopAsesBotClassBotClass*(client: CloudflareClient,
                                           location: seq[string] = @[],
                                           continent: seq[string] = @[],
                                           geoId: seq[string] = @[],
+                                          asCategory: seq[string] = default(seq[string]),
                                           deviceType: seq[string] = default(seq[string]),
                                           httpProtocol: seq[string] = default(seq[string]),
                                           httpVersion: seq[string] = default(seq[string]),
@@ -1207,6 +1216,7 @@ proc getRadarHttpTopAsesBotClassBotClass*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol
   q["httpVersion"] = $httpVersion
@@ -1234,6 +1244,7 @@ proc getRadarHttpTopAsesBrowserFamilyBrowserFamily*(client: CloudflareClient,
                                                     location: seq[string] = @[],
                                                     continent: seq[string] = @[],
                                                     geoId: seq[string] = @[],
+                                                    asCategory: seq[string] = default(seq[string]),
                                                     botClass: seq[string] = default(seq[string]),
                                                     deviceType: seq[string] = default(seq[string]),
                                                     httpProtocol: seq[string] = default(seq[string]),
@@ -1255,6 +1266,7 @@ proc getRadarHttpTopAsesBrowserFamilyBrowserFamily*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol
@@ -1282,6 +1294,7 @@ proc getRadarHttpTopAsesDeviceTypeDeviceType*(client: CloudflareClient,
                                               location: seq[string] = @[],
                                               continent: seq[string] = @[],
                                               geoId: seq[string] = @[],
+                                              asCategory: seq[string] = default(seq[string]),
                                               botClass: seq[string] = default(seq[string]),
                                               httpProtocol: seq[string] = default(seq[string]),
                                               httpVersion: seq[string] = default(seq[string]),
@@ -1303,6 +1316,7 @@ proc getRadarHttpTopAsesDeviceTypeDeviceType*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["httpProtocol"] = $httpProtocol
   q["httpVersion"] = $httpVersion
@@ -1330,6 +1344,7 @@ proc getRadarHttpTopAsesHttpProtocolHttpProtocol*(client: CloudflareClient,
                                                   location: seq[string] = @[],
                                                   continent: seq[string] = @[],
                                                   geoId: seq[string] = @[],
+                                                  asCategory: seq[string] = default(seq[string]),
                                                   botClass: seq[string] = default(seq[string]),
                                                   deviceType: seq[string] = default(seq[string]),
                                                   httpVersion: seq[string] = default(seq[string]),
@@ -1351,6 +1366,7 @@ proc getRadarHttpTopAsesHttpProtocolHttpProtocol*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpVersion"] = $httpVersion
@@ -1378,6 +1394,7 @@ proc getRadarHttpTopAsesHttpVersionHttpVersion*(client: CloudflareClient,
                                                 location: seq[string] = @[],
                                                 continent: seq[string] = @[],
                                                 geoId: seq[string] = @[],
+                                                asCategory: seq[string] = default(seq[string]),
                                                 botClass: seq[string] = default(seq[string]),
                                                 deviceType: seq[string] = default(seq[string]),
                                                 httpProtocol: seq[string] = default(seq[string]),
@@ -1399,6 +1416,7 @@ proc getRadarHttpTopAsesHttpVersionHttpVersion*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol
@@ -1426,6 +1444,7 @@ proc getRadarHttpTopAsesIpVersionIpVersion*(client: CloudflareClient,
                                             location: seq[string] = @[],
                                             continent: seq[string] = @[],
                                             geoId: seq[string] = @[],
+                                            asCategory: seq[string] = default(seq[string]),
                                             botClass: seq[string] = default(seq[string]),
                                             deviceType: seq[string] = default(seq[string]),
                                             httpProtocol: seq[string] = default(seq[string]),
@@ -1447,6 +1466,7 @@ proc getRadarHttpTopAsesIpVersionIpVersion*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol
@@ -1471,6 +1491,7 @@ proc getRadarHttpTopAsesOsOs*(client: CloudflareClient, os: Os, limit: int64 = 5
                               location: seq[string] = @[],
                               continent: seq[string] = @[],
                               geoId: seq[string] = @[],
+                              asCategory: seq[string] = default(seq[string]),
                               botClass: seq[string] = default(seq[string]),
                               deviceType: seq[string] = default(seq[string]),
                               httpProtocol: seq[string] = default(seq[string]),
@@ -1492,6 +1513,7 @@ proc getRadarHttpTopAsesOsOs*(client: CloudflareClient, os: Os, limit: int64 = 5
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol
@@ -1519,6 +1541,7 @@ proc getRadarHttpTopAsesTlsVersionTlsVersion*(client: CloudflareClient,
                                               location: seq[string] = @[],
                                               continent: seq[string] = @[],
                                               geoId: seq[string] = @[],
+                                              asCategory: seq[string] = default(seq[string]),
                                               botClass: seq[string] = default(seq[string]),
                                               deviceType: seq[string] = default(seq[string]),
                                               httpProtocol: seq[string] = default(seq[string]),
@@ -1540,6 +1563,7 @@ proc getRadarHttpTopAsesTlsVersionTlsVersion*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol
@@ -1656,6 +1680,7 @@ proc getRadarHttpTopLocations*(client: CloudflareClient, limit: int64 = 5,
                                location: seq[string] = @[],
                                continent: seq[string] = @[],
                                geoId: seq[string] = @[],
+                               asCategory: seq[string] = default(seq[string]),
                                botClass: seq[string] = default(seq[string]),
                                deviceType: seq[string] = default(seq[string]),
                                httpProtocol: seq[string] = default(seq[string]),
@@ -1677,6 +1702,7 @@ proc getRadarHttpTopLocations*(client: CloudflareClient, limit: int64 = 5,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol
@@ -1705,6 +1731,7 @@ proc getRadarHttpTopLocationsBotClassBotClass*(client: CloudflareClient,
                                                location: seq[string] = @[],
                                                continent: seq[string] = @[],
                                                geoId: seq[string] = @[],
+                                               asCategory: seq[string] = default(seq[string]),
                                                deviceType: seq[string] = default(seq[string]),
                                                httpProtocol: seq[string] = default(seq[string]),
                                                httpVersion: seq[string] = default(seq[string]),
@@ -1725,6 +1752,7 @@ proc getRadarHttpTopLocationsBotClassBotClass*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol
   q["httpVersion"] = $httpVersion
@@ -1752,6 +1780,7 @@ proc getRadarHttpTopLocationsBrowserFamilyBrowserFamily*(client: CloudflareClien
                                                          location: seq[string] = @[],
                                                          continent: seq[string] = @[],
                                                          geoId: seq[string] = @[],
+                                                         asCategory: seq[string] = default(seq[string]),
                                                          botClass: seq[string] = default(seq[string]),
                                                          deviceType: seq[string] = default(seq[string]),
                                                          httpProtocol: seq[string] = default(seq[string]),
@@ -1772,6 +1801,7 @@ proc getRadarHttpTopLocationsBrowserFamilyBrowserFamily*(client: CloudflareClien
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol
@@ -1799,6 +1829,7 @@ proc getRadarHttpTopLocationsDeviceTypeDeviceType*(client: CloudflareClient,
                                                    location: seq[string] = @[],
                                                    continent: seq[string] = @[],
                                                    geoId: seq[string] = @[],
+                                                   asCategory: seq[string] = default(seq[string]),
                                                    botClass: seq[string] = default(seq[string]),
                                                    httpProtocol: seq[string] = default(seq[string]),
                                                    httpVersion: seq[string] = default(seq[string]),
@@ -1819,6 +1850,7 @@ proc getRadarHttpTopLocationsDeviceTypeDeviceType*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["httpProtocol"] = $httpProtocol
   q["httpVersion"] = $httpVersion
@@ -1846,6 +1878,7 @@ proc getRadarHttpTopLocationsHttpProtocolHttpProtocol*(client: CloudflareClient,
                                                        location: seq[string] = @[],
                                                        continent: seq[string] = @[],
                                                        geoId: seq[string] = @[],
+                                                       asCategory: seq[string] = default(seq[string]),
                                                        botClass: seq[string] = default(seq[string]),
                                                        deviceType: seq[string] = default(seq[string]),
                                                        httpVersion: seq[string] = default(seq[string]),
@@ -1866,6 +1899,7 @@ proc getRadarHttpTopLocationsHttpProtocolHttpProtocol*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpVersion"] = $httpVersion
@@ -1893,6 +1927,7 @@ proc getRadarHttpTopLocationsHttpVersionHttpVersion*(client: CloudflareClient,
                                                      location: seq[string] = @[],
                                                      continent: seq[string] = @[],
                                                      geoId: seq[string] = @[],
+                                                     asCategory: seq[string] = default(seq[string]),
                                                      botClass: seq[string] = default(seq[string]),
                                                      deviceType: seq[string] = default(seq[string]),
                                                      httpProtocol: seq[string] = default(seq[string]),
@@ -1913,6 +1948,7 @@ proc getRadarHttpTopLocationsHttpVersionHttpVersion*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol
@@ -1940,6 +1976,7 @@ proc getRadarHttpTopLocationsIpVersionIpVersion*(client: CloudflareClient,
                                                  location: seq[string] = @[],
                                                  continent: seq[string] = @[],
                                                  geoId: seq[string] = @[],
+                                                 asCategory: seq[string] = default(seq[string]),
                                                  botClass: seq[string] = default(seq[string]),
                                                  deviceType: seq[string] = default(seq[string]),
                                                  httpProtocol: seq[string] = default(seq[string]),
@@ -1960,6 +1997,7 @@ proc getRadarHttpTopLocationsIpVersionIpVersion*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol
@@ -1985,6 +2023,7 @@ proc getRadarHttpTopLocationsOsOs*(client: CloudflareClient, os: Os,
                                    location: seq[string] = @[],
                                    continent: seq[string] = @[],
                                    geoId: seq[string] = @[],
+                                   asCategory: seq[string] = default(seq[string]),
                                    botClass: seq[string] = default(seq[string]),
                                    deviceType: seq[string] = default(seq[string]),
                                    httpProtocol: seq[string] = default(seq[string]),
@@ -2006,6 +2045,7 @@ proc getRadarHttpTopLocationsOsOs*(client: CloudflareClient, os: Os,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol
@@ -2033,6 +2073,7 @@ proc getRadarHttpTopLocationsTlsVersionTlsVersion*(client: CloudflareClient,
                                                    location: seq[string] = @[],
                                                    continent: seq[string] = @[],
                                                    geoId: seq[string] = @[],
+                                                   asCategory: seq[string] = default(seq[string]),
                                                    botClass: seq[string] = default(seq[string]),
                                                    deviceType: seq[string] = default(seq[string]),
                                                    httpProtocol: seq[string] = default(seq[string]),
@@ -2054,6 +2095,7 @@ proc getRadarHttpTopLocationsTlsVersionTlsVersion*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   for v in geoId: q["geoId"] = $v
+  q["asCategory"] = $asCategory
   q["botClass"] = $botClass
   q["deviceType"] = $deviceType
   q["httpProtocol"] = $httpProtocol

@@ -503,6 +503,10 @@ proc renameHook*(v: types.BillableUsageApiV2AccountBillableMetric, fieldName: va
     fieldName = "product_family"
   elif fieldName == "product_family":
     fieldName = "ProductFamily"
+  elif fieldName == "TagKeys":
+    fieldName = "tag_keys"
+  elif fieldName == "tag_keys":
+    fieldName = "TagKeys"
 
 proc renameHook*(v: types.BillableUsageApiV2FilterBy, fieldName: var string) {.inline.} =
   if fieldName == "BillableMetricIds":
@@ -573,6 +577,10 @@ proc renameHook*(v: types.BillableUsageApiV2UsageQuery, fieldName: var string) {
     fieldName = "filter_by"
   elif fieldName == "filter_by":
     fieldName = "FilterBy"
+  elif fieldName == "Granularity":
+    fieldName = "granularity"
+  elif fieldName == "granularity":
+    fieldName = "Granularity"
   elif fieldName == "GroupBy":
     fieldName = "group_by"
   elif fieldName == "group_by":
@@ -1162,6 +1170,20 @@ proc renameHook*(v: types.GoogleTagGatewayGoogleTagGatewayConfig, fieldName: var
   elif fieldName == "set_up_tag":
     fieldName = "setUpTag"
 
+proc renameHook*(v: types.GoogleTagGatewayGoogleTagGatewayConfigResponse, fieldName: var string) {.inline.} =
+  if fieldName == "hideOriginalIp":
+    fieldName = "hide_original_ip"
+  elif fieldName == "hide_original_ip":
+    fieldName = "hideOriginalIp"
+  elif fieldName == "measurementId":
+    fieldName = "measurement_id"
+  elif fieldName == "measurement_id":
+    fieldName = "measurementId"
+  elif fieldName == "setUpTag":
+    fieldName = "set_up_tag"
+  elif fieldName == "set_up_tag":
+    fieldName = "setUpTag"
+
 proc renameHook*(v: types.IamScimAuthenticationScheme, fieldName: var string) {.inline.} =
   if fieldName == "documentationUri":
     fieldName = "documentation_uri"
@@ -1712,6 +1734,12 @@ proc renameHook*(v: types.R2AccountLevelMetrics, fieldName: var string) {.inline
   elif fieldName == "infrequent_access":
     fieldName = "infrequentAccess"
 
+proc renameHook*(v: types.R2AddCustomDomainLegacyRequest, fieldName: var string) {.inline.} =
+  if fieldName == "zoneId":
+    fieldName = "zone_id"
+  elif fieldName == "zone_id":
+    fieldName = "zoneId"
+
 proc renameHook*(v: types.R2AddCustomDomainRequest, fieldName: var string) {.inline.} =
   if fieldName == "minTLS":
     fieldName = "min_t_l_s"
@@ -1975,12 +2003,6 @@ proc renameHook*(v: types.RealtimekitPacketLossCumulative, fieldName: var string
     fieldName = "f5_or_greater_event_fraction"
   elif fieldName == "f5_or_greater_event_fraction":
     fieldName = "5_or_greater_event_fraction"
-
-proc renameHook*(v: types.RealtimekitTranscript, fieldName: var string) {.inline.} =
-  if fieldName == "sessionId":
-    fieldName = "session_id"
-  elif fieldName == "session_id":
-    fieldName = "sessionId"
 
 proc renameHook*(v: types.RealtimekitTranscriptSummary, fieldName: var string) {.inline.} =
   if fieldName == "sessionId":

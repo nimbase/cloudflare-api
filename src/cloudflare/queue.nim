@@ -130,10 +130,14 @@ proc patchAccountsAccountIdEventSubscriptionsSubscriptionsSubscriptionId*(client
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdQueues*(client: CloudflareClient,
-                                 accountId: types.MqIdentifier): Future[JsonNode] {.async.} =
+                                 accountId: types.MqIdentifier, page: int64 = 1,
+                                 perPage: int64 = 100): Future[JsonNode] {.async.} =
   ## Returns the queues owned by an account.
 
-  let res = await client.httpGET(fmt"/accounts/{accountId}/queues")
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/accounts/{accountId}/queues", q)
   let body = await res.body
   case res.code
   of Http200:

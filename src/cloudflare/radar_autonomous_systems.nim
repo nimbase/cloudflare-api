@@ -115,6 +115,7 @@ proc getRadarEntitiesAsnsIp*(client: CloudflareClient, ip: JsonNode,
     raise newException(CloudflareClientError, body)
 
 proc getRadarEntitiesAsnsAsn*(client: CloudflareClient, asn: int64,
+                              includeConfidenceLevel: bool = true,
                               format: RadarAutonomousSystemFormatOption = formatJSON): Future[GetRadarEntitiesAsnsAsnResponse] {.async.} =
   ## Retrieves the requested autonomous system information. (A confidence level below
   ## `5` indicates a low level of confidence in the traffic data - normally this
@@ -122,6 +123,7 @@ proc getRadarEntitiesAsnsAsn*(client: CloudflareClient, asn: int64,
   ## Population estimates come from APNIC (refer to https://labs.apnic.net/?p=526).
 
   var q = initOrderedTable[string, string]()
+  q["includeConfidenceLevel"] = $includeConfidenceLevel
   q["format"] = $format
   let res = await client.httpGET(fmt"/radar/entities/asns/{asn}", q)
   let body = await res.body

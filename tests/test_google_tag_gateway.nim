@@ -23,6 +23,10 @@ suite "google_tag_gateway serialization":
     let obj = newGoogleTagGatewayGoogleTagGatewayConfig()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GoogleTagGatewayGoogleTagGatewayConfig)) == openjson.toJson(obj)
 
+  test "round-trips GoogleTagGatewayGoogleTagGatewayConfigResponse":
+    let obj = newGoogleTagGatewayGoogleTagGatewayConfigResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GoogleTagGatewayGoogleTagGatewayConfigResponse)) == openjson.toJson(obj)
+
 suite "google_tag_gateway endpoints":
   test "GET /zones/{zone_id}/settings/google-tag-gateway/config":
     let client = initCloudflareClient("test-key")

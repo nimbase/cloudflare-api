@@ -137,6 +137,9 @@ proc putAccountsAccountIdRealtimeKitAppIdRecordingsRecordingId*(client: Cloudfla
                                                                 recordingId: string,
                                                                 body: PutAccountsAccountIdRealtimeKitAppIdRecordingsRecordingIdRequest): Future[JsonNode] {.async.} =
   ## Pause/Resume/Stop a given recording ID.
+  ##
+  ## **Note:** A recording can stay paused for a maximum of 12 hours. After that, it
+  ## automatically resumes and finishes.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/realtime/kit/{appId}/recordings/{recordingId}", body)
   let body = await res.body

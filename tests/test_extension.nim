@@ -11,29 +11,29 @@ import cloudflare
 import ./common
 
 suite "extension serialization":
-  test "round-trips RegistrarApiApiResponseCommonFailure":
-    let obj = newRegistrarApiApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips RegistrarSandboxExtensionResponseSingle":
+    let obj = newRegistrarSandboxExtensionResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarSandboxExtensionResponseSingle)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiExtensionResponseCollection":
-    let obj = newRegistrarApiExtensionResponseCollection()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiExtensionResponseCollection)) == openjson.toJson(obj)
+  test "round-trips RegistrarSandboxApiResponseCommonFailure":
+    let obj = newRegistrarSandboxApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarSandboxApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiSandboxExtensionResponseCollection":
-    let obj = newRegistrarApiSandboxExtensionResponseCollection()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiSandboxExtensionResponseCollection)) == openjson.toJson(obj)
+  test "round-trips RegistrarExtensionResponseSingle":
+    let obj = newRegistrarExtensionResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarExtensionResponseSingle)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiSandboxApiResponseCommonFailure":
-    let obj = newRegistrarApiSandboxApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiSandboxApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips RegistrarExtensionResponseCollection":
+    let obj = newRegistrarExtensionResponseCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarExtensionResponseCollection)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiExtensionResponseSingle":
-    let obj = newRegistrarApiExtensionResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiExtensionResponseSingle)) == openjson.toJson(obj)
+  test "round-trips RegistrarSandboxExtensionResponseCollection":
+    let obj = newRegistrarSandboxExtensionResponseCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarSandboxExtensionResponseCollection)) == openjson.toJson(obj)
 
-  test "round-trips RegistrarApiSandboxExtensionResponseSingle":
-    let obj = newRegistrarApiSandboxExtensionResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiSandboxExtensionResponseSingle)) == openjson.toJson(obj)
+  test "round-trips RegistrarApiResponseCommonFailure":
+    let obj = newRegistrarApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RegistrarApiResponseCommonFailure)) == openjson.toJson(obj)
 
 suite "extension endpoints":
   test "GET /accounts/{account_id}/registrar-sandbox/extensions":

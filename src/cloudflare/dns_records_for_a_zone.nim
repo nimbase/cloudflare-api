@@ -43,14 +43,22 @@ proc getZonesZoneIdDnsRecords*(client: CloudflareClient,
                                tagEndswith: string = default(string),
                                search: types.DnsRecordsSearch = default(types.DnsRecordsSearch),
                                tagMatch: types.DnsRecordsTagMatch = default(types.DnsRecordsTagMatch),
+                               cursor: string = default(string),
+                               prevCursor: string = default(string),
                                page: types.DnsRecordsPage = default(types.DnsRecordsPage),
                                perPage: types.DnsRecordsPerPage = default(types.DnsRecordsPerPage),
                                order: types.DnsRecordsOrder = default(types.DnsRecordsOrder),
                                direction: types.DnsRecordsDirection = default(types.DnsRecordsDirection),
                                includeShadowMetadata: bool = false,
                                shadowedByName: string = default(string),
-                               shadowingName: string = default(string)): Future[types.DnsRecordsDnsResponseCollection] {.async.} =
-  ## List, search, sort, and filter a zones' DNS records.
+                               shadowingName: string = default(string)): Future[types.DnsRecordsDnsResponseList] {.async.} =
+  ## List, search, sort, and filter a zone's DNS records. Requests with `cursor` or
+  ## `prev_cursor` use cursor pagination. Otherwise, the endpoint uses offset
+  ## pagination. To start cursor pagination, set `cursor` to an empty value, then
+  ## pass `result_info.cursor` from the previous response to request the next page.
+  ## Cursor-paginated responses do not include `page`, `total_count`, or
+  ## `total_pages`. Cursor tokens are opaque and can vary in length. Pass them back
+  ## unchanged and do not assume a fixed length.
 
   var q = initOrderedTable[string, string]()
   q["name"] = $name
@@ -82,6 +90,8 @@ proc getZonesZoneIdDnsRecords*(client: CloudflareClient,
   q["tag.endswith"] = $tagEndswith
   q["search"] = $search
   q["tag_match"] = $tagMatch
+  q["cursor"] = $cursor
+  q["prev_cursor"] = $prevCursor
   q["page"] = $page
   q["per_page"] = $perPage
   q["order"] = $order
@@ -93,7 +103,7 @@ proc getZonesZoneIdDnsRecords*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.DnsRecordsDnsResponseCollection)
+    result = fromJson(body, types.DnsRecordsDnsResponseList)
   else:
     raise newException(CloudflareClientError, body)
 
@@ -150,14 +160,99 @@ proc postZonesZoneIdDnsRecordsBatch*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdDnsRecordsExport*(client: CloudflareClient,
-                                     zoneId: types.DnsRecordsIdentifier): Future[AsyncResponse] {.async.} =
-  ## You can export your [BIND config](https://en.wikipedia.org/wiki/Zone_file "Zone
-  ## file") through this endpoint.
+                                     zoneId: types.DnsRecordsIdentifier,
+                                     includeGeneratedRecords: bool = true,
+                                     name: string = default(string),
+                                     nameExact: string = default(string),
+                                     nameContains: string = default(string),
+                                     nameStartswith: string = default(string),
+                                     nameEndswith: string = default(string),
+                                     `type`: types.DnsRecordsType = default(types.DnsRecordsType),
+                                     content: string = default(string),
+                                     contentExact: string = default(string),
+                                     contentContains: string = default(string),
+                                     contentStartswith: string = default(string),
+                                     contentEndswith: string = default(string),
+                                     proxied: types.DnsRecordsProxied = default(types.DnsRecordsProxied),
+                                     match: types.DnsRecordsMatch = default(types.DnsRecordsMatch),
+                                     comment: string = default(string),
+                                     commentPresent: string = default(string),
+                                     commentAbsent: string = default(string),
+                                     commentExact: string = default(string),
+                                     commentContains: string = default(string),
+                                     commentStartswith: string = default(string),
+                                     commentEndswith: string = default(string),
+                                     tag: string = default(string),
+                                     tagPresent: string = default(string),
+                                     tagAbsent: string = default(string),
+                                     tagExact: string = default(string),
+                                     tagContains: string = default(string),
+                                     tagStartswith: string = default(string),
+                                     tagEndswith: string = default(string),
+                                     search: types.DnsRecordsSearch = default(types.DnsRecordsSearch),
+                                     tagMatch: types.DnsRecordsTagMatch = default(types.DnsRecordsTagMatch),
+                                     includeShadowMetadata: bool = false,
+                                     shadowedByName: string = default(string),
+                                     shadowingName: string = default(string)): Future[AsyncResponse] {.async.} =
+  ## Export your [BIND config](https://en.wikipedia.org/wiki/Zone_file "Zone file")
+  ## through this endpoint. Use the same record filters as the List DNS Records
+  ## endpoint to export only matching stored records.
+  ##
+  ## By default, the SOA record (stored or generated) and assigned apex NS records,
+  ## where applicable, are included regardless of filters. Secondary zones must have
+  ## a stored SOA record to export in this mode. Set
+  ## `include_generated_records=false` to export only matching stored records,
+  ## without adding the SOA/nameserver section or requiring secondary zones to have
+  ## an SOA record. Matching stored SOA and NS records are still exported. This may
+  ## produce a partial zone rather than a complete zone. Workers-managed records are
+  ## never exported.
+  ##
+  ## The export returns at most 5,000,000 matching stored records, in addition to any
+  ## automatically included SOA and assigned apex NS records. It is not paginated and
+  ## does not support `page`, `per_page`, `order`, `direction`, `cursor`, or
+  ## `prev_cursor`.
+  ##
+  ## `include_shadow_metadata=true` is required when using `shadowed_by_name`; it
+  ## does not add shadow metadata to the BIND output.
   ##
   ## See [the documentation](https://developers.cloudflare.com/dns/manage-dns-records
   ## /how-to/import-and-export/ "Import and export records") for more information.
 
-  let res = await client.httpGET(fmt"/zones/{zoneId}/dns_records/export")
+  var q = initOrderedTable[string, string]()
+  q["include_generated_records"] = $includeGeneratedRecords
+  q["name"] = $name
+  q["name.exact"] = $nameExact
+  q["name.contains"] = $nameContains
+  q["name.startswith"] = $nameStartswith
+  q["name.endswith"] = $nameEndswith
+  q["type"] = $`type`
+  q["content"] = $content
+  q["content.exact"] = $contentExact
+  q["content.contains"] = $contentContains
+  q["content.startswith"] = $contentStartswith
+  q["content.endswith"] = $contentEndswith
+  q["proxied"] = $proxied
+  q["match"] = $match
+  q["comment"] = $comment
+  q["comment.present"] = $commentPresent
+  q["comment.absent"] = $commentAbsent
+  q["comment.exact"] = $commentExact
+  q["comment.contains"] = $commentContains
+  q["comment.startswith"] = $commentStartswith
+  q["comment.endswith"] = $commentEndswith
+  q["tag"] = $tag
+  q["tag.present"] = $tagPresent
+  q["tag.absent"] = $tagAbsent
+  q["tag.exact"] = $tagExact
+  q["tag.contains"] = $tagContains
+  q["tag.startswith"] = $tagStartswith
+  q["tag.endswith"] = $tagEndswith
+  q["search"] = $search
+  q["tag_match"] = $tagMatch
+  q["include_shadow_metadata"] = $includeShadowMetadata
+  q["shadowed_by_name"] = $shadowedByName
+  q["shadowing_name"] = $shadowingName
+  let res = await client.httpGET(fmt"/zones/{zoneId}/dns_records/export", q)
   return res
 
 proc postZonesZoneIdDnsRecordsImport*(client: CloudflareClient,

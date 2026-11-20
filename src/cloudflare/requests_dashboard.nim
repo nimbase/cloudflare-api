@@ -21,6 +21,9 @@ type
   GetAccountsAccountIdCloudforceOneV2RequestsProjectTypeMetadataResponse* = object
     data: seq[JsonNode]
     success: bool
+  GetAccountsAccountIdCloudforceOneV2RequestsProjectTypeQuotaResponse* = object
+    result: JsonNode
+    success: bool
   GetAccountsAccountIdCloudforceOneV2RequestsProjectTypeTypesResponse* = object
     result: JsonNode
     success: bool
@@ -73,12 +76,19 @@ proc getAccountsAccountIdCloudforceOneV2RequestsProjectTypeMetadata*(client: Clo
 
 proc getAccountsAccountIdCloudforceOneV2RequestsProjectTypeQuota*(client: CloudflareClient,
                                                                   accountId: string,
-                                                                  projectType: ProjectType): Future[AsyncResponse] {.async.} =
+                                                                  projectType: ProjectType): Future[GetAccountsAccountIdCloudforceOneV2RequestsProjectTypeQuotaResponse] {.async.} =
   ## Returns the account's token quota for the current anniversary quarter: total
-  ## granted, used, remaining, and the quarter/anniversary boundaries.
+  ## granted, used, remaining, and the quarter/anniversary boundaries. Also returns
+  ## the annual allocation, usage, and remaining tokens for the current anniversary
+  ## year; quarterly remaining controls usage.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/requests/{projectType}/quota")
-  return res
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneV2RequestsProjectTypeQuotaResponse)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdCloudforceOneV2RequestsProjectTypeTypes*(client: CloudflareClient,
                                                                   accountId: string,

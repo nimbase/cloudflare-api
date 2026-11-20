@@ -359,6 +359,7 @@ proc getRadarAttacksLayer7SummaryDimension*(client: CloudflareClient,
                                             asn: seq[string] = @[],
                                             location: seq[string] = @[],
                                             continent: seq[string] = @[],
+                                            asCategory: seq[string] = default(seq[string]),
                                             ipVersion: seq[string] = default(seq[string]),
                                             httpVersion: seq[string] = default(seq[string]),
                                             httpMethod: seq[string] = default(seq[string]),
@@ -375,6 +376,7 @@ proc getRadarAttacksLayer7SummaryDimension*(client: CloudflareClient,
   for v in asn: q["asn"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
+  q["asCategory"] = $asCategory
   q["ipVersion"] = $ipVersion
   q["httpVersion"] = $httpVersion
   q["httpMethod"] = $httpMethod
@@ -399,6 +401,7 @@ proc getRadarAttacksLayer7Timeseries*(client: CloudflareClient,
                                       location: seq[string] = @[],
                                       continent: seq[string] = @[],
                                       normalization: RadarLayer7AttackNormalizationOption = normalizationPERCENTAGECHANGE,
+                                      asCategory: seq[string] = default(seq[string]),
                                       ipVersion: seq[string] = default(seq[string]),
                                       httpVersion: seq[string] = default(seq[string]),
                                       httpMethod: seq[string] = default(seq[string]),
@@ -416,6 +419,7 @@ proc getRadarAttacksLayer7Timeseries*(client: CloudflareClient,
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
   q["normalization"] = $normalization
+  q["asCategory"] = $asCategory
   q["ipVersion"] = $ipVersion
   q["httpVersion"] = $httpVersion
   q["httpMethod"] = $httpMethod
@@ -721,6 +725,7 @@ proc getRadarAttacksLayer7TimeseriesGroupsDimension*(client: CloudflareClient,
                                                      asn: seq[string] = @[],
                                                      location: seq[string] = @[],
                                                      continent: seq[string] = @[],
+                                                     asCategory: seq[string] = default(seq[string]),
                                                      ipVersion: seq[string] = default(seq[string]),
                                                      httpVersion: seq[string] = default(seq[string]),
                                                      httpMethod: seq[string] = default(seq[string]),
@@ -739,6 +744,7 @@ proc getRadarAttacksLayer7TimeseriesGroupsDimension*(client: CloudflareClient,
   for v in asn: q["asn"] = $v
   for v in location: q["location"] = $v
   for v in continent: q["continent"] = $v
+  q["asCategory"] = $asCategory
   q["ipVersion"] = $ipVersion
   q["httpVersion"] = $httpVersion
   q["httpMethod"] = $httpMethod
@@ -766,6 +772,7 @@ proc getRadarAttacksLayer7TopAsesOrigin*(client: CloudflareClient,
                                          httpVersion: seq[string] = default(seq[string]),
                                          httpMethod: seq[string] = default(seq[string]),
                                          mitigationProduct: seq[string] = default(seq[string]),
+                                         asCategory: seq[string] = default(seq[string]),
                                          format: RadarLayer7AttackFormatOption = formatJSON): Future[GetRadarAttacksLayer7TopAsesOriginResponse] {.async.} =
   ## Retrieves the top origin autonomous systems of layer 7 attacks. Values are
   ## percentages of the total layer 7 attacks, with the origin autonomous systems
@@ -783,6 +790,7 @@ proc getRadarAttacksLayer7TopAsesOrigin*(client: CloudflareClient,
   q["httpVersion"] = $httpVersion
   q["httpMethod"] = $httpMethod
   q["mitigationProduct"] = $mitigationProduct
+  q["asCategory"] = $asCategory
   q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer7/top/ases/origin", q)
   let body = await res.body
@@ -883,6 +891,7 @@ proc getRadarAttacksLayer7TopLocationsOrigin*(client: CloudflareClient,
                                               httpVersion: seq[string] = default(seq[string]),
                                               httpMethod: seq[string] = default(seq[string]),
                                               mitigationProduct: seq[string] = default(seq[string]),
+                                              asCategory: seq[string] = default(seq[string]),
                                               format: RadarLayer7AttackFormatOption = formatJSON): Future[GetRadarAttacksLayer7TopLocationsOriginResponse] {.async.} =
   ## Retrieves the top origin locations of layer 7 attacks. Values are percentages of
   ## the total layer 7 attacks, with the origin location determined by the client IP
@@ -900,6 +909,7 @@ proc getRadarAttacksLayer7TopLocationsOrigin*(client: CloudflareClient,
   q["httpVersion"] = $httpVersion
   q["httpMethod"] = $httpMethod
   q["mitigationProduct"] = $mitigationProduct
+  q["asCategory"] = $asCategory
   q["format"] = $format
   let res = await client.httpGET("/radar/attacks/layer7/top/locations/origin", q)
   let body = await res.body

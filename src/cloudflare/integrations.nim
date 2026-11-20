@@ -60,9 +60,8 @@ proc getAccountsAccountIdOneIntegrations*(client: CloudflareClient,
 proc postAccountsAccountIdOneIntegrations*(client: CloudflareClient,
                                            accountId: string,
                                            body: types.OneIntegrationV2CreateRequest): Future[types.OneIntegrationCreateResponse] {.async.} =
-  ## Creates a new integration for the specified application. Integration creation
-  ## with OAuth is not supported by API at the moment. For other auth methods, use
-  ## `GET /v2/applications/{application_id}/credential-guide` to see the required
+  ## Creates a new integration for the specified application. For other auth methods,
+  ## use `GET /v2/applications/{application_id}/credential-guide` to see the required
   ## credential structure and example payloads for each vendor.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/one/integrations", body)
@@ -95,8 +94,8 @@ proc deleteAccountsAccountIdOneIntegrationsId*(client: CloudflareClient,
 proc patchAccountsAccountIdOneIntegrationsId*(client: CloudflareClient,
                                               accountId: string, id: string,
                                               body: types.OnePatchedUpdateIntegrationV2Request): Future[types.OneIntegrationUpdateResponse] {.async.} =
-  ## Updates an integration's name, permissions, DLP profiles, use cases, or
-  ## credentials.
+  ## Updates an integration's name, permissions, DLP profiles, use cases,
+  ## credentials, or GitLab resources.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/one/integrations/{id}", body)
   let body = await res.body

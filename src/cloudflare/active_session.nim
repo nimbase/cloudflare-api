@@ -13,8 +13,7 @@ type
     data: types.RealtimekitActiveSession
     success: bool
   PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionKickRequest = object
-    custom_participant_ids: Option[seq[string]]
-    participant_ids: Option[seq[string]]
+    participant_ids: seq[string]
   PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionKickResponse* = object
     data: JsonNode
     success: bool
@@ -22,8 +21,7 @@ type
     data: JsonNode
     success: bool
   PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionMuteRequest = object
-    custom_participant_ids: Option[seq[string]]
-    participant_ids: Option[seq[string]]
+    participant_ids: seq[string]
   PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionMuteResponse* = object
     data: JsonNode
     success: bool
@@ -58,8 +56,8 @@ proc postAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionKick*(cl
                                                                               appId: types.RealtimekitAppId,
                                                                               meetingId: string,
                                                                               body: PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionKickRequest): Future[PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionKickResponse] {.async.} =
-  ## Kicks one or more participants from an active session using user ID or custom
-  ## participant ID.
+  ## Kicks one or more participants from an active session using their participant
+  ## IDs. Every connection of each participant is removed from the session.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/realtime/kit/{appId}/meetings/{meetingId}/active-session/kick", body)
   let body = await res.body
@@ -73,7 +71,8 @@ proc postAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionKickAll*
                                                                                  accountId: types.RealtimekitAccountIdentifier,
                                                                                  appId: types.RealtimekitAppId,
                                                                                  meetingId: string): Future[PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionKickAllResponse] {.async.} =
-  ## Kicks all participants from an active session for the given meeting ID.
+  ## Kicks all participants from an active session for the given meeting ID and ends
+  ## the session. Participants in connected breakout rooms are kicked as well.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/realtime/kit/{appId}/meetings/{meetingId}/active-session/kick-all")
   let body = await res.body
@@ -88,8 +87,8 @@ proc postAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionMute*(cl
                                                                               appId: types.RealtimekitAppId,
                                                                               meetingId: string,
                                                                               body: PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionMuteRequest): Future[PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionMuteResponse] {.async.} =
-  ## Mutes one or more participants from an active session using user ID or custom
-  ## participant ID.
+  ## Mutes the microphone of one or more participants of an active session using
+  ## their participant IDs.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/realtime/kit/{appId}/meetings/{meetingId}/active-session/mute", body)
   let body = await res.body
@@ -104,7 +103,8 @@ proc postAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionMuteAll*
                                                                                  appId: types.RealtimekitAppId,
                                                                                  meetingId: string,
                                                                                  body: PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionMuteAllRequest): Future[PostAccountsAccountIdRealtimeKitAppIdMeetingsMeetingIdActiveSessionMuteAllResponse] {.async.} =
-  ## Mutes all participants of an active session for the given meeting ID.
+  ## Mutes the microphone of all participants of an active session for the given
+  ## meeting ID.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/realtime/kit/{appId}/meetings/{meetingId}/active-session/mute-all", body)
   let body = await res.body

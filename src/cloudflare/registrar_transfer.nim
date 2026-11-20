@@ -10,9 +10,9 @@ import ./private/types
 
 
 proc postAccountsAccountIdRegistrarRegistrationsDomainNameTransferIn*(client: CloudflareClient,
-                                                                      accountId: types.RegistrarApiIdentifier,
-                                                                      domainName: types.RegistrarApiDomainName,
-                                                                      body: types.RegistrarApiTransferInCreateRequest): Future[types.RegistrarApiWorkflowStatusResponseSingle] {.async.} =
+                                                                      accountId: types.RegistrarIdentifier,
+                                                                      domainName: types.RegistrarDomainName,
+                                                                      body: types.RegistrarTransferInCreateRequest): Future[types.RegistrarWorkflowStatusResponseSingle] {.async.} =
   ## Starts a domain transfer-in workflow. This is typically a billable
   ## operation — successful transfers charge the account's default payment
   ## method, except for extensions with zero transfer pricing (e.g. UK
@@ -63,13 +63,13 @@ proc postAccountsAccountIdRegistrarRegistrationsDomainNameTransferIn*(client: Cl
   let body = await res.body
   case res.code
   of Http202:
-    result = fromJson(body, types.RegistrarApiWorkflowStatusResponseSingle)
+    result = fromJson(body, types.RegistrarWorkflowStatusResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdRegistrarRegistrationsDomainNameTransferInStatus*(client: CloudflareClient,
-                                                                           accountId: types.RegistrarApiIdentifier,
-                                                                           domainName: types.RegistrarApiDomainName): Future[types.RegistrarApiWorkflowStatusResponseSingle] {.async.} =
+                                                                           accountId: types.RegistrarIdentifier,
+                                                                           domainName: types.RegistrarDomainName): Future[types.RegistrarWorkflowStatusResponseSingle] {.async.} =
   ## Returns the current status of a domain transfer workflow.
   ##
   ## Use this endpoint to poll transfer progress after initiating a transfer
@@ -110,6 +110,6 @@ proc getAccountsAccountIdRegistrarRegistrationsDomainNameTransferInStatus*(clien
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiWorkflowStatusResponseSingle)
+    result = fromJson(body, types.RegistrarWorkflowStatusResponseSingle)
   else:
     raise newException(CloudflareClientError, body)

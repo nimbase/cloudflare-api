@@ -27,7 +27,7 @@ suite "tunnel_virtual_network endpoints":
   test "GET /accounts/{account_id}/teamnet/virtual_networks":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdTeamnetVirtualNetworks("test", "test", "test", true, true, true)
+    discard waitFor client.getAccountsAccountIdTeamnetVirtualNetworks("test", 1, 1, "test", "test", true, true, true)
 
   test "GET /accounts/{account_id}/teamnet/virtual_networks/{virtual_network_id}":
     let client = initCloudflareClient("test-key")

@@ -39,6 +39,10 @@ suite "dns_records_for_a_zone serialization":
     let obj = newDnsRecordsDnsRequestReviewScanObject()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsRecordsDnsRequestReviewScanObject)) == openjson.toJson(obj)
 
+  test "round-trips DnsRecordsDnsResponseList":
+    let obj = newDnsRecordsDnsResponseList()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsRecordsDnsResponseList)) == openjson.toJson(obj)
+
   test "round-trips DnsRecordsDnsResponseSingle":
     let obj = newDnsRecordsDnsResponseSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsRecordsDnsResponseSingle)) == openjson.toJson(obj)
@@ -51,13 +55,13 @@ suite "dns_records_for_a_zone serialization":
     let obj = newDnsRecordsDnsResponseTriggerScan()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsRecordsDnsResponseTriggerScan)) == openjson.toJson(obj)
 
-  test "round-trips DnsRecordsDnsResponseCollection":
-    let obj = newDnsRecordsDnsResponseCollection()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsRecordsDnsResponseCollection)) == openjson.toJson(obj)
-
   test "round-trips DnsRecordsDnsResponseImportScan":
     let obj = newDnsRecordsDnsResponseImportScan()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsRecordsDnsResponseImportScan)) == openjson.toJson(obj)
+
+  test "round-trips DnsRecordsDnsResponseCollection":
+    let obj = newDnsRecordsDnsResponseCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DnsRecordsDnsResponseCollection)) == openjson.toJson(obj)
 
   test "round-trips DeleteZonesZoneIdDnsRecordsDnsRecordIdResponse":
     let obj = cloudflare.DeleteZonesZoneIdDnsRecordsDnsRecordIdResponse()
@@ -73,11 +77,6 @@ suite "dns_records_for_a_zone endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.postZonesZoneIdDnsRecordsBatch("test", true, newDnsRecordsDnsRequestBatchObject())
-
-  test "GET /zones/{zone_id}/dns_records/export":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getZonesZoneIdDnsRecordsExport("test")
 
   test "POST /zones/{zone_id}/dns_records/import":
     let client = initCloudflareClient("test-key")

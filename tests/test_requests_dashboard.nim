@@ -23,6 +23,10 @@ suite "requests_dashboard serialization":
     let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2RequestsProjectTypeMetadataResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneV2RequestsProjectTypeMetadataResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdCloudforceOneV2RequestsProjectTypeQuotaResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2RequestsProjectTypeQuotaResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneV2RequestsProjectTypeQuotaResponse)) == openjson.toJson(obj)
+
   test "round-trips GetAccountsAccountIdCloudforceOneV2RequestsProjectTypeTypesResponse":
     let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2RequestsProjectTypeTypesResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneV2RequestsProjectTypeTypesResponse)) == openjson.toJson(obj)

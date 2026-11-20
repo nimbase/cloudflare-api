@@ -73,10 +73,9 @@ proc getAccountsAccountIdEmailSendingSuppressions*(client: CloudflareClient,
                                                    scopeType: EmailSendingSuppressionScopeTypeOption = scopeTypeAccount,
                                                    scopeValue: string = default(string)): Future[GetAccountsAccountIdEmailSendingSuppressionsResponse] {.async.} =
   ## Lists every active Email Sending suppression owned by the account:
-  ## sending-domain suppressions and account-wide suppressions (including legacy rows
-  ## with internal zone memberships). Each scope is listed newest first. The order
-  ## between sending-domain and account-wide suppressions is not fixed; use
-  ## `scope_type` to list one scope.
+  ## sending-domain suppressions and account-wide suppressions. Each scope is listed
+  ## newest first. The order between sending-domain and account-wide suppressions is
+  ## not fixed; use `scope_type` to list one scope.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage
@@ -99,8 +98,7 @@ proc postAccountsAccountIdEmailSendingSuppressions*(client: CloudflareClient,
                                                     body: PostAccountsAccountIdEmailSendingSuppressionsRequest): Future[PostAccountsAccountIdEmailSendingSuppressionsResponse] {.async.} =
   ## Creates a suppression for every sending domain of the account (default) or for
   ## one sending domain (`scope.type = sending_domain`). Creating an existing active
-  ## suppression returns its identifier. If a legacy zone-linked account row already
-  ## exists, it is promoted without changing its identifier.
+  ## suppression returns its identifier.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/email/sending/suppressions", body)
   let body = await res.body
@@ -140,8 +138,8 @@ proc getAccountsAccountIdEmailSendingSuppressionsSuppressionId*(client: Cloudfla
 proc deleteAccountsAccountIdEmailSendingSuppressionsSuppressionId*(client: CloudflareClient,
                                                                    accountId: string,
                                                                    suppressionId: string): Future[DeleteAccountsAccountIdEmailSendingSuppressionsSuppressionIdResponse] {.async.} =
-  ## Deletes the suppression, its note, and every legacy internal zone membership,
-  ## allowing future delivery attempts to the address.
+  ## Deletes the suppression and its note, allowing future delivery attempts to the
+  ## address.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/email/sending/suppressions/{suppressionId}")
   let body = await res.body
@@ -155,8 +153,7 @@ proc patchAccountsAccountIdEmailSendingSuppressionsSuppressionId*(client: Cloudf
                                                                   accountId: string,
                                                                   suppressionId: string,
                                                                   body: PatchAccountsAccountIdEmailSendingSuppressionsSuppressionIdRequest): Future[PatchAccountsAccountIdEmailSendingSuppressionsSuppressionIdResponse] {.async.} =
-  ## Updates expiry or advisory note fields without changing legacy internal zone
-  ## memberships. Scope cannot be changed.
+  ## Updates expiry or advisory note fields. Scope cannot be changed.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/email/sending/suppressions/{suppressionId}", body)
   let body = await res.body

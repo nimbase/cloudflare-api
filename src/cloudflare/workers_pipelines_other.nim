@@ -115,7 +115,8 @@ type
 proc getAccountsAccountIdPipelines*(client: CloudflareClient,
                                     accountId: types.CloudflarePipelinesWorkersPipelinesAccountId,
                                     search: string = default(string),
-                                    page: string = "1", perPage: string = "25"): Future[GetAccountsAccountIdPipelinesResponse] {.async.} =
+                                    page: string = "1",
+                                    perPage: float64 = default(float64)): Future[GetAccountsAccountIdPipelinesResponse] {.async.} =
   ## [DEPRECATED] List, filter, and paginate pipelines in an account. Use the new
   ## /pipelines/v1/pipelines endpoint instead.
 

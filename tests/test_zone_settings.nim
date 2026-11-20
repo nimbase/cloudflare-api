@@ -15,6 +15,10 @@ suite "zone_settings serialization":
     let obj = newZonesSetting()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ZonesSetting)) == openjson.toJson(obj)
 
+  test "round-trips SpeedAutomaticPlatformOptimizationPatchValue":
+    let obj = newSpeedAutomaticPlatformOptimizationPatchValue()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedAutomaticPlatformOptimizationPatchValue)) == openjson.toJson(obj)
+
   test "round-trips SpeedCloudflareSpeedBrainResponse":
     let obj = newSpeedCloudflareSpeedBrainResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedCloudflareSpeedBrainResponse)) == openjson.toJson(obj)
@@ -26,10 +30,6 @@ suite "zone_settings serialization":
   test "round-trips CacheSettingsZoneCacheSettingsDeleteResponseSingle":
     let obj = newCacheSettingsZoneCacheSettingsDeleteResponseSingle()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CacheSettingsZoneCacheSettingsDeleteResponseSingle)) == openjson.toJson(obj)
-
-  test "round-trips SpeedAutomaticPlatformOptimizationValue":
-    let obj = newSpeedAutomaticPlatformOptimizationValue()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedAutomaticPlatformOptimizationValue)) == openjson.toJson(obj)
 
   test "round-trips CacheSettingsOriginMaxHttpVersionResponseValue":
     let obj = newCacheSettingsOriginMaxHttpVersionResponseValue()

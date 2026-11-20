@@ -123,7 +123,7 @@ suite "workers_pipelines_other endpoints":
   test "GET /accounts/{account_id}/pipelines":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdPipelines("test", "test", "test", "test")
+    discard waitFor client.getAccountsAccountIdPipelines("test", "test", "test", 1.0)
 
   test "GET /accounts/{account_id}/pipelines/v1/pipelines":
     let client = initCloudflareClient("test-key")

@@ -6235,14 +6235,6 @@ type
     result*: Option[JsonNode]
     success*: bool
 
-  AigBillingGetAuthoritativeTopupEligibilityResult* = ref object of RootObj
-    advisory*: bool
-    auto_topup*: JsonNode
-    contract_version*: float64
-    evaluated_at*: string
-    manual_topup*: JsonNode
-    payment_methods*: seq[JsonNode]
-
   AigBillingGetCreditBalanceResponse* = ref object of RootObj
     errors*: seq[JsonNode]
     messages*: seq[JsonNode]
@@ -6252,10 +6244,18 @@ type
 
   AigBillingGetCreditBalanceResult* = ref object of RootObj
     balance*: float64
+      ## Credit balance in US cents. Can be fractional, because usage is deducted in
+      ## fractions of a cent, and is negative when usage overdraws it.
     first_topup_success*: Option[bool]
+      ## Whether the account completed its first top-up. Auto top-up can be set up only
+      ## after it.
     has_default_payment_method*: bool
+      ## Whether AI Gateway billing has a default payment method for the account.
     payment_method*: Option[JsonNode]
+      ## The default payment method's card. Null when there is no default, it isn't a
+      ## card, or it couldn't be read.
     topup_config*: JsonNode
+      ## Auto top-up configuration, as GET /topup/config returns it.
 
   AigBillingGetInvoiceHistoryResponse* = ref object of RootObj
     errors*: seq[JsonNode]
@@ -6266,7 +6266,9 @@ type
 
   AigBillingGetInvoiceHistoryResult* = ref object of RootObj
     invoices*: seq[JsonNode]
+      ## Top-up invoices matching `type`, up to 100.
     pagination*: JsonNode
+      ## Pagination details. Results come in a single page.
 
   AigBillingGetInvoicePreviewResponse* = ref object of RootObj
     errors*: seq[JsonNode]
@@ -6277,14 +6279,24 @@ type
 
   AigBillingGetInvoicePreviewResult* = ref object of RootObj
     amount_due*: float64
+      ## Amount due, in US cents.
     amount_paid*: float64
+      ## Amount paid, in US cents.
     amount_remaining*: float64
+      ## Amount still owed, in US cents.
     currency*: string
+      ## Lowercase ISO 4217 currency code.
     id*: string
+      ## Invoice number, as printed on the invoice, rather than an identifier. Empty
+      ## until the invoice is finalized.
     invoice_lines*: seq[JsonNode]
+      ## Invoice line items.
     period_end*: float64
+      ## End of the billing period, as a Unix timestamp in seconds.
     period_start*: float64
+      ## Start of the billing period, as a Unix timestamp in seconds.
     status*: string
+      ## Invoice status.
 
   AigBillingGetSpendingLimitResponse* = ref object of RootObj
     errors*: seq[JsonNode]
@@ -6295,7 +6307,9 @@ type
 
   AigBillingGetSpendingLimitResult* = ref object of RootObj
     config*: JsonNode
+      ## Spending limit configuration.
     enabled*: bool
+      ## Whether a spending limit is enforced for the account.
 
   AigBillingGetTopupConfigResponse* = ref object of RootObj
     errors*: seq[JsonNode]
@@ -6306,15 +6320,22 @@ type
 
   AigBillingGetTopupConfigResult* = ref object of RootObj
     amount*: Option[float64]
+      ## Amount in cents that each auto top-up adds. 0 when auto top-up is off.
     disabled_reason*: Option[string]
+      ## Why auto top-up was stopped. Present only once it stopped.
     error*: Option[string]
+      ## Message from the failure that stopped auto top-up. Present only once it stopped.
     last_failed_at*: Option[float64]
+      ## When auto top-up was stopped, as a Unix timestamp in milliseconds. Present only
+      ## once it stopped.
     threshold*: Option[float64]
+      ## Balance threshold in cents that triggers an auto top-up. 0 when auto top-up is
+      ## off.
 
   AigBillingGetTopupEligibilityResponse* = ref object of RootObj
     errors*: seq[JsonNode]
     messages*: seq[JsonNode]
-    result*: JsonNode
+    result*: AigBillingGetTopupEligibilityResult
     result_info*: Option[JsonNode]
     success*: bool
 
@@ -6336,6 +6357,35 @@ type
     recoverable*: bool
       ## Whether the customer can resolve this themselves (vs contact support).
 
+  AigBillingGetTopupEligibilityV2Response* = ref object of RootObj
+    errors*: seq[JsonNode]
+    messages*: seq[JsonNode]
+    result*: AigBillingGetTopupEligibilityV2Result
+    result_info*: Option[JsonNode]
+    success*: bool
+
+  AigBillingGetTopupEligibilityV2Result* = ref object of RootObj
+    auto_topup*: JsonNode
+      ## Auto top-up state.
+    contract_version*: float64
+      ## Response contract version. Always `2`.
+    evaluated_at*: string
+      ## When eligibility was evaluated, as an ISO 8601 timestamp.
+    manual_topup*: JsonNode
+      ## Manual top-up availability.
+    payment_methods*: seq[JsonNode]
+      ## The account's payment methods, and whether each can pay for a top-up.
+    reason*: string
+      ## What prevents a manual top-up, or `NONE`. `CONTRACT_BILLING`: the account is
+      ## billed by contract. `ACCOUNT_RESTRICTED`: the account is restricted.
+      ## `ELIGIBILITY_UNAVAILABLE`: eligibility could not be determined.
+      ## `NO_ELIGIBLE_PAYMENT_METHOD`: no payment method can pay for a top-up.
+      ## `DAILY_LIMIT_REACHED`: the account reached its daily top-up limit.
+    status*: string
+      ## `ready` when a manual top-up is available, `blocked` when `reason` prevents one,
+      ## or `unavailable` when eligibility could not be determined and the request can be
+      ## retried.
+
   AigBillingGetTopupLimitsResponse* = ref object of RootObj
     errors*: seq[JsonNode]
     messages*: seq[JsonNode]
@@ -6347,6 +6397,7 @@ type
     currency*: string
       ## ISO 4217 currency code.
     max_cents*: int64
+      ## Maximum allowed top-up amount in cents.
     min_cents*: int64
       ## Minimum allowed top-up amount in cents.
 
@@ -6359,6 +6410,7 @@ type
 
   AigBillingGetUsageHistoryResult* = ref object of RootObj
     history*: seq[JsonNode]
+      ## Usage cost per window of `value_grouping_window`.
 
   AigBillingSetSpendingLimitResponse* = ref object of RootObj
     errors*: seq[JsonNode]
@@ -6387,7 +6439,10 @@ type
 
   AigBillingTopupStatusResult* = ref object of RootObj
     payment_intent_id*: string
+      ## Top-up identifier from the request.
     status*: string
+      ## `completed` once the top-up payment is processed and its credits are added to
+      ## the balance, `pending` until then.
 
   AlexandriaApiResponseCollection* = ref object of RootObj
     errors*: AlexandriaMessages
@@ -8775,12 +8830,26 @@ type
 
   BillableUsageApiV2AccountBillableMetric* = ref object of RootObj
     dimension_keys*: seq[string]
+      ## Dimension keys defined for this billable metric. Use them as
+      ## `Key` in a `DIMENSION` `GroupBy` on the account usage endpoint.
+      ## They do not depend on the requested period, and a key can
+      ## be listed even when no usage in the period carries it. Empty when
+      ## the metric defines no dimensions.
+      ##
     id*: string
       ## Public catalog identifier of the billable metric.
     name*: string
       ## Human-readable billable metric name.
     product_category*: seq[BillableUsageApiV2ProductCategory]
     product_family*: seq[BillableUsageApiV2ProductFamily]
+    tag_keys*: seq[string]
+      ## Resource-tag keys observed on this metric's usage within the
+      ## requested period, sorted and deduplicated. Use them as `Key` in a
+      ## `TAG` `GroupBy` or in `FilterBy.Tags` on the account usage
+      ## endpoint. Because the list reflects recorded usage, it changes with
+      ## `from` and `to`, and is empty when no tagged usage exists in the
+      ## period or tag-key discovery is not available.
+      ##
 
   BillableUsageApiV2AccountBillableMetricsResponse* = ref object of RootObj
     ## Successful response containing account-visible billable metrics.
@@ -8845,6 +8914,13 @@ type
     ## Filter criteria for a usage query. Every field is optional; an empty object is
     ## equivalent to omitting the body entirely. Unknown fields are rejected.
     filter_by*: Option[BillableUsageApiV2FilterBy]
+    granularity*: Option[string]
+      ## Optional time bucket to sum records over. `DAILY` returns one record per day.
+      ## `PERIOD` returns one record for the whole time period. When set with `Metric`
+      ## `cost`, cost is summed across pricing tiers into one record per billable metric
+      ## per bucket. When omitted, records are not summed: `usage` returns daily records
+      ## and `cost` returns one record per rated breakdown. Available only on `POST`
+      ## account usage.
     group_by*: Option[seq[BillableUsageApiV2GroupBy]]
       ## Grouping definitions used to split result rows. At most two unique keys may be
       ## supplied.
@@ -9418,6 +9494,8 @@ type
   BrandProtectionApiURLSubmit* = ref object of RootObj
     skipped_urls*: Option[seq[JsonNode]]
     submitted_urls*: Option[seq[JsonNode]]
+
+  BrapiCrawlJsonValue* = ref object of RootObj
 
   BrapiSerializedAXNode* = ref object of RootObj
     ## Accessibility tree node
@@ -11533,7 +11611,7 @@ type
     enabled*: Option[bool]
 
   CcPlacementEvent* = ref object of RootObj
-    ## An event within a Placement or a Job.
+    ## An event within a Placement.
     details*: JsonNode
     id*: string
     message*: string
@@ -12439,6 +12517,13 @@ type
     domains*: Option[seq[string]]
     name*: string
 
+  CloudforceOneEventsPirOrganizationType* = ref object of RootObj
+    description*: string
+    id*: string
+    label*: string
+    sectors*: seq[string]
+    suggested_protected_targets*: seq[string]
+
   CloudforceOneEventsPirRelevanceCriterion* = ref object of RootObj
     band*: string
     id*: string
@@ -12460,6 +12545,34 @@ type
     targets*: Option[JsonNode]
     technique_ids*: Option[seq[string]]
     technologies*: Option[JsonNode]
+
+  CloudforceOneEventsPirTopic* = ref object of RootObj
+    actor_types*: seq[string]
+    coverage_notes*: seq[JsonNode]
+    event_rules*: seq[JsonNode]
+    family*: string
+      ## The `topic_families` entry this topic is listed under. New families can be
+      ## added, so treat an unknown value as ungrouped.
+    filter_revision*: int64
+    intent_revision*: int64
+    motivations*: seq[string]
+    presentation_revision*: int64
+    profile_context*: seq[string]
+      ## Inherited facts this topic emphasizes: listed as Highly relevant and available
+      ## to its event rules. Every PIR inherits every fact.
+    question_template*: string
+      ## English question; only `{targets}` and `{regions}` are substituted.
+    recommended_sectors*: seq[string]
+    relevance_criteria*: seq[JsonNode]
+    suggested_actors*: seq[JsonNode]
+      ## Suggestions the account can see; others are left out.
+    title*: string
+    topic_id*: string
+
+  CloudforceOneEventsPirTopicFamily* = ref object of RootObj
+    id*: string
+    label*: string
+      ## English heading for the group.
 
   CloudforceOneEventsRelationshipEdge* = ref object of RootObj
     confidence*: Option[int64]
@@ -17507,6 +17620,14 @@ type
       ## Whether the API call was successful.
     result*: Option[JsonNode]
 
+  DnsRecordsDnsResponseList* = ref object of RootObj
+    errors*: DnsRecordsMessages
+    messages*: DnsRecordsMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result_info*: Option[JsonNode]
+    result*: Option[seq[DnsRecordsDnsRecordResponse]]
+
   DnsRecordsDnsResponseReviewScan* = ref object of RootObj
     errors*: DnsRecordsMessages
     messages*: DnsRecordsMessages
@@ -17585,6 +17706,7 @@ type
     ## `all`, acts like a logical AND between tag filters. If set to `any`, acts like a
     ## logical OR instead. Note that the regular `match` parameter is still used to
     ## combine the resulting condition with other filters that aren't related to tags.
+    ## The legacy `tag-match` parameter is an alias for this parameter.
     ##
     any = "any"
     all = "all"
@@ -19902,174 +20024,6 @@ type
 
   EmailEmail* = string
 
-  EmailEmailDomain* = ref object of RootObj
-    account_id*: EmailIdentifier
-    claim_release_at*: Option[string]
-      ## When the claim will enter blocked-first release if both ownership records remain
-      ## continuously invalid. Absent outside that recovery period.
-    client_reference*: Option[string]
-      ## Opaque customer enrollment reference supplied at Create. The platform must map
-      ## customers by this reference and EmailDomain ID, never by hostname alone.
-    dns_management*: string
-      ## The customer publishes the returned DNS instructions.
-    dns_records*: Option[seq[EmailEmailDomainDnsRecord]]
-      ## Four immutable assignments, including one Routing MX record. Included on
-      ## single-resource responses and optionally on lists; operation examples show the
-      ## complete set.
-    hostname*: string
-      ## Canonical exact external customer hostname.
-    id*: string
-      ## Stable identifier of this exact domain enrollment.
-    lifecycle_reason*: Option[string]
-      ## Why the resource is leaving the provisioned lifecycle.
-    lifecycle_status*: string
-      ## Resource lifecycle; provisioned does not imply active mail, and completed
-      ## deletion returns HTTP 404.
-    modified_at*: string
-      ## Last state change. Use the opaque change-feed cursor rather than comparing this
-      ## value alone.
-    routing*: JsonNode
-      ## Whether this exact domain can currently receive mail.
-    sending*: JsonNode
-      ## Whether this exact domain can currently send mail.
-    verification*: JsonNode
-      ## Customer DNS ownership status, independent of mail capability readiness.
-
-  EmailEmailDomainCapability* = ref object of RootObj
-    ## Current Sending or Routing availability for the exact domain.
-    reason*: Option[string]
-      ## Machine-readable explanation. V1 reasons: policy_suspended denotes an
-      ## unavailable capability; customer_dns_invalid, customer_dns_indeterminate, and
-      ## verification_invalid reflect customer ownership records; rollout_unacknowledged,
-      ## sending_not_ready, routing_not_ready, worker_unavailable,
-      ## platform_dependency_unavailable, platform_health_unavailable,
-      ## platform_health_stale, platform_dns_invalid, platform_dns_indeterminate,
-      ## publication_invalid, publication_unavailable, and validation_overdue reflect
-      ## service readiness or internal evidence; deleting means teardown is in progress.
-      ## Clients must tolerate unknown future values and treat the capability as
-      ## unavailable.
-    status*: string
-      ## Current capability state. Treat suspended and unknown future values as
-      ## unavailable.
-    uncertainty_expires_at*: Option[string]
-      ## End of the immutable last-known-good lease; present only while degraded.
-
-  EmailEmailDomainChange* = ref object of RootObj
-    email_domain*: Option[JsonNode]
-      ## EmailDomain state at this change. Present only when kind is email_domain; DNS
-      ## assignments are omitted.
-    kind*: string
-      ## Change type. email_domain carries the domain state at this change; tombstone
-      ## records a completed removal.
-    tombstone*: Option[JsonNode]
-      ## Bounded reconciliation record for a completed removal. Present only when kind is
-      ## tombstone.
-
-  EmailEmailDomainChangeCollectionResponse* = ref object of RootObj
-    errors*: seq[JsonNode]
-    messages*: seq[string]
-    platform*: EmailEmailDomainPlatformStatus
-    result*: seq[EmailEmailDomainChange]
-    result_info*: JsonNode
-    success*: bool
-
-  EmailEmailDomainCollectionResponse* = ref object of RootObj
-    errors*: seq[JsonNode]
-    messages*: seq[string]
-    result*: seq[EmailEmailDomain]
-    result_info*: JsonNode
-    success*: bool
-
-  EmailEmailDomainCreate* = ref object of RootObj
-    client_reference*: Option[string]
-      ## Opaque reference for one customer enrollment. Reuse it with the same hostname to
-      ## retry Create safely. Distinct references can enroll the same unverified
-      ## hostname; a hostname alone never identifies a customer.
-    hostname*: string
-      ## Exact external hostname to enroll. After ASCII conversion, the assigned
-      ## Return-Path hostname must be at most 201 characters (191 for the current
-      ## cf-bounce. prefix). Wildcards, provider-zone names, and hostnames inside an
-      ## existing Cloudflare-managed DNS zone are rejected.
-
-  EmailEmailDomainDnsRecord* = ref object of RootObj
-    content*: string
-      ## Assigned target. CNAME targets contain the enrollment token; use the returned
-      ## value verbatim.
-    name*: string
-      ## Exact owner name to publish in the customer's DNS.
-    observed_at*: Option[string]
-      ## Time of the latest accepted observation for this assignment.
-    priority*: Option[int64]
-      ## MX preference; present only for MX records.
-    purpose*: string
-      ## Role of this DNS assignment.
-    required_for*: seq[string]
-      ## Capabilities that depend on this assignment.
-    selector*: Option[string]
-      ## DKIM selector, the first label of name; present only for DKIM assignments. New
-      ## enrollments use cf1 and cf2. Enrollments created before cf1 and cf2 keep s1 and
-      ## s2.
-    `type`*: string
-      ## DNS record type to publish.
-    validation_status*: string
-      ## Observation of the exact customer record.
-    verification_group*: Option[string]
-      ## Either current DKIM alias can establish ownership.
-
-  EmailEmailDomainErrorResponse* = ref object of RootObj
-    errors*: seq[JsonNode]
-      ## One or more structured API errors.
-    messages*: seq[JsonNode]
-      ## Structured messages from the standard API error handler; normally empty on
-      ## success.
-    result*: Option[JsonNode]
-    success*: bool
-      ## Always false for this error envelope.
-
-  EmailEmailDomainPlatformStatus* = ref object of RootObj
-    routing*: JsonNode
-      ## Shared platform Routing gate. A suspended value blocks Routing for every
-      ## EmailDomain regardless of its domain-specific state.
-    sending*: JsonNode
-      ## Shared platform Sending gate. A suspended value blocks Sending for every
-      ## EmailDomain regardless of its domain-specific state.
-
-  EmailEmailDomainResponse* = ref object of RootObj
-    errors*: seq[JsonNode]
-    messages*: seq[string]
-    result*: EmailEmailDomain
-    success*: bool
-
-  EmailEmailDomainTombstone* = ref object of RootObj
-    hostname*: string
-      ## Canonical hostname released by the removal.
-    id*: string
-      ## Identifier of the removed EmailDomain.
-    modified_at*: string
-      ## Time the removal completed.
-    reason*: string
-      ## Why the resource disappeared from the live inventory: deleted by DELETE or
-      ## account deletion; claim_released after 30 days of lost ownership DNS; expired,
-      ## an unverified candidate whose records must be published again under a new
-      ## enrollment; claim_lost, an unverified candidate whose hostname another
-      ## enrollment holds. Clients must tolerate unknown future values.
-
-  EmailEmailDomainVerification* = ref object of RootObj
-    ## Customer DNS ownership status, independent of mail capability readiness.
-    expires_at*: Option[string]
-      ## Expiry of an unclaimed candidate; absent once ownership is claimed.
-    observed_at*: Option[string]
-      ## Time of the latest accepted customer DNS observation.
-    reason*: Option[string]
-      ## Machine-readable explanation. Current values are customer_dns_indeterminate,
-      ## customer_dns_invalid, and platform_dependency_unavailable. Clients must tolerate
-      ## unknown future values and treat ownership as unverified unless status is
-      ## verified.
-    status*: string
-      ## Current ownership-verification result.
-    verified_at*: Option[string]
-      ## Time ownership was first verified for this enrollment.
-
   EmailEmailSettingCreated* = string
 
   EmailEmailSettingDnsRequestBody* = ref object of RootObj
@@ -21397,8 +21351,27 @@ type
       ## Specifies the endpoint path for proxying Google Tag Manager requests. Use an
       ## absolute path starting with '/', with no nested paths and alphanumeric
       ## characters only (e.g. /metrics).
+    hide_original_ip*: Option[bool]
+      ## Deprecated. This value is stored but has no effect on traffic. Optional in
+      ## requests: if omitted, the previously stored value is kept. Responses always
+      ## include it.
+    measurement_id*: string
+      ## Specify the Google Tag Manager container or measurement ID (e.g. GTM-XXXXXXX or
+      ## G-XXXXXXXXXX).
+    set_up_tag*: Option[bool]
+      ## Set up the associated Google Tag on the zone automatically when enabled.
+
+  GoogleTagGatewayGoogleTagGatewayConfigResponse* = ref object of RootObj
+    enabled*: bool
+      ## Enables or disables Google Tag Gateway for this zone.
+    endpoint*: string
+      ## Specifies the endpoint path for proxying Google Tag Manager requests. Use an
+      ## absolute path starting with '/', with no nested paths and alphanumeric
+      ## characters only (e.g. /metrics).
     hide_original_ip*: bool
-      ## Hides the original client IP address from Google when enabled.
+      ## Deprecated. This value is stored but has no effect on traffic. Optional in
+      ## requests: if omitted, the previously stored value is kept. Responses always
+      ## include it.
     measurement_id*: string
       ## Specify the Google Tag Manager container or measurement ID (e.g. GTM-XXXXXXX or
       ## G-XXXXXXXXXX).
@@ -24396,6 +24369,7 @@ type
     errors*: seq[LexV4Error]
     messages*: seq[string]
     result*: Option[JsonNode]
+    result_info*: Option[LexQueryResultInfo]
     success*: bool
 
   LexErrorResponse2* = ref object of RootObj
@@ -24414,7 +24388,13 @@ type
     errors*: seq[LexV4Error]
     messages*: seq[string]
     result*: Option[seq[LexQueryRow]]
+    result_info*: LexQueryResultInfo
     success*: bool
+
+  LexQueryResultInfo* = ref object of RootObj
+    ## Metadata about the query execution.
+    dataset*: string
+      ## Dataset type name queried (e.g. `http_requests`).
 
   LexQueryRow* = ref object of RootObj
 
@@ -28688,6 +28668,7 @@ type
     netdevs*: Option[seq[MconnTelemetrySnapshotNetdev]]
     platform*: Option[string]
       ## Platform identifier
+    qdiscs*: Option[seq[MconnTelemetrySnapshotQdisc]]
     routes*: Option[seq[MconnTelemetrySnapshotRoute]]
     site_id*: Option[string]
       ## Site identifier
@@ -28989,6 +28970,135 @@ type
       ## FIFO overruns
     sent_packets*: float64
       ## Total packets transmitted
+
+  MconnTelemetrySnapshotQdisc* = ref object of RootObj
+    ## Snapshot Qdisc
+    backlog*: float64
+      ## Bytes currently queued
+    bytes*: float64
+      ## Total bytes sent
+    cake_stats*: Option[MconnTelemetrySnapshotQdiscCake]
+    dev*: string
+      ## Interface the qdisc is attached to
+    drops*: float64
+      ## Total packets dropped
+    handle*: string
+      ## Qdisc handle
+    kind*: string
+      ## Kind of qdisc
+    overlimits*: float64
+      ## Total times the qdisc was over its limit
+    packets*: float64
+      ## Total packets sent
+    parent*: Option[string]
+      ## Parent class handle (absent when root)
+    qlen*: float64
+      ## Packets currently queued
+    requeues*: float64
+      ## Total packets requeued
+    root*: Option[bool]
+      ## Set when attached at the root of the interface
+
+  MconnTelemetrySnapshotQdiscCake* = ref object of RootObj
+    ## Snapshot Qdisc CAKE
+    avg_hdr_offset*: float64
+      ## Average offset of the network header within packets (bytes)
+    capacity_estimate*: float64
+      ## Estimated link capacity (bytes per second)
+    max_adj_size*: float64
+      ## Largest overhead-adjusted packet seen (bytes)
+    max_network_size*: float64
+      ## Largest network-layer packet seen (bytes)
+    memory_limit*: float64
+      ## Memory limit for queued packets (bytes)
+    memory_used*: float64
+      ## Peak memory used by queued packets (bytes)
+    min_adj_size*: float64
+      ## Smallest overhead-adjusted packet seen (bytes, 65535 until the first packet
+      ## after creation or an overhead change)
+    min_network_size*: float64
+      ## Smallest network-layer packet seen (bytes, 65535 until the first packet after
+      ## creation or an overhead change)
+    options*: MconnTelemetrySnapshotQdiscCakeOptions
+    tins*: seq[MconnTelemetrySnapshotQdiscCakeTin]
+
+  MconnTelemetrySnapshotQdiscCakeOptions* = ref object of RootObj
+    ## Snapshot Qdisc CAKE Options
+    ack_filter*: string
+      ## ACK filter mode
+    atm*: Option[string]
+      ## ATM cell compensation mode (absent when raw without ATM or PTM compensation)
+    autorate*: Option[string]
+      ## Automatic rate estimation mode (absent when disabled)
+    bandwidth*: float64
+      ## Shaped rate (bytes per second, 0 when unlimited)
+    diffserv*: string
+      ## Diffserv mode
+    flowmode*: string
+      ## Flow isolation mode
+    fwmark*: string
+      ## Firewall mark mask used to select a tin
+    ingress*: bool
+      ## Set when shaping in ingress mode
+    memlimit*: Option[float64]
+      ## Configured memory limit for queued packets (bytes, absent when unset)
+    mpu*: Option[float64]
+      ## Minimum packet size (bytes, absent when unset)
+    nat*: bool
+      ## Set when flow isolation uses post-NAT addresses
+    overhead*: float64
+      ## Per-packet overhead compensation (bytes)
+    raw*: bool
+      ## Set when no overhead compensation is applied
+    rtt*: float64
+      ## Expected round-trip time (microseconds)
+    split_gso*: bool
+      ## Set when GSO super-packets are split
+    wash*: bool
+      ## Set when DSCP markings are cleared on egress
+
+  MconnTelemetrySnapshotQdiscCakeTin* = ref object of RootObj
+    ## Snapshot Qdisc CAKE Tin
+    ack_drops*: float64
+      ## Total ACKs dropped by the ACK filter
+    avg_delay_us*: float64
+      ## Average queueing delay (microseconds)
+    backlog_bytes*: float64
+      ## Bytes currently queued
+    base_delay_us*: float64
+      ## Minimum queueing delay (microseconds)
+    bulk_flows*: float64
+      ## Current number of bulk flows
+    drops*: float64
+      ## Total packets dropped
+    ecn_mark*: float64
+      ## Total packets marked with ECN Congestion Experienced
+    flow_quantum*: float64
+      ## Bytes each flow may send per scheduling round
+    interval_us*: float64
+      ## AQM interval (microseconds)
+    max_pkt_len*: float64
+      ## Largest packet seen (bytes)
+    peak_delay_us*: float64
+      ## Peak queueing delay (microseconds)
+    sent_bytes*: float64
+      ## Total bytes sent
+    sent_packets*: float64
+      ## Total packets sent
+    sparse_flows*: float64
+      ## Current number of sparse flows
+    target_us*: float64
+      ## Target queueing delay (microseconds)
+    threshold_rate*: float64
+      ## Rate above which the tin yields to lower-priority tins (bytes per second)
+    unresponsive_flows*: float64
+      ## Current number of unresponsive flows
+    way_collisions*: float64
+      ## Total flow hash collisions
+    way_indirect_hits*: float64
+      ## Total flow hash lookups resolved by set-associative probing
+    way_misses*: float64
+      ## Total flow hash lookups that allocated a new queue
 
   MconnTelemetrySnapshotRoute* = ref object of RootObj
     ## Snapshot Route
@@ -30287,6 +30397,9 @@ type
       ## Full OAuth authorization URL with query parameters.
     client_id*: Option[string]
       ## OAuth client ID.
+    feature_overrides*: seq[OneFeatureAuthOverride]
+      ## Per-feature authorization overrides. When a listed feature is selected,
+      ## authorize with the override's client ID and URL instead of the defaults above.
     requires_pkce*: bool
       ## Whether PKCE is required.
     scopes*: seq[string]
@@ -30344,6 +30457,16 @@ type
     value_from*: Option[string]
       ## Field path to get value from (for copy_block).
 
+  OneFeatureAuthOverride* = ref object of RootObj
+    ## Authorization settings to use instead of the defaults when a feature is
+    ## selected.
+    authorization_url*: Option[string]
+      ## Full OAuth authorization URL with query parameters.
+    client_id*: Option[string]
+      ## OAuth client ID to authorize with.
+    feature*: string
+      ## Feature identifier that triggers this override.
+
   OneFeatureScope* = ref object of RootObj
     ## A feature with its additional scopes.
     description*: string
@@ -30385,10 +30508,22 @@ type
       ## * `email` - email
       ## * `file_upload` - file_upload
 
+  OneGitLabIntegrationConfigurationRequest* = ref object of RootObj
+    ## Selected GitLab groups and projects.
+    group_ids*: Option[seq[string]]
+      ## Selected top-level GitLab group IDs as string-encoded positive integers.
+    project_ids*: Option[seq[string]]
+      ## Selected GitLab project IDs as string-encoded positive integers.
+
   OneInstructions* = ref object of RootObj
     ## Instructions for obtaining credentials.
     markdown*: string
       ## Detailed instructions in markdown format.
+
+  OneIntegrationConfig* = ref object of RootObj
+    ## Vendor-specific integration configuration returned by the API.
+    gitlab*: Option[JsonNode]
+      ## GitLab-specific configuration. Present only for GitLab integrations.
 
   OneIntegrationCreateResponse* = ref object of RootObj
     errors*: Option[seq[JsonNode]]
@@ -30483,6 +30618,8 @@ type
       ## The integration's authentication method.
     authorization_link*: Option[JsonNode]
       ## Authorization link for the integration.
+    config*: JsonNode
+      ## Vendor-specific integration configuration.
     created*: string
       ## When the integration was created.
     credentials_expiry*: string
@@ -30511,6 +30648,8 @@ type
     application*: JsonNode
     auth_method*: Option[JsonNode]
       ## The integration's authentication method.
+    config*: JsonNode
+      ## Vendor-specific integration configuration.
     created*: string
       ## When the integration was created.
     id*: string
@@ -30576,6 +30715,8 @@ type
 
   OnePatchedUpdateIntegrationV2Request* = ref object of RootObj
     ## Serializer for v2 integration PATCH requests.
+    config*: Option[JsonNode]
+      ## Vendor-specific integration configuration.
     credentials*: Option[JsonNode]
       ## Partial credential fields to merge with existing.
     dlp_profiles*: Option[seq[string]]
@@ -30601,6 +30742,21 @@ type
       ## * `medium` - medium
       ## * `high` - high
       ## * `critical` - critical
+
+  OneSelectedGitLabIntegrationConfiguration* = ref object of RootObj
+    ## Selected GitLab groups and projects returned by the API.
+    groups*: seq[OneSelectedGitLabResource]
+      ## Selected top-level GitLab groups.
+    projects*: seq[OneSelectedGitLabResource]
+      ## Selected GitLab projects.
+
+  OneSelectedGitLabResource* = ref object of RootObj
+    display_name*: string
+      ## Human-readable GitLab resource name.
+    id*: string
+      ## GitLab resource ID as a string-encoded positive integer.
+    path*: string
+      ## Full GitLab resource path.
 
   OneSetupFlow* = ref object of RootObj
     ## Setup flow for an application auth method.
@@ -30651,6 +30807,11 @@ type
       ## * `instruction` - instruction
       ## * `form_input` - form_input
       ## * `oauth_redirect` - oauth_redirect
+
+  OneUpdateIntegrationConfigRequest* = ref object of RootObj
+    ## Vendor-specific integration configuration accepted during updates.
+    gitlab*: Option[JsonNode]
+      ## GitLab-specific configuration. Accepted only for GitLab integrations.
 
   OneUseCaseDetail* = ref object of RootObj
     ## Full use case with scopes and features for detail endpoint.
@@ -31760,10 +31921,21 @@ type
   PostureApiAssetSchemaDetail* = ref object of RootObj
     asset_class*: string
       ## Asset class identifier (PascalCase), e.g. AnthropicApiKey.
+    content_schema*: Option[PostureApiAssetTypeContentSchema]
+    display_name*: Option[string]
+      ## Human-readable name. Present for `cloudflare` and `custom` asset types.
+    id*: Option[string]
+      ## Unique identifier. Present for `cloudflare` and `custom` asset types.
+    origin*: string
+      ## Who defines the asset class: `system` for built-in asset classes, `cloudflare`
+      ## for asset types provided by Cloudflare, and `custom` for the account's own asset
+      ## types.
     schema*: JsonNode
       ## Fields and related attributes a custom finding type may reference for this asset
       ## class, as a JSON Schema. Top-level properties are `asset` and, when related
       ## resources exist, `associated`.
+    version*: Option[int64]
+      ## Current version. Present for `cloudflare` and `custom` asset types.
 
   PostureApiAssetSchemaListResponse* = ref object of RootObj
     errors*: PostureApiMessages
@@ -31783,12 +31955,28 @@ type
   PostureApiAssetSchemaSummary* = ref object of RootObj
     asset_class*: string
       ## Asset class identifier (PascalCase), e.g. AnthropicUser.
+    display_name*: Option[string]
+      ## Human-readable name. Present for `cloudflare` and `custom` asset types.
+    id*: Option[string]
+      ## Unique identifier. Present for `cloudflare` and `custom` asset types.
+    origin*: string
+      ## Who defines the asset class: `system` for built-in asset classes, `cloudflare`
+      ## for asset types provided by Cloudflare, and `custom` for the account's own asset
+      ## types.
+    version*: Option[int64]
+      ## Current version. Present for `cloudflare` and `custom` asset types.
 
   PostureApiAssetSchemaVendorGroup* = ref object of RootObj
     asset_classes*: seq[PostureApiAssetSchemaSummary]
       ## Asset classes belonging to this vendor, sorted by asset_class.
     vendor*: string
       ## Canonical vendor enum value, e.g. GOOGLE_WORKSPACE.
+
+  PostureApiAssetTypeContentSchema* = ref object of RootObj
+    ## JSON Schema subset describing the content of each asset of this type. The top
+    ## level is an `object` with `properties` and an optional `required` list. Property
+    ## names must be 1 to 32 letters, digits or underscores. A property may be nullable
+    ## by listing `null` alongside its type.
 
   PostureApiBaseFindingType* = ref object of RootObj
     ## Basic finding type information.
@@ -33614,6 +33802,12 @@ type
     infrequent_access*: Option[R2ClassBasedMetrics]
     standard*: Option[R2ClassBasedMetrics]
 
+  R2AddCustomDomainLegacyRequest* = ref object of RootObj
+    domain*: string
+      ## Name of the custom domain to be added.
+    zone_id*: string
+      ## Zone ID of the custom domain.
+
   R2AddCustomDomainRequest* = ref object of RootObj
     ciphers*: Option[seq[string]]
       ## An allowlist of ciphers for TLS termination. These ciphers must be in the
@@ -33715,6 +33909,10 @@ type
     destination_storage_class*: Option[string]
     job_type*: string
     source_storage_class*: Option[string]
+
+  R2CustomDomainLegacyResponse* = ref object of RootObj
+    domain*: string
+      ## Name of the custom domain.
 
   R2DomainName* = string
 
@@ -33826,6 +34024,9 @@ type
   R2LifecycleStorageTransition* = ref object of RootObj
     condition*: JsonNode
     storage_class*: string
+
+  R2ListCustomDomainsLegacyResponse* = ref object of RootObj
+    domains*: seq[JsonNode]
 
   R2ListCustomDomainsResponse* = ref object of RootObj
     domains*: seq[JsonNode]
@@ -34052,6 +34253,12 @@ type
     storage_class_migration*: JsonNode
 
   R2TempAccessCredsRequest* = ref object of RootObj
+    actions*: Option[seq[string]]
+      ## S3 actions allowed on the credentials; requests for any other action are denied.
+      ## For example, `["GetObject", "HeadObject"]` allows reading objects without
+      ## listing them. Exactly one of `permission` or `actions` must be provided. The
+      ## parent token must have Object Read & Write permission if any action writes, and
+      ## Object Read otherwise.
     bucket*: string
       ## Name of the R2 bucket.
     objects*: Option[seq[string]]
@@ -34059,8 +34266,9 @@ type
     parent_access_key_id*: string
       ## Access key ID of the parent R2 API token. The temporary credentials cannot
       ## exceed this token's permissions.
-    permission*: string
-      ## Permissions allowed on the credentials.
+    permission*: Option[string]
+      ## Permissions allowed on the credentials. Exactly one of `permission` or `actions`
+      ## must be provided.
     prefixes*: Option[seq[string]]
       ## Optional prefix paths to scope the credentials to.
     ttl_seconds*: float64
@@ -34101,6 +34309,10 @@ type
     ## summaries
     summarization*: Option[RealtimekitSummarizationConfig]
     transcription*: Option[RealtimekitTranscriptionConfig]
+
+  RealtimekitActionParticipant* = ref object of RootObj
+    id*: string
+      ## ID of the participant
 
   RealtimekitActiveSession* = ref object of RootObj
     associated_id*: string
@@ -34422,6 +34634,7 @@ type
 
   RealtimekitPatchWebhookRequest* = ref object of RootObj
     enabled*: Option[bool]
+      ## Omit to keep the current value.
     events*: Option[seq[string]]
       ## Events that the webhook will get triggered by
     name*: Option[string]
@@ -34633,18 +34846,6 @@ type
     storage_config*: Option[RealtimekitStorageConfig]
     video_config*: Option[RealtimekitVideoConfig]
 
-  RealtimekitSessionParticipant* = ref object of RootObj
-    created_at*: string
-    email*: Option[string]
-      ## Email of the session participant.
-    id*: string
-      ## ID of the session participant
-    name*: Option[string]
-      ## Name of the session participant.
-    picture*: Option[string]
-      ## A URL pointing to a picture of the participant.
-    updated_at*: string
-
   RealtimekitStorageConfig* = ref object of RootObj
     access_key*: Option[string]
       ## Access key of the storage medium. Access key is not required for the `gcs`
@@ -34672,8 +34873,8 @@ type
     region*: Option[string]
       ## Region of the storage medium.
     secret*: Option[string]
-      ## Secret key of the storage medium. Similar to `access_key`, it is only writeable
-      ## by clients, not readable.
+      ## Secret key of the storage medium. Required for `aws` storage. Similar to
+      ## `access_key`, it is only writeable by clients, not readable.
     `type`*: string
       ## Type of storage media.
     username*: Option[string]
@@ -34877,21 +35078,21 @@ type
     reason*: Option[string]
       ## Specifies the reason why the recording stopped.
 
-  RegistrarApiSandboxApiResponseCommon* = ref object of RootObj
-    errors*: RegistrarApiSandboxMessages
-    messages*: RegistrarApiSandboxMessages
+  RegistrarSandboxApiResponseCommon* = ref object of RootObj
+    errors*: RegistrarSandboxMessages
+    messages*: RegistrarSandboxMessages
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiSandboxApiResponseCommonFailure* = ref object of RootObj
+  RegistrarSandboxApiResponseCommonFailure* = ref object of RootObj
     errors*: JsonNode
     messages*: JsonNode
     result*: Option[JsonNode]
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiSandboxCursorResultInfo* = ref object of RootObj
+  RegistrarSandboxCursorResultInfo* = ref object of RootObj
     ## Provides cursor-based pagination metadata. List endpoints use this
     ## metadata for cursor pagination. Pass the `cursor` value as a query
     ## parameter in the next request to fetch the next page. An empty string
@@ -34907,7 +35108,7 @@ type
     per_page*: int64
       ## Maximum number of items per page.
 
-  RegistrarApiSandboxDomainCheckRequest* = ref object of RootObj
+  RegistrarSandboxDomainCheckRequest* = ref object of RootObj
     ## Request body for checking domain availability.
     domains*: seq[string]
       ## List of fully qualified domain names (FQDNs) to check for availability. Each
@@ -34920,22 +35121,22 @@ type
       ## extension).
       ##
 
-  RegistrarApiSandboxDomainCheckResponse* = ref object of RootObj
-    errors*: RegistrarApiSandboxMessages
-    messages*: RegistrarApiSandboxMessages
+  RegistrarSandboxDomainCheckResponse* = ref object of RootObj
+    errors*: RegistrarSandboxMessages
+    messages*: RegistrarSandboxMessages
     result*: JsonNode
       ## Contains the availability check results.
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiSandboxDomainCheckResult* = ref object of RootObj
+  RegistrarSandboxDomainCheckResult* = ref object of RootObj
     ## Describes a single authoritative domain availability result from the Check
     ## endpoint. Check results reflect current registry status; use them immediately
     ## before registration.
     name*: string
       ## The fully qualified domain name (FQDN) in punycode format for internationalized
       ## domain names (IDNs).
-    pricing*: Option[RegistrarApiSandboxPricingRegistration]
+    pricing*: Option[RegistrarSandboxPricingRegistration]
     reason*: Option[string]
       ## Appears only when `registrable` is `false` and explains the result.
       ## - `extension_not_supported_via_api`: Cloudflare Registrar supports this
@@ -34965,24 +35166,24 @@ type
       ## - `standard`: Standard registry pricing.
       ## - `premium`: Premium domain with higher pricing from the registry.
 
-  RegistrarApiSandboxDomainName* = string
+  RegistrarSandboxDomainName* = string
 
-  RegistrarApiSandboxDomainSearchResponse* = ref object of RootObj
-    errors*: RegistrarApiSandboxMessages
-    messages*: RegistrarApiSandboxMessages
+  RegistrarSandboxDomainSearchResponse* = ref object of RootObj
+    errors*: RegistrarSandboxMessages
+    messages*: RegistrarSandboxMessages
     result*: JsonNode
       ## Contains the search results.
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiSandboxDomainSearchResult* = ref object of RootObj
+  RegistrarSandboxDomainSearchResult* = ref object of RootObj
     ## Describes a single domain suggestion from the Search endpoint. Search results
     ## use non-authoritative data that may come from a cache. Use POST /domain-check to
     ## confirm real-time availability and pricing before registration.
     name*: string
       ## The fully qualified domain name (FQDN) in punycode format for internationalized
       ## domain names (IDNs).
-    pricing*: Option[RegistrarApiSandboxPricingRegistration]
+    pricing*: Option[RegistrarSandboxPricingRegistration]
     reason*: Option[string]
       ## Appears only when `registrable` is `false` and explains the advisory search
       ## result. Use POST /domain-check for authoritative status.
@@ -35012,7 +35213,7 @@ type
       ## - `premium`: Premium domain with higher pricing from the registry.
       ##
 
-  RegistrarApiSandboxExtensionItem* = ref object of RootObj
+  RegistrarSandboxExtensionItem* = ref object of RootObj
     ## Extension entry with metadata and JSON Schema documents for registration and
     ## transfer operations.
     metadata*: JsonNode
@@ -35024,27 +35225,27 @@ type
       ## JSON Schema describing the expected input structure for transfer operations on
       ## this extension.
 
-  RegistrarApiSandboxExtensionResponseCollection* = ref object of RootObj
-    errors*: RegistrarApiSandboxMessages
-    messages*: RegistrarApiSandboxMessages
-    result*: seq[RegistrarApiSandboxExtensionItem]
+  RegistrarSandboxExtensionResponseCollection* = ref object of RootObj
+    errors*: RegistrarSandboxMessages
+    messages*: RegistrarSandboxMessages
+    result*: seq[RegistrarSandboxExtensionItem]
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
       ## Cursor-based pagination metadata.
 
-  RegistrarApiSandboxExtensionResponseSingle* = ref object of RootObj
-    errors*: RegistrarApiSandboxMessages
-    messages*: RegistrarApiSandboxMessages
-    result*: RegistrarApiSandboxExtensionItem
+  RegistrarSandboxExtensionResponseSingle* = ref object of RootObj
+    errors*: RegistrarSandboxMessages
+    messages*: RegistrarSandboxMessages
+    result*: RegistrarSandboxExtensionItem
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiSandboxIdentifier* = string
+  RegistrarSandboxIdentifier* = string
 
-  RegistrarApiSandboxMessages* = seq[JsonNode]
+  RegistrarSandboxMessages* = seq[JsonNode]
 
-  RegistrarApiSandboxPricingBase* = ref object of RootObj
+  RegistrarSandboxPricingBase* = ref object of RootObj
     ## Provides annual pricing information for a given domain.
     ## The API returns all per-year prices as strings to preserve decimal precision.
     ##
@@ -35067,7 +35268,7 @@ type
       ## costs more than renewals.
       ##
 
-  RegistrarApiSandboxPricingRegistration* = ref object of RootObj
+  RegistrarSandboxPricingRegistration* = ref object of RootObj
     currency*: string
       ## ISO-4217 currency code for the prices (e.g., "USD", "EUR", "GBP").
     renewal_cost*: string
@@ -35080,14 +35281,14 @@ type
     registration_cost*: string
       ## The first-year cost to register this domain.
 
-  RegistrarApiSandboxRegistration* = ref object of RootObj
+  RegistrarSandboxRegistration* = ref object of RootObj
     ## A domain registration resource representing the current state of a registered
     ## domain.
     auto_renew*: bool
       ## Whether automatic renewal occurs before expiration.
     created_at*: string
       ## When the domain was registered. Present when the registration resource exists.
-    domain_name*: RegistrarApiSandboxDomainName
+    domain_name*: RegistrarSandboxDomainName
     expires_at*: Option[string]
       ## When the domain registration expires. Ready registrations include this value;
       ## only `registration_pending` and `transfer_pending` may return null.
@@ -35106,22 +35307,22 @@ type
       ## - `pending_delete`: The registry scheduled the domain for deletion.
       ##
 
-  RegistrarApiSandboxRegistrationResponseCollection* = ref object of RootObj
-    errors*: RegistrarApiSandboxMessages
-    messages*: RegistrarApiSandboxMessages
-    result*: seq[RegistrarApiSandboxRegistration]
+  RegistrarSandboxRegistrationResponseCollection* = ref object of RootObj
+    errors*: RegistrarSandboxMessages
+    messages*: RegistrarSandboxMessages
+    result*: seq[RegistrarSandboxRegistration]
     success*: bool
       ## Whether the API call was successful.
-    result_info*: RegistrarApiSandboxCursorResultInfo
+    result_info*: RegistrarSandboxCursorResultInfo
 
-  RegistrarApiSandboxRegistrationResponseSingle* = ref object of RootObj
-    errors*: RegistrarApiSandboxMessages
-    messages*: RegistrarApiSandboxMessages
-    result*: RegistrarApiSandboxRegistration
+  RegistrarSandboxRegistrationResponseSingle* = ref object of RootObj
+    errors*: RegistrarSandboxMessages
+    messages*: RegistrarSandboxMessages
+    result*: RegistrarSandboxRegistration
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiSandboxRegistrationContact* = ref object of RootObj
+  RegistrarSandboxRegistrationContact* = ref object of RootObj
     ## Contact data for the domain registration. This information
     ## is submitted to the domain registry and, depending on extension and
     ## privacy settings, may appear in public WHOIS records.
@@ -35139,9 +35340,9 @@ type
       ## Phone number in E.164 format: `+{country_code}.{number}` without spaces or
       ## dashes. Examples: `+1.5555555555` (US), `+44.2071234567` (UK), `+81.312345678`
       ## (Japan).
-    postal_info*: RegistrarApiSandboxRegistrationContactPostalInfo
+    postal_info*: RegistrarSandboxRegistrationContactPostalInfo
 
-  RegistrarApiSandboxRegistrationContactAddress* = ref object of RootObj
+  RegistrarSandboxRegistrationContactAddress* = ref object of RootObj
     ## Physical mailing address for the registrant contact.
     city*: string
       ## City or locality name.
@@ -35155,14 +35356,14 @@ type
     street*: string
       ## Street address including building/suite number.
 
-  RegistrarApiSandboxRegistrationContactPostalInfo* = ref object of RootObj
+  RegistrarSandboxRegistrationContactPostalInfo* = ref object of RootObj
     ## Postal/mailing information for the contact. The `name` field is the
     ## complete contact name in one string. Some registries require a complete
     ## personal name, including a family or last name where applicable, but this
     ## API does not accept separate first-name and last-name fields for
     ## registration contacts.
     ##
-    address*: RegistrarApiSandboxRegistrationContactAddress
+    address*: RegistrarSandboxRegistrationContactAddress
     name*: string
       ## Full legal name of the contact, including all required name components for an
       ## individual or authorized representative. Some registries require a complete
@@ -35172,7 +35373,7 @@ type
     organization*: Option[string]
       ## Organization or company name. Optional for individual registrants.
 
-  RegistrarApiSandboxRegistrationContacts* = ref object of RootObj
+  RegistrarSandboxRegistrationContacts* = ref object of RootObj
     ## Provides contact data for the registration request.
     ##
     ## The per-extension schema from
@@ -35214,7 +35415,7 @@ type
       ## Cloudflare may derive it from `contacts.registrant`.
       ##
 
-  RegistrarApiSandboxRegistrationCreateRequest* = ref object of RootObj
+  RegistrarSandboxRegistrationCreateRequest* = ref object of RootObj
     acknowledgements*: Option[JsonNode]
       ## Provides user acknowledgements for a specific extension or premium
       ## registration flow. The extension registration schema from the
@@ -35238,7 +35439,7 @@ type
       ## registration schema excludes `contact_extensions`.
       ##
     contacts*: Option[JsonNode]
-    domain_name*: RegistrarApiSandboxDomainName
+    domain_name*: RegistrarSandboxDomainName
     privacy_mode*: Option[string]
       ## Sets the WHOIS privacy mode for the registration. Defaults to `redaction`.
       ## - `off`: Disables WHOIS privacy.
@@ -35256,7 +35457,7 @@ type
       ## use the default.
       ##
 
-  RegistrarApiSandboxRegistrationUpdateRequest* = ref object of RootObj
+  RegistrarSandboxRegistrationUpdateRequest* = ref object of RootObj
     ## Request to update an existing domain registration.
     ##
     ## This endpoint currently supports updating `auto_renew` only.
@@ -35269,14 +35470,14 @@ type
       ## time based on registry pricing.
       ##
 
-  RegistrarApiSandboxWorkflowStatusResponseSingle* = ref object of RootObj
-    errors*: RegistrarApiSandboxMessages
-    messages*: RegistrarApiSandboxMessages
-    result*: RegistrarApiSandboxWorkflowStatus
+  RegistrarSandboxWorkflowStatusResponseSingle* = ref object of RootObj
+    errors*: RegistrarSandboxMessages
+    messages*: RegistrarSandboxMessages
+    result*: RegistrarSandboxWorkflowStatus
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiSandboxWorkflowError* = ref object of RootObj
+  RegistrarSandboxWorkflowError* = ref object of RootObj
     ## Provides error details when a workflow reaches the `failed` state. The workflow
     ## type (registration, update, etc.) and underlying registry response determine the
     ## specific codes and messages. Workflow error codes differ from immediate HTTP
@@ -35288,13 +35489,13 @@ type
       ## Human-readable explanation of the failure. May include registry-specific
       ## details.
 
-  RegistrarApiSandboxWorkflowLinks* = ref object of RootObj
+  RegistrarSandboxWorkflowLinks* = ref object of RootObj
     resource*: Option[string]
       ## URL to the domain resource.
     self*: string
       ## URL to this status resource.
 
-  RegistrarApiSandboxWorkflowStatus* = ref object of RootObj
+  RegistrarSandboxWorkflowStatus* = ref object of RootObj
     ## Status of an async registration workflow.
     completed*: bool
       ## Indicates whether the workflow reached a terminal state. A `succeeded` or
@@ -35308,7 +35509,7 @@ type
       ##
     created_at*: string
     error*: Option[JsonNode]
-    links*: RegistrarApiSandboxWorkflowLinks
+    links*: RegistrarSandboxWorkflowLinks
     state*: string
       ## Describes the workflow lifecycle state.
       ## - `pending`: The workflow awaits processing.
@@ -35329,21 +35530,21 @@ type
       ##
     updated_at*: string
 
-  RegistrarApiApiResponseCommon* = ref object of RootObj
-    errors*: RegistrarApiMessages
-    messages*: RegistrarApiMessages
+  RegistrarApiResponseCommon* = ref object of RootObj
+    errors*: RegistrarMessages
+    messages*: RegistrarMessages
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiApiResponseCommonFailure* = ref object of RootObj
+  RegistrarApiResponseCommonFailure* = ref object of RootObj
     errors*: JsonNode
     messages*: JsonNode
     result*: Option[JsonNode]
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiCursorResultInfo* = ref object of RootObj
+  RegistrarCursorResultInfo* = ref object of RootObj
     ## Provides cursor-based pagination metadata. List endpoints use this
     ## metadata for cursor pagination. Pass the `cursor` value as a query
     ## parameter in the next request to fetch the next page. An empty string
@@ -35359,7 +35560,7 @@ type
     per_page*: int64
       ## Maximum number of items per page.
 
-  RegistrarApiDomainCheckRequest* = ref object of RootObj
+  RegistrarDomainCheckRequest* = ref object of RootObj
     ## Request body for checking domain availability.
     domains*: seq[string]
       ## List of fully qualified domain names (FQDNs) to check for availability. Each
@@ -35372,22 +35573,22 @@ type
       ## extension).
       ##
 
-  RegistrarApiDomainCheckResponse* = ref object of RootObj
-    errors*: RegistrarApiMessages
-    messages*: RegistrarApiMessages
+  RegistrarDomainCheckResponse* = ref object of RootObj
+    errors*: RegistrarMessages
+    messages*: RegistrarMessages
     result*: JsonNode
       ## Contains the availability check results.
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiDomainCheckResult* = ref object of RootObj
+  RegistrarDomainCheckResult* = ref object of RootObj
     ## Describes a single authoritative domain availability result from the Check
     ## endpoint. Check results reflect current registry status; use them immediately
     ## before registration.
     name*: string
       ## The fully qualified domain name (FQDN) in punycode format for internationalized
       ## domain names (IDNs).
-    pricing*: Option[RegistrarApiPricingRegistration]
+    pricing*: Option[RegistrarPricingRegistration]
     reason*: Option[string]
       ## Appears only when `registrable` is `false` and explains the result.
       ## - `extension_not_supported_via_api`: Cloudflare Registrar supports this
@@ -35417,24 +35618,24 @@ type
       ## - `standard`: Standard registry pricing.
       ## - `premium`: Premium domain with higher pricing from the registry.
 
-  RegistrarApiDomainName* = string
+  RegistrarDomainName* = string
 
-  RegistrarApiDomainSearchResponse* = ref object of RootObj
-    errors*: RegistrarApiMessages
-    messages*: RegistrarApiMessages
+  RegistrarDomainSearchResponse* = ref object of RootObj
+    errors*: RegistrarMessages
+    messages*: RegistrarMessages
     result*: JsonNode
       ## Contains the search results.
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiDomainSearchResult* = ref object of RootObj
+  RegistrarDomainSearchResult* = ref object of RootObj
     ## Describes a single domain suggestion from the Search endpoint. Search results
     ## use non-authoritative data that may come from a cache. Use POST /domain-check to
     ## confirm real-time availability and pricing before registration.
     name*: string
       ## The fully qualified domain name (FQDN) in punycode format for internationalized
       ## domain names (IDNs).
-    pricing*: Option[RegistrarApiPricingRegistration]
+    pricing*: Option[RegistrarPricingRegistration]
     reason*: Option[string]
       ## Appears only when `registrable` is `false` and explains the advisory search
       ## result. Use POST /domain-check for authoritative status.
@@ -35464,7 +35665,7 @@ type
       ## - `premium`: Premium domain with higher pricing from the registry.
       ##
 
-  RegistrarApiDomainTransferCheckReason* = enum
+  RegistrarDomainTransferCheckReason* = enum
     ## Transfer eligibility reason code.
     ## - `extension_not_supported_via_api`: This API excludes the extension; dashboard
     ## flows support it.
@@ -35507,20 +35708,20 @@ type
     invalidZonePlan = "invalid_zone_plan"
     domainUnsupported = "domain_unsupported"
 
-  RegistrarApiDomainTransferCheckRequest* = ref object of RootObj
+  RegistrarDomainTransferCheckRequest* = ref object of RootObj
     ## Request body for checking domain transfer eligibility.
     domains*: seq[JsonNode]
       ## List of domain objects to evaluate for transfer eligibility.
 
-  RegistrarApiDomainTransferCheckResponse* = ref object of RootObj
-    errors*: RegistrarApiMessages
-    messages*: RegistrarApiMessages
+  RegistrarDomainTransferCheckResponse* = ref object of RootObj
+    errors*: RegistrarMessages
+    messages*: RegistrarMessages
     result*: JsonNode
       ## Contains the transfer eligibility results.
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiDomainTransferCheckResult* = ref object of RootObj
+  RegistrarDomainTransferCheckResult* = ref object of RootObj
     ## Transfer eligibility for a single domain.
     ## `reasons` is always present:
     ## - Empty when `transferable` is `true`.
@@ -35528,7 +35729,7 @@ type
     ##
     name*: string
       ## The check evaluates this domain name.
-    pricing*: Option[RegistrarApiPricingTransfer]
+    pricing*: Option[RegistrarPricingTransfer]
     reasons*: seq[JsonNode]
       ## Machine-readable transfer eligibility reasons.
     transferable*: bool
@@ -35537,7 +35738,7 @@ type
       ## - `false`: One or more prerequisites fail. See `reasons`.
       ##
 
-  RegistrarApiExtensionItem* = ref object of RootObj
+  RegistrarExtensionItem* = ref object of RootObj
     ## Extension entry with metadata and JSON Schema documents for registration and
     ## transfer operations.
     metadata*: JsonNode
@@ -35549,27 +35750,27 @@ type
       ## JSON Schema describing the expected input structure for transfer operations on
       ## this extension.
 
-  RegistrarApiExtensionResponseCollection* = ref object of RootObj
-    errors*: RegistrarApiMessages
-    messages*: RegistrarApiMessages
-    result*: seq[RegistrarApiExtensionItem]
+  RegistrarExtensionResponseCollection* = ref object of RootObj
+    errors*: RegistrarMessages
+    messages*: RegistrarMessages
+    result*: seq[RegistrarExtensionItem]
     success*: bool
       ## Whether the API call was successful.
     result_info*: Option[JsonNode]
       ## Cursor-based pagination metadata.
 
-  RegistrarApiExtensionResponseSingle* = ref object of RootObj
-    errors*: RegistrarApiMessages
-    messages*: RegistrarApiMessages
-    result*: RegistrarApiExtensionItem
+  RegistrarExtensionResponseSingle* = ref object of RootObj
+    errors*: RegistrarMessages
+    messages*: RegistrarMessages
+    result*: RegistrarExtensionItem
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiIdentifier* = string
+  RegistrarIdentifier* = string
 
-  RegistrarApiMessages* = seq[JsonNode]
+  RegistrarMessages* = seq[JsonNode]
 
-  RegistrarApiPricingBase* = ref object of RootObj
+  RegistrarPricingBase* = ref object of RootObj
     ## Provides annual pricing information for a given domain.
     ## The API returns all per-year prices as strings to preserve decimal precision.
     ##
@@ -35592,7 +35793,7 @@ type
       ## costs more than renewals.
       ##
 
-  RegistrarApiPricingRegistration* = ref object of RootObj
+  RegistrarPricingRegistration* = ref object of RootObj
     currency*: string
       ## ISO-4217 currency code for the prices (e.g., "USD", "EUR", "GBP").
     renewal_cost*: string
@@ -35605,7 +35806,7 @@ type
     registration_cost*: string
       ## The first-year cost to register this domain.
 
-  RegistrarApiPricingTransfer* = ref object of RootObj
+  RegistrarPricingTransfer* = ref object of RootObj
     currency*: string
       ## ISO-4217 currency code for the prices (e.g., "USD", "EUR", "GBP").
     renewal_cost*: string
@@ -35618,14 +35819,14 @@ type
     transfer_cost*: string
       ## The first-year cost to transfer this domain.
 
-  RegistrarApiRegistration* = ref object of RootObj
+  RegistrarRegistration* = ref object of RootObj
     ## A domain registration resource representing the current state of a registered
     ## domain.
     auto_renew*: bool
       ## Whether automatic renewal occurs before expiration.
     created_at*: string
       ## When the domain was registered. Present when the registration resource exists.
-    domain_name*: RegistrarApiDomainName
+    domain_name*: RegistrarDomainName
     expires_at*: Option[string]
       ## When the domain registration expires. Ready registrations include this value;
       ## only `registration_pending` and `transfer_pending` may return null.
@@ -35644,22 +35845,22 @@ type
       ## - `pending_delete`: The registry scheduled the domain for deletion.
       ##
 
-  RegistrarApiRegistrationResponseCollection* = ref object of RootObj
-    errors*: RegistrarApiMessages
-    messages*: RegistrarApiMessages
-    result*: seq[RegistrarApiRegistration]
+  RegistrarRegistrationResponseCollection* = ref object of RootObj
+    errors*: RegistrarMessages
+    messages*: RegistrarMessages
+    result*: seq[RegistrarRegistration]
     success*: bool
       ## Whether the API call was successful.
-    result_info*: RegistrarApiCursorResultInfo
+    result_info*: RegistrarCursorResultInfo
 
-  RegistrarApiRegistrationResponseSingle* = ref object of RootObj
-    errors*: RegistrarApiMessages
-    messages*: RegistrarApiMessages
-    result*: RegistrarApiRegistration
+  RegistrarRegistrationResponseSingle* = ref object of RootObj
+    errors*: RegistrarMessages
+    messages*: RegistrarMessages
+    result*: RegistrarRegistration
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiRegistrationContact* = ref object of RootObj
+  RegistrarRegistrationContact* = ref object of RootObj
     ## Contact data for the domain registration. This information
     ## is submitted to the domain registry and, depending on extension and
     ## privacy settings, may appear in public WHOIS records.
@@ -35677,9 +35878,9 @@ type
       ## Phone number in E.164 format: `+{country_code}.{number}` without spaces or
       ## dashes. Examples: `+1.5555555555` (US), `+44.2071234567` (UK), `+81.312345678`
       ## (Japan).
-    postal_info*: RegistrarApiRegistrationContactPostalInfo
+    postal_info*: RegistrarRegistrationContactPostalInfo
 
-  RegistrarApiRegistrationContactAddress* = ref object of RootObj
+  RegistrarRegistrationContactAddress* = ref object of RootObj
     ## Physical mailing address for the registrant contact.
     city*: string
       ## City or locality name.
@@ -35693,14 +35894,14 @@ type
     street*: string
       ## Street address including building/suite number.
 
-  RegistrarApiRegistrationContactPostalInfo* = ref object of RootObj
+  RegistrarRegistrationContactPostalInfo* = ref object of RootObj
     ## Postal/mailing information for the contact. The `name` field is the
     ## complete contact name in one string. Some registries require a complete
     ## personal name, including a family or last name where applicable, but this
     ## API does not accept separate first-name and last-name fields for
     ## registration contacts.
     ##
-    address*: RegistrarApiRegistrationContactAddress
+    address*: RegistrarRegistrationContactAddress
     name*: string
       ## Full legal name of the contact, including all required name components for an
       ## individual or authorized representative. Some registries require a complete
@@ -35710,7 +35911,7 @@ type
     organization*: Option[string]
       ## Organization or company name. Optional for individual registrants.
 
-  RegistrarApiRegistrationContacts* = ref object of RootObj
+  RegistrarRegistrationContacts* = ref object of RootObj
     ## Provides contact data for the registration request.
     ##
     ## The per-extension schema from
@@ -35752,7 +35953,7 @@ type
       ## Cloudflare may derive it from `contacts.registrant`.
       ##
 
-  RegistrarApiRegistrationCreateRequest* = ref object of RootObj
+  RegistrarRegistrationCreateRequest* = ref object of RootObj
     acknowledgements*: Option[JsonNode]
       ## Provides user acknowledgements for a specific extension or premium
       ## registration flow. The extension registration schema from the
@@ -35776,7 +35977,7 @@ type
       ## registration schema excludes `contact_extensions`.
       ##
     contacts*: Option[JsonNode]
-    domain_name*: RegistrarApiDomainName
+    domain_name*: RegistrarDomainName
     privacy_mode*: Option[string]
       ## Sets the WHOIS privacy mode for the registration. Defaults to `redaction`.
       ## - `off`: Disables WHOIS privacy.
@@ -35794,7 +35995,7 @@ type
       ## use the default.
       ##
 
-  RegistrarApiRegistrationUpdateRequest* = ref object of RootObj
+  RegistrarRegistrationUpdateRequest* = ref object of RootObj
     ## Request to update an existing domain registration.
     ##
     ## This endpoint currently supports updating `auto_renew` only.
@@ -35807,7 +36008,7 @@ type
       ## time based on registry pricing.
       ##
 
-  RegistrarApiTransferInCreateRequest* = ref object of RootObj
+  RegistrarTransferInCreateRequest* = ref object of RootObj
     auth_code*: Option[string]
       ## The EPP/authorization code from your current registrar, base64-encoded
       ## per RFC 4648 §4. Obtain this from your current registrar's control panel.
@@ -35833,14 +36034,14 @@ type
       ## the extension's default privacy mode (typically `redaction`).
       ##
 
-  RegistrarApiWorkflowStatusResponseSingle* = ref object of RootObj
-    errors*: RegistrarApiMessages
-    messages*: RegistrarApiMessages
-    result*: RegistrarApiWorkflowStatus
+  RegistrarWorkflowStatusResponseSingle* = ref object of RootObj
+    errors*: RegistrarMessages
+    messages*: RegistrarMessages
+    result*: RegistrarWorkflowStatus
     success*: bool
       ## Whether the API call was successful.
 
-  RegistrarApiWorkflowError* = ref object of RootObj
+  RegistrarWorkflowError* = ref object of RootObj
     ## Provides error details when a workflow reaches the `failed` state. The workflow
     ## type (registration, update, etc.) and underlying registry response determine the
     ## specific codes and messages. Workflow error codes differ from immediate HTTP
@@ -35852,13 +36053,13 @@ type
       ## Human-readable explanation of the failure. May include registry-specific
       ## details.
 
-  RegistrarApiWorkflowLinks* = ref object of RootObj
+  RegistrarWorkflowLinks* = ref object of RootObj
     resource*: Option[string]
       ## URL to the domain resource.
     self*: string
       ## URL to this status resource.
 
-  RegistrarApiWorkflowStatus* = ref object of RootObj
+  RegistrarWorkflowStatus* = ref object of RootObj
     ## Status of an async registration workflow.
     completed*: bool
       ## Indicates whether the workflow reached a terminal state. A `succeeded` or
@@ -35872,7 +36073,7 @@ type
       ##
     created_at*: string
     error*: Option[JsonNode]
-    links*: RegistrarApiWorkflowLinks
+    links*: RegistrarWorkflowLinks
     state*: string
       ## Describes the workflow lifecycle state.
       ## - `pending`: The workflow awaits processing.
@@ -36399,6 +36600,7 @@ type
     aiSearchNamespace = "ai_search_namespace"
     alertingPolicy = "alerting_policy"
     alertingWebhook = "alerting_webhook"
+    appLibraryApplication = "app_library_application"
     cloudflaredTunnel = "cloudflared_tunnel"
     cwsDeployment2 = "cws_deployment"
     cwsPolicy2 = "cws_policy"
@@ -36438,6 +36640,7 @@ type
     aiSearchNamespace = "ai_search_namespace"
     alertingPolicy = "alerting_policy"
     alertingWebhook = "alerting_webhook"
+    appLibraryApplication = "app_library_application"
     cloudflaredTunnel = "cloudflared_tunnel"
     cwsDeployment2 = "cws_deployment"
     cwsPolicy2 = "cws_policy"
@@ -36544,6 +36747,7 @@ type
     alertingPolicy = "alerting_policy"
     alertingWebhook = "alerting_webhook"
     apiGatewayOperation = "api_gateway_operation"
+    appLibraryApplication = "app_library_application"
     cloudflaredTunnel = "cloudflared_tunnel"
     customCertificate = "custom_certificate"
     customHostname = "custom_hostname"
@@ -36775,6 +36979,15 @@ type
     tags*: ResourceTaggingTags
     tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
     zone_id*: ResourceTaggingZoneId
+
+  ResourceTaggingTaggedResourceObjectAppLibraryApplication* = ref object of RootObj
+    ## Response for app_library_application resources
+    `type`*: string
+    etag*: ResourceTaggingEtag
+    id*: ResourceTaggingResourceId
+    name*: ResourceTaggingResourceName
+    tags*: ResourceTaggingTags
+    tags_updated_at*: Option[ResourceTaggingTagsUpdatedAt]
 
   ResourceTaggingTaggedResourceObjectCloudflaredTunnel* = ref object of RootObj
     ## Response for cloudflared_tunnel resources
@@ -39557,7 +39770,18 @@ type
     modified_on*: SpectrumConfigModified
     dns*: SpectrumConfigDns
     origin_direct*: Option[SpectrumConfigOriginDirect]
+    origin_worker_id*: Option[SpectrumConfigOriginWorkerId]
+    origin_worker_name*: Option[SpectrumConfigOriginWorkerName]
+    origin_worker_status*: Option[SpectrumConfigOriginWorkerStatus]
     protocol*: SpectrumConfigProtocol
+    traffic_type*: Option[string]
+      ## Determines how traffic is sent to the origin. If absent or empty, defaults to
+      ## "direct". Direct mode uses origin_direct. Worker mode requires origin_worker_id,
+      ## TCP or UDP with a single port, and CNAME DNS; origin_worker_id and origin_direct
+      ## are mutually exclusive. A PAYG zone may have at most one Worker application per
+      ## transport (one TCP and one UDP); creating another for the same transport, or
+      ## converting another application to Worker while that quota is full, is rejected
+      ## with error code 11034 and HTTP status 400.
 
   SpectrumConfigProtocol* = string
 
@@ -39618,6 +39842,18 @@ type
     result*: Option[JsonNode]
     success*: bool
       ## Whether the API call was successful.
+
+  SpeedAutomaticPlatformOptimizationPatchValue* = ref object of RootObj
+    ## Configuration for Automatic Platform Optimization (APO) for WordPress.
+    ## Set to "off" to disable, or provide an object to configure APO settings.
+    ## When an APO configuration already exists, fields omitted from the object keep
+    ## their current value, and "off" disables APO without erasing the detected
+    ## zone/site/plugin facts.
+    ## On the first write for a zone (no existing configuration) an object must include
+    ## `enabled`, `cf`, `wordpress` and `wp_plugin`; otherwise the request fails with
+    ## error 1023 and no configuration is created. Setting "off" when no configuration
+    ## exists is a no-op.
+    ##
 
   SpeedAutomaticPlatformOptimizationResponse* = ref object of RootObj
     ## Controls Automatic Platform Optimization (APO) for WordPress.
@@ -39747,6 +39983,16 @@ type
     latest = "latest"
 
   SpeedMessages* = seq[JsonNode]
+
+  SpeedSettingMetadata* = ref object of RootObj
+    ## Zone setting fields shared by settings whose value is not an on/off string.
+    editable*: Option[bool]
+      ## Whether or not this setting can be modified for this zone (based on your
+      ## Cloudflare plan level).
+    id*: Option[string]
+      ## Identifier of the zone setting.
+    modified_on*: Option[string]
+      ## last time this setting was modified.
 
   SpeedTransformationsAllowedOriginsResponse* = ref object of RootObj
     ## Controls which origins are allowed to request image and video transformations.
@@ -43269,10 +43515,12 @@ type
     txt = "txt"
 
   TlsCertificatesAndHostnamesValidationMethod3* = ref object of RootObj
-    validation_method*: TlsCertificatesAndHostnamesValidationMethodDefinition
+    ## SSL validation settings. Omit validation_method to use the current or default
+    ## method.
+    validation_method*: Option[TlsCertificatesAndHostnamesValidationMethodDefinition]
 
   TlsCertificatesAndHostnamesValidationMethodDefinition* = enum
-    ## Desired validation method.
+    ## SSL validation method.
     http = "http"
     cname = "cname"
     txt = "txt"
@@ -43501,7 +43749,7 @@ type
     config*: Option[TunnelConfig]
     created_at*: Option[TunnelTimestamp]
     source*: Option[TunnelConfigSrc2]
-    tunnel_id*: Option[TunnelTunnelId2]
+    tunnel_id*: Option[TunnelTunnelId3]
     version*: Option[TunnelConfigVersion2]
 
   TunnelConfigurationResponse* = ref object of RootObj
@@ -43555,7 +43803,7 @@ type
     hostname*: Option[TunnelHostname]
     id*: Option[TunnelHostnameRouteId]
     tun_type*: Option[JsonNode]
-    tunnel_id*: Option[TunnelTunnelId3]
+    tunnel_id*: Option[TunnelTunnelId2]
     tunnel_name*: Option[TunnelTunnelName2]
 
   TunnelHostnameRouteId* = string
@@ -43627,7 +43875,7 @@ type
       ## Monotonically increasing configuration version, incremented on each PUT.
     created_at*: TunnelCreatedAt
     ha_mode*: TunnelMeshHaMode
-    tunnel_id*: TunnelTunnelId2
+    tunnel_id*: TunnelTunnelId3
     updated_at*: Option[TunnelUpdatedAt]
 
   TunnelMeshConfigurationResponseSingle* = ref object of RootObj
@@ -43714,7 +43962,22 @@ type
 
   TunnelPageNumber* = float64
 
+  TunnelPatchTunnelHostnameBody* = ref object of RootObj
+    canonical*: Option[bool]
+      ## Makes this hostname canonical. `false` is not accepted; make a different
+      ## hostname canonical to unset this one.
+    hostname*: Option[TunnelTunnelHostnameValue]
+
   TunnelPerPage* = float64
+
+  TunnelPostTunnelHostnameBody* = ref object of RootObj
+    canonical*: Option[bool]
+      ## Set to `true` to make the new hostname canonical, replacing any existing
+      ## canonical hostname.
+      ## If `false` or omitted, the new hostname is canonical only if the tunnel has no
+      ## active hostnames.
+      ##
+    hostname*: TunnelTunnelHostnameValue
 
   TunnelPutAccountRegionBody* = ref object of RootObj
     region_key*: TunnelRegionKey
@@ -43909,6 +44172,37 @@ type
     success*: bool
       ## Whether the API call was successful
     result_info*: Option[TunnelResultInfo]
+
+  TunnelTunnelHostname* = ref object of RootObj
+    canonical*: TunnelTunnelHostnameCanonical
+    created_at*: TunnelCreatedAt
+    hostname*: TunnelTunnelHostnameValue
+    id*: TunnelTunnelHostnameId
+    tunnel_id*: TunnelTunnelId2
+
+  TunnelTunnelHostnameCanonical* = bool
+
+  TunnelTunnelHostnameId* = string
+
+  TunnelTunnelHostnameResponseCollection* = ref object of RootObj
+    errors*: TunnelMessages
+    messages*: TunnelMessages
+    result*: seq[TunnelTunnelHostname]
+      ## Tunnel hostnames on the requested page.
+    success*: bool
+      ## Whether the API call was successful
+    result_info*: Option[JsonNode]
+      ## Pagination metadata for the requested page of tunnel hostnames.
+
+  TunnelTunnelHostnameResponseSingle* = ref object of RootObj
+    errors*: TunnelMessages
+    messages*: TunnelMessages
+    result*: JsonNode
+      ## The tunnel hostname created, retrieved, updated, or deleted by the operation.
+    success*: bool
+      ## Whether the API call was successful
+
+  TunnelTunnelHostnameValue* = string
 
   TunnelTunnelId* = string
 
@@ -46627,7 +46921,12 @@ type
       ## Email of the user who created the version.
     author_id*: Option[string]
       ## Identifier of the user who created the version.
-    bindings*: Option[WorkersBindings]
+    bindings*: Option[JsonNode]
+      ## Bindings attached to the version, as an array of objects that
+      ## each name themselves. A create or patch request can send
+      ## `bindings` or `env`, and a read returns both. A request that
+      ## sends both fails with error 10021.
+      ##
     cache_options*: Option[WorkersCacheOptions]
     compatibility_date*: Option[WorkersCompatibilityDate]
     compatibility_flags*: Option[JsonNode]
@@ -46641,6 +46940,21 @@ type
     containers*: Option[WorkersContainers]
     created_on*: string
       ## When the version was created.
+    env*: Option[JsonNode]
+      ## Bindings attached to the version, as a map from binding name to
+      ## binding. Each value holds the same payload as the matching
+      ## `bindings` entry, without `name`. Reads derive `env` from
+      ## `bindings`, so the two fields always list the same bindings and
+      ## `env` carries nothing extra. Reads omit secret values in both
+      ## fields.
+      ##
+      ## A create or patch request can send `env` or `bindings`, and a
+      ## request that sends both fails with error 10021. To copy a
+      ## version, drop `env` from the read before sending it back, and
+      ## use `inherit` bindings for secrets. In a patch, `env` entries
+      ## merge one binding at a time: set an entry to `null` to remove
+      ## that binding, while a `bindings` array replaces the whole set.
+      ##
     exports*: Option[JsonNode]
       ## Declarative exports for the version, including Durable Object
       ## classes (with their `storage` backend) and named Worker
@@ -48198,7 +48512,7 @@ type
     actions*: Option[JsonNode]
       ## Actions configured on a tool. Either this or neoEvents field is required.
     component*: string
-      ## Tool's internal name.
+      ## Name of the Managed Component the tool runs, for example `google-analytics_v4`.
     neo_events*: Option[seq[JsonNode]]
       ## DEPRECATED - List of actions configured on a tool. Either this or actions field
       ## is required. If both are present, actions field will take precedence.
@@ -48250,7 +48564,7 @@ type
     actions*: Option[JsonNode]
       ## Actions configured on a tool. Either this or neoEvents field is required.
     component*: string
-      ## Tool's internal name.
+      ## Name of the Managed Component the tool runs, for example `google-analytics_v4`.
     neo_events*: Option[seq[JsonNode]]
       ## DEPRECATED - List of actions configured on a tool. Either this or actions field
       ## is required. If both are present, actions field will take precedence.
@@ -48260,7 +48574,7 @@ type
       ## Tool's settings.
     `type`*: string
     worker*: JsonNode
-      ## Cloudflare worker that acts as a managed component.
+      ## Cloudflare Worker that acts as a Managed Component.
 
   ZarazElementVisibilityRule* = ref object of RootObj
     action*: string
@@ -48300,7 +48614,7 @@ type
     actions*: Option[JsonNode]
       ## Actions configured on a tool. Either this or neoEvents field is required.
     component*: string
-      ## Tool's internal name.
+      ## Name of the Managed Component the tool runs, for example `google-analytics_v4`.
     neo_events*: Option[seq[JsonNode]]
       ## DEPRECATED - List of actions configured on a tool. Either this or actions field
       ## is required. If both are present, actions field will take precedence.
@@ -48906,6 +49220,12 @@ type
   ZeroTrustGatewayGatewayTag* = string
 
   ZeroTrustGatewayGenerateCertRequest* = ref object of RootObj
+    region*: Option[string]
+      ## Pin the generated certificate authority's key material to one of the account's
+      ## selected Data Localization Suite regions. **Important**: This field is only
+      ## settable during certificate creation. Certificates become immutable after
+      ## creation - use the `/activate` and `/deactivate` endpoints to manage certificate
+      ## lifecycle.
     validity_period_days*: Option[int64]
       ## Sets the certificate validity period in days (range: 1-10,950 days / ~30 years).
       ## Defaults to 1,825 days (5 years). **Important**: This field is only settable
@@ -49141,6 +49461,18 @@ type
   ZeroTrustGatewayReadOnlyTimestamp* = string
 
   ZeroTrustGatewayRegion* = string
+
+  ZeroTrustGatewayRegionSetting* = ref object of RootObj
+    ## Specify the TLS interception and certificate settings Gateway applies to traffic
+    ## routed through this region.
+    certificate*: Option[ZeroTrustGatewayCertificateSettings]
+    tls_decrypt*: Option[ZeroTrustGatewayTlsSettings]
+
+  ZeroTrustGatewayRegionsSettings* = ref object of RootObj
+    ## Specify per-region TLS interception and certificate settings for Gateway, keyed
+    ## by Data Localization Suite region key. Relies on the Zero Trust account region
+    ## setting  (`GET`/`PUT /accounts/{account_id}/zerotrust/region`) - the account
+    ## must select a region before Gateway applies these settings for it.
 
   ZeroTrustGatewayResponseCollection* = ref object of RootObj
     errors*: ZeroTrustGatewayMessages

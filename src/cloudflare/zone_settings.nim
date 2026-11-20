@@ -12,7 +12,7 @@ type
   PatchZonesZoneIdSettingsAegisRequest = object
     value: types.CacheSettingsAegisValue
   PatchZonesZoneIdSettingsAutomaticPlatformOptimizationRequest = object
-    value: types.SpeedAutomaticPlatformOptimizationValue
+    value: types.SpeedAutomaticPlatformOptimizationPatchValue
   PatchZonesZoneIdSettingsBinaryAstRequest = object
     value: types.SpeedBinaryAstValue
   PatchZonesZoneIdSettingsFontsRequest = object
@@ -127,6 +127,13 @@ proc patchZonesZoneIdSettingsAutomaticPlatformOptimization*(client: CloudflareCl
   ## that serves your
   ## WordPress site from Cloudflare's edge network, reducing load times for visitors.
   ## Refer to the APO documentation for more information.
+  ## When an APO configuration already exists, fields omitted from an object `value`
+  ## keep their current value, except `recheck`, which is false unless the request
+  ## sends it. Setting `value` to `"off"` disables APO but keeps the detected
+  ## zone/site/plugin facts.
+  ## On the first write for a zone (no existing configuration) an object `value` must
+  ## include `enabled`, `cf`, `wordpress` and `wp_plugin`; otherwise the request
+  ## fails with error 1023. `"off"` is a no-op when no configuration exists.
 
   let res = await client.httpPATCH(fmt"/zones/{zoneId}/settings/automatic_platform_optimization", body)
   let body = await res.body

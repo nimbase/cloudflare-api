@@ -19,6 +19,10 @@ suite "r2_bucket serialization":
     let obj = newR2BucketLockRuleConfig()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2BucketLockRuleConfig)) == openjson.toJson(obj)
 
+  test "round-trips R2ListCustomDomainsLegacyResponse":
+    let obj = newR2ListCustomDomainsLegacyResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2ListCustomDomainsLegacyResponse)) == openjson.toJson(obj)
+
   test "round-trips R2RemoveCustomDomainResponse":
     let obj = newR2RemoveCustomDomainResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2RemoveCustomDomainResponse)) == openjson.toJson(obj)
@@ -34,6 +38,10 @@ suite "r2_bucket serialization":
   test "round-trips R2ListCustomDomainsResponse":
     let obj = newR2ListCustomDomainsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2ListCustomDomainsResponse)) == openjson.toJson(obj)
+
+  test "round-trips R2AddCustomDomainLegacyRequest":
+    let obj = newR2AddCustomDomainLegacyRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2AddCustomDomainLegacyRequest)) == openjson.toJson(obj)
 
   test "round-trips R2ManagedDomainResponse":
     let obj = newR2ManagedDomainResponse()
@@ -86,6 +94,10 @@ suite "r2_bucket serialization":
   test "round-trips R2EditCustomDomainResponse":
     let obj = newR2EditCustomDomainResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2EditCustomDomainResponse)) == openjson.toJson(obj)
+
+  test "round-trips R2CustomDomainLegacyResponse":
+    let obj = newR2CustomDomainLegacyResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.R2CustomDomainLegacyResponse)) == openjson.toJson(obj)
 
   test "round-trips R2AddCustomDomainResponse":
     let obj = newR2AddCustomDomainResponse()
@@ -164,6 +176,21 @@ suite "r2_bucket endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdR2BucketsBucketNameCors("test", "test")
+
+  test "GET /accounts/{account_id}/r2/buckets/{bucket_name}/custom_domains":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdR2BucketsBucketNameCustomDomains("test", "test")
+
+  test "POST /accounts/{account_id}/r2/buckets/{bucket_name}/custom_domains":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdR2BucketsBucketNameCustomDomains("test", "test", newR2AddCustomDomainLegacyRequest())
+
+  test "DELETE /accounts/{account_id}/r2/buckets/{bucket_name}/custom_domains/{domain}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdR2BucketsBucketNameCustomDomainsDomain("test", "test", "test")
 
   test "GET /accounts/{account_id}/r2/buckets/{bucket_name}/domains/custom":
     let client = initCloudflareClient("test-key")

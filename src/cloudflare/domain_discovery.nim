@@ -10,8 +10,8 @@ import ./private/types
 
 
 proc postAccountsAccountIdRegistrarSandboxDomainCheck*(client: CloudflareClient,
-                                                       accountId: types.RegistrarApiSandboxIdentifier,
-                                                       body: types.RegistrarApiSandboxDomainCheckRequest): Future[types.RegistrarApiSandboxDomainCheckResponse] {.async.} =
+                                                       accountId: types.RegistrarSandboxIdentifier,
+                                                       body: types.RegistrarSandboxDomainCheckRequest): Future[types.RegistrarSandboxDomainCheckResponse] {.async.} =
   ## Performs real-time, authoritative availability checks directly against domain
   ## registries. Use this endpoint to verify a domain is available before attempting
   ## registration via `POST /registrations`.
@@ -65,15 +65,15 @@ proc postAccountsAccountIdRegistrarSandboxDomainCheck*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiSandboxDomainCheckResponse)
+    result = fromJson(body, types.RegistrarSandboxDomainCheckResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdRegistrarSandboxDomainSearch*(client: CloudflareClient,
-                                                       accountId: types.RegistrarApiSandboxIdentifier,
+                                                       accountId: types.RegistrarSandboxIdentifier,
                                                        q: string,
                                                        extensions: seq[string] = @[],
-                                                       limit: int64 = 20): Future[types.RegistrarApiSandboxDomainSearchResponse] {.async.} =
+                                                       limit: int64 = 20): Future[types.RegistrarSandboxDomainSearchResponse] {.async.} =
   ## Searches for domain name suggestions based on a keyword, phrase, or partial
   ## domain name.
   ## Returns a list of potentially available domains with pricing information.
@@ -113,13 +113,13 @@ proc getAccountsAccountIdRegistrarSandboxDomainSearch*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiSandboxDomainSearchResponse)
+    result = fromJson(body, types.RegistrarSandboxDomainSearchResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdRegistrarDomainCheck*(client: CloudflareClient,
-                                                accountId: types.RegistrarApiIdentifier,
-                                                body: types.RegistrarApiDomainCheckRequest): Future[types.RegistrarApiDomainCheckResponse] {.async.} =
+                                                accountId: types.RegistrarIdentifier,
+                                                body: types.RegistrarDomainCheckRequest): Future[types.RegistrarDomainCheckResponse] {.async.} =
   ## Performs real-time, authoritative availability checks directly against domain
   ## registries. Use this endpoint to verify a domain is available before attempting
   ## registration via `POST /registrations`.
@@ -173,15 +173,15 @@ proc postAccountsAccountIdRegistrarDomainCheck*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiDomainCheckResponse)
+    result = fromJson(body, types.RegistrarDomainCheckResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdRegistrarDomainSearch*(client: CloudflareClient,
-                                                accountId: types.RegistrarApiIdentifier,
+                                                accountId: types.RegistrarIdentifier,
                                                 q: string,
                                                 extensions: seq[string] = @[],
-                                                limit: int64 = 20): Future[types.RegistrarApiDomainSearchResponse] {.async.} =
+                                                limit: int64 = 20): Future[types.RegistrarDomainSearchResponse] {.async.} =
   ## Searches for domain name suggestions based on a keyword, phrase, or partial
   ## domain name.
   ## Returns a list of potentially available domains with pricing information.
@@ -221,13 +221,13 @@ proc getAccountsAccountIdRegistrarDomainSearch*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiDomainSearchResponse)
+    result = fromJson(body, types.RegistrarDomainSearchResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdRegistrarDomainTransferCheck*(client: CloudflareClient,
-                                                        accountId: types.RegistrarApiIdentifier,
-                                                        body: types.RegistrarApiDomainTransferCheckRequest): Future[types.RegistrarApiDomainTransferCheckResponse] {.async.} =
+                                                        accountId: types.RegistrarIdentifier,
+                                                        body: types.RegistrarDomainTransferCheckRequest): Future[types.RegistrarDomainTransferCheckResponse] {.async.} =
   ## Performs real-time, authoritative eligibility checks directly against needed
   ## requirements.
   ## Use this endpoint to verify a domain is available before
@@ -264,6 +264,6 @@ proc postAccountsAccountIdRegistrarDomainTransferCheck*(client: CloudflareClient
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.RegistrarApiDomainTransferCheckResponse)
+    result = fromJson(body, types.RegistrarDomainTransferCheckResponse)
   else:
     raise newException(CloudflareClientError, body)

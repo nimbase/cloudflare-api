@@ -17,8 +17,7 @@ type
     amount: int64
     payment_method_id: Option[string]
   PostAccountsAccountIdAiGatewayBillingTopupEligibilityRequest = object
-    contract_version: Option[float64]
-    payment_method_id: Option[string]
+    contract_version: Option[int64]
     payment_methods: Option[seq[JsonNode]]
   PostAccountsAccountIdAiGatewayBillingTopupStatusRequest = object
     payment_intent_id: string
@@ -138,7 +137,8 @@ proc postAccountsAccountIdAiGatewayBillingTopup*(client: CloudflareClient,
 
 proc getAccountsAccountIdAiGatewayBillingTopupConfig*(client: CloudflareClient,
                                                       accountId: string): Future[types.AigBillingGetTopupConfigResponse] {.async.} =
-  ## Retrieve the current auto top-up threshold, amount, and any error state.
+  ## Deprecated: use `auto_topup` from GET /topup/eligibility. Retrieve the current
+  ## auto top-up threshold, amount, and any error state.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/billing/topup/config")
   let body = await res.body
@@ -176,13 +176,28 @@ proc deleteAccountsAccountIdAiGatewayBillingTopupConfig*(client: CloudflareClien
   else:
     raise newException(CloudflareClientError, body)
 
+proc getAccountsAccountIdAiGatewayBillingTopupEligibility*(client: CloudflareClient,
+                                                           accountId: string): Future[types.AigBillingGetTopupEligibilityV2Response] {.async.} =
+  ## Reports whether the account can top up: its payment methods and whether each can
+  ## pay for a top-up, whether a manual top-up is available and its limits, and the
+  ## auto top-up state. Advisory only: every top-up checks again. Answers 409 while
+  ## this endpoint isn't available for the account yet.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/billing/topup/eligibility")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AigBillingGetTopupEligibilityV2Response)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc postAccountsAccountIdAiGatewayBillingTopupEligibility*(client: CloudflareClient,
                                                             accountId: string,
                                                             body: PostAccountsAccountIdAiGatewayBillingTopupEligibilityRequest): Future[types.AigBillingGetTopupEligibilityResponse] {.async.} =
-  ## Determine top-up eligibility. Requests without contract_version retain the
-  ## legacy forwarded-method contract. Explicit contract_version: 2 opts into the
-  ## gated, read-only authoritative advisory API; forwarded method metadata is not
-  ## authoritative. No response authorizes a charge.
+  ## Deprecated: use GET /topup/eligibility, which reads the account's payment
+  ## methods itself. This endpoint keeps working while that one answers 409 for the
+  ## account. Reports whether the account can make a manual top-up, given the payment
+  ## methods in the request body. Advisory only: every top-up checks again.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/ai-gateway/billing/topup/eligibility", body)
   let body = await res.body
@@ -194,8 +209,8 @@ proc postAccountsAccountIdAiGatewayBillingTopupEligibility*(client: CloudflareCl
 
 proc getAccountsAccountIdAiGatewayBillingTopupLimits*(client: CloudflareClient,
                                                       accountId: string): Future[types.AigBillingGetTopupLimitsResponse] {.async.} =
-  ## Retrieve the minimum and maximum allowed top-up amounts (in cents) for this
-  ## account.
+  ## Deprecated: use `manual_topup.limits` from GET /topup/eligibility. Retrieve the
+  ## minimum and maximum allowed top-up amounts (in cents) for this account.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/ai-gateway/billing/topup/limits")
   let body = await res.body

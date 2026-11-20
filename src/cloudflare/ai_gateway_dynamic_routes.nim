@@ -51,8 +51,8 @@ type
 proc getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutes*(client: CloudflareClient,
                                                            accountId: string,
                                                            gatewayId: string,
-                                                           page: int64 = default(int64),
-                                                           perPage: int64 = default(int64)): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesResponse] {.async.} =
+                                                           page: int64 = 1,
+                                                           perPage: int64 = 20): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesResponse] {.async.} =
   ## Lists the dynamic routes configured on an AI Gateway.
 
   var q = initOrderedTable[string, string]()
@@ -130,8 +130,8 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeployments*(client: 
                                                                         accountId: string,
                                                                         gatewayId: string,
                                                                         id: string,
-                                                                        page: int64 = default(int64),
-                                                                        perPage: int64 = default(int64)): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeploymentsResponse] {.async.} =
+                                                                        page: int64 = 1,
+                                                                        perPage: int64 = 20): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdDeploymentsResponse] {.async.} =
   ## Lists the deployment history of a dynamic route.
 
   var q = initOrderedTable[string, string]()
@@ -165,8 +165,8 @@ proc getAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersions*(client: Clo
                                                                      accountId: string,
                                                                      gatewayId: string,
                                                                      id: string,
-                                                                     page: int64 = default(int64),
-                                                                     perPage: int64 = default(int64)): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersionsResponse] {.async.} =
+                                                                     page: int64 = 1,
+                                                                     perPage: int64 = 20): Future[GetAccountsAccountIdAiGatewayGatewaysGatewayIdRoutesIdVersionsResponse] {.async.} =
   ## Lists the saved versions of a dynamic route.
 
   var q = initOrderedTable[string, string]()

@@ -35,6 +35,10 @@ suite "ai_gateway serialization":
     let obj = newAigBillingCreateTopupResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AigBillingCreateTopupResponse)) == openjson.toJson(obj)
 
+  test "round-trips AigBillingGetTopupEligibilityV2Response":
+    let obj = newAigBillingGetTopupEligibilityV2Response()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AigBillingGetTopupEligibilityV2Response)) == openjson.toJson(obj)
+
   test "round-trips AigBillingGetInvoiceHistoryResponse":
     let obj = newAigBillingGetInvoiceHistoryResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AigBillingGetInvoiceHistoryResponse)) == openjson.toJson(obj)
@@ -115,6 +119,11 @@ suite "ai_gateway endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.deleteAccountsAccountIdAiGatewayBillingTopupConfig("test")
+
+  test "GET /accounts/{account_id}/ai-gateway/billing/topup/eligibility":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdAiGatewayBillingTopupEligibility("test")
 
   test "GET /accounts/{account_id}/ai-gateway/billing/topup/limits":
     let client = initCloudflareClient("test-key")

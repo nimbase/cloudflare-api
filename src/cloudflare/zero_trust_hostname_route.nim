@@ -12,17 +12,17 @@ type
   PostAccountsAccountIdZerotrustRoutesHostnameRequest = object
     comment: Option[types.TunnelHostnameComment]
     hostname: Option[types.TunnelHostname]
-    tunnel_id: Option[types.TunnelTunnelId3]
+    tunnel_id: Option[types.TunnelTunnelId2]
   PatchAccountsAccountIdZerotrustRoutesHostnameHostnameRouteIdRequest = object
     comment: Option[types.TunnelHostnameComment]
     hostname: Option[types.TunnelHostname]
-    tunnel_id: Option[types.TunnelTunnelId3]
+    tunnel_id: Option[types.TunnelTunnelId2]
 
 proc getAccountsAccountIdZerotrustRoutesHostname*(client: CloudflareClient,
                                                   accountId: types.TunnelAccountId,
                                                   id: types.TunnelHostnameRouteId = default(types.TunnelHostnameRouteId),
                                                   hostname: types.TunnelHostname = default(types.TunnelHostname),
-                                                  tunnelId: types.TunnelTunnelId3 = default(types.TunnelTunnelId3),
+                                                  tunnelId: types.TunnelTunnelId2 = default(types.TunnelTunnelId2),
                                                   comment: types.TunnelHostnameQueryComment = default(types.TunnelHostnameQueryComment),
                                                   existedAt: types.TunnelExistedAt = default(types.TunnelExistedAt),
                                                   isDeleted: bool = false,

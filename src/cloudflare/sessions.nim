@@ -233,7 +233,8 @@ proc getAccountsAccountIdRealtimeKitAppIdSessionsSessionIdTranscript*(client: Cl
                                                                       appId: types.RealtimekitAppId,
                                                                       sessionId: string,
                                                                       format: SessionFormatOption = formatCSV): Future[GetAccountsAccountIdRealtimeKitAppIdSessionsSessionIdTranscriptResponse] {.async.} =
-  ## Returns a URL to download the transcript for the session ID in CSV format.
+  ## Returns a URL to download the transcript for the session ID in the requested
+  ## format.
 
   var q = initOrderedTable[string, string]()
   q["format"] = $format

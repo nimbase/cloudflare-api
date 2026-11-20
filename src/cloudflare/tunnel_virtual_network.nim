@@ -21,6 +21,8 @@ type
 
 proc getAccountsAccountIdTeamnetVirtualNetworks*(client: CloudflareClient,
                                                  accountId: types.TunnelAccountId,
+                                                 page: int64 = default(int64),
+                                                 perPage: int64 = default(int64),
                                                  id: types.TunnelVirtualNetworkId = default(types.TunnelVirtualNetworkId),
                                                  name: types.TunnelVirtualNetworkName = default(types.TunnelVirtualNetworkName),
                                                  isDefault: bool = default(bool),
@@ -29,6 +31,8 @@ proc getAccountsAccountIdTeamnetVirtualNetworks*(client: CloudflareClient,
   ## Lists and filters virtual networks in an account.
 
   var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
   q["id"] = $id
   q["name"] = $name
   q["is_default"] = $isDefault

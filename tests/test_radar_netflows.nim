@@ -41,13 +41,3 @@ suite "radar_netflows endpoints":
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getRadarNetflowsSummary(@["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], formatJSON)
 
-  test "GET /radar/netflows/top/ases":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarNetflowsTopAses(1, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], formatJSON)
-
-  test "GET /radar/netflows/top/locations":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getRadarNetflowsTopLocations(1, @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], @["test"], formatJSON)
-

@@ -90,6 +90,7 @@ type
     display_name: Option[string]
     enabled: Option[bool]
     poll_interval_s: Option[int64]
+    tagging_enabled: Option[bool]
     title: Option[string]
     url: Option[string]
   PostAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsResponse* = object
@@ -111,6 +112,7 @@ type
     display_name: Option[string]
     enabled: Option[bool]
     poll_interval_s: Option[int64]
+    tagging_enabled: Option[bool]
     title: Option[string]
   PatchAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdResponse* = object
     errors: seq[JsonNode]

@@ -14,7 +14,7 @@ type
 
 proc getAccountsAccountIdCfdTunnelTunnelIdConfigurations*(client: CloudflareClient,
                                                           accountId: types.TunnelIdentifier,
-                                                          tunnelId: types.TunnelTunnelId2): Future[types.TunnelConfigurationResponse] {.async.} =
+                                                          tunnelId: types.TunnelTunnelId3): Future[types.TunnelConfigurationResponse] {.async.} =
   ## Retrieves the configuration for a remotely managed Cloudflare Tunnel.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cfd_tunnel/{tunnelId}/configurations")
@@ -27,7 +27,7 @@ proc getAccountsAccountIdCfdTunnelTunnelIdConfigurations*(client: CloudflareClie
 
 proc putAccountsAccountIdCfdTunnelTunnelIdConfigurations*(client: CloudflareClient,
                                                           accountId: types.TunnelIdentifier,
-                                                          tunnelId: types.TunnelTunnelId2,
+                                                          tunnelId: types.TunnelTunnelId3,
                                                           body: PutAccountsAccountIdCfdTunnelTunnelIdConfigurationsRequest): Future[types.TunnelConfigurationResponse] {.async.} =
   ## Replaces the configuration for a remotely managed Cloudflare Tunnel, including
   ## its ingress rules and origin request settings.
@@ -42,7 +42,7 @@ proc putAccountsAccountIdCfdTunnelTunnelIdConfigurations*(client: CloudflareClie
 
 proc deleteAccountsAccountIdCfdTunnelTunnelIdConfigurations*(client: CloudflareClient,
                                                              accountId: types.TunnelIdentifier,
-                                                             tunnelId: types.TunnelTunnelId2): Future[JsonNode] {.async.} =
+                                                             tunnelId: types.TunnelTunnelId3): Future[JsonNode] {.async.} =
   ## Resets a remotely managed Cloudflare Tunnel to an empty configuration, removing
   ## ingress rules and origin request settings. The tunnel remains remotely managed,
   ## and private network routes continue to determine WARP routing. Publishes a new
@@ -61,7 +61,7 @@ proc deleteAccountsAccountIdCfdTunnelTunnelIdConfigurations*(client: CloudflareC
 
 proc getAccountsAccountIdWarpConnectorTunnelIdConfigurations*(client: CloudflareClient,
                                                               accountId: types.TunnelIdentifier,
-                                                              tunnelId: types.TunnelTunnelId2): Future[types.TunnelMeshConfigurationResponseSingle] {.async.} =
+                                                              tunnelId: types.TunnelTunnelId3): Future[types.TunnelMeshConfigurationResponseSingle] {.async.} =
   ## Gets the high-availability configuration for a Mesh node.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/warp_connector/{tunnelId}/configurations")
@@ -74,7 +74,7 @@ proc getAccountsAccountIdWarpConnectorTunnelIdConfigurations*(client: Cloudflare
 
 proc putAccountsAccountIdWarpConnectorTunnelIdConfigurations*(client: CloudflareClient,
                                                               accountId: types.TunnelIdentifier,
-                                                              tunnelId: types.TunnelTunnelId2,
+                                                              tunnelId: types.TunnelTunnelId3,
                                                               body: types.TunnelMeshConfigurationRequestBody): Future[types.TunnelMeshConfigurationResponseSingle] {.async.} =
   ## Adds or updates the high-availability configuration for a Mesh node.
 

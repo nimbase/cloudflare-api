@@ -11,6 +11,18 @@ import cloudflare
 import ./common
 
 suite "priority_intelligence_requirements serialization":
+  test "round-trips CloudforceOneEventsPirTopicFamily":
+    let obj = newCloudforceOneEventsPirTopicFamily()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneEventsPirTopicFamily)) == openjson.toJson(obj)
+
+  test "round-trips CloudforceOneEventsPirTopic":
+    let obj = newCloudforceOneEventsPirTopic()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneEventsPirTopic)) == openjson.toJson(obj)
+
+  test "round-trips CloudforceOneEventsPirOrganizationType":
+    let obj = newCloudforceOneEventsPirOrganizationType()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneEventsPirOrganizationType)) == openjson.toJson(obj)
+
   test "round-trips CloudforceOneEventsPirDefinition":
     let obj = newCloudforceOneEventsPirDefinition()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.CloudforceOneEventsPirDefinition)) == openjson.toJson(obj)
@@ -22,6 +34,10 @@ suite "priority_intelligence_requirements serialization":
   test "round-trips GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceMatchesAggregateResponse":
     let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceMatchesAggregateResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceMatchesAggregateResponse)) == openjson.toJson(obj)
+
+  test "round-trips GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceTopicsResponse":
+    let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceTopicsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceTopicsResponse)) == openjson.toJson(obj)
 
   test "round-trips GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesAggregateResponse":
     let obj = cloudflare.GetAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdMatchesAggregateResponse()

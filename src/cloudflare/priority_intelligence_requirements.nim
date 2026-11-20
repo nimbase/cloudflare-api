@@ -65,6 +65,11 @@ type
       ## summed.
   PostAccountsAccountIdCloudforceOneV2PriorityIntelligenceResolveRequest = object
     definition: types.CloudforceOneEventsPirDefinition
+  GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceTopicsResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    success: bool
   PutAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityIdRequest = object
     based_on: Option[JsonNode]
     confirm_query: Option[bool]
@@ -327,22 +332,31 @@ proc postAccountsAccountIdCloudforceOneV2PriorityIntelligenceResolve*(client: Cl
   ## Returns the requirement and event query that saving `definition` would generate,
   ## using the account's current organization profile and topic. `resolved.issues`
   ## lists problems that would block saving, and `resolved.notices` inputs that would
-  ## be ignored. Search events with `resolved.event_plan.branches`. Send
-  ## `resolved.based_on` with the save so it fails with 409 if the profile or topic
-  ## changes in between. Nothing is saved, and no model is called.
+  ## be ignored. Search events with `resolved.event_plan.branches`: a beta value for
+  ## running searches, not a stable contract, which changes whenever a topic's event
+  ## rules change. Show `resolved.event_plan.rules[].explanation` to explain matches.
+  ## Send `resolved.based_on` with the save so it fails with 409 if the profile or
+  ## topic changes in between. Nothing is saved, and no model is called.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/resolve", body)
   return res
 
 proc getAccountsAccountIdCloudforceOneV2PriorityIntelligenceTopics*(client: CloudflareClient,
-                                                                    accountId: string): Future[AsyncResponse] {.async.} =
-  ## Returns the managed topics a structured PIR can follow, with their default
-  ## question, relevance criteria, suggested actors and event rules. Suggested actors
-  ## the account cannot see are left out. Topics change centrally; PIRs follow a
-  ## topic's defaults wherever the customer has not changed them.
+                                                                    accountId: string): Future[GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceTopicsResponse] {.async.} =
+  ## Returns the managed topics a structured PIR can follow, with their family,
+  ## default question, relevance criteria, suggested actors and event rules.
+  ## Suggested actors the account cannot see are left out. Topics change centrally;
+  ## PIRs follow a topic's defaults wherever the customer has not changed them. Also
+  ## returns `topic_families`, the picker's groups in display order, and
+  ## `organization_types` for the organization profile form.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/topics")
-  return res
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdCloudforceOneV2PriorityIntelligenceTopicsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityId*(client: CloudflareClient,
                                                                         accountId: string,
@@ -364,6 +378,11 @@ proc putAccountsAccountIdCloudforceOneV2PriorityIntelligencePriorityId*(client: 
   ## the active PIR quota; setting `active` on a PIR the matcher paused resumes it
   ## without one. Updates to a structured PIR must send its `revision` and change its
   ## answers through `definition`; its requirement, title and query are generated.
+  ## Sending a `definition` and `revision` for a free-form PIR converts it in place:
+  ## it keeps its ID, status, labels, priority, TLP and match history, and its query,
+  ## dataset scope and notifications are removed, since structured PIRs are not
+  ## matched by the PIR matcher and send no notifications. A conversion must not send
+  ## a `dataset_scope`.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/v2/priority-intelligence/{priorityId}", body)
   return res
