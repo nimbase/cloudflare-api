@@ -9,7 +9,7 @@ import ./private/metaclient
 import ./private/types
 
 
-proc getBillingRatePlansPublicKey*(client: CloudflareClient, publicKey: string): Future[types.BillSubsApiRatePlanSimpleResponse] {.async.} =
+proc getBillingRatePlansPublicKey*(client: CloudflareClient, publicKey: string): Future[types.BillSubsRatePlanSimpleResponse] {.async.} =
   ## Gets a rate plan's details by its public key (e.g., 'teams_free',
   ## 'cf_pro_20_20'). This is a public catalog endpoint, so authentication is not
   ## enforced and credentials are accepted but not required.
@@ -18,6 +18,6 @@ proc getBillingRatePlansPublicKey*(client: CloudflareClient, publicKey: string):
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiRatePlanSimpleResponse)
+    result = fromJson(body, types.BillSubsRatePlanSimpleResponse)
   else:
     raise newException(CloudflareClientError, body)

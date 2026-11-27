@@ -11,21 +11,21 @@ import cloudflare
 import ./common
 
 suite "managed_transforms serialization":
-  test "round-trips RulesetsManagedTransformsPatch":
-    let obj = newRulesetsManagedTransformsPatch()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RulesetsManagedTransformsPatch)) == openjson.toJson(obj)
+  test "round-trips ManagedTransformsResponse":
+    let obj = newManagedTransformsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ManagedTransformsResponse)) == openjson.toJson(obj)
 
-  test "round-trips RulesetsMessage":
-    let obj = newRulesetsMessage()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RulesetsMessage)) == openjson.toJson(obj)
+  test "round-trips ManagedTransformsManagedTransformsPatch":
+    let obj = newManagedTransformsManagedTransformsPatch()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ManagedTransformsManagedTransformsPatch)) == openjson.toJson(obj)
 
-  test "round-trips RulesetsResponse":
-    let obj = newRulesetsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RulesetsResponse)) == openjson.toJson(obj)
+  test "round-trips ManagedTransformsMessage":
+    let obj = newManagedTransformsMessage()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ManagedTransformsMessage)) == openjson.toJson(obj)
 
-  test "round-trips RulesetsManagedTransforms":
-    let obj = newRulesetsManagedTransforms()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RulesetsManagedTransforms)) == openjson.toJson(obj)
+  test "round-trips ManagedTransformsManagedTransforms":
+    let obj = newManagedTransformsManagedTransforms()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.ManagedTransformsManagedTransforms)) == openjson.toJson(obj)
 
 suite "managed_transforms endpoints":
   test "GET /zones/{zone_id}/managed_headers":
@@ -41,5 +41,5 @@ suite "managed_transforms endpoints":
   test "PATCH /zones/{zone_id}/managed_headers":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchZonesZoneIdManagedHeaders("test", newRulesetsManagedTransformsPatch())
+    discard waitFor client.patchZonesZoneIdManagedHeaders("test", newManagedTransformsManagedTransformsPatch())
 

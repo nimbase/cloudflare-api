@@ -241,3 +241,253 @@ proc getAccountsAccountIdRulesetsRulesetIdVersionsRulesetVersionByTagRuleTag*(cl
     result = fromJson(body, JsonNode)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdRulesets*(client: CloudflareClient,
+                                              accountOrZone: AccountOrZone,
+                                              accountOrZoneId: types.RulesetsAccountId,
+                                              cursor: types.RulesetsCursor = default(types.RulesetsCursor),
+                                              perPage: types.RulesetsPerPage = default(types.RulesetsPerPage)): Future[JsonNode] {.async.} =
+  ## Fetches all rulesets.
+
+  var q = initOrderedTable[string, string]()
+  q["cursor"] = $cursor
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdRulesets*(client: CloudflareClient,
+                                               accountOrZone: AccountOrZone,
+                                               accountOrZoneId: types.RulesetsAccountId,
+                                               dryRun: bool = false): Future[JsonNode] {.async.} =
+  ## Creates a ruleset.
+
+  var q = initOrderedTable[string, string]()
+  q["dry_run"] = $dryRun
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdRulesetsPhasesRulesetPhaseEntrypoint*(client: CloudflareClient,
+                                                                          accountOrZone: AccountOrZone,
+                                                                          rulesetPhase: types.RulesetsRulesetPhase,
+                                                                          accountOrZoneId: types.RulesetsAccountId): Future[JsonNode] {.async.} =
+  ## Fetches the latest version of the account or zone entry point ruleset for a
+  ## given phase.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/phases/{rulesetPhase}/entrypoint")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountOrZoneAccountOrZoneIdRulesetsPhasesRulesetPhaseEntrypoint*(client: CloudflareClient,
+                                                                          accountOrZone: AccountOrZone,
+                                                                          rulesetPhase: types.RulesetsRulesetPhase,
+                                                                          accountOrZoneId: types.RulesetsAccountId,
+                                                                          dryRun: bool = false): Future[JsonNode] {.async.} =
+  ## Updates an account or zone entry point ruleset, creating a new version.
+
+  var q = initOrderedTable[string, string]()
+  q["dry_run"] = $dryRun
+  let res = await client.httpPUT(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/phases/{rulesetPhase}/entrypoint", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdRulesetsPhasesRulesetPhaseEntrypointVersions*(client: CloudflareClient,
+                                                                                  accountOrZone: AccountOrZone,
+                                                                                  rulesetPhase: types.RulesetsRulesetPhase,
+                                                                                  accountOrZoneId: types.RulesetsAccountId): Future[JsonNode] {.async.} =
+  ## Fetches the versions of an account or zone entry point ruleset.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/phases/{rulesetPhase}/entrypoint/versions")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdRulesetsPhasesRulesetPhaseEntrypointVersionsRulesetVersion*(client: CloudflareClient,
+                                                                                                accountOrZone: AccountOrZone,
+                                                                                                rulesetVersion: types.RulesetsRulesetVersion,
+                                                                                                rulesetPhase: types.RulesetsRulesetPhase,
+                                                                                                accountOrZoneId: types.RulesetsAccountId): Future[JsonNode] {.async.} =
+  ## Fetches a specific version of an account or zone entry point ruleset.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/phases/{rulesetPhase}/entrypoint/versions/{rulesetVersion}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdRulesetsRulesetId*(client: CloudflareClient,
+                                                       accountOrZone: AccountOrZone,
+                                                       rulesetId: types.RulesetsRulesetId,
+                                                       accountOrZoneId: types.RulesetsAccountId): Future[JsonNode] {.async.} =
+  ## Fetches the latest version of an account or zone ruleset.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/{rulesetId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountOrZoneAccountOrZoneIdRulesetsRulesetId*(client: CloudflareClient,
+                                                       accountOrZone: AccountOrZone,
+                                                       rulesetId: types.RulesetsRulesetId,
+                                                       accountOrZoneId: types.RulesetsAccountId,
+                                                       dryRun: bool = false): Future[JsonNode] {.async.} =
+  ## Updates an account or zone ruleset, creating a new version.
+
+  var q = initOrderedTable[string, string]()
+  q["dry_run"] = $dryRun
+  let res = await client.httpPUT(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/{rulesetId}", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountOrZoneAccountOrZoneIdRulesetsRulesetId*(client: CloudflareClient,
+                                                          accountOrZone: AccountOrZone,
+                                                          rulesetId: types.RulesetsRulesetId,
+                                                          accountOrZoneId: types.RulesetsAccountId,
+                                                          dryRun: bool = false): Future[AsyncResponse] {.async.} =
+  ## Deletes all versions of an existing account or zone ruleset.
+
+  var q = initOrderedTable[string, string]()
+  q["dry_run"] = $dryRun
+  let res = await client.httpDELETE(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/{rulesetId}", q)
+  return res
+
+proc postAccountOrZoneAccountOrZoneIdRulesetsRulesetIdRules*(client: CloudflareClient,
+                                                             accountOrZone: AccountOrZone,
+                                                             rulesetId: types.RulesetsRulesetId,
+                                                             accountOrZoneId: types.RulesetsAccountId,
+                                                             dryRun: bool = false): Future[JsonNode] {.async.} =
+  ## Adds a new rule to an account or zone ruleset. The rule will be added to the end
+  ## of the existing list of rules in the ruleset by default.
+
+  var q = initOrderedTable[string, string]()
+  q["dry_run"] = $dryRun
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/{rulesetId}/rules", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountOrZoneAccountOrZoneIdRulesetsRulesetIdRulesRuleId*(client: CloudflareClient,
+                                                                     accountOrZone: AccountOrZone,
+                                                                     ruleId: types.RulesetsRuleId,
+                                                                     rulesetId: types.RulesetsRulesetId,
+                                                                     accountOrZoneId: types.RulesetsAccountId,
+                                                                     dryRun: bool = false): Future[JsonNode] {.async.} =
+  ## Deletes an existing rule from an account or zone ruleset.
+
+  var q = initOrderedTable[string, string]()
+  q["dry_run"] = $dryRun
+  let res = await client.httpDELETE(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/{rulesetId}/rules/{ruleId}", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountOrZoneAccountOrZoneIdRulesetsRulesetIdRulesRuleId*(client: CloudflareClient,
+                                                                    accountOrZone: AccountOrZone,
+                                                                    ruleId: types.RulesetsRuleId,
+                                                                    rulesetId: types.RulesetsRulesetId,
+                                                                    accountOrZoneId: types.RulesetsAccountId,
+                                                                    dryRun: bool = false): Future[JsonNode] {.async.} =
+  ## Updates an existing rule in an account or zone ruleset.
+
+  var q = initOrderedTable[string, string]()
+  q["dry_run"] = $dryRun
+  let res = await client.httpPATCH(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/{rulesetId}/rules/{ruleId}", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdRulesetsRulesetIdVersions*(client: CloudflareClient,
+                                                               accountOrZone: AccountOrZone,
+                                                               rulesetId: types.RulesetsRulesetId,
+                                                               accountOrZoneId: types.RulesetsAccountId): Future[JsonNode] {.async.} =
+  ## Fetches the versions of an account or zone ruleset.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/{rulesetId}/versions")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdRulesetsRulesetIdVersionsRulesetVersion*(client: CloudflareClient,
+                                                                             accountOrZone: AccountOrZone,
+                                                                             rulesetVersion: types.RulesetsRulesetVersion,
+                                                                             rulesetId: types.RulesetsRulesetId,
+                                                                             accountOrZoneId: types.RulesetsAccountId): Future[JsonNode] {.async.} =
+  ## Fetches a specific version of an account or zone ruleset.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/{rulesetId}/versions/{rulesetVersion}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountOrZoneAccountOrZoneIdRulesetsRulesetIdVersionsRulesetVersion*(client: CloudflareClient,
+                                                                                accountOrZone: AccountOrZone,
+                                                                                rulesetVersion: types.RulesetsRulesetVersion,
+                                                                                rulesetId: types.RulesetsRulesetId,
+                                                                                accountOrZoneId: types.RulesetsAccountId,
+                                                                                dryRun: bool = false): Future[AsyncResponse] {.async.} =
+  ## Deletes an existing version of an account or zone ruleset.
+
+  var q = initOrderedTable[string, string]()
+  q["dry_run"] = $dryRun
+  let res = await client.httpDELETE(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/{rulesetId}/versions/{rulesetVersion}", q)
+  return res
+
+proc getAccountOrZoneAccountOrZoneIdRulesetsRulesetIdVersionsRulesetVersionByTagRuleTag*(client: CloudflareClient,
+                                                                                         accountOrZone: AccountOrZone,
+                                                                                         ruleTag: types.RulesetsRuleCategory,
+                                                                                         rulesetVersion: types.RulesetsRulesetVersion,
+                                                                                         rulesetId: types.RulesetsRulesetId,
+                                                                                         accountOrZoneId: types.RulesetsAccountId): Future[JsonNode] {.async.} =
+  ## Fetches the rules of a managed account or zone ruleset version for a given tag.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/rulesets/{rulesetId}/versions/{rulesetVersion}/by_tag/{ruleTag}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)

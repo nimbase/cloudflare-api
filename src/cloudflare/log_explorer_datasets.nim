@@ -204,3 +204,111 @@ proc deleteZonesZoneIdLogsExplorerDatasetsDatasetId*(client: CloudflareClient,
     result = fromJson(body, types.LexDatasetDetailResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdLogsExplorerDatasets*(client: CloudflareClient,
+                                                          accountOrZone: AccountOrZone,
+                                                          accountOrZoneId: string,
+                                                          includeZones: bool = default(bool)): Future[types.LexDatasetSummaryListResponse] {.async.} =
+  ## Returns all Log Explorer datasets configured for the account or zone.
+  ##
+  ## Pass `include_zones=true` to also include zone-level datasets that
+  ## belong to this account or zone. List responses omit the `fields` property;
+  ## use the single-dataset endpoint to retrieve field configuration.
+
+  var q = initOrderedTable[string, string]()
+  q["include_zones"] = $includeZones
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/logs/explorer/datasets", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LexDatasetSummaryListResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdLogsExplorerDatasets*(client: CloudflareClient,
+                                                           accountOrZone: AccountOrZone,
+                                                           accountOrZoneId: string,
+                                                           body: types.LexCreateDatasetRequest): Future[types.LexDatasetDetailResponse] {.async.} =
+  ## Create a new Log Explorer dataset for the account or zone.
+  ##
+  ## List available account or zone datasets to see the dataset types and fields you
+  ## can use.
+  ##
+  ## The `fields` property is optional. If not specified, all available fields
+  ## will be enabled.
+  ##
+  ## For dataset field definitions, see:
+  ## https://developers.cloudflare.com/logs/logpush/logpush-job/datasets/
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/logs/explorer/datasets", body)
+  let body = await res.body
+  case res.code
+  of Http201:
+    result = fromJson(body, types.LexDatasetDetailResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdLogsExplorerDatasetsAvailable*(client: CloudflareClient,
+                                                                   accountOrZone: AccountOrZone,
+                                                                   accountOrZoneId: string): Future[types.LexAvailableDestinationListResponse] {.async.} =
+  ## Returns all dataset types that this account or zone can create. Each entry
+  ## includes the dataset schema and timestamp field.
+  ##
+  ## The schema shows all possible fields for a dataset. However, not all
+  ## fields may be available for your account or zone. When creating or updating a
+  ## dataset, only fields available to your account or zone can be enabled. If you
+  ## request a field that is not available, you will receive an error.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/logs/explorer/datasets/available")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LexAvailableDestinationListResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdLogsExplorerDatasetsDatasetId*(client: CloudflareClient,
+                                                                   accountOrZone: AccountOrZone,
+                                                                   accountOrZoneId: string,
+                                                                   datasetId: string): Future[types.LexDatasetDetailResponse] {.async.} =
+  ## Retrieve a single Log Explorer dataset by ID for the account or zone.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/logs/explorer/datasets/{datasetId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LexDatasetDetailResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountOrZoneAccountOrZoneIdLogsExplorerDatasetsDatasetId*(client: CloudflareClient,
+                                                                   accountOrZone: AccountOrZone,
+                                                                   accountOrZoneId: string,
+                                                                   datasetId: string,
+                                                                   body: types.LexUpdateDatasetRequest): Future[types.LexDatasetDetailResponse] {.async.} =
+  ## Updates the enabled state and/or field configuration of an account or zone
+  ## dataset.
+
+  let res = await client.httpPUT(fmt"/{accountOrZone}/{accountOrZoneId}/logs/explorer/datasets/{datasetId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LexDatasetDetailResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountOrZoneAccountOrZoneIdLogsExplorerDatasetsDatasetId*(client: CloudflareClient,
+                                                                      accountOrZone: AccountOrZone,
+                                                                      accountOrZoneId: string,
+                                                                      datasetId: string): Future[types.LexDatasetDetailResponse] {.async.} =
+  ## Deletes a Log Explorer dataset for the account or zone. Dataset deletion must
+  ## not
+  ## be protected.
+
+  let res = await client.httpDELETE(fmt"/{accountOrZone}/{accountOrZoneId}/logs/explorer/datasets/{datasetId}")
+  let body = await res.body
+  case res.code
+  of Http202:
+    result = fromJson(body, types.LexDatasetDetailResponse)
+  else:
+    raise newException(CloudflareClientError, body)

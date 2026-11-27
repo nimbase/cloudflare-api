@@ -386,6 +386,24 @@ type
       ## Used for configuring maintenance_event_notification
     alert_trigger_preferences*: Option[seq[string]]
       ## Usage depends on specific alert type
+    alert_trigger_preferences_long_window*: Option[seq[string]]
+      ## Usage depends on specific alert type. Takes at most one value, a duration such
+      ## as `4h`. custom_analytics requires it when alert_trigger_preferences is slo,
+      ## zscore_spike, zscore_drop or zscore_spike_and_drop. There it must be at most
+      ## 24h, and for the z-score types at least six times
+      ## alert_trigger_preferences_short_window.
+    alert_trigger_preferences_minimum_threshold*: Option[seq[string]]
+      ## Usage depends on specific alert type. Takes at most one value, a number as a
+      ## string.
+    alert_trigger_preferences_operator*: Option[seq[string]]
+      ## Used for configuring custom_analytics, which requires it. Takes exactly one
+      ## value, the operator that compares the result with
+      ## alert_trigger_preferences_value. It must be `<` unless alert_trigger_preferences
+      ## is threshold.
+    alert_trigger_preferences_short_window*: Option[seq[string]]
+      ## Usage depends on specific alert type. Takes at most one value, a duration such
+      ## as `5m`. custom_analytics requires it, and it must be at least 1m there.
+      ## queues_lag_alert requires it, at least 5m.
     alert_trigger_preferences_value*: Option[seq[string]]
       ## Usage depends on specific alert type
     check_id*: Option[seq[string]]
@@ -403,6 +421,12 @@ type
       ## Used for configuring load_balancing_health_alert
     event_type*: Option[seq[string]]
       ## Usage depends on specific alert type
+    execution_interval*: Option[seq[string]]
+      ## Used for configuring custom_analytics when source is sql_api. Other sources
+      ## reject it. Takes at most one value, how often the query runs, as a duration in
+      ## whole seconds such as `5m`. It can't be shorter than the minimum for the query,
+      ## which is 1m, or 10m for Log Explorer datasets. If it's omitted, the API sets it
+      ## to that minimum.
     group_by*: Option[seq[string]]
       ## Usage depends on specific alert type
     health_check_id*: Option[seq[string]]
@@ -449,6 +473,9 @@ type
       ## Used for configuring clickhouse_alert_fw_ent_anomaly
     slo*: Option[seq[string]]
       ## Usage depends on specific alert type
+    source*: Option[seq[string]]
+      ## Used for configuring custom_analytics, which requires it. Takes exactly one
+      ## value, the dataset the alert queries.
     status*: Option[seq[string]]
       ## Used for configuring health_check_status_notification
     target_hostname*: Option[seq[string]]
@@ -1183,6 +1210,10 @@ type
     entity_type*: AbuseReportsMitigatedEntityType
     id*: string
       ## ID of remediation.
+    scheduled_removal_date*: Option[string]
+      ## Date when the mitigation is scheduled to be removed. Present only when a removal
+      ## is scheduled, for example after an approved counter notice. Time in RFC 3339
+      ## format (https://www.rfc-editor.org/rfc/rfc3339.html)
     status*: AbuseReportsMitigationStatus
     `type`*: AbuseReportsMitigationType
 
@@ -6536,6 +6567,14 @@ type
     `type`*: string
       ## The resource type, such as Rule or Profile. Additional types may be returned.
 
+  AlexandriaApplicationReferencesResponse* = ref object of RootObj
+    errors*: AlexandriaMessages
+    messages*: AlexandriaMessages
+    success*: bool
+      ## Indicates whether the API call was successful.
+    result*: seq[AlexandriaApplicationReference]
+      ## The complete list of resources in the account that reference the application.
+
   AlexandriaApplicationScoreComposition* = ref object of RootObj
     ## Returns the score composition breakdown for the application.
 
@@ -7997,7 +8036,7 @@ type
     result*: seq[ArtResultValues]
     success*: bool
 
-  BillSubsApiAccountBillingHistory* = ref object of RootObj
+  BillSubsAccountBillingHistory* = ref object of RootObj
     action*: Option[string]
       ## The billing item action.
     amount*: Option[float64]
@@ -8029,39 +8068,39 @@ type
     `type`*: Option[string]
       ## The billing item type.
 
-  BillSubsApiAccountBillingHistoryCollection* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
-    result*: seq[BillSubsApiAccountBillingHistory]
+  BillSubsAccountBillingHistoryCollection* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
+    result*: seq[BillSubsAccountBillingHistory]
     success*: bool
       ## Whether the API call was successful
-    result_info*: Option[BillSubsApiResultInfo]
+    result_info*: Option[BillSubsResultInfo]
 
-  BillSubsApiAccountCreditsResponse* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
+  BillSubsAccountCreditsResponse* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiAccountSubscriptionResponseCollection* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
-    result*: seq[BillSubsApiSubscription]
+  BillSubsAccountSubscriptionResponseCollection* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
+    result*: seq[BillSubsSubscription]
     success*: bool
       ## Whether the API call was successful
-    result_info*: Option[BillSubsApiResultInfo]
+    result_info*: Option[BillSubsResultInfo]
 
-  BillSubsApiAccountSubscriptionResponseSingle* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
-    result*: BillSubsApiSubscription
+  BillSubsAccountSubscriptionResponseSingle* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
+    result*: BillSubsSubscription
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiAction* = string
+  BillSubsAction* = string
 
-  BillSubsApiAddressValidationRequest* = ref object of RootObj
+  BillSubsAddressValidationRequest* = ref object of RootObj
     address*: Option[string]
       ## Address line 1.
     address2*: Option[string]
@@ -8075,91 +8114,91 @@ type
     zipcode*: Option[string]
       ## Postal or zip code.
 
-  BillSubsApiAddressValidationResponseSingle* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
+  BillSubsAddressValidationResponseSingle* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiAmount* = float64
+  BillSubsAmount* = float64
 
-  BillSubsApiApiResponseCollection* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
+  BillSubsApiResponseCollection* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
     result*: Option[seq[JsonNode]]
     success*: bool
       ## Whether the API call was successful
-    result_info*: Option[BillSubsApiResultInfo]
+    result_info*: Option[BillSubsResultInfo]
 
-  BillSubsApiApiResponseCommon* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
+  BillSubsApiResponseCommon* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiApiResponseCommonFailure* = ref object of RootObj
+  BillSubsApiResponseCommonFailure* = ref object of RootObj
     errors*: JsonNode
     messages*: JsonNode
     result*: Option[JsonNode]
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiApiResponseSingle* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
+  BillSubsApiResponseSingle* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiAvailableRatePlan* = ref object of RootObj
-    can_subscribe*: Option[BillSubsApiCanSubscribe]
-    currency*: Option[BillSubsApiCurrency]
-    externally_managed*: Option[BillSubsApiExternallyManaged]
-    frequency*: Option[BillSubsApiSchemasFrequency]
-    id*: Option[BillSubsApiIdentifier]
-    is_subscribed*: Option[BillSubsApiIsSubscribed]
-    legacy_id*: Option[BillSubsApiLegacyId]
-    name*: Option[BillSubsApiSchemasName]
-    price*: Option[BillSubsApiSchemasPrice]
+  BillSubsAvailableRatePlan* = ref object of RootObj
+    can_subscribe*: Option[BillSubsCanSubscribe]
+    currency*: Option[BillSubsCurrency]
+    externally_managed*: Option[BillSubsExternallyManaged]
+    frequency*: Option[BillSubsSchemasFrequency]
+    id*: Option[BillSubsIdentifier]
+    is_subscribed*: Option[BillSubsIsSubscribed]
+    legacy_id*: Option[BillSubsLegacyId]
+    name*: Option[BillSubsSchemasName]
+    price*: Option[BillSubsSchemasPrice]
 
-  BillSubsApiBadDebtInfo* = ref object of RootObj
+  BillSubsBadDebtInfo* = ref object of RootObj
     already_paid*: Option[float64]
       ## Amount already paid towards the debt.
     bad_debt_status*: Option[string]
       ## The current bad debt status of the account.
-    invoices*: Option[seq[BillSubsApiAccountBillingHistory]]
+    invoices*: Option[seq[BillSubsAccountBillingHistory]]
       ## List of outstanding invoices contributing to bad debt.
     total_debt_amount*: Option[float64]
       ## Total outstanding debt amount.
 
-  BillSubsApiBadDebtResponseSingle* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
-    result*: BillSubsApiBadDebtInfo
+  BillSubsBadDebtResponseSingle* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
+    result*: BillSubsBadDebtInfo
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiBillingHistory* = ref object of RootObj
-    action*: BillSubsApiAction
-    amount*: BillSubsApiAmount
-    currency*: BillSubsApiCurrency
-    description*: BillSubsApiDescription
-    id*: BillSubsApiComponentsSchemasIdentifier
-    occurred_at*: BillSubsApiOccurredAt
-    `type`*: BillSubsApiType
-    zone*: BillSubsApiSchemasZone
+  BillSubsBillingHistory* = ref object of RootObj
+    action*: BillSubsAction
+    amount*: BillSubsAmount
+    currency*: BillSubsCurrency
+    description*: BillSubsDescription
+    id*: BillSubsComponentsSchemasIdentifier
+    occurred_at*: BillSubsOccurredAt
+    `type`*: BillSubsType
+    zone*: BillSubsSchemasZone
 
-  BillSubsApiBillingHistoryCollection* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
-    result*: seq[BillSubsApiBillingHistory]
+  BillSubsBillingHistoryCollection* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
+    result*: seq[BillSubsBillingHistory]
     success*: bool
       ## Whether the API call was successful
-    result_info*: Option[BillSubsApiResultInfo]
+    result_info*: Option[BillSubsResultInfo]
 
-  BillSubsApiBillingProfileRequest* = ref object of RootObj
+  BillSubsBillingProfileRequest* = ref object of RootObj
     ## Request body for creating or updating a billing profile.
     address*: Option[string]
       ## Street address line 1.
@@ -8200,23 +8239,23 @@ type
     zipcode*: Option[string]
       ## ZIP or postal code.
 
-  BillSubsApiBillingResponseSingle* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
+  BillSubsBillingResponseSingle* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiBulkAccountSubscriptionResponse* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
+  BillSubsBulkAccountSubscriptionResponse* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiCanSubscribe* = bool
+  BillSubsCanSubscribe* = bool
 
-  BillSubsApiCancelReason* = ref object of RootObj
+  BillSubsCancelReason* = ref object of RootObj
     id*: Option[string]
       ## The cancel reason identifier.
     other*: Option[string]
@@ -8228,31 +8267,31 @@ type
     subscription_id*: Option[string]
       ## The subscription identifier.
 
-  BillSubsApiCancelReasonRequest* = ref object of RootObj
+  BillSubsCancelReasonRequest* = ref object of RootObj
     other*: Option[string]
       ## Additional cancellation details.
     reason_code*: Option[seq[string]]
       ## The cancellation reason codes.
 
-  BillSubsApiCancelReasonResponseSingle* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
-    result*: BillSubsApiCancelReason
+  BillSubsCancelReasonResponseSingle* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
+    result*: BillSubsCancelReason
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiClientSecret* = string
+  BillSubsClientSecret* = string
 
-  BillSubsApiClientSecretResponseSingle* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
+  BillSubsClientSecretResponseSingle* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiClientSecrets* = seq[BillSubsApiClientSecret]
+  BillSubsClientSecrets* = seq[BillSubsClientSecret]
 
-  BillSubsApiComponentValue* = ref object of RootObj
+  BillSubsComponentValue* = ref object of RootObj
     ## A component value for a subscription.
     default*: Option[float64]
       ## The default amount assigned.
@@ -8269,63 +8308,63 @@ type
     value*: Option[float64]
       ## The amount of the component value assigned.
 
-  BillSubsApiComponentValues* = seq[BillSubsApiComponentValue]
+  BillSubsComponentValues* = seq[BillSubsComponentValue]
 
-  BillSubsApiComponentsSchemasIdentifier* = string
+  BillSubsComponentsSchemasIdentifier* = string
 
-  BillSubsApiComponentsSchemasName* = enum
+  BillSubsComponentsSchemasName* = enum
     ## The unique component.
     zones = "zones"
     pageRules = "page_rules"
     dedicatedCertificates = "dedicated_certificates"
     dedicatedCertificatesCustom = "dedicated_certificates_custom"
 
-  BillSubsApiCurrency* = string
+  BillSubsCurrency* = string
 
-  BillSubsApiCurrentPeriodEnd* = string
+  BillSubsCurrentPeriodEnd* = string
 
-  BillSubsApiCurrentPeriodStart* = string
+  BillSubsCurrentPeriodStart* = string
 
-  BillSubsApiDefault* = float64
+  BillSubsDefault* = float64
 
-  BillSubsApiDescription* = string
+  BillSubsDescription* = string
 
-  BillSubsApiDuration* = float64
+  BillSubsDuration* = float64
 
-  BillSubsApiExternallyManaged* = bool
+  BillSubsExternallyManaged* = bool
 
-  BillSubsApiFrequency* = enum
+  BillSubsFrequency* = enum
     ## How often the subscription is renewed automatically.
     weekly = "weekly"
     monthly = "monthly"
     quarterly = "quarterly"
     yearly = "yearly"
 
-  BillSubsApiFrequencyResponse* = ref object of RootObj
+  BillSubsFrequencyResponse* = ref object of RootObj
     ## How often the subscription is renewed automatically (computed field).
 
-  BillSubsApiIdentifier* = string
+  BillSubsIdentifier* = string
 
-  BillSubsApiInstallId* = string
+  BillSubsInstallId* = string
 
-  BillSubsApiIsSubscribed* = bool
+  BillSubsIsSubscribed* = bool
 
-  BillSubsApiLegacyId* = string
+  BillSubsLegacyId* = string
 
-  BillSubsApiMessages* = seq[JsonNode]
+  BillSubsMessages* = seq[JsonNode]
 
-  BillSubsApiName* = string
+  BillSubsName* = string
 
-  BillSubsApiOccurredAt* = string
+  BillSubsOccurredAt* = string
 
-  BillSubsApiPaymentIntentResponseSingle* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
+  BillSubsPaymentIntentResponseSingle* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiPaymentMethod* = ref object of RootObj
+  BillSubsPaymentMethod* = ref object of RootObj
     address*: Option[string]
       ## Billing address line 1.
     address2*: Option[string]
@@ -8377,47 +8416,47 @@ type
     zipcode*: Option[string]
       ## Billing zip code.
 
-  BillSubsApiPaymentMethodResponseCollection* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
-    result*: seq[BillSubsApiPaymentMethod]
+  BillSubsPaymentMethodResponseCollection* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
+    result*: seq[BillSubsPaymentMethod]
     success*: bool
       ## Whether the API call was successful
-    result_info*: Option[BillSubsApiResultInfo]
+    result_info*: Option[BillSubsResultInfo]
 
-  BillSubsApiPaymentMethodResponseSingle* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
-    result*: BillSubsApiPaymentMethod
+  BillSubsPaymentMethodResponseSingle* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
+    result*: BillSubsPaymentMethod
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiPlanComponentValue* = ref object of RootObj
-    default*: Option[BillSubsApiDefault]
-    name*: Option[BillSubsApiComponentsSchemasName]
-    unit_price*: Option[BillSubsApiUnitPrice]
+  BillSubsPlanComponentValue* = ref object of RootObj
+    default*: Option[BillSubsDefault]
+    name*: Option[BillSubsComponentsSchemasName]
+    unit_price*: Option[BillSubsUnitPrice]
 
-  BillSubsApiPlanRatePlan* = ref object of RootObj
-    components*: Option[BillSubsApiSchemasComponentValues]
-    currency*: Option[BillSubsApiCurrency]
-    duration*: Option[BillSubsApiDuration]
-    frequency*: Option[BillSubsApiSchemasFrequency]
-    id*: Option[BillSubsApiRatePlanComponentsSchemasIdentifier]
-    name*: Option[BillSubsApiSchemasName]
+  BillSubsPlanRatePlan* = ref object of RootObj
+    components*: Option[BillSubsSchemasComponentValues]
+    currency*: Option[BillSubsCurrency]
+    duration*: Option[BillSubsDuration]
+    frequency*: Option[BillSubsSchemasFrequency]
+    id*: Option[BillSubsRatePlanComponentsSchemasIdentifier]
+    name*: Option[BillSubsSchemasName]
 
-  BillSubsApiPlanResponseCollection* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
-    result*: seq[BillSubsApiSchemasRatePlan]
+  BillSubsPlanResponseCollection* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
+    result*: seq[BillSubsSchemasRatePlan]
     success*: bool
       ## Whether the API call was successful
-    result_info*: Option[BillSubsApiResultInfo]
+    result_info*: Option[BillSubsResultInfo]
 
-  BillSubsApiPrice* = float64
+  BillSubsPrice* = float64
 
-  BillSubsApiRatePlanComponentsSchemasIdentifier* = string
+  BillSubsRatePlanComponentsSchemasIdentifier* = string
 
-  BillSubsApiRatePlan* = ref object of RootObj
+  BillSubsRatePlan* = ref object of RootObj
     ## The rate plan applied to the subscription.
     currency*: Option[string]
       ## The currency applied to the rate plan subscription.
@@ -8434,14 +8473,14 @@ type
     sets*: Option[seq[string]]
       ## The list of sets this rate plan applies to. Returns array of strings.
 
-  BillSubsApiRatePlanSimpleResponse* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
+  BillSubsRatePlanSimpleResponse* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiResultInfo* = ref object of RootObj
+  BillSubsResultInfo* = ref object of RootObj
     count*: Option[float64]
       ## Total number of results for the requested service
     page*: Option[float64]
@@ -8451,33 +8490,33 @@ type
     total_count*: Option[float64]
       ## Total results available without any search parameters
 
-  BillSubsApiSchemasComponentValues* = seq[BillSubsApiPlanComponentValue]
+  BillSubsSchemasComponentValues* = seq[BillSubsPlanComponentValue]
 
-  BillSubsApiSchemasFrequency* = enum
+  BillSubsSchemasFrequency* = enum
     ## The frequency at which you will be billed for this plan.
     weekly = "weekly"
     monthly = "monthly"
     quarterly = "quarterly"
     yearly = "yearly"
 
-  BillSubsApiSchemasIdentifier* = string
+  BillSubsSchemasIdentifier* = string
 
-  BillSubsApiSchemasName* = string
+  BillSubsSchemasName* = string
 
-  BillSubsApiSchemasPrice* = float64
+  BillSubsSchemasPrice* = float64
 
-  BillSubsApiSchemasRatePlan* = ref object of RootObj
-    components*: Option[BillSubsApiSchemasComponentValues]
-    currency*: Option[BillSubsApiCurrency]
-    duration*: Option[BillSubsApiDuration]
-    frequency*: Option[BillSubsApiSchemasFrequency]
-    id*: Option[BillSubsApiRatePlanComponentsSchemasIdentifier]
-    name*: Option[BillSubsApiSchemasName]
+  BillSubsSchemasRatePlan* = ref object of RootObj
+    components*: Option[BillSubsSchemasComponentValues]
+    currency*: Option[BillSubsCurrency]
+    duration*: Option[BillSubsDuration]
+    frequency*: Option[BillSubsSchemasFrequency]
+    id*: Option[BillSubsRatePlanComponentsSchemasIdentifier]
+    name*: Option[BillSubsSchemasName]
 
-  BillSubsApiSchemasZone* = ref object of RootObj
+  BillSubsSchemasZone* = ref object of RootObj
     name*: Option[string]
 
-  BillSubsApiState* = enum
+  BillSubsState* = enum
     ## The state that the subscription is in.
     Trial = "Trial"
     Provisioned = "Provisioned"
@@ -8487,78 +8526,78 @@ type
     Failed = "Failed"
     Expired = "Expired"
 
-  BillSubsApiSubscription* = ref object of RootObj
+  BillSubsSubscription* = ref object of RootObj
     app*: Option[JsonNode]
       ## Cloudflare Apps Marketplace is sunset. This field is retained for legacy
       ## grandfathered app subscriptions only.
-    component_values*: Option[BillSubsApiComponentValues]
-    currency*: Option[BillSubsApiCurrency]
-    current_period_end*: Option[BillSubsApiCurrentPeriodEnd]
-    current_period_start*: Option[BillSubsApiCurrentPeriodStart]
-    frequency*: Option[BillSubsApiFrequency]
-    id*: Option[BillSubsApiSchemasIdentifier]
-    price*: Option[BillSubsApiPrice]
-    rate_plan*: Option[BillSubsApiRatePlan]
-    state*: Option[BillSubsApiState]
+    component_values*: Option[BillSubsComponentValues]
+    currency*: Option[BillSubsCurrency]
+    current_period_end*: Option[BillSubsCurrentPeriodEnd]
+    current_period_start*: Option[BillSubsCurrentPeriodStart]
+    frequency*: Option[BillSubsFrequency]
+    id*: Option[BillSubsSchemasIdentifier]
+    price*: Option[BillSubsPrice]
+    rate_plan*: Option[BillSubsRatePlan]
+    state*: Option[BillSubsState]
     zone*: Option[JsonNode]
 
-  BillSubsApiSubscriptionV2* = ref object of RootObj
+  BillSubsSubscriptionV2* = ref object of RootObj
     app*: Option[JsonNode]
       ## Cloudflare Apps Marketplace is sunset. This field is retained for legacy
       ## grandfathered app subscriptions only.
-    component_values*: Option[BillSubsApiComponentValues]
-    currency*: Option[BillSubsApiCurrency]
-    current_period_end*: Option[BillSubsApiCurrentPeriodEnd]
-    current_period_start*: Option[BillSubsApiCurrentPeriodStart]
-    frequency*: Option[BillSubsApiFrequency]
-    id*: Option[BillSubsApiSchemasIdentifier]
-    price*: Option[BillSubsApiPrice]
-    rate_plan*: Option[BillSubsApiRatePlan]
-    state*: Option[BillSubsApiState]
+    component_values*: Option[BillSubsComponentValues]
+    currency*: Option[BillSubsCurrency]
+    current_period_end*: Option[BillSubsCurrentPeriodEnd]
+    current_period_start*: Option[BillSubsCurrentPeriodStart]
+    frequency*: Option[BillSubsFrequency]
+    id*: Option[BillSubsSchemasIdentifier]
+    price*: Option[BillSubsPrice]
+    rate_plan*: Option[BillSubsRatePlan]
+    state*: Option[BillSubsState]
     zone*: Option[JsonNode]
 
-  BillSubsApiSubscriptionResponse* = ref object of RootObj
+  BillSubsSubscriptionResponse* = ref object of RootObj
     app*: Option[JsonNode]
       ## Cloudflare Apps Marketplace is sunset. This field is retained for legacy
       ## grandfathered app subscriptions only.
-    component_values*: Option[BillSubsApiComponentValues]
-    currency*: Option[BillSubsApiCurrency]
-    current_period_end*: Option[BillSubsApiCurrentPeriodEnd]
-    current_period_start*: Option[BillSubsApiCurrentPeriodStart]
-    frequency*: Option[BillSubsApiFrequencyResponse]
-    id*: Option[BillSubsApiSchemasIdentifier]
-    price*: Option[BillSubsApiPrice]
-    rate_plan*: Option[BillSubsApiRatePlan]
-    state*: Option[BillSubsApiState]
+    component_values*: Option[BillSubsComponentValues]
+    currency*: Option[BillSubsCurrency]
+    current_period_end*: Option[BillSubsCurrentPeriodEnd]
+    current_period_start*: Option[BillSubsCurrentPeriodStart]
+    frequency*: Option[BillSubsFrequencyResponse]
+    id*: Option[BillSubsSchemasIdentifier]
+    price*: Option[BillSubsPrice]
+    rate_plan*: Option[BillSubsRatePlan]
+    state*: Option[BillSubsState]
     zone*: Option[JsonNode]
 
-  BillSubsApiType* = string
+  BillSubsType* = string
 
-  BillSubsApiUnitPrice* = float64
+  BillSubsUnitPrice* = float64
 
-  BillSubsApiUnpaidInvoicesResponseSingle* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
+  BillSubsUnpaidInvoicesResponseSingle* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiUserSubscriptionResponseCollection* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
-    result*: seq[BillSubsApiSubscription]
+  BillSubsUserSubscriptionResponseCollection* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
+    result*: seq[BillSubsSubscription]
     success*: bool
       ## Whether the API call was successful
-    result_info*: Option[BillSubsApiResultInfo]
+    result_info*: Option[BillSubsResultInfo]
 
-  BillSubsApiUserSubscriptionResponseSingle* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
+  BillSubsUserSubscriptionResponseSingle* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
     result*: JsonNode
     success*: bool
       ## Whether the API call was successful
 
-  BillSubsApiValidatedAddress* = ref object of RootObj
+  BillSubsValidatedAddress* = ref object of RootObj
     address*: Option[string]
       ## Validated address line 1.
     address2*: Option[string]
@@ -8574,15 +8613,15 @@ type
     zipcode*: Option[string]
       ## Validated postal or zip code.
 
-  BillSubsApiZone* = ref object of RootObj
+  BillSubsZone* = ref object of RootObj
     ## A simple zone object. May have null properties if not a zone subscription.
-    id*: Option[BillSubsApiIdentifier]
-    name*: Option[BillSubsApiName]
+    id*: Option[BillSubsIdentifier]
+    name*: Option[BillSubsName]
 
-  BillSubsApiZoneSubscriptionResponseSingle* = ref object of RootObj
-    errors*: BillSubsApiMessages
-    messages*: BillSubsApiMessages
-    result*: BillSubsApiSubscriptionResponse
+  BillSubsZoneSubscriptionResponseSingle* = ref object of RootObj
+    errors*: BillSubsMessages
+    messages*: BillSubsMessages
+    result*: BillSubsSubscriptionResponse
     success*: bool
       ## Whether the API call was successful
 
@@ -8683,8 +8722,10 @@ type
       ## provided. Missing keys are omitted, and key-only tags are returned as boolean
       ## `true`. All other tag values are strings.
     x_billable_metric_id*: string
-      ## The unique identifier for the billable metric in the Cloudflare catalog.
-      ## Cloudflare extension; replaces FOCUS SkuId.
+      ## The unique identifier for the billable metric in the Cloudflare catalog. For
+      ## cost billed under a since-archived billable metric this is the metric's catalog
+      ## public id (a UUID) rather than its usage metric name, so it stays separate from
+      ## the live metric that replaced it. Cloudflare extension; replaces FOCUS SkuId.
     x_billable_metric_name*: Option[string]
       ## The display name of the billable metric. Cloudflare extension; replaces FOCUS
       ## SkuMeter.
@@ -8864,6 +8905,9 @@ type
     billable_metric_ids*: Option[seq[string]]
       ## Restrict results to rows whose `x_BillableMetricId` matches one of these
       ## billable metric ids (e.g. `workers_standard_requests`). Values must be unique.
+      ## Cost billed under an archived billable metric carries that metric's catalog
+      ## public id as `x_BillableMetricId` and is never matched by this filter; omit the
+      ## filter to include it.
     product_family_ids*: Option[seq[string]]
       ## Restrict results to billable metrics belonging to these product families. Values
       ## must be unique UUIDs.
@@ -9425,26 +9469,26 @@ type
 
   BotManagementUsingLatestModel* = bool
 
-  BotnetFeedApiApiResponseCommon* = ref object of RootObj
-    errors*: BotnetFeedApiMessages
-    messages*: BotnetFeedApiMessages
+  BotnetFeedApiResponseCommon* = ref object of RootObj
+    errors*: BotnetFeedMessages
+    messages*: BotnetFeedMessages
     success*: bool
       ## Whether the API call was successful.
 
-  BotnetFeedApiApiResponseCommonFailure* = ref object of RootObj
+  BotnetFeedApiResponseCommonFailure* = ref object of RootObj
     errors*: JsonNode
     messages*: JsonNode
     result*: Option[JsonNode]
     success*: bool
       ## Whether the API call was successful.
 
-  BotnetFeedApiAsn* = int64
+  BotnetFeedAsn* = int64
 
-  BotnetFeedApiIdentifier* = string
+  BotnetFeedIdentifier* = string
 
-  BotnetFeedApiMessages* = seq[JsonNode]
+  BotnetFeedMessages* = seq[JsonNode]
 
-  BotnetFeedApiTimestamp* = string
+  BotnetFeedTimestamp* = string
 
   BrandProtectionApiError* = ref object of RootObj
     code*: Option[int64]
@@ -14098,6 +14142,9 @@ type
     domain*: string
       ## Hostname or domain pattern, capped at 255 UTF-8 bytes
 
+  CwsErrorDetails* = ref object of RootObj
+    references*: Option[seq[CwsResourceReference]]
+
   CwsErrorResponse* = ref object of RootObj
     errors*: Option[seq[CwsResponseMessage]]
     messages*: Option[seq[CwsResponseMessage]]
@@ -14338,6 +14385,11 @@ type
       ## bytes.
     updated_at*: string
 
+  CwsResourceReference* = ref object of RootObj
+    id*: string
+    name*: string
+    resource_type*: string
+
   CwsResponseBasicAuthCredential* = ref object of RootObj
     errors*: Option[seq[CwsResponseMessage]]
     messages*: Option[seq[CwsResponseMessage]]
@@ -14382,6 +14434,7 @@ type
 
   CwsResponseMessage* = ref object of RootObj
     code*: int64
+    details*: Option[CwsErrorDetails]
     message*: string
     source*: Option[CwsMessageSource]
 
@@ -14650,8 +14703,21 @@ type
 
   D1DatabaseResponse* = ref object of RootObj
     created_at*: Option[D1CreatedAt]
+    file_size*: Option[D1FileSize]
     jurisdiction*: Option[D1JurisdictionNullable]
     name*: Option[D1DatabaseName]
+    num_tables*: Option[D1TableCount]
+    recommendation_count*: Option[int64]
+      ## Number of current index recommendations for the database. To list them, use
+      ## `GET
+      ## /accounts/{account_id}/d1/insights/recommendations?database_id={database_id}`.
+      ##
+      ## Only returned when requested with `fields`. Left out of every database when D1
+      ## Insights
+      ## is turned off for the account, or when the count is unavailable, so a missing
+      ## value
+      ## means unknown, not `0`.
+      ##
     uuid*: Option[D1DatabaseIdentifier]
     version*: Option[D1DatabaseVersion]
 
@@ -14693,6 +14759,40 @@ type
       ## Estimated number of rows written in the window.
     total_duration_ms*: Option[float64]
       ## Estimated total execution time in the window, in milliseconds.
+
+  D1InsightsRecommendation* = ref object of RootObj
+    database_id*: D1DatabaseIdentifier
+    database_name*: string
+      ## The current name of the database.
+    generated_at*: string
+      ## When D1 generated the recommendation.
+    id*: string
+      ## Recommendation identifier.
+    impacted_queries*: seq[JsonNode]
+      ## The queries the change is expected to speed up, with their usage in
+      ## `query_window`.
+    priority*: string
+      ## `high` when the impacted queries spend a large amount of time scanning rows they
+      ## do not return.
+    query_window*: JsonNode
+      ## The window of query usage the recommendation is based on, in UTC. `from` is
+      ## inclusive, `to` is exclusive.
+    reasoning*: string
+      ## Why the change is recommended.
+    suggestions*: seq[JsonNode]
+      ## The changes to make.
+    summary*: string
+      ## A short description of the recommended change.
+    `type`*: string
+      ## The kind of recommendation.
+
+  D1InsightsSettingsResponse* = ref object of RootObj
+    errors*: D1Messages
+    messages*: D1Messages
+    success*: bool
+      ## Whether the API call was successful
+    result*: JsonNode
+      ## The account's D1 Insights settings.
 
   D1Jurisdiction* = enum
     ## Specify the location to restrict the D1 database to run and store data. If this
@@ -14859,7 +14959,7 @@ type
     message*: string
       ## Plain-text notification message.
     outcome_counts*: Option[JsonNode]
-      ## Weighted delivery outcome counts derived from sampled delivery events.
+      ## Exact delivery outcome counts.
     recipient_count*: Option[int64]
       ## Number of targeted device registrations. Omitted for account-wide notifications.
     scope*: string
@@ -15227,8 +15327,6 @@ type
       ## Active notification duration in milliseconds. Expired outcomes report zero.
     registration_id*: string
       ## Registration ID of the device that produced the outcome.
-    sample_interval*: int64
-      ## Sampling interval for this event. Values above one indicate a sampled result.
     status*: string
       ## Observed notification delivery status.
     timestamp*: JsonNode
@@ -15237,9 +15335,6 @@ type
   DigitalExperienceMonitoringNotificationOutcomeCounts* = ref object of RootObj
     delivered*: int64
       ## Number of delivered outcomes.
-    estimated*: bool
-      ## Whether these weighted counts may be affected by equitable sampling before
-      ## full-resolution storage.
     expired*: int64
       ## Number of expired outcomes.
     failed*: int64
@@ -15543,15 +15638,6 @@ type
     id*: string
     name*: string
     `type`*: DlpEntryType
-
-  DlpBehavior* = ref object of RootObj
-    description*: string
-    enabled*: bool
-    name*: string
-    risk_level*: DlpRiskLevel
-
-  DlpBehaviors* = ref object of RootObj
-    behaviors*: JsonNode
 
   DlpConfidence* = enum
     low = "low"
@@ -16415,26 +16501,6 @@ type
   DlpRegexValidationResult* = ref object of RootObj
     valid*: bool
 
-  DlpRiskEvent* = ref object of RootObj
-    event_details*: Option[JsonNode]
-    id*: string
-    name*: string
-    risk_level*: DlpRiskLevel
-    timestamp*: string
-
-  DlpRiskEvents* = ref object of RootObj
-    email*: string
-    events*: seq[DlpRiskEvent]
-    last_reset_time*: Option[string]
-    name*: string
-    risk_level*: Option[JsonNode]
-
-  DlpRiskLevel* = enum
-    info = "info"
-    low = "low"
-    medium = "medium"
-    high = "high"
-
   DlpRiskScoreIntegration* = ref object of RootObj
     account_tag*: string
       ## The Cloudflare account tag.
@@ -16461,9 +16527,6 @@ type
 
   DlpRiskScoreIntegrationType* = enum
     Okta = "Okta"
-
-  DlpRiskSummary* = ref object of RootObj
-    users*: seq[DlpUserRiskInfo]
 
   DlpSensitivityGroup* = ref object of RootObj
     created_at*: string
@@ -16540,13 +16603,6 @@ type
   DlpUpdateAddinAccountMapping* = ref object of RootObj
     auth_requirements*: DlpAddinAuth
 
-  DlpUpdateBehavior* = ref object of RootObj
-    enabled*: bool
-    risk_level*: DlpRiskLevel
-
-  DlpUpdateBehaviors* = ref object of RootObj
-    behaviors*: JsonNode
-
   DlpUpdateDocumentFingerprint* = ref object of RootObj
     description*: Option[string]
     match_percent*: Option[int32]
@@ -16568,14 +16624,6 @@ type
       ## n-access-identity-provider
     tenant_url*: string
       ## The base url of the tenant, e.g. "https://tenant.okta.com".
-
-  DlpUserRiskInfo* = ref object of RootObj
-    email*: string
-    event_count*: int64
-    last_event*: string
-    max_risk_level*: DlpRiskLevel
-    name*: string
-    user_id*: string
 
   DlpValidation* = enum
     luhn = "luhn"
@@ -16647,13 +16695,6 @@ type
       ## A name for this validator, at most 50 characters.
     script_tag*: string
       ## The public script tag of the customer's Worker that scores matches.
-
-  DlpApiResponseCollection* = ref object of RootObj
-    errors*: DlpMessages
-    messages*: DlpMessages
-    success*: bool
-      ## Whether the API call was successful.
-    result_info*: Option[JsonNode]
 
   DlpApiResponseCommon* = ref object of RootObj
     errors*: DlpMessages
@@ -17677,6 +17718,8 @@ type
     content = "content"
     ttl = "ttl"
     proxied = "proxied"
+    createdOn = "created_on"
+    modifiedOn = "modified_on"
 
   DnsRecordsPage* = float64
 
@@ -20107,7 +20150,7 @@ type
   EmailRuleMatcher* = ref object of RootObj
     ## Matching pattern to forward your actions.
     field*: Option[string]
-      ## Field for type matcher.
+      ## Field for type matcher. Required for `literal` matchers, and must be `to`.
     `type`*: string
       ## Type of matcher.
     value*: Option[string]
@@ -20467,6 +20510,138 @@ type
       ## Human-readable name of the feature.
 
   EntitlementsIdentifier* = string
+
+  FeedbackApiResponseCommon* = ref object of RootObj
+    errors*: FeedbackMessages
+    messages*: FeedbackMessages
+    success*: bool
+      ## Whether the API call was successful.
+
+  FeedbackApiResponseCommonFailure* = ref object of RootObj
+    errors*: FeedbackMessages
+    messages*: FeedbackMessages
+    result*: Option[JsonNode]
+      ## Always null on failure.
+    success*: bool
+      ## Whether the API call was successful.
+
+  FeedbackFeedbackAgent* = ref object of RootObj
+    ## A report from a coding agent, sent with `cf feedback --input-json` or the MCP
+    ## server.
+    commands*: Option[seq[JsonNode]]
+      ## Commands the agent ran.
+    docs_urls*: Option[seq[string]]
+      ## Documentation the agent read.
+    errors*: Option[seq[JsonNode]]
+      ## Errors the agent hit.
+    model*: Option[string]
+      ## The model the agent used.
+    name*: Option[string]
+      ## The agent's name, such as `claude-code`.
+    repro_steps*: Option[seq[string]]
+      ## Steps to reproduce the problem.
+    stats*: Option[JsonNode]
+      ## Counts for the task.
+    version*: Option[string]
+      ## The agent's version.
+
+  FeedbackFeedbackClient* = ref object of RootObj
+    ## Context the cf CLI attaches: its version and mode, the platform, the detected
+    ## agent and the last command.
+    agent_detected*: Option[string]
+      ## The coding agent the CLI detected, such as `claude-code`.
+    agent_model_detected*: Option[string]
+      ## The model the CLI detected.
+    arch*: Option[string]
+      ## The CPU architecture.
+    cli_delegated*: Option[bool]
+      ## Whether the command was delegated to another tool.
+    cli_mode*: Option[string]
+      ## How the CLI was run.
+    cli_version*: Option[string]
+      ## The cf CLI version.
+    error*: Option[JsonNode]
+      ## The error the CLI reported, if any.
+    is_ci*: Option[bool]
+      ## Whether the CLI ran in CI.
+    is_interactive*: Option[bool]
+      ## Whether the CLI ran in an interactive terminal.
+    last_command*: Option[JsonNode]
+      ## The last cf command run before the feedback.
+    node_major*: Option[int64]
+      ## The Node.js major version.
+    os*: Option[string]
+      ## The operating system.
+    os_release*: Option[string]
+      ## The operating system release.
+    package_manager*: Option[string]
+      ## The package manager that installed the CLI.
+    telemetry_enabled*: Option[bool]
+      ## Whether CLI telemetry was on.
+
+  FeedbackFeedbackDiagnosis* = ref object of RootObj
+    instructions*: string
+      ## The prompt for the agent, in Markdown.
+    prompt_version*: string
+      ## Version of the prompt in `instructions`.
+    schema_version*: int64
+      ## Version of this response format.
+    submit*: JsonNode
+      ## How to send the finished report.
+
+  FeedbackFeedbackError* = ref object of RootObj
+    error*: string
+      ## A short error code, such as `rate_limited` or `invalid_json`.
+
+  FeedbackFeedbackReceipt* = ref object of RootObj
+    ignored*: Option[seq[JsonNode]]
+      ## Fields that were not stored as sent.
+    notices*: Option[seq[string]]
+      ## Something the client should tell the user, such as a credential having been
+      ## redacted.
+    status*: string
+      ## The feedback was stored.
+    submission_id*: string
+      ## The ID to share with the user.
+
+  FeedbackFeedbackSubmission* = ref object of RootObj
+    actual*: Option[string]
+      ## What happened instead.
+    agent*: Option[FeedbackFeedbackAgent]
+    attempted*: Option[string]
+      ## What was tried.
+    client*: Option[FeedbackFeedbackClient]
+    command*: Option[string]
+      ## The cf command it is about, such as `workers deploy`.
+    expected*: Option[string]
+      ## What was expected to happen.
+    fields*: Option[JsonNode]
+      ## Any other details as string values, keyed by lowercase names such as `region`.
+    impact*: Option[string]
+      ## How much it got in the way.
+    message*: Option[string]
+      ## The feedback, in the user's or agent's words.
+    product*: Option[string]
+      ## The Cloudflare product it is about, such as `workers` or `r2`.
+    rating*: Option[int64]
+      ## An overall rating from 1 to 5.
+    schema_version*: int64
+      ## Version of this request format.
+    sent_at*: Option[string]
+      ## When the client sent the feedback.
+    sentiment*: Option[string]
+      ## The overall sentiment.
+    submission_id*: string
+      ## A UUID chosen by the client. Retrying with the same ID does not store the
+      ## feedback twice.
+    suggestion*: Option[string]
+      ## What would have helped.
+    task*: Option[string]
+      ## What the user was trying to do.
+    `type`*: Option[string]
+      ## What kind of feedback this is.
+
+  FeedbackMessages* = seq[JsonNode]
 
   FieldExtractorsApiError* = ref object of RootObj
     code*: float64
@@ -21238,6 +21413,38 @@ type
   FlagshipLogicalCondition4* = ref object of RootObj
     clauses*: seq[FlagshipBaseCondition]
     logical_operator*: string
+
+  FlagshipOfrepBulkEvaluationResponse* = ref object of RootObj
+    flags*: seq[JsonNode]
+      ## One entry per flag in the app. A flag with an invalid config is reported as a
+      ## failure entry.
+
+  FlagshipOfrepEvaluationFailure* = ref object of RootObj
+    error_code*: string
+      ## OpenFeature error code for the failed evaluation.
+    error_details*: Option[string]
+      ## Human-readable description of the failure.
+    key*: Option[string]
+      ## Key of the flag that failed. Omitted on request-level errors.
+
+  FlagshipOfrepEvaluationRequest* = ref object of RootObj
+    context*: Option[JsonNode]
+      ## Evaluation attributes keyed by name. Values may be any JSON value; the context
+      ## supports up to 100 entries, nesting depth of 10, 10,000 values, and 32 KB. Omit
+      ## for an empty context.
+
+  FlagshipOfrepEvaluationSuccess* = ref object of RootObj
+    key*: string
+      ## Key of the evaluated flag.
+    metadata*: Option[JsonNode]
+      ## Key-value metadata associated with the flag. Returned only when the flag has
+      ## metadata.
+    reason*: string
+      ## Reason the evaluator selected this variation.
+    value*: Option[FlagshipJsonValue]
+    variant*: Option[string]
+      ## Name of the variation that supplied the resolved value. Omitted when the flag is
+      ## disabled.
 
   FlagshipResultInfo* = ref object of RootObj
     count*: int64
@@ -23480,6 +23687,28 @@ type
 
   ImagesImageVariantsResponse* = ref object of RootObj
     variants*: Option[ImagesImageVariantPublicRequest]
+
+  ImagesImagesConfig* = ref object of RootObj
+    ## Account-level Cloudflare Images settings. Settings that are `false` may be
+    ## omitted from responses; treat an absent setting as `false`.
+    flexible_variants*: Option[ImagesImagesConfigFlexibleVariants]
+    preserve_content_credentials*: Option[ImagesImagesConfigPreserveContentCredentials]
+
+  ImagesImagesConfigEditRequest* = ref object of RootObj
+    ## Settings to change. Settings omitted from the request are left unchanged.
+    flexible_variants*: Option[ImagesImagesConfigFlexibleVariants]
+    preserve_content_credentials*: Option[ImagesImagesConfigPreserveContentCredentials]
+
+  ImagesImagesConfigFlexibleVariants* = bool
+
+  ImagesImagesConfigPreserveContentCredentials* = bool
+
+  ImagesImagesConfigResponse* = ref object of RootObj
+    errors*: ImagesMessages
+    messages*: ImagesMessages
+    result*: ImagesImagesConfig
+    success*: bool
+      ## Whether the API call was successful
 
   ImagesImagesListContinuationToken* = string
 
@@ -28144,11 +28373,21 @@ type
       ## legacy report revisions.
     location*: JsonNode
     open_question*: Option[string]
-      ## One bounded unresolved proof question. Optional on legacy report revisions.
+      ## One bounded unresolved proof question. For a finding in a pending proof state,
+      ## it names what must be checked, in the source, public information, a measurement
+      ## or with the owning team that `proof_state` names, to prove or refute the
+      ## finding. Optional on legacy report revisions.
     proof_method*: Option[string]
       ## Method used or needed to close the proof. Optional on legacy report revisions.
     proof_state*: Option[string]
-      ## Current proof lifecycle state. Optional on legacy report revisions.
+      ## Current proof lifecycle state. `closed` means the finding is proven. A pending
+      ## state means the path through the scanned repository is confirmed and one
+      ## question the scanned source cannot settle, stated in `open_question`, is still
+      ## open: `pending_source` waits on a dependency's or runtime's source,
+      ## `pending_public` on public information, `pending_experiment` on a measurement,
+      ## and `pending_team` on a fact the owning team knows, such as a deployment or
+      ## consumer detail. The report's conditions and severity assume it resolves in the
+      ## attacker's favour. Optional on legacy report revisions.
     reachability*: seq[ManagedDefenseVulnerabilityDiscoveryReportReachability]
     remediation*: JsonNode
     root_cause*: string
@@ -28344,6 +28583,58 @@ type
     expires_in*: int64
     remote*: string
     token*: string
+
+  ManagedTransformsErrors* = seq[ManagedTransformsMessage]
+
+  ManagedTransformsManagedTransform* = ref object of RootObj
+    ## A Managed Transform object.
+    conflicts_with*: Option[seq[JsonNode]]
+      ## The Managed Transforms that this Managed Transform conflicts with.
+    enabled*: bool
+      ## Whether the Managed Transform is enabled.
+    has_conflict*: bool
+      ## Whether the Managed Transform conflicts with the currently-enabled Managed
+      ## Transforms.
+    id*: ManagedTransformsManagedTransformId
+
+  ManagedTransformsManagedTransformId* = string
+
+  ManagedTransformsManagedTransforms* = ref object of RootObj
+    ## A Managed Transforms object.
+    managed_request_headers*: seq[JsonNode]
+      ## The list of Managed Request Transforms.
+    managed_response_headers*: seq[JsonNode]
+      ## The list of Managed Response Transforms.
+
+  ManagedTransformsManagedTransformsPatch* = ref object of RootObj
+    ## A Managed Transforms patch object. Both fields are optional; only the sections
+    ## provided will be updated.
+    managed_request_headers*: Option[seq[JsonNode]]
+      ## The list of Managed Request Transforms.
+    managed_response_headers*: Option[seq[JsonNode]]
+      ## The list of Managed Response Transforms.
+
+  ManagedTransformsMessage* = ref object of RootObj
+    ## A message.
+    code*: Option[int64]
+      ## A unique code for this message.
+    message*: string
+      ## A text description of this message.
+    source*: Option[JsonNode]
+      ## The source of this message.
+
+  ManagedTransformsMessages* = seq[ManagedTransformsMessage]
+
+  ManagedTransformsResponse* = ref object of RootObj
+    ## A response object.
+    errors*: ManagedTransformsErrors
+    messages*: ManagedTransformsMessages
+    result*: JsonNode
+      ## A result.
+    success*: bool
+      ## Whether the API call was successful.
+
+  ManagedTransformsZoneId* = string
 
   MconnTelemetryAccountId* = string
 
@@ -29863,6 +30154,41 @@ type
 
   NelConfigZoneIdentifier* = string
 
+  NetworkqualityErrorEnvelope* = ref object of RootObj
+    errors*: seq[JsonNode]
+    messages*: seq[string]
+    result*: Option[JsonNode]
+    success*: bool
+
+  NetworkqualitySettingsResult* = ref object of RootObj
+    enabled*: bool
+    updated_at*: Option[string]
+
+  NetworkqualitySettingsSuccess* = ref object of RootObj
+    errors*: seq[string]
+    messages*: seq[string]
+    result*: NetworkqualitySettingsResult
+    success*: bool
+
+  NetworkqualitySettingsUpdate* = ref object of RootObj
+    enabled*: bool
+
+  NetworkqualityTokenRequest* = ref object of RootObj
+    bytes*: int64
+      ## Customer-defined byte budget signed into the token for downstream enforcement
+      ## and billing
+    eyeball_id*: string
+    source_ips*: Option[seq[JsonNode]]
+
+  NetworkqualityTokenResult* = ref object of RootObj
+    token*: string
+
+  NetworkqualityTokenSuccess* = ref object of RootObj
+    errors*: seq[string]
+    messages*: seq[string]
+    result*: NetworkqualityTokenResult
+    success*: bool
+
   NscAccountTag* = string
 
   NscApiBandwidth* = enum
@@ -30833,25 +31159,27 @@ type
     id*: string
       ## Use case identifier (e.g. casb, ces).
 
-  OrganizationsApiAccount* = ref object of RootObj
+  OrganizationsAccount* = ref object of RootObj
     created_on*: string
+    enterprise_provisioning_status*: Option[string]
     id*: string
     name*: Option[string]
+    provisioning_mode*: Option[string]
     settings*: JsonNode
     tags*: Option[JsonNode]
       ## Account tags, present only when `include_tags=true` is requested.
     `type`*: string
 
-  OrganizationsApiAccountListResultInfo* = OrganizationsApiPageTokenResultInfo
+  OrganizationsAccountListResultInfo* = OrganizationsPageTokenResultInfo
 
-  OrganizationsApiBatchCreateMembersRequest* = ref object of RootObj
-    members*: Option[seq[OrganizationsApiCreateSingleMember]]
+  OrganizationsBatchCreateMembersRequest* = ref object of RootObj
+    members*: Option[seq[OrganizationsCreateSingleMember]]
       ## Omitted or null members are treated as an empty batch.
 
-  OrganizationsApiCreateMemberRequest* = ref object of RootObj
-    member*: OrganizationsApiCreateSingleMember
+  OrganizationsCreateMemberRequest* = ref object of RootObj
+    member*: OrganizationsCreateSingleMember
 
-  OrganizationsApiCreateOrganizationProfileRequest* = ref object of RootObj
+  OrganizationsCreateOrganizationProfileRequest* = ref object of RootObj
     ## Optional profile fields, each limited to 1,000 UTF-8 bytes. An empty profile is
     ## ignored.
     business_address*: Option[string]
@@ -30860,35 +31188,35 @@ type
     business_phone*: Option[string]
     external_metadata*: Option[string]
 
-  OrganizationsApiCreateOrganizationRequest* = ref object of RootObj
+  OrganizationsCreateOrganizationRequest* = ref object of RootObj
     name*: string
       ## The Organization name, limited to 65 UTF-8 bytes.
     parent*: Option[JsonNode]
-    profile*: Option[OrganizationsApiCreateOrganizationProfileRequest]
+    profile*: Option[OrganizationsCreateOrganizationProfileRequest]
 
-  OrganizationsApiCreateSingleMember* = ref object of RootObj
+  OrganizationsCreateSingleMember* = ref object of RootObj
     user*: JsonNode
 
-  OrganizationsApiDeleteOrganizationMemberResult* = ref object of RootObj
+  OrganizationsDeleteOrganizationMemberResult* = ref object of RootObj
     id*: string
 
-  OrganizationsApiDeleteOrganizationResult* = ref object of RootObj
+  OrganizationsDeleteOrganizationResult* = ref object of RootObj
     id*: string
 
-  OrganizationsApiFeature* = ref object of RootObj
+  OrganizationsFeature* = ref object of RootObj
     key*: string
 
-  OrganizationsApiHandleOrganizationInviteRequest* = ref object of RootObj
+  OrganizationsHandleOrganizationInviteRequest* = ref object of RootObj
     status*: string
 
-  OrganizationsApiLegacyAccount* = ref object of RootObj
+  OrganizationsLegacyAccount* = ref object of RootObj
     account_pubname*: Option[string]
     account_tag*: string
     account_type*: string
     created_on*: string
     settings*: JsonNode
 
-  OrganizationsApiLegacyTenant* = ref object of RootObj
+  OrganizationsLegacyTenant* = ref object of RootObj
     cdate*: string
     customer_id*: Option[string]
     edate*: string
@@ -30900,49 +31228,49 @@ type
     tenant_status*: string
     tenant_tag*: string
     tenant_type*: string
-    tenant_units*: Option[seq[OrganizationsApiTenantUnit]]
+    tenant_units*: Option[seq[OrganizationsTenantUnit]]
     ui_flags*: JsonNode
       ## Which top-level dashboard experiences to render for this tenant; both may be
       ## true.
 
-  OrganizationsApiMember* = ref object of RootObj
+  OrganizationsMember* = ref object of RootObj
     create_time*: string
-    id*: OrganizationsApiMemberID
+    id*: OrganizationsMemberID
     meta*: JsonNode
-    policies*: Option[seq[OrganizationsApiMemberPolicy]]
+    policies*: Option[seq[OrganizationsMemberPolicy]]
       ## Direct policies of the membership. Present only for DSR members enrolled in
       ## Organization Roles.
     status*: string
     update_time*: string
-    user*: OrganizationsApiMemberSubjectUser
+    user*: OrganizationsMemberSubjectUser
 
-  OrganizationsApiMemberID* = string
+  OrganizationsMemberID* = string
 
-  OrganizationsApiMemberPolicy* = ref object of RootObj
+  OrganizationsMemberPolicy* = ref object of RootObj
     id*: Option[string]
       ## Omit to create a policy. An unchanged policy keeps its ID; a changed policy is
       ## replaced under a new ID.
-    roles*: seq[OrganizationsApiMemberPolicyRole]
-    scopes*: seq[OrganizationsApiMemberPolicyScope]
+    roles*: seq[OrganizationsMemberPolicyRole]
+    scopes*: seq[OrganizationsMemberPolicyScope]
 
-  OrganizationsApiMemberPolicyRole* = ref object of RootObj
+  OrganizationsMemberPolicyRole* = ref object of RootObj
     id*: string
 
-  OrganizationsApiMemberPolicyScope* = ref object of RootObj
+  OrganizationsMemberPolicyScope* = ref object of RootObj
     key*: string
       ## An Organization (`com.cloudflare.api.tenant.unit.<tag>`) or Account
       ## (`com.cloudflare.api.account.<tag>`) key.
-    subset_of*: Option[seq[OrganizationsApiMemberPolicyScope]]
+    subset_of*: Option[seq[OrganizationsMemberPolicyScope]]
       ## The route Organization for Account scopes. Optional in requests and always
       ## returned for Account scopes.
 
-  OrganizationsApiMemberSubjectUser* = ref object of RootObj
+  OrganizationsMemberSubjectUser* = ref object of RootObj
     email*: string
     id*: string
     name*: string
     two_factor_authentication_enabled*: bool
 
-  OrganizationsApiModifyOrganizationRequest* = ref object of RootObj
+  OrganizationsModifyOrganizationRequest* = ref object of RootObj
     name*: Option[string]
       ## The Organization name, limited to 65 UTF-8 bytes. An omitted, empty, or
       ## unchanged value is a no-op.
@@ -30950,7 +31278,7 @@ type
       ## The current parent Organization ID. A different value is rejected; this endpoint
       ## cannot move an Organization.
 
-  OrganizationsApiModifyProfileRequest* = ref object of RootObj
+  OrganizationsModifyProfileRequest* = ref object of RootObj
     ## Partial business profile update. Omitted, empty, or null fields remain
     ## unchanged. At least
     ## one of business name, address, phone, or email must be non-empty.
@@ -30960,22 +31288,22 @@ type
     business_phone*: Option[string]
     external_metadata*: Option[string]
 
-  OrganizationsApiMoveAccountResult* = ref object of RootObj
+  OrganizationsMoveAccountResult* = ref object of RootObj
     account_id*: string
     destination_organization_id*: string
     source_organization_id*: string
       ## Empty string when the account did not belong to an organization before the move.
 
-  OrganizationsApiOrganization* = ref object of RootObj
+  OrganizationsOrganization* = ref object of RootObj
     ## References an Organization in the Cloudflare data model.
     create_time*: string
     id*: JsonNode
     meta*: JsonNode
     name*: string
     parent*: Option[JsonNode]
-    profile*: Option[OrganizationsApiProfile]
+    profile*: Option[OrganizationsProfile]
 
-  OrganizationsApiOrganizationFlags* = ref object of RootObj
+  OrganizationsOrganizationFlags* = ref object of RootObj
     ## Enable features for Organizations.
     account_creation*: string
     account_creation_applies_tenant_defaults*: string
@@ -30986,21 +31314,21 @@ type
     member_management*: string
     sub_org_creation*: string
 
-  OrganizationsApiOrganizationID* = string
+  OrganizationsOrganizationID* = string
 
-  OrganizationsApiOrganizationInviteMember* = ref object of RootObj
+  OrganizationsOrganizationInviteMember* = ref object of RootObj
     ## Membership returned after handling an Organization invitation. Invite handling
     ## populates
     ## user ID and email; name, two-factor status, and timestamps contain placeholder
     ## values.
     create_time*: string
-    id*: OrganizationsApiMemberID
+    id*: OrganizationsMemberID
     meta*: Option[JsonNode]
     status*: string
     update_time*: string
-    user*: OrganizationsApiMemberSubjectUser
+    user*: OrganizationsMemberSubjectUser
 
-  OrganizationsApiPageTokenResultInfo* = ref object of RootObj
+  OrganizationsPageTokenResultInfo* = ref object of RootObj
     next_page_token*: Option[string]
       ## Use this opaque token in the next request to retrieve the
       ## next page.
@@ -31011,48 +31339,48 @@ type
       ## Counts the total amount of items in a list with the applied filters. The API
       ## omits next_page_token to indicate no more items in a particular list.
 
-  OrganizationsApiProfile* = ref object of RootObj
+  OrganizationsProfile* = ref object of RootObj
     business_address*: string
     business_email*: string
     business_name*: string
     business_phone*: string
     external_metadata*: string
 
-  OrganizationsApiProfileResponse* = ref object of RootObj
+  OrganizationsProfileResponse* = ref object of RootObj
     errors*: seq[JsonNode]
-    messages*: seq[OrganizationsApiV4Message]
-    result*: OrganizationsApiProfile
+    messages*: seq[OrganizationsV4Message]
+    result*: OrganizationsProfile
     success*: bool
 
-  OrganizationsApiTenantUnit* = ref object of RootObj
-    unit_memberships*: Option[seq[OrganizationsApiTenantUnitMembership]]
+  OrganizationsTenantUnit* = ref object of RootObj
+    unit_memberships*: Option[seq[OrganizationsTenantUnitMembership]]
     unit_metadata*: JsonNode
     unit_name*: string
     unit_status*: string
     unit_tag*: string
 
-  OrganizationsApiTenantUnitMembership* = ref object of RootObj
+  OrganizationsTenantUnitMembership* = ref object of RootObj
     member_metadata*: JsonNode
     member_status*: string
     member_tag*: string
 
-  OrganizationsApiUserTenantAllocation* = ref object of RootObj
+  OrganizationsUserTenantAllocation* = ref object of RootObj
     `type`*: string
-    value*: OrganizationsApiUserTenantAllocationValue
+    value*: OrganizationsUserTenantAllocationValue
 
-  OrganizationsApiUserTenantAllocationValue* = ref object of RootObj
+  OrganizationsUserTenantAllocationValue* = ref object of RootObj
 
-  OrganizationsApiUserTenantEntitlement* = ref object of RootObj
-    allocation*: OrganizationsApiUserTenantAllocation
-    feature*: OrganizationsApiFeature
+  OrganizationsUserTenantEntitlement* = ref object of RootObj
+    allocation*: OrganizationsUserTenantAllocation
+    feature*: OrganizationsFeature
 
-  OrganizationsApiV4ErrorResponse* = ref object of RootObj
-    errors*: seq[OrganizationsApiV4Message]
-    messages*: seq[OrganizationsApiV4Message]
+  OrganizationsV4ErrorResponse* = ref object of RootObj
+    errors*: seq[OrganizationsV4Message]
+    messages*: seq[OrganizationsV4Message]
     result*: Option[JsonNode]
     success*: bool
 
-  OrganizationsApiV4Message* = ref object of RootObj
+  OrganizationsV4Message* = ref object of RootObj
     code*: int64
     message*: string
 
@@ -31268,6 +31596,10 @@ type
     hashes*: seq[string]
       ## List of file content hashes to register in the asset store.
 
+  PagesPagesDeployHookResponse* = ref object of RootObj
+    id*: string
+      ## Identifier of the deployment started by the deploy hook.
+
   PagesPagesUploadTokenResponse* = ref object of RootObj
     jwt*: string
       ## Short-lived JWT used to authenticate Pages Direct Upload asset operations.
@@ -31445,9 +31777,6 @@ type
     license_status*: string
       ## Whether the selected accepted price agreement is currently active or retained
       ## after expiration
-    non_billable_since*: Option[string]
-      ## When the publisher zone was classified for local-only, non-billable settlement.
-      ## Null for billable zones.
     price_usd_microcents*: int64
       ## Price of the selected accepted agreement in microcents. For an active license
       ## this is the price currently in effect; for an expired license it is the last
@@ -31463,6 +31792,37 @@ type
       ## Opaque, account-bound cursor for the next page. It expires after one hour and is
       ## null on the final page.
     domains*: seq[PayPerCrawlEnabledDomain]
+
+  PayPerCrawlEnabledPublisher* = ref object of RootObj
+    domains*: seq[string]
+      ## Domains the publisher covers, sorted. Empty when the publisher covers no
+      ## domains.
+    license_expires_at*: Option[string]
+      ## Earlier non-null exclusive expiration from the accepted offer and the publisher
+      ## lifecycle, or null when neither expires
+    license_status*: string
+      ## Whether the selected accepted offer is currently active or retained after
+      ## expiration
+    price_usd_microcents*: int64
+      ## Price of the selected accepted offer in microcents. For an active license this
+      ## is the price currently in effect; for an expired license it is the last accepted
+      ## price.
+    publisher_id*: string
+      ## Identifier of the publisher whose accepted offer this is. Report usage for this
+      ## publisher with this publisher_id.
+    publisher_name*: string
+      ## Display name of the publisher.
+
+  PayPerCrawlEnabledPublishersResponse* = ref object of RootObj
+    result*: PayPerCrawlEnabledPublishersResult
+    result_info*: Option[PayPerCrawlResultInfo]
+    success*: bool
+
+  PayPerCrawlEnabledPublishersResult* = ref object of RootObj
+    cursor*: Option[string]
+      ## Opaque, account-bound cursor for the next page. It expires after one hour and is
+      ## null on the final page.
+    publishers*: seq[PayPerCrawlEnabledPublisher]
 
   PayPerCrawlErrorSource* = ref object of RootObj
     pointer*: Option[string]
@@ -31480,6 +31840,41 @@ type
       ## Meta object containing non-standard meta-information about the error.
       ## This field must be an object or null!
     source*: Option[PayPerCrawlSource]
+
+  PayPerCrawlPPUAgreement* = ref object of RootObj
+    created_at*: string
+    price_usd_microcents*: Option[int64]
+      ## Offered price per use in USD microcents, or null when no price is agreed yet.
+    publisher_id*: string
+      ## Identifier of the publisher the offer is made to.
+    publisher_name*: string
+      ## Display name of the publisher.
+    status*: string
+      ## Open offers are proposed.
+
+  PayPerCrawlPPUAgreementRequest* = ref object of RootObj
+    price_usd_microcents*: Option[int64]
+      ## Offered price per use in USD microcents. Omit it or send null when no price is
+      ## agreed yet.
+    publisher_id*: string
+      ## Identifier of the publisher the offer is made to.
+
+  PayPerCrawlPPUAgreementResponse* = ref object of RootObj
+    errors*: Option[seq[PayPerCrawlMsg]]
+    messages*: Option[seq[PayPerCrawlMsg]]
+    result*: Option[PayPerCrawlPPUAgreement]
+    result_info*: Option[PayPerCrawlResultInfo]
+    success*: Option[bool]
+
+  PayPerCrawlPPUAgreements* = ref object of RootObj
+    agreements*: seq[PayPerCrawlPPUAgreement]
+
+  PayPerCrawlPPUAgreementsResponse* = ref object of RootObj
+    errors*: Option[seq[PayPerCrawlMsg]]
+    messages*: Option[seq[PayPerCrawlMsg]]
+    result*: Option[PayPerCrawlPPUAgreements]
+    result_info*: Option[PayPerCrawlResultInfo]
+    success*: Option[bool]
 
   PayPerCrawlPPUOperatorConfiguration* = ref object of RootObj
     default_price_usd_microcents*: int64
@@ -31524,9 +31919,6 @@ type
       ## Accepted price active at the current time.
     default_price_usd_microcents*: int64
     name*: string
-    non_billable_since*: Option[string]
-      ## When this operator was classified for local-only, non-billable settlement. Null
-      ## for billable operators. Always matches the requesting zone's classification.
     operator_id*: string
       ## Stable pay-per-use operator identifier.
     proposed_price*: Option[JsonNode]
@@ -31573,9 +31965,6 @@ type
 
   PayPerCrawlPPUProposal* = ref object of RootObj
     created_at*: string
-    non_billable_since*: Option[string]
-      ## When the proposing publisher zone was classified for local-only, non-billable
-      ## settlement. Null for billable zones.
     price_id*: int64
       ## Use this value to accept or reject this specific pending proposal.
     price_usd_microcents*: int64
@@ -34852,6 +35241,9 @@ type
       ## storage media type.
       ##
       ## Note that this field is not readable by clients, only writeable.
+    account_id*: Option[string]
+      ## Cloudflare account ID, a 32-character hexadecimal string. Required for
+      ## `cloudflare` storage.
     auth_method*: Option[string]
       ## Authentication method used for "sftp" type storage medium
       ##
@@ -37380,6 +37772,258 @@ type
     zone = "zone"
     zoneRuleset = "zone_ruleset"
 
+  RiskScoringBehavior* = ref object of RootObj
+    ## A risk behavior and its configuration.
+    description*: string
+      ## Explains what the behavior detects.
+    enabled*: bool
+      ## Whether the behavior counts toward the risk score.
+    name*: string
+      ## Display name of the behavior.
+    points*: RiskScoringPoints
+    risk_level*: RiskScoringRiskLevel
+
+  RiskScoringBehaviorResponse* = ref object of RootObj
+    errors*: RiskScoringMessages
+    messages*: RiskScoringMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[RiskScoringBehavior]
+
+  RiskScoringBehaviors* = ref object of RootObj
+    ## Risk behaviors, keyed by behavior ID.
+    behaviors*: JsonNode
+      ## Risk behaviors, keyed by behavior ID.
+
+  RiskScoringBehaviorsResponse* = ref object of RootObj
+    errors*: RiskScoringMessages
+    messages*: RiskScoringMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[RiskScoringBehaviors]
+
+  RiskScoringDlpBehaviorConfig* = ref object of RootObj
+    ## DLP configuration of the high_dlp behavior.
+    duration_secs*: int64
+      ## Rolling window in seconds, from 60 to 172800.
+    hits*: int64
+      ## Number of DLP policy matches that triggers the behavior.
+
+  RiskScoringEmpty* = ref object of RootObj
+    ## Empty result.
+
+  RiskScoringEmptyResponse* = ref object of RootObj
+    errors*: RiskScoringMessages
+    messages*: RiskScoringMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[RiskScoringEmpty]
+
+  RiskScoringHighDlpBehavior* = ref object of RootObj
+    ## The high_dlp risk behavior and its DLP configuration.
+    config*: RiskScoringDlpBehaviorConfig
+    description*: string
+      ## Explains what the behavior detects.
+    enabled*: bool
+      ## Whether the behavior counts toward the risk score.
+    name*: string
+      ## Display name of the behavior.
+    points*: RiskScoringPoints
+    risk_level*: RiskScoringRiskLevel
+
+  RiskScoringHighDlpBehaviorResponse* = ref object of RootObj
+    errors*: RiskScoringMessages
+    messages*: RiskScoringMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[RiskScoringHighDlpBehavior]
+
+  RiskScoringMaxRiskLevel* = enum
+    ## Highest risk level. The value is unset when no event maps to a configured
+    ## behavior.
+    unset = "unset"
+    info = "info"
+    low = "low"
+    medium = "medium"
+    high = "high"
+
+  RiskScoringPoints* = int64
+
+  RiskScoringResultInfo* = ref object of RootObj
+    ## Pagination information. The server always returns every field.
+    count*: int64
+      ## Number of results on this page.
+    page*: int64
+      ## Current page within the paginated list of results.
+    per_page*: int64
+      ## Number of results per page.
+    total_count*: int64
+      ## Total number of results that match the request.
+
+  RiskScoringRiskEvent* = ref object of RootObj
+    ## One risk event of a user.
+    event_details*: Option[JsonNode]
+      ## Details of the event. The fields depend on the behavior. The server omits the
+      ## field when the details are not valid JSON.
+    id*: string
+      ## ID of the behavior that caused the event.
+    name*: string
+      ## Name of the behavior that caused the event.
+    points*: RiskScoringPoints
+    risk_level*: RiskScoringRiskLevel
+    timestamp*: string
+      ## Time of the event.
+
+  RiskScoringRiskEventCluster* = ref object of RootObj
+    ## The risk events of one user on one calendar day.
+    end_time*: string
+      ## End of the calendar day of the cluster, in the requested time zone.
+    event_count*: int64
+      ## Number of events in the cluster.
+    events*: seq[RiskScoringRiskEvent]
+      ## At most 25 events of the cluster, oldest first.
+    first_event_time*: string
+      ## Time of the first event in the cluster.
+    highest_risk_level*: RiskScoringMaxRiskLevel
+    last_event_time*: string
+      ## Time of the last event in the cluster.
+    points*: int64
+      ## Sum of the points of all events in the cluster.
+    start_time*: string
+      ## Start of the calendar day of the cluster, in the requested time zone.
+
+  RiskScoringRiskEventClusters* = ref object of RootObj
+    ## Risk level, last reset time, and daily risk event clusters of one user.
+    clusters*: seq[RiskScoringRiskEventCluster]
+      ## Daily risk event clusters on this page.
+    email*: string
+      ## Email address of the user.
+    last_reset_time*: Option[string]
+      ## Time of the last risk score reset of the user. The value is null when the score
+      ## was never reset.
+    name*: string
+      ## Name of the user.
+    range_event_count*: int64
+      ## Number of events in the requested time range.
+    risk_level*: Option[RiskScoringRiskLevel]
+
+  RiskScoringRiskEventClustersResponse* = ref object of RootObj
+    errors*: RiskScoringMessages
+    messages*: RiskScoringMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[RiskScoringRiskEventClusters]
+    result_info*: Option[RiskScoringResultInfo]
+
+  RiskScoringRiskEvents* = ref object of RootObj
+    ## Risk level, last reset time, and risk events of one user.
+    email*: string
+      ## Email address of the user.
+    events*: seq[RiskScoringRiskEvent]
+      ## Risk events of the user on this page.
+    last_reset_time*: Option[string]
+      ## Time of the last risk score reset of the user. The value is null when the score
+      ## was never reset.
+    name*: string
+      ## Name of the user.
+    risk_level*: Option[RiskScoringRiskLevel]
+
+  RiskScoringRiskEventsResponse* = ref object of RootObj
+    errors*: RiskScoringMessages
+    messages*: RiskScoringMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[RiskScoringRiskEvents]
+    result_info*: Option[RiskScoringResultInfo]
+
+  RiskScoringRiskLevel* = enum
+    ## Risk level of a behavior or an event.
+    info = "info"
+    low = "low"
+    medium = "medium"
+    high = "high"
+
+  RiskScoringRiskSummary* = ref object of RootObj
+    ## Risk summary of the users in an account.
+    users*: seq[RiskScoringUserRiskInfo]
+      ## Users on this page, with their risk summary.
+
+  RiskScoringRiskSummaryResponse* = ref object of RootObj
+    errors*: RiskScoringMessages
+    messages*: RiskScoringMessages
+    success*: bool
+      ## Whether the API call was successful.
+    result*: Option[RiskScoringRiskSummary]
+    result_info*: Option[RiskScoringResultInfo]
+
+  RiskScoringUpdateBehavior* = ref object of RootObj
+    ## Settings for one risk behavior. Supply risk_level, points, or both. When you
+    ## supply both,
+    ## points must be in the range of risk_level. When you supply only one, the server
+    ## derives the
+    ## other.
+    ##
+    enabled*: bool
+      ## Whether the behavior counts toward the risk score.
+    points*: Option[int64]
+      ## Risk score points of the behavior. A null value is the same as an omitted value.
+    risk_level*: Option[RiskScoringRiskLevel]
+
+  RiskScoringUpdateBehaviors* = ref object of RootObj
+    ## Settings for one or more risk behaviors, keyed by behavior ID.
+    behaviors*: JsonNode
+      ## Settings for each behavior to update, keyed by behavior ID.
+
+  RiskScoringUpdateHighDlpBehavior* = ref object of RootObj
+    ## Settings for the high_dlp risk behavior. Supply risk_level, points, or both.
+    ## When you supply
+    ## both, points must be in the range of risk_level. An omitted or null config keeps
+    ## the stored
+    ## configuration.
+    ##
+    config*: Option[JsonNode]
+      ## DLP configuration of the behavior. A null value is the same as an omitted value.
+    enabled*: bool
+      ## Whether the behavior counts toward the risk score.
+    points*: Option[int64]
+      ## Risk score points of the behavior. A null value is the same as an omitted value.
+    risk_level*: Option[RiskScoringRiskLevel]
+
+  RiskScoringUserRiskInfo* = ref object of RootObj
+    ## Risk summary of one user.
+    email*: string
+      ## Email address of the user.
+    event_count*: int64
+      ## Number of risk events of the user.
+    last_event*: string
+      ## Time of the most recent risk event of the user.
+    max_risk_level*: RiskScoringMaxRiskLevel
+    name*: string
+      ## Name of the user.
+    user_id*: string
+      ## User ID (UUID v4).
+
+  RiskScoringApiResponseCommon* = ref object of RootObj
+    errors*: RiskScoringMessages
+    messages*: RiskScoringMessages
+    success*: bool
+      ## Whether the API call was successful.
+
+  RiskScoringApiResponseCommonFailure* = ref object of RootObj
+    errors*: JsonNode
+    messages*: JsonNode
+    result*: Option[JsonNode]
+    success*: bool
+      ## Whether the API call was successful.
+
+  RiskScoringApiResponseSingle* = ref object of RootObj
+    errors*: RiskScoringMessages
+    messages*: RiskScoringMessages
+    success*: bool
+      ## Whether the API call was successful.
+
+  RiskScoringMessages* = seq[JsonNode]
+
   RlanalyticsApiResponseCommonFailure* = ref object of RootObj
     errors*: seq[RlanalyticsMessages]
     messages*: seq[RlanalyticsMessages]
@@ -37673,34 +38317,6 @@ type
       ## The reference of the rule (the rule's ID by default).
     version*: string
       ## The version of the rule.
-
-  RulesetsManagedTransform* = ref object of RootObj
-    ## A Managed Transform object.
-    conflicts_with*: Option[seq[JsonNode]]
-      ## The Managed Transforms that this Managed Transform conflicts with.
-    enabled*: bool
-      ## Whether the Managed Transform is enabled.
-    has_conflict*: bool
-      ## Whether the Managed Transform conflicts with the currently-enabled Managed
-      ## Transforms.
-    id*: RulesetsManagedTransformId
-
-  RulesetsManagedTransformId* = string
-
-  RulesetsManagedTransforms* = ref object of RootObj
-    ## A Managed Transforms object.
-    managed_request_headers*: seq[JsonNode]
-      ## The list of Managed Request Transforms.
-    managed_response_headers*: seq[JsonNode]
-      ## The list of Managed Response Transforms.
-
-  RulesetsManagedTransformsPatch* = ref object of RootObj
-    ## A Managed Transforms patch object. Both fields are optional; only the sections
-    ## provided will be updated.
-    managed_request_headers*: Option[seq[JsonNode]]
-      ## The list of Managed Request Transforms.
-    managed_response_headers*: Option[seq[JsonNode]]
-      ## The list of Managed Response Transforms.
 
   RulesetsMessage* = ref object of RootObj
     ## A message.
@@ -38355,13 +38971,6 @@ type
     version*: string
       ## The version of the rule.
 
-  RulesetsUrlNormalization* = ref object of RootObj
-    ## A URL Normalization object.
-    scope*: string
-      ## The scope of the URL normalization.
-    `type`*: string
-      ## The type of URL normalization performed by Cloudflare.
-
   RulesetsZoneId* = string
 
   RumApiResponseCommon* = ref object of RootObj
@@ -38411,8 +39020,6 @@ type
   RumId* = string
 
   RumIdentifier* = string
-
-  RumIsHostRegex* = bool
 
   RumLite* = bool
 
@@ -38494,17 +39101,17 @@ type
 
   RumRulesetIdentifier* = string
 
+  RumRumSite* = ref object of RootObj
+    editable*: Option[RumEditable]
+    id*: Option[RumId]
+    value*: Option[RumValue]
+
   RumRumSiteResponseSingle* = ref object of RootObj
     errors*: RumMessages
     messages*: RumMessages
     success*: bool
       ## Whether the API call was successful.
     result*: Option[RumRumSite]
-
-  RumRumSite* = ref object of RootObj
-    editable*: Option[RumEditable]
-    id*: Option[RumId]
-    value*: Option[RumValue]
 
   RumSite* = ref object of RootObj
     auto_install*: Option[RumAutoInstall]
@@ -39652,6 +40259,7 @@ type
     modified_on*: SpectrumConfigModified
     argo_smart_routing*: Option[SpectrumConfigArgoSmartRouting]
     dns*: SpectrumConfigDns
+    edge_alpn_protocols*: Option[SpectrumConfigEdgeAlpnProtocols]
     edge_ips*: Option[SpectrumConfigEdgeIps]
     ip_firewall*: Option[SpectrumConfigIpFirewall]
     origin_direct*: Option[SpectrumConfigOriginDirect]
@@ -39715,6 +40323,8 @@ type
     ## The type of DNS record associated with the application.
     CNAME = "CNAME"
     ADDRESS = "ADDRESS"
+
+  SpectrumConfigEdgeAlpnProtocols* = seq[string]
 
   SpectrumConfigEdgeIps* = ref object of RootObj
     ## The anycast edge IP configuration for the hostname of this application.
@@ -40074,6 +40684,27 @@ type
     ##
     on = "on"
 
+  SpeedWorkerScriptName* = string
+
+  SpeedWorkerTransformations* = ref object of RootObj
+    ## Controls `/cdn-cgi/image/` URL transformations for requests served by a Worker.
+    allowed_origins*: Option[SpeedWorkerTransformationsAllowedOrigins]
+    enabled*: SpeedWorkerTransformationsEnabled
+
+  SpeedWorkerTransformationsAllowedOrigins* = seq[string]
+
+  SpeedWorkerTransformationsDeleted* = ref object of RootObj
+    ## Always `null`, as the zone-level settings now apply.
+
+  SpeedWorkerTransformationsEnabled* = bool
+
+  SpeedWorkerTransformationsResult* = ref object of RootObj
+    ## The Worker's setting, or `null` when the zone-level settings apply.
+    allowed_origins*: Option[SpeedWorkerTransformationsAllowedOrigins]
+    enabled*: SpeedWorkerTransformationsEnabled
+    id*: string
+      ## Name of the Worker script the setting applies to.
+
   SpeedZoneConfigItem* = ref object of RootObj
     ## A configuration item for a specific zone and feature.
     cf_zone_tag*: Option[string]
@@ -40214,6 +40845,7 @@ type
   StreamDirectUploadRequest* = ref object of RootObj
     allowed_origins*: Option[StreamAllowedOrigins]
     creator*: Option[StreamCreator]
+    encoding_mode*: Option[StreamEncodingMode]
     expiry*: Option[string]
       ## The date and time after upload when videos will not be accepted.
     max_duration_seconds*: StreamMaxDurationSeconds
@@ -40268,6 +40900,13 @@ type
   StreamEditAudioTrack* = ref object of RootObj
     default*: Option[StreamAudioDefault]
     label*: Option[StreamAudioLabel]
+
+  StreamEncodingMode* = enum
+    ## Specifies whether to generate a preview rendition before the standard encoding
+    ## ladder. `default` generates only the standard encoding ladder. `previewFirst`
+    ## generates a preview rendition first.
+    default = "default"
+    previewFirst = "previewFirst"
 
   StreamEnd* = string
 
@@ -40590,6 +41229,21 @@ type
 
   StreamPreview* = string
 
+  StreamPreviewStatus* = enum
+    ## Reports the current status of preview generation. This value is `null` when
+    ## `encodingMode` is `default`.
+    pending = "pending"
+    ready = "ready"
+    error = "error"
+    notEligibleContainer = "not-eligible-container"
+    notEligibleVideoCodec = "not-eligible-video-codec"
+    notEligibleAudioCodec = "not-eligible-audio-codec"
+    notEligibleResolution = "not-eligible-resolution"
+    notEligibleBitrate = "not-eligible-bitrate"
+    notEligibleGop = "not-eligible-gop"
+    notEligiblePixelFormat = "not-eligible-pixel-format"
+    notEligibleEditList = "not-eligible-edit-list"
+
   StreamReadyToStream* = bool
 
   StreamReadyToStreamAt* = string
@@ -40700,6 +41354,7 @@ type
     ## Copy upload request. Provide `input` (preferred) or `url` (deprecated).
     allowed_origins*: Option[StreamAllowedOrigins]
     creator*: Option[StreamCreator]
+    encoding_mode*: Option[StreamEncodingMode]
     input*: Option[string]
       ## A video's URL. The server must be publicly routable and support `HTTP HEAD`
       ## requests and `HTTP GET` range requests. The server should respond to `HTTP HEAD`
@@ -40761,6 +41416,7 @@ type
     created*: Option[StreamCreated]
     creator*: Option[StreamCreator]
     duration*: Option[StreamDuration]
+    encoding_mode*: Option[StreamEncodingMode]
     input*: Option[StreamInput]
     live_input*: Option[StreamLiveInput]
     max_duration_seconds*: Option[StreamMaxDurationSeconds]
@@ -40770,6 +41426,7 @@ type
     modified*: Option[StreamModified]
     playback*: Option[StreamPlayback]
     preview*: Option[StreamPreview]
+    preview_status*: Option[StreamPreviewStatus]
     public_details*: Option[JsonNode]
       ## Public details for the video including title, share link, channel link, and
       ## logo.
@@ -43796,6 +44453,37 @@ type
 
   TunnelHostnameQueryComment* = string
 
+  TunnelHostnameRecord* = ref object of RootObj
+    canonical*: TunnelHostnameRecordCanonical
+    created_at*: TunnelCreatedAt
+    hostname*: TunnelHostnameRecordValue
+    id*: TunnelHostnameRecordId
+    tunnel_id*: TunnelTunnelId2
+
+  TunnelHostnameRecordCanonical* = bool
+
+  TunnelHostnameRecordId* = string
+
+  TunnelHostnameRecordResponseCollection* = ref object of RootObj
+    errors*: TunnelMessages
+    messages*: TunnelMessages
+    result*: seq[TunnelHostnameRecord]
+      ## Tunnel hostnames on the requested page.
+    success*: bool
+      ## Whether the API call was successful
+    result_info*: Option[JsonNode]
+      ## Pagination metadata for the requested page of tunnel hostnames.
+
+  TunnelHostnameRecordResponseSingle* = ref object of RootObj
+    errors*: TunnelMessages
+    messages*: TunnelMessages
+    result*: JsonNode
+      ## The tunnel hostname created, retrieved, updated, or deleted by the operation.
+    success*: bool
+      ## Whether the API call was successful
+
+  TunnelHostnameRecordValue* = string
+
   TunnelHostnameRoute* = ref object of RootObj
     comment*: Option[TunnelHostnameComment]
     created_at*: Option[TunnelCreatedAt]
@@ -43962,22 +44650,22 @@ type
 
   TunnelPageNumber* = float64
 
-  TunnelPatchTunnelHostnameBody* = ref object of RootObj
+  TunnelPatchHostnameRecordBody* = ref object of RootObj
     canonical*: Option[bool]
       ## Makes this hostname canonical. `false` is not accepted; make a different
       ## hostname canonical to unset this one.
-    hostname*: Option[TunnelTunnelHostnameValue]
+    hostname*: Option[TunnelHostnameRecordValue]
 
   TunnelPerPage* = float64
 
-  TunnelPostTunnelHostnameBody* = ref object of RootObj
+  TunnelPostHostnameRecordBody* = ref object of RootObj
     canonical*: Option[bool]
       ## Set to `true` to make the new hostname canonical, replacing any existing
       ## canonical hostname.
       ## If `false` or omitted, the new hostname is canonical only if the tunnel has no
       ## active hostnames.
       ##
-    hostname*: TunnelTunnelHostnameValue
+    hostname*: TunnelHostnameRecordValue
 
   TunnelPutAccountRegionBody* = ref object of RootObj
     region_key*: TunnelRegionKey
@@ -44172,37 +44860,6 @@ type
     success*: bool
       ## Whether the API call was successful
     result_info*: Option[TunnelResultInfo]
-
-  TunnelTunnelHostname* = ref object of RootObj
-    canonical*: TunnelTunnelHostnameCanonical
-    created_at*: TunnelCreatedAt
-    hostname*: TunnelTunnelHostnameValue
-    id*: TunnelTunnelHostnameId
-    tunnel_id*: TunnelTunnelId2
-
-  TunnelTunnelHostnameCanonical* = bool
-
-  TunnelTunnelHostnameId* = string
-
-  TunnelTunnelHostnameResponseCollection* = ref object of RootObj
-    errors*: TunnelMessages
-    messages*: TunnelMessages
-    result*: seq[TunnelTunnelHostname]
-      ## Tunnel hostnames on the requested page.
-    success*: bool
-      ## Whether the API call was successful
-    result_info*: Option[JsonNode]
-      ## Pagination metadata for the requested page of tunnel hostnames.
-
-  TunnelTunnelHostnameResponseSingle* = ref object of RootObj
-    errors*: TunnelMessages
-    messages*: TunnelMessages
-    result*: JsonNode
-      ## The tunnel hostname created, retrieved, updated, or deleted by the operation.
-    success*: bool
-      ## Whether the API call was successful
-
-  TunnelTunnelHostnameValue* = string
 
   TunnelTunnelId* = string
 
@@ -44459,6 +45116,37 @@ type
     nonInteractive = "non-interactive"
     invisible = "invisible"
     managed = "managed"
+
+  UrlNormalizationErrors* = seq[UrlNormalizationMessage]
+
+  UrlNormalizationMessage* = ref object of RootObj
+    ## A message.
+    code*: Option[int64]
+      ## A unique code for this message.
+    message*: string
+      ## A text description of this message.
+    source*: Option[JsonNode]
+      ## The source of this message.
+
+  UrlNormalizationMessages* = seq[UrlNormalizationMessage]
+
+  UrlNormalizationResponse* = ref object of RootObj
+    ## A response object.
+    errors*: UrlNormalizationErrors
+    messages*: UrlNormalizationMessages
+    result*: JsonNode
+      ## A result.
+    success*: bool
+      ## Whether the API call was successful.
+
+  UrlNormalizationUrlNormalization* = ref object of RootObj
+    ## A URL Normalization object.
+    scope*: string
+      ## The scope of the URL normalization.
+    `type`*: string
+      ## The type of URL normalization performed by Cloudflare.
+
+  UrlNormalizationZoneId* = string
 
   UsageAnalyticsApiError* = ref object of RootObj
     code*: int64
@@ -45974,9 +46662,9 @@ type
     errors*: Web3Messages
     messages*: Web3Messages
     result*: Option[seq[JsonNode]]
+    result_info*: Option[Web3ResultInfo]
     success*: bool
       ## Specifies whether the API call was successful.
-    result_info*: Option[Web3ResultInfo]
 
   Web3ApiResponseCommon* = ref object of RootObj
     errors*: Web3Messages
@@ -46014,9 +46702,9 @@ type
     errors*: Web3Messages
     messages*: Web3Messages
     result*: seq[Web3Web3Hostname]
+    result_info*: Option[Web3ResultInfo]
     success*: bool
       ## Specifies whether the API call was successful.
-    result_info*: Option[Web3ResultInfo]
 
   Web3ContentListAction* = enum
     ## Behavior of the content list.
@@ -46051,7 +46739,6 @@ type
     result*: JsonNode
     success*: bool
       ## Specifies whether the API call was successful.
-    result_info*: Option[Web3ResultInfo]
 
   Web3ContentListEntryContent* = string
 
@@ -49131,7 +49818,7 @@ type
 
   ZeroTrustGatewayExpiration* = ref object of RootObj
     ## Defines the expiration time stamp and default duration of a DNS policy. Takes
-    ## precedence over the policy's `schedule` configuration, if any. This  does not
+    ## precedence over the policy's `schedule` configuration, if any. This does not
     ## apply to HTTP or network policies. Settable only for `dns` rules.
     duration*: Option[int64]
       ## Defines the default duration a policy active in minutes. Must set in order to
@@ -49229,9 +49916,8 @@ type
     validity_period_days*: Option[int64]
       ## Sets the certificate validity period in days (range: 1-10,950 days / ~30 years).
       ## Defaults to 1,825 days (5 years). **Important**: This field is only settable
-      ## during the certificate creation.  Certificates becomes immutable after creation
-      ## - use the `/activate` and `/deactivate` endpoints to manage certificate
-      ## lifecycle.
+      ## during the certificate creation. Certificates becomes immutable after creation -
+      ## use the `/activate` and `/deactivate` endpoints to manage certificate lifecycle.
 
   ZeroTrustGatewayHostSelectorSettings* = ref object of RootObj
     ## Enable host selection in egress policies.
@@ -49253,11 +49939,11 @@ type
   ZeroTrustGatewayInspectionSettings* = ref object of RootObj
     ## Define the proxy inspection mode.
     mode*: Option[string]
-      ## Define the proxy inspection mode.   1. static: Gateway applies static inspection
+      ## Define the proxy inspection mode. 1. static: Gateway applies static inspection
       ## to HTTP on TCP(80). With TLS decryption on, Gateway inspects HTTPS traffic on
-      ## TCP(443) and UDP(443).   2. dynamic: Gateway applies protocol detection to
-      ## inspect HTTP and HTTPS traffic on any port. TLS decryption must remain on to
-      ## inspect HTTPS traffic.
+      ## TCP(443) and UDP(443). 2. dynamic: Gateway applies protocol detection to inspect
+      ## HTTP and HTTPS traffic on any port. TLS decryption must remain on to inspect
+      ## HTTPS traffic.
 
   ZeroTrustGatewayIp* = string
 
@@ -51421,7 +52107,8 @@ type
 
   ZonesSearchForAgents* = ref object of RootObj
     ## When enabled, Cloudflare provisions an AI Search instance for the zone
-    ## and exposes a /.well-known/ai-search endpoint that AI agents can query.
+    ## and exposes a /.well-known/search endpoint that AI agents can query.
+    ## Available on all plans.
     ## Markdown responses also receive an agent: YAML capability block advertising
     ## the search endpoint.
     editable*: Option[bool]

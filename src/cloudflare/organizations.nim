@@ -11,40 +11,40 @@ import ./private/types
 type
   GetOrganizationsResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: seq[types.OrganizationsApiOrganization]
-    result_info: types.OrganizationsApiPageTokenResultInfo
+    messages: seq[types.OrganizationsV4Message]
+    result: seq[types.OrganizationsOrganization]
+    result_info: types.OrganizationsPageTokenResultInfo
     success: bool
   PostOrganizationsResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiOrganization
+    messages: seq[types.OrganizationsV4Message]
+    result: types.OrganizationsOrganization
     success: bool
   GetOrganizationsOrganizationIdResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiOrganization
+    messages: seq[types.OrganizationsV4Message]
+    result: types.OrganizationsOrganization
     success: bool
   PutOrganizationsOrganizationIdResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiOrganization
+    messages: seq[types.OrganizationsV4Message]
+    result: types.OrganizationsOrganization
     success: bool
   DeleteOrganizationsOrganizationIdResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiDeleteOrganizationResult
+    messages: seq[types.OrganizationsV4Message]
+    result: types.OrganizationsDeleteOrganizationResult
     success: bool
   GetOrganizationsOrganizationIdAccountsResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
+    messages: seq[types.OrganizationsV4Message]
     result: seq[JsonNode]
-    result_info: types.OrganizationsApiPageTokenResultInfo
+    result_info: types.OrganizationsAccountListResultInfo
     success: bool
   PutOrganizationsOrganizationIdInvitesMemberCodeResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiOrganizationInviteMember
+    messages: seq[types.OrganizationsV4Message]
+    result: types.OrganizationsOrganizationInviteMember
     success: bool
   OrganizationOrderByOption* = enum
     orderByName = "name"
@@ -100,7 +100,7 @@ proc getOrganizations*(client: CloudflareClient, id: seq[string] = @[],
     raise newException(CloudflareClientError, body)
 
 proc postOrganizations*(client: CloudflareClient,
-                        body: types.OrganizationsApiCreateOrganizationRequest): Future[PostOrganizationsResponse] {.async.} =
+                        body: types.OrganizationsCreateOrganizationRequest): Future[PostOrganizationsResponse] {.async.} =
   ## Create a new organization for a user. Sub-organization creation availability
   ## depends on
   ## the organization's capabilities. The optional `profile` object accepts partial
@@ -122,7 +122,7 @@ proc postOrganizations*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getOrganizationsOrganizationId*(client: CloudflareClient,
-                                     organizationId: types.OrganizationsApiOrganizationID): Future[GetOrganizationsOrganizationIdResponse] {.async.} =
+                                     organizationId: types.OrganizationsOrganizationID): Future[GetOrganizationsOrganizationIdResponse] {.async.} =
   ## Retrieve the details of a certain organization.
 
   let res = await client.httpGET(fmt"/organizations/{organizationId}")
@@ -134,8 +134,8 @@ proc getOrganizationsOrganizationId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc putOrganizationsOrganizationId*(client: CloudflareClient,
-                                     organizationId: types.OrganizationsApiOrganizationID,
-                                     body: types.OrganizationsApiModifyOrganizationRequest): Future[PutOrganizationsOrganizationIdResponse] {.async.} =
+                                     organizationId: types.OrganizationsOrganizationID,
+                                     body: types.OrganizationsModifyOrganizationRequest): Future[PutOrganizationsOrganizationIdResponse] {.async.} =
   ## Update an organization's name. Supplying `parent_id` verifies the current
   ## parent; this
   ## endpoint cannot move an organization. Organization names are limited to 65 UTF-8
@@ -150,7 +150,7 @@ proc putOrganizationsOrganizationId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteOrganizationsOrganizationId*(client: CloudflareClient,
-                                        organizationId: types.OrganizationsApiOrganizationID): Future[DeleteOrganizationsOrganizationIdResponse] {.async.} =
+                                        organizationId: types.OrganizationsOrganizationID): Future[DeleteOrganizationsOrganizationIdResponse] {.async.} =
   ## Delete an organization. It must not contain active sub-organizations or
   ## accounts. A root
   ## organization must also have no active managed users. Sub-organization deletion
@@ -168,7 +168,7 @@ proc deleteOrganizationsOrganizationId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getOrganizationsOrganizationIdAccounts*(client: CloudflareClient,
-                                             organizationId: types.OrganizationsApiOrganizationID,
+                                             organizationId: types.OrganizationsOrganizationID,
                                              accountPubname: string = default(string),
                                              accountPubnameStartsWith: string = default(string),
                                              accountPubnameEndsWith: string = default(string),
@@ -216,9 +216,9 @@ proc getOrganizationsOrganizationIdAccounts*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc putOrganizationsOrganizationIdInvitesMemberCode*(client: CloudflareClient,
-                                                      organizationId: types.OrganizationsApiOrganizationID,
+                                                      organizationId: types.OrganizationsOrganizationID,
                                                       memberCode: string,
-                                                      body: types.OrganizationsApiHandleOrganizationInviteRequest): Future[PutOrganizationsOrganizationIdInvitesMemberCodeResponse] {.async.} =
+                                                      body: types.OrganizationsHandleOrganizationInviteRequest): Future[PutOrganizationsOrganizationIdInvitesMemberCodeResponse] {.async.} =
   ## Accept or reject an invitation to a specific organization.
   ##
   ## The credential must belong to the invited user. No additional API token
@@ -234,7 +234,7 @@ proc putOrganizationsOrganizationIdInvitesMemberCode*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getOrganizationsOrganizationIdProfile*(client: CloudflareClient,
-                                            organizationId: types.OrganizationsApiOrganizationID): Future[types.OrganizationsApiProfileResponse] {.async.} =
+                                            organizationId: types.OrganizationsOrganizationID): Future[types.OrganizationsProfileResponse] {.async.} =
   ## Retrieves the business profile (name, email, phone, address, and external
   ## metadata)
   ## associated with this organization's customer record. Profiles can be shared
@@ -245,13 +245,13 @@ proc getOrganizationsOrganizationIdProfile*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.OrganizationsApiProfileResponse)
+    result = fromJson(body, types.OrganizationsProfileResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc putOrganizationsOrganizationIdProfile*(client: CloudflareClient,
-                                            organizationId: types.OrganizationsApiOrganizationID,
-                                            body: types.OrganizationsApiModifyProfileRequest): Future[AsyncResponse] {.async.} =
+                                            organizationId: types.OrganizationsOrganizationID,
+                                            body: types.OrganizationsModifyProfileRequest): Future[AsyncResponse] {.async.} =
   ## Partially updates the business profile (name, email, phone, address, and
   ## external metadata)
   ## associated with this organization's customer record, creating the profile if it

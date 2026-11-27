@@ -28,6 +28,56 @@ proc getAccountsAccountIdSettingsTransformations*(client: CloudflareClient,
   else:
     raise newException(CloudflareClientError, body)
 
+proc getAccountsAccountIdSettingsTransformationsWorkersScriptName*(client: CloudflareClient,
+                                                                   accountId: types.SpeedIdentifier,
+                                                                   scriptName: types.SpeedWorkerScriptName): Future[JsonNode] {.async.} =
+  ## Returns the `/cdn-cgi/image/` URL transformations setting for requests served by
+  ## a Worker.
+  ## The result is `null` when the Worker has no setting of its own, in which case
+  ## the zone-level
+  ## Image Transformations settings apply.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/settings/transformations/workers/{scriptName}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountsAccountIdSettingsTransformationsWorkersScriptName*(client: CloudflareClient,
+                                                                   accountId: types.SpeedIdentifier,
+                                                                   scriptName: types.SpeedWorkerScriptName,
+                                                                   body: types.SpeedWorkerTransformations): Future[JsonNode] {.async.} =
+  ## Sets the `/cdn-cgi/image/` URL transformations setting for requests served by a
+  ## Worker.
+  ## This overrides the zone-level Image Transformations and Allowed Origins settings
+  ## for
+  ## requests handled by the Worker.
+
+  let res = await client.httpPUT(fmt"/accounts/{accountId}/settings/transformations/workers/{scriptName}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountsAccountIdSettingsTransformationsWorkersScriptName*(client: CloudflareClient,
+                                                                      accountId: types.SpeedIdentifier,
+                                                                      scriptName: types.SpeedWorkerScriptName): Future[JsonNode] {.async.} =
+  ## Removes the Worker's `/cdn-cgi/image/` URL transformations setting, so the
+  ## zone-level
+  ## Image Transformations settings apply again.
+
+  let res = await client.httpDELETE(fmt"/accounts/{accountId}/settings/transformations/workers/{scriptName}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
 proc getAccountsAccountIdSettingsUtBilling*(client: CloudflareClient,
                                             accountId: types.SpeedIdentifier): Future[JsonNode] {.async.} =
   ## Retrieves the Unique Transformations billing configuration for an account.

@@ -10,7 +10,7 @@ import ./private/types
 
 
 proc getZonesZoneIdManagedHeaders*(client: CloudflareClient,
-                                   zoneId: types.RulesetsZoneId): Future[JsonNode] {.async.} =
+                                   zoneId: types.ManagedTransformsZoneId): Future[JsonNode] {.async.} =
   ## Fetches a list of all Managed Transforms.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/managed_headers")
@@ -22,15 +22,15 @@ proc getZonesZoneIdManagedHeaders*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdManagedHeaders*(client: CloudflareClient,
-                                      zoneId: types.RulesetsZoneId): Future[AsyncResponse] {.async.} =
+                                      zoneId: types.ManagedTransformsZoneId): Future[AsyncResponse] {.async.} =
   ## Disables all Managed Transforms.
 
   let res = await client.httpDELETE(fmt"/zones/{zoneId}/managed_headers")
   return res
 
 proc patchZonesZoneIdManagedHeaders*(client: CloudflareClient,
-                                     zoneId: types.RulesetsZoneId,
-                                     body: types.RulesetsManagedTransformsPatch): Future[JsonNode] {.async.} =
+                                     zoneId: types.ManagedTransformsZoneId,
+                                     body: types.ManagedTransformsManagedTransformsPatch): Future[JsonNode] {.async.} =
   ## Updates the status of one or more Managed Transforms.
 
   let res = await client.httpPATCH(fmt"/zones/{zoneId}/managed_headers", body)

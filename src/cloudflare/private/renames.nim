@@ -1156,6 +1156,16 @@ proc renameHook*(v: types.FlagshipEvaluationResult, fieldName: var string) {.inl
   elif fieldName == "flag_key":
     fieldName = "flagKey"
 
+proc renameHook*(v: types.FlagshipOfrepEvaluationFailure, fieldName: var string) {.inline.} =
+  if fieldName == "errorCode":
+    fieldName = "error_code"
+  elif fieldName == "error_code":
+    fieldName = "errorCode"
+  elif fieldName == "errorDetails":
+    fieldName = "error_details"
+  elif fieldName == "error_details":
+    fieldName = "errorDetails"
+
 proc renameHook*(v: types.GoogleTagGatewayGoogleTagGatewayConfig, fieldName: var string) {.inline.} =
   if fieldName == "hideOriginalIp":
     fieldName = "hide_original_ip"
@@ -2043,6 +2053,10 @@ proc renameHook*(v: types.StreamDirectUploadRequest, fieldName: var string) {.in
     fieldName = "allowed_origins"
   elif fieldName == "allowed_origins":
     fieldName = "allowedOrigins"
+  elif fieldName == "encodingMode":
+    fieldName = "encoding_mode"
+  elif fieldName == "encoding_mode":
+    fieldName = "encodingMode"
   elif fieldName == "maxDurationSeconds":
     fieldName = "max_duration_seconds"
   elif fieldName == "max_duration_seconds":
@@ -2219,6 +2233,10 @@ proc renameHook*(v: types.StreamVideoCopyRequest, fieldName: var string) {.inlin
     fieldName = "allowed_origins"
   elif fieldName == "allowed_origins":
     fieldName = "allowedOrigins"
+  elif fieldName == "encodingMode":
+    fieldName = "encoding_mode"
+  elif fieldName == "encoding_mode":
+    fieldName = "encodingMode"
   elif fieldName == "requireSignedURLs":
     fieldName = "require_signed_u_r_ls"
   elif fieldName == "require_signed_u_r_ls":
@@ -2271,6 +2289,10 @@ proc renameHook*(v: types.StreamVideos, fieldName: var string) {.inline.} =
     fieldName = "clipped_from"
   elif fieldName == "clipped_from":
     fieldName = "clippedFrom"
+  elif fieldName == "encodingMode":
+    fieldName = "encoding_mode"
+  elif fieldName == "encoding_mode":
+    fieldName = "encodingMode"
   elif fieldName == "liveInput":
     fieldName = "live_input"
   elif fieldName == "live_input":
@@ -2283,6 +2305,10 @@ proc renameHook*(v: types.StreamVideos, fieldName: var string) {.inline.} =
     fieldName = "max_size_bytes"
   elif fieldName == "max_size_bytes":
     fieldName = "maxSizeBytes"
+  elif fieldName == "previewStatus":
+    fieldName = "preview_status"
+  elif fieldName == "preview_status":
+    fieldName = "previewStatus"
   elif fieldName == "publicDetails":
     fieldName = "public_details"
   elif fieldName == "public_details":

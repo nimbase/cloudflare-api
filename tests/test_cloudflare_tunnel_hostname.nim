@@ -11,25 +11,25 @@ import cloudflare
 import ./common
 
 suite "cloudflare_tunnel_hostname serialization":
-  test "round-trips TunnelPostTunnelHostnameBody":
-    let obj = newTunnelPostTunnelHostnameBody()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TunnelPostTunnelHostnameBody)) == openjson.toJson(obj)
-
-  test "round-trips TunnelTunnelHostnameResponseSingle":
-    let obj = newTunnelTunnelHostnameResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TunnelTunnelHostnameResponseSingle)) == openjson.toJson(obj)
-
-  test "round-trips TunnelTunnelHostnameResponseCollection":
-    let obj = newTunnelTunnelHostnameResponseCollection()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TunnelTunnelHostnameResponseCollection)) == openjson.toJson(obj)
+  test "round-trips TunnelPatchHostnameRecordBody":
+    let obj = newTunnelPatchHostnameRecordBody()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TunnelPatchHostnameRecordBody)) == openjson.toJson(obj)
 
   test "round-trips TunnelApiResponseCommonFailure":
     let obj = newTunnelApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TunnelApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips TunnelPatchTunnelHostnameBody":
-    let obj = newTunnelPatchTunnelHostnameBody()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TunnelPatchTunnelHostnameBody)) == openjson.toJson(obj)
+  test "round-trips TunnelHostnameRecordResponseSingle":
+    let obj = newTunnelHostnameRecordResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TunnelHostnameRecordResponseSingle)) == openjson.toJson(obj)
+
+  test "round-trips TunnelHostnameRecordResponseCollection":
+    let obj = newTunnelHostnameRecordResponseCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TunnelHostnameRecordResponseCollection)) == openjson.toJson(obj)
+
+  test "round-trips TunnelPostHostnameRecordBody":
+    let obj = newTunnelPostHostnameRecordBody()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.TunnelPostHostnameRecordBody)) == openjson.toJson(obj)
 
 suite "cloudflare_tunnel_hostname endpoints":
   test "GET /accounts/{account_id}/tunnels/{tunnel_id}/hostnames":
@@ -40,7 +40,7 @@ suite "cloudflare_tunnel_hostname endpoints":
   test "POST /accounts/{account_id}/tunnels/{tunnel_id}/hostnames":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdTunnelsTunnelIdHostnames("test", "test", newTunnelPostTunnelHostnameBody())
+    discard waitFor client.postAccountsAccountIdTunnelsTunnelIdHostnames("test", "test", newTunnelPostHostnameRecordBody())
 
   test "GET /accounts/{account_id}/tunnels/{tunnel_id}/hostnames/{hostname_id}":
     let client = initCloudflareClient("test-key")
@@ -55,5 +55,5 @@ suite "cloudflare_tunnel_hostname endpoints":
   test "PATCH /accounts/{account_id}/tunnels/{tunnel_id}/hostnames/{hostname_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.patchAccountsAccountIdTunnelsTunnelIdHostnamesHostnameId("test", "test", "test", newTunnelPatchTunnelHostnameBody())
+    discard waitFor client.patchAccountsAccountIdTunnelsTunnelIdHostnamesHostnameId("test", "test", "test", newTunnelPatchHostnameRecordBody())
 

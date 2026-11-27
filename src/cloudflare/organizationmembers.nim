@@ -11,33 +11,33 @@ import ./private/types
 type
   GetOrganizationsOrganizationIdMembersResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: seq[types.OrganizationsApiMember]
-    result_info: types.OrganizationsApiPageTokenResultInfo
+    messages: seq[types.OrganizationsV4Message]
+    result: seq[types.OrganizationsMember]
+    result_info: types.OrganizationsPageTokenResultInfo
     success: bool
   PostOrganizationsOrganizationIdMembersResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiMember
+    messages: seq[types.OrganizationsV4Message]
+    result: types.OrganizationsMember
     success: bool
   GetOrganizationsOrganizationIdMembersMemberIdResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiMember
+    messages: seq[types.OrganizationsV4Message]
+    result: types.OrganizationsMember
     success: bool
   DeleteOrganizationsOrganizationIdMembersMemberIdResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiDeleteOrganizationMemberResult
+    messages: seq[types.OrganizationsV4Message]
+    result: types.OrganizationsDeleteOrganizationMemberResult
     success: bool
   PostOrganizationsOrganizationIdMembersBatchCreateResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: seq[types.OrganizationsApiMember]
+    messages: seq[types.OrganizationsV4Message]
+    result: seq[types.OrganizationsMember]
     success: bool
 
 proc getOrganizationsOrganizationIdMembers*(client: CloudflareClient,
-                                            organizationId: types.OrganizationsApiOrganizationID,
+                                            organizationId: types.OrganizationsOrganizationID,
                                             status: seq[string] = default(seq[string]),
                                             userEmail: string = default(string),
                                             userEmailContains: string = default(string),
@@ -64,8 +64,8 @@ proc getOrganizationsOrganizationIdMembers*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc postOrganizationsOrganizationIdMembers*(client: CloudflareClient,
-                                             organizationId: types.OrganizationsApiOrganizationID,
-                                             body: types.OrganizationsApiCreateMemberRequest): Future[PostOrganizationsOrganizationIdMembersResponse] {.async.} =
+                                             organizationId: types.OrganizationsOrganizationID,
+                                             body: types.OrganizationsCreateMemberRequest): Future[PostOrganizationsOrganizationIdMembersResponse] {.async.} =
   ## Create a membership that grants access to a specific Organization.
 
   let res = await client.httpPOST(fmt"/organizations/{organizationId}/members", body)
@@ -77,8 +77,8 @@ proc postOrganizationsOrganizationIdMembers*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getOrganizationsOrganizationIdMembersMemberId*(client: CloudflareClient,
-                                                    organizationId: types.OrganizationsApiOrganizationID,
-                                                    memberId: types.OrganizationsApiMemberID): Future[GetOrganizationsOrganizationIdMembersMemberIdResponse] {.async.} =
+                                                    organizationId: types.OrganizationsOrganizationID,
+                                                    memberId: types.OrganizationsMemberID): Future[GetOrganizationsOrganizationIdMembersMemberIdResponse] {.async.} =
   ## Retrieve a single membership from an Organization.
 
   let res = await client.httpGET(fmt"/organizations/{organizationId}/members/{memberId}")
@@ -90,8 +90,8 @@ proc getOrganizationsOrganizationIdMembersMemberId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteOrganizationsOrganizationIdMembersMemberId*(client: CloudflareClient,
-                                                       organizationId: types.OrganizationsApiOrganizationID,
-                                                       memberId: types.OrganizationsApiMemberID): Future[DeleteOrganizationsOrganizationIdMembersMemberIdResponse] {.async.} =
+                                                       organizationId: types.OrganizationsOrganizationID,
+                                                       memberId: types.OrganizationsMemberID): Future[DeleteOrganizationsOrganizationIdMembersMemberIdResponse] {.async.} =
   ## Delete a membership to a particular Organization.
 
   let res = await client.httpDELETE(fmt"/organizations/{organizationId}/members/{memberId}")
@@ -103,8 +103,8 @@ proc deleteOrganizationsOrganizationIdMembersMemberId*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc postOrganizationsOrganizationIdMembersBatchCreate*(client: CloudflareClient,
-                                                        organizationId: types.OrganizationsApiOrganizationID,
-                                                        body: types.OrganizationsApiBatchCreateMembersRequest): Future[PostOrganizationsOrganizationIdMembersBatchCreateResponse] {.async.} =
+                                                        organizationId: types.OrganizationsOrganizationID,
+                                                        body: types.OrganizationsBatchCreateMembersRequest): Future[PostOrganizationsOrganizationIdMembersBatchCreateResponse] {.async.} =
   ## Batch create multiple memberships that grant access to a specific Organization.
 
   let res = await client.httpPOST(fmt"/organizations/{organizationId}/members:batchCreate", body)

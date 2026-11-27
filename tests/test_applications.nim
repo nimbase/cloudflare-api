@@ -27,6 +27,10 @@ suite "applications serialization":
     let obj = newOnePaginatedApplicationListList()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OnePaginatedApplicationListList)) == openjson.toJson(obj)
 
+  test "round-trips AlexandriaApplicationReferencesResponse":
+    let obj = newAlexandriaApplicationReferencesResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.AlexandriaApplicationReferencesResponse)) == openjson.toJson(obj)
+
   test "round-trips OnePaginatedAuthMethodDetailList":
     let obj = newOnePaginatedAuthMethodDetailList()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OnePaginatedAuthMethodDetailList)) == openjson.toJson(obj)
@@ -156,4 +160,9 @@ suite "applications endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.patchAccountsAccountIdResourceLibraryApplicationsId("test", 1, newAlexandriaUpdateApplicationRequest())
+
+  test "GET /accounts/{account_id}/resource-library/applications/{id}/references":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdResourceLibraryApplicationsIdReferences("test", 1)
 

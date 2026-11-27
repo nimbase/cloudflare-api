@@ -9,11 +9,31 @@ import ./private/metaclient
 import ./private/types
 
 type
+  PostAccountsAccountIdWorkersWorkersWorkerIdPreviewsPreviewIdDeploymentsDeploymentIdProfileRequest = object
+    actor_id: Option[string]
+    duration_ms: int32
+    namespace_id: Option[string]
+    profile_type: Option[string]
   PostAccountsAccountIdWorkersWorkersWorkerIdVersionsVersionIdProfileRequest = object
     actor_id: Option[string]
     duration_ms: int32
     namespace_id: Option[string]
     profile_type: Option[string]
+
+proc postAccountsAccountIdWorkersWorkersWorkerIdPreviewsPreviewIdDeploymentsDeploymentIdProfile*(client: CloudflareClient,
+                                                                                                 accountId: types.WorkersIdentifier,
+                                                                                                 workerId: string,
+                                                                                                 previewId: string,
+                                                                                                 deploymentId: string,
+                                                                                                 body: PostAccountsAccountIdWorkersWorkersWorkerIdPreviewsPreviewIdDeploymentsDeploymentIdProfileRequest): Future[AsyncResponse] {.async.} =
+  ## Captures a CPU or heap profile from a recently active isolate running the
+  ## specified Preview deployment. This endpoint requires the Worker Preview
+  ## profiling feature to be enabled for the account. If the deployment's bundle is
+  ## identical to another deployed Worker version in the account, the profile may be
+  ## captured from an isolate running that version.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/workers/workers/{workerId}/previews/{previewId}/deployments/{deploymentId}/profile", body)
+  return res
 
 proc postAccountsAccountIdWorkersWorkersWorkerIdVersionsVersionIdProfile*(client: CloudflareClient,
                                                                           accountId: types.WorkersIdentifier,

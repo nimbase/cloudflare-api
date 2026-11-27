@@ -10,9 +10,9 @@ import ./private/types
 
 
 proc getAccountsAccountIdBillingHistory*(client: CloudflareClient,
-                                         accountId: types.BillSubsApiIdentifier,
+                                         accountId: types.BillSubsIdentifier,
                                          page: int64 = 1, perPage: int64 = 20,
-                                         status: string = default(string)): Future[types.BillSubsApiAccountBillingHistoryCollection] {.async.} =
+                                         status: string = default(string)): Future[types.BillSubsAccountBillingHistoryCollection] {.async.} =
   ## Gets the billing history for an account.
 
   var q = initOrderedTable[string, string]()
@@ -23,6 +23,6 @@ proc getAccountsAccountIdBillingHistory*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiAccountBillingHistoryCollection)
+    result = fromJson(body, types.BillSubsAccountBillingHistoryCollection)
   else:
     raise newException(CloudflareClientError, body)

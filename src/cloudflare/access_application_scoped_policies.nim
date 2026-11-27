@@ -106,3 +106,90 @@ proc putAccountsAccountIdAccessAppsAppIdPoliciesPolicyIdMakeReusable*(client: Cl
     result = fromJson(body, types.AccessResponseCollection9)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdAccessAppsAppIdPolicies*(client: CloudflareClient,
+                                                             accountOrZone: AccountOrZone,
+                                                             appId: types.AccessUuid,
+                                                             accountOrZoneId: types.AccessIdentifier,
+                                                             page: int64 = 1,
+                                                             perPage: int64 = 200): Future[types.AccessResponseCollection9] {.async.} =
+  ## Lists Access policies configured for an application. Returns both exclusively
+  ## scoped and reusable policies used by the application.
+
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/access/apps/{appId}/policies", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessResponseCollection9)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdAccessAppsAppIdPolicies*(client: CloudflareClient,
+                                                              accountOrZone: AccountOrZone,
+                                                              appId: types.AccessUuid,
+                                                              accountOrZoneId: types.AccessIdentifier,
+                                                              body: types.AccessAppPolicyWriteRequest): Future[types.AccessSingleResponse10] {.async.} =
+  ## Creates a policy applying exclusive to a single application that defines the
+  ## users or groups who can reach it. We recommend creating a reusable policy
+  ## instead and subsequently referencing its ID in the application's 'policies'
+  ## array.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/access/apps/{appId}/policies", body)
+  let body = await res.body
+  case res.code
+  of Http201:
+    result = fromJson(body, types.AccessSingleResponse10)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdAccessAppsAppIdPoliciesPolicyId*(client: CloudflareClient,
+                                                                     accountOrZone: AccountOrZone,
+                                                                     appId: types.AccessUuid,
+                                                                     policyId: types.AccessUuid,
+                                                                     accountOrZoneId: types.AccessIdentifier): Future[types.AccessSingleResponse10] {.async.} =
+  ## Fetches a single Access policy configured for an application. Returns both
+  ## exclusively owned and reusable policies used by the application.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/access/apps/{appId}/policies/{policyId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessSingleResponse10)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountOrZoneAccountOrZoneIdAccessAppsAppIdPoliciesPolicyId*(client: CloudflareClient,
+                                                                     accountOrZone: AccountOrZone,
+                                                                     appId: types.AccessUuid,
+                                                                     policyId: types.AccessUuid,
+                                                                     accountOrZoneId: types.AccessIdentifier,
+                                                                     body: types.AccessAppPolicyWriteRequest): Future[types.AccessSingleResponse10] {.async.} =
+  ## Updates an Access policy specific to an application. To update a reusable
+  ## policy, use the /account or zones/{account or zone_id}/policies/{uid} endpoint.
+
+  let res = await client.httpPUT(fmt"/{accountOrZone}/{accountOrZoneId}/access/apps/{appId}/policies/{policyId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessSingleResponse10)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountOrZoneAccountOrZoneIdAccessAppsAppIdPoliciesPolicyId*(client: CloudflareClient,
+                                                                        accountOrZone: AccountOrZone,
+                                                                        appId: types.AccessUuid,
+                                                                        policyId: types.AccessUuid,
+                                                                        accountOrZoneId: types.AccessIdentifier): Future[types.AccessIdResponse] {.async.} =
+  ## Deletes an Access policy specific to an application. To delete a reusable
+  ## policy, use the /account or zones/{account or zone_id}/policies/{uid} endpoint.
+
+  let res = await client.httpDELETE(fmt"/{accountOrZone}/{accountOrZoneId}/access/apps/{appId}/policies/{policyId}")
+  let body = await res.body
+  case res.code
+  of Http202:
+    result = fromJson(body, types.AccessIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)

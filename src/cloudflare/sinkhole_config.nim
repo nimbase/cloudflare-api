@@ -155,3 +155,17 @@ proc deleteZonesZoneIdIntelSinkholesSinkholeIdIngressesIngressId*(client: Cloudf
     result = fromJson(body, types.IntelSinkholesApiResponseSingleEmpty)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdIntelSinkholesSinkholeIdIngresses*(client: CloudflareClient,
+                                                                       accountOrZone: AccountOrZone,
+                                                                       accountOrZoneId: types.IntelSinkholesIdentifier,
+                                                                       sinkholeId: string): Future[types.IntelSinkholesIngressCollectionResponse] {.async.} =
+  ## Returns all ingress rules associated with the specified sinkhole.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/intel/sinkholes/{sinkholeId}/ingresses")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.IntelSinkholesIngressCollectionResponse)
+  else:
+    raise newException(CloudflareClientError, body)

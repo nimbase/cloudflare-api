@@ -97,3 +97,86 @@ proc patchAccountsAccountIdLoadBalancersLoadBalancerId*(client: CloudflareClient
     result = fromJson(body, types.LoadBalancingLoadBalancerComponentsSchemasSingleResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdLoadBalancers*(client: CloudflareClient,
+                                                   accountOrZone: AccountOrZone,
+                                                   accountOrZoneId: types.LoadBalancingComponentsSchemasIdentifier): Future[types.LoadBalancingLoadBalancerComponentsSchemasResponseCollection] {.async.} =
+  ## List configured account or zone-scoped load balancers.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/load_balancers")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LoadBalancingLoadBalancerComponentsSchemasResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdLoadBalancers*(client: CloudflareClient,
+                                                    accountOrZone: AccountOrZone,
+                                                    accountOrZoneId: types.LoadBalancingComponentsSchemasIdentifier): Future[types.LoadBalancingLoadBalancerComponentsSchemasSingleResponse] {.async.} =
+  ## Create a new account or zone-scoped load balancer.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/load_balancers", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LoadBalancingLoadBalancerComponentsSchemasSingleResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdLoadBalancersLoadBalancerId*(client: CloudflareClient,
+                                                                 accountOrZone: AccountOrZone,
+                                                                 accountOrZoneId: types.LoadBalancingComponentsSchemasIdentifier,
+                                                                 loadBalancerId: types.LoadBalancingLoadBalancerComponentsSchemasIdentifier): Future[types.LoadBalancingLoadBalancerComponentsSchemasSingleResponse] {.async.} =
+  ## Fetch a single configured account or zone-scoped load balancer.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/load_balancers/{loadBalancerId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LoadBalancingLoadBalancerComponentsSchemasSingleResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountOrZoneAccountOrZoneIdLoadBalancersLoadBalancerId*(client: CloudflareClient,
+                                                                 accountOrZone: AccountOrZone,
+                                                                 accountOrZoneId: types.LoadBalancingComponentsSchemasIdentifier,
+                                                                 loadBalancerId: types.LoadBalancingLoadBalancerComponentsSchemasIdentifier): Future[types.LoadBalancingLoadBalancerComponentsSchemasSingleResponse] {.async.} =
+  ## Update a configured account or zone-scoped load balancer.
+
+  let res = await client.httpPUT(fmt"/{accountOrZone}/{accountOrZoneId}/load_balancers/{loadBalancerId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LoadBalancingLoadBalancerComponentsSchemasSingleResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountOrZoneAccountOrZoneIdLoadBalancersLoadBalancerId*(client: CloudflareClient,
+                                                                    accountOrZone: AccountOrZone,
+                                                                    accountOrZoneId: types.LoadBalancingComponentsSchemasIdentifier,
+                                                                    loadBalancerId: types.LoadBalancingLoadBalancerComponentsSchemasIdentifier): Future[types.LoadBalancingComponentsSchemasIdResponse] {.async.} =
+  ## Delete a configured account or zone-scoped load balancer.
+
+  let res = await client.httpDELETE(fmt"/{accountOrZone}/{accountOrZoneId}/load_balancers/{loadBalancerId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LoadBalancingComponentsSchemasIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountOrZoneAccountOrZoneIdLoadBalancersLoadBalancerId*(client: CloudflareClient,
+                                                                   accountOrZone: AccountOrZone,
+                                                                   accountOrZoneId: types.LoadBalancingComponentsSchemasIdentifier,
+                                                                   loadBalancerId: types.LoadBalancingLoadBalancerComponentsSchemasIdentifier): Future[types.LoadBalancingLoadBalancerComponentsSchemasSingleResponse] {.async.} =
+  ## Apply changes to an existing account or zone-scoped load balancer, overwriting
+  ## the supplied properties.
+
+  let res = await client.httpPATCH(fmt"/{accountOrZone}/{accountOrZoneId}/load_balancers/{loadBalancerId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LoadBalancingLoadBalancerComponentsSchemasSingleResponse)
+  else:
+    raise newException(CloudflareClientError, body)

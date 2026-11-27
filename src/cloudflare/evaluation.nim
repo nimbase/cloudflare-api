@@ -49,3 +49,42 @@ proc postAccountsAccountIdFlagshipAppsAppIdEvaluate*(client: CloudflareClient,
     result = fromJson(body, types.FlagshipEvaluationResult)
   else:
     raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdFlagshipAppsAppIdOfrepV1EvaluateFlags*(client: CloudflareClient,
+                                                                 accountId: string,
+                                                                 appId: string,
+                                                                 body: types.FlagshipOfrepEvaluationRequest): Future[types.FlagshipOfrepBulkEvaluationResponse] {.async.} =
+  ## Evaluates every flag in the app following the [OpenFeature Remote Evaluation
+  ## Protocol](https://github.com/open-feature/protocol) (OFREP) bulk contract. A
+  ## flag with an invalid config appears as a failure entry rather than failing the
+  ## request. Send the returned `ETag` in `If-None-Match` to receive `304` when the
+  ## evaluated results are unchanged; a rollout whose targeting attribute is missing
+  ## re-buckets randomly on each request, so it does not stay cached. Request-level
+  ## failures omit `key` from the OFREP error body.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/flagship/apps/{appId}/ofrep/v1/evaluate/flags", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.FlagshipOfrepBulkEvaluationResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountsAccountIdFlagshipAppsAppIdOfrepV1EvaluateFlagsFlagKey*(client: CloudflareClient,
+                                                                        accountId: string,
+                                                                        appId: string,
+                                                                        flagKey: string,
+                                                                        body: types.FlagshipOfrepEvaluationRequest): Future[types.FlagshipOfrepEvaluationSuccess] {.async.} =
+  ## Evaluates a single flag following the [OpenFeature Remote Evaluation
+  ## Protocol](https://github.com/open-feature/protocol) (OFREP). Send the evaluation
+  ## context as `{ "context": { ... } }`; it may be omitted. A disabled flag returns
+  ## `reason: DISABLED` without `value` or `variant` so the client uses its own
+  ## default. Failures use the OFREP error shape `{ key, errorCode, errorDetails }`.
+
+  let res = await client.httpPOST(fmt"/accounts/{accountId}/flagship/apps/{appId}/ofrep/v1/evaluate/flags/{flagKey}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.FlagshipOfrepEvaluationSuccess)
+  else:
+    raise newException(CloudflareClientError, body)

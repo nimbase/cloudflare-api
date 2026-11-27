@@ -206,3 +206,80 @@ proc deleteAccountsAccountIdAccessIdentityProvidersIdentityProviderIdScimUsersUs
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/access/identity_providers/{identityProviderId}/scim/users/{userId}")
   return res
+
+proc getAccountOrZoneAccountOrZoneIdAccessIdentityProviders*(client: CloudflareClient,
+                                                             accountOrZone: AccountOrZone,
+                                                             accountOrZoneId: types.AccessIdentifier,
+                                                             scimEnabled: string = default(string),
+                                                             page: int64 = 1,
+                                                             perPage: int64 = 200): Future[types.AccessResponseCollection] {.async.} =
+  ## Lists all configured identity providers.
+
+  var q = initOrderedTable[string, string]()
+  q["scim_enabled"] = $scimEnabled
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/access/identity_providers", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdAccessIdentityProviders*(client: CloudflareClient,
+                                                              accountOrZone: AccountOrZone,
+                                                              accountOrZoneId: types.AccessIdentifier,
+                                                              body: types.AccessIdentityProviders): Future[types.AccessSingleResponse3] {.async.} =
+  ## Adds a new identity provider to Access.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/access/identity_providers", body)
+  let body = await res.body
+  case res.code
+  of Http201:
+    result = fromJson(body, types.AccessSingleResponse3)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdAccessIdentityProvidersIdentityProviderId*(client: CloudflareClient,
+                                                                               accountOrZone: AccountOrZone,
+                                                                               identityProviderId: types.AccessUuid,
+                                                                               accountOrZoneId: types.AccessIdentifier): Future[types.AccessSingleResponse3] {.async.} =
+  ## Fetches a configured identity provider.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/access/identity_providers/{identityProviderId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessSingleResponse3)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountOrZoneAccountOrZoneIdAccessIdentityProvidersIdentityProviderId*(client: CloudflareClient,
+                                                                               accountOrZone: AccountOrZone,
+                                                                               identityProviderId: types.AccessUuid,
+                                                                               accountOrZoneId: types.AccessIdentifier,
+                                                                               body: types.AccessIdentityProviders): Future[types.AccessSingleResponse3] {.async.} =
+  ## Updates a configured identity provider.
+
+  let res = await client.httpPUT(fmt"/{accountOrZone}/{accountOrZoneId}/access/identity_providers/{identityProviderId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessSingleResponse3)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountOrZoneAccountOrZoneIdAccessIdentityProvidersIdentityProviderId*(client: CloudflareClient,
+                                                                                  accountOrZone: AccountOrZone,
+                                                                                  identityProviderId: types.AccessUuid,
+                                                                                  accountOrZoneId: types.AccessIdentifier): Future[types.AccessIdResponse] {.async.} =
+  ## Deletes an identity provider from Access.
+
+  let res = await client.httpDELETE(fmt"/{accountOrZone}/{accountOrZoneId}/access/identity_providers/{identityProviderId}")
+  let body = await res.body
+  case res.code
+  of Http202:
+    result = fromJson(body, types.AccessIdResponse)
+  else:
+    raise newException(CloudflareClientError, body)

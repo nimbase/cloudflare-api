@@ -15,59 +15,59 @@ type
     secondary_billing_email: Option[string]
 
 proc getAccountsAccountIdBillingProfile*(client: CloudflareClient,
-                                         accountId: types.BillSubsApiIdentifier): Future[types.BillSubsApiBillingResponseSingle] {.async.} =
+                                         accountId: types.BillSubsIdentifier): Future[types.BillSubsBillingResponseSingle] {.async.} =
   ## Gets the current billing profile for the account.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/billing/profile")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiBillingResponseSingle)
+    result = fromJson(body, types.BillSubsBillingResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdBillingProfile*(client: CloudflareClient,
-                                          accountId: types.BillSubsApiIdentifier,
-                                          body: types.BillSubsApiBillingProfileRequest): Future[types.BillSubsApiBillingResponseSingle] {.async.} =
+                                          accountId: types.BillSubsIdentifier,
+                                          body: types.BillSubsBillingProfileRequest): Future[types.BillSubsBillingResponseSingle] {.async.} =
   ## Creates a billing profile for an account.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/billing/profile", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiBillingResponseSingle)
+    result = fromJson(body, types.BillSubsBillingResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc putAccountsAccountIdBillingProfile*(client: CloudflareClient,
-                                         accountId: types.BillSubsApiIdentifier,
-                                         body: types.BillSubsApiBillingProfileRequest): Future[types.BillSubsApiBillingResponseSingle] {.async.} =
+                                         accountId: types.BillSubsIdentifier,
+                                         body: types.BillSubsBillingProfileRequest): Future[types.BillSubsBillingResponseSingle] {.async.} =
   ## Updates the billing profile for an account.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/billing/profile", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiBillingResponseSingle)
+    result = fromJson(body, types.BillSubsBillingResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc deleteAccountsAccountIdBillingProfile*(client: CloudflareClient,
-                                            accountId: types.BillSubsApiIdentifier): Future[AsyncResponse] {.async.} =
+                                            accountId: types.BillSubsIdentifier): Future[AsyncResponse] {.async.} =
   ## Deletes the billing profile for an account.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/billing/profile")
   return res
 
 proc patchAccountsAccountIdBillingProfile*(client: CloudflareClient,
-                                           accountId: types.BillSubsApiIdentifier,
-                                           body: PatchAccountsAccountIdBillingProfileRequest): Future[types.BillSubsApiBillingResponseSingle] {.async.} =
+                                           accountId: types.BillSubsIdentifier,
+                                           body: PatchAccountsAccountIdBillingProfileRequest): Future[types.BillSubsBillingResponseSingle] {.async.} =
   ## Updates the billing email addresses and preferred locale for an account.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/billing/profile", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiBillingResponseSingle)
+    result = fromJson(body, types.BillSubsBillingResponseSingle)
   else:
     raise newException(CloudflareClientError, body)

@@ -15,6 +15,8 @@ type
     dismiss: Option[bool]
   PutZonesZoneIdSecurityCenterInsightsIssueIdDismissRequest = object
     dismiss: Option[bool]
+  PutAccountOrZoneAccountOrZoneIdSecurityCenterInsightsIssueIdDismissRequest = object
+    dismiss: Option[bool]
   SecurityCenterInsightSourceOption* = enum
     sourceRiskrecon = "riskrecon"
 
@@ -639,6 +641,214 @@ proc putZonesZoneIdSecurityCenterInsightsIssueIdDismiss*(client: CloudflareClien
   ## zone insights while preserving historical data.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/security-center/insights/{issueId}/dismiss", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdSecurityCenterInsights*(client: CloudflareClient,
+                                                            accountOrZone: AccountOrZone,
+                                                            accountOrZoneId: types.SecurityCenterIdentifier,
+                                                            dismissed: types.SecurityCenterDismissed = default(types.SecurityCenterDismissed),
+                                                            issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
+                                                            issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
+                                                            product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                            source: types.SecurityCenterSources = default(types.SecurityCenterSources),
+                                                            severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
+                                                            subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
+                                                            issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
+                                                            issueTypeNeq: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
+                                                            productNeq: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                            severityNeq: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
+                                                            subjectNeq: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
+                                                            page: JsonNode = default(JsonNode),
+                                                            perPage: JsonNode = default(JsonNode)): Future[JsonNode] {.async.} =
+  ## Lists all Security Center insights for the account or zone, showing security
+  ## findings and recommendations.
+
+  var q = initOrderedTable[string, string]()
+  q["dismissed"] = $dismissed
+  q["issue_class"] = $issueClass
+  q["issue_type"] = $issueType
+  q["product"] = $product
+  q["source"] = $source
+  q["severity"] = $severity
+  q["subject"] = $subject
+  q["issue_class~neq"] = $issueClassNeq
+  q["issue_type~neq"] = $issueTypeNeq
+  q["product~neq"] = $productNeq
+  q["severity~neq"] = $severityNeq
+  q["subject~neq"] = $subjectNeq
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/security-center/insights", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdSecurityCenterInsightsClass*(client: CloudflareClient,
+                                                                 accountOrZone: AccountOrZone,
+                                                                 accountOrZoneId: types.SecurityCenterIdentifier,
+                                                                 dismissed: types.SecurityCenterDismissed = default(types.SecurityCenterDismissed),
+                                                                 issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
+                                                                 issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
+                                                                 product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                                 source: types.SecurityCenterSources = default(types.SecurityCenterSources),
+                                                                 severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
+                                                                 subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
+                                                                 issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
+                                                                 issueTypeNeq: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
+                                                                 productNeq: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                                 severityNeq: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
+                                                                 subjectNeq: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects)): Future[types.SecurityCenterValueCountsResponse] {.async.} =
+  ## Retrieves Security Center insight counts aggregated by classification class.
+
+  var q = initOrderedTable[string, string]()
+  q["dismissed"] = $dismissed
+  q["issue_class"] = $issueClass
+  q["issue_type"] = $issueType
+  q["product"] = $product
+  q["source"] = $source
+  q["severity"] = $severity
+  q["subject"] = $subject
+  q["issue_class~neq"] = $issueClassNeq
+  q["issue_type~neq"] = $issueTypeNeq
+  q["product~neq"] = $productNeq
+  q["severity~neq"] = $severityNeq
+  q["subject~neq"] = $subjectNeq
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/security-center/insights/class", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.SecurityCenterValueCountsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdSecurityCenterInsightsPartnerCount*(client: CloudflareClient,
+                                                                        accountOrZone: AccountOrZone,
+                                                                        accountOrZoneId: types.SecurityCenterIdentifier,
+                                                                        source: SecurityCenterInsightSourceOption): Future[types.SecurityCenterPartnerInsightCountResponse] {.async.} =
+  ## Retrieves the uncapped count of active, non-dismissed, unclassified RiskRecon
+  ## insights for the account or zone.
+
+  var q = initOrderedTable[string, string]()
+  q["source"] = $source
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/security-center/insights/partner-count", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.SecurityCenterPartnerInsightCountResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdSecurityCenterInsightsSeverity*(client: CloudflareClient,
+                                                                    accountOrZone: AccountOrZone,
+                                                                    accountOrZoneId: types.SecurityCenterIdentifier,
+                                                                    dismissed: types.SecurityCenterDismissed = default(types.SecurityCenterDismissed),
+                                                                    issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
+                                                                    issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
+                                                                    product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                                    source: types.SecurityCenterSources = default(types.SecurityCenterSources),
+                                                                    severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
+                                                                    subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
+                                                                    issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
+                                                                    issueTypeNeq: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
+                                                                    productNeq: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                                    severityNeq: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
+                                                                    subjectNeq: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects)): Future[types.SecurityCenterValueCountsResponse] {.async.} =
+  ## Retrieves Security Center insight counts aggregated by severity level (critical,
+  ## high, medium, low).
+
+  var q = initOrderedTable[string, string]()
+  q["dismissed"] = $dismissed
+  q["issue_class"] = $issueClass
+  q["issue_type"] = $issueType
+  q["product"] = $product
+  q["source"] = $source
+  q["severity"] = $severity
+  q["subject"] = $subject
+  q["issue_class~neq"] = $issueClassNeq
+  q["issue_type~neq"] = $issueTypeNeq
+  q["product~neq"] = $productNeq
+  q["severity~neq"] = $severityNeq
+  q["subject~neq"] = $subjectNeq
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/security-center/insights/severity", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.SecurityCenterValueCountsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdSecurityCenterInsightsType*(client: CloudflareClient,
+                                                                accountOrZone: AccountOrZone,
+                                                                accountOrZoneId: types.SecurityCenterIdentifier,
+                                                                dismissed: types.SecurityCenterDismissed = default(types.SecurityCenterDismissed),
+                                                                issueClass: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
+                                                                issueType: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
+                                                                product: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                                source: types.SecurityCenterSources = default(types.SecurityCenterSources),
+                                                                severity: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
+                                                                subject: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects),
+                                                                issueClassNeq: types.SecurityCenterIssueClasses = default(types.SecurityCenterIssueClasses),
+                                                                issueTypeNeq: types.SecurityCenterIssueTypes = default(types.SecurityCenterIssueTypes),
+                                                                productNeq: types.SecurityCenterProducts = default(types.SecurityCenterProducts),
+                                                                severityNeq: types.SecurityCenterSeverityQueryParam = default(types.SecurityCenterSeverityQueryParam),
+                                                                subjectNeq: types.SecurityCenterSubjects = default(types.SecurityCenterSubjects)): Future[types.SecurityCenterValueCountsResponse] {.async.} =
+  ## Retrieves Security Center insight counts aggregated by insight type.
+
+  var q = initOrderedTable[string, string]()
+  q["dismissed"] = $dismissed
+  q["issue_class"] = $issueClass
+  q["issue_type"] = $issueType
+  q["product"] = $product
+  q["source"] = $source
+  q["severity"] = $severity
+  q["subject"] = $subject
+  q["issue_class~neq"] = $issueClassNeq
+  q["issue_type~neq"] = $issueTypeNeq
+  q["product~neq"] = $productNeq
+  q["severity~neq"] = $severityNeq
+  q["subject~neq"] = $subjectNeq
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/security-center/insights/type", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.SecurityCenterValueCountsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountOrZoneAccountOrZoneIdSecurityCenterInsightsIssueIdClassification*(client: CloudflareClient,
+                                                                                   accountOrZone: AccountOrZone,
+                                                                                   accountOrZoneId: types.SecurityCenterIdentifier,
+                                                                                   issueId: string,
+                                                                                   body: types.SecurityCenterUserClassificationUpdate): Future[JsonNode] {.async.} =
+  ## Updates the user classification for a Security Center insight. Valid values are
+  ## 'false_positive' or 'accept_risk'. To reset, set classification to null. Cannot
+  ## change directly between classification values - must reset to null first.
+
+  let res = await client.httpPATCH(fmt"/{accountOrZone}/{accountOrZoneId}/security-center/insights/{issueId}/classification", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountOrZoneAccountOrZoneIdSecurityCenterInsightsIssueIdDismiss*(client: CloudflareClient,
+                                                                          accountOrZone: AccountOrZone,
+                                                                          accountOrZoneId: types.SecurityCenterIdentifier,
+                                                                          issueId: string,
+                                                                          body: PutAccountOrZoneAccountOrZoneIdSecurityCenterInsightsIssueIdDismissRequest): Future[JsonNode] {.async.} =
+  ## Archives a Security Center insight for an account or zone, removing it from the
+  ## active insights list while preserving historical data.
+
+  let res = await client.httpPUT(fmt"/{accountOrZone}/{accountOrZoneId}/security-center/insights/{issueId}/dismiss", body)
   let body = await res.body
   case res.code
   of Http200:

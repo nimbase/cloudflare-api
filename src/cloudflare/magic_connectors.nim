@@ -114,7 +114,7 @@ proc getAccountsAccountIdMagicConnectorsConnectorIdInterrupts*(client: Cloudflar
 proc postAccountsAccountIdMagicConnectorsConnectorIdInterrupts*(client: CloudflareClient,
                                                                 accountId: types.MconnAccountId,
                                                                 connectorId: types.MconnUuid,
-                                                                body: types.MconnInterrupt): Future[types.MconnConnectorInterruptsCreateResponse] {.async.} =
+                                                                body: types.MconnConnectorInterruptsCreateRequest): Future[types.MconnConnectorInterruptsCreateResponse] {.async.} =
   ## Creates an interrupt for a Magic WAN Connector.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/magic/connectors/{connectorId}/interrupts", body)

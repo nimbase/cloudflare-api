@@ -13,18 +13,18 @@ type
     destination_organization_id: string
   PostAccountsAccountIdMoveResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiMoveAccountResult
+    messages: seq[types.OrganizationsV4Message]
+    result: types.OrganizationsMoveAccountResult
     success: bool
   GetAccountsAccountIdOrganizationsResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: seq[types.OrganizationsApiOrganization]
+    messages: seq[types.OrganizationsV4Message]
+    result: seq[types.OrganizationsOrganization]
     success: bool
   GetAccountsAccountIdProfileResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: types.OrganizationsApiProfile
+    messages: seq[types.OrganizationsV4Message]
+    result: types.OrganizationsProfile
     success: bool
   AccountDirectionOption* = enum
     directionAsc = "asc"
@@ -155,7 +155,7 @@ proc getAccountsAccountIdProfile*(client: CloudflareClient, accountId: string): 
     raise newException(CloudflareClientError, body)
 
 proc putAccountsAccountIdProfile*(client: CloudflareClient, accountId: string,
-                                  body: types.OrganizationsApiModifyProfileRequest): Future[AsyncResponse] {.async.} =
+                                  body: types.OrganizationsModifyProfileRequest): Future[AsyncResponse] {.async.} =
   ## Partially updates the business profile (name, email, phone, address, and
   ## external metadata)
   ## associated with this account's parent organization customer record, creating the

@@ -85,6 +85,73 @@ type
   PatchAccountsAccountIdAccessOrganizationsTrustSettingsRequest = object
     grant_trust_to_all_accounts_in_org: Option[types.AccessGrantTrustToAllAccountsInOrg]
     trusting_accounts: Option[types.AccessTrustingAccounts]
+  PostAccountOrZoneAccountOrZoneIdAccessOrganizationsRequest = object
+    allow_authenticate_via_warp: Option[types.AccessAllowAuthenticateViaWarp]
+    auth_domain: Option[types.AccessAuthDomain]
+    auto_redirect_to_identity: Option[types.AccessAutoRedirectToIdentity]
+    deny_unmatched_requests: Option[types.AccessDenyUnmatchedRequests]
+    deny_unmatched_requests_exempted_zone_names: Option[types.AccessDenyUnmatchedRequestsExemptedZoneNames]
+    disable_end_user_app_creation: Option[types.AccessDisableEndUserAppCreation]
+    is_ui_read_only: Option[types.AccessIsUiReadOnly]
+    login_design: Option[types.AccessLoginDesign]
+    mfa_config: Option[types.AccessOrgMfaConfig]
+    mfa_piv_key_requirements: Option[types.AccessMfaPivKeyRequirements]
+    mfa_required_for_all_apps: Option[types.AccessMfaRequiredForAllApps]
+    name: Option[types.AccessName]
+    service_token_inactivity: Option[types.AccessServiceTokenInactivity]
+    session_duration: Option[types.AccessSessionDuration]
+    strict_service_token_auth: Option[types.AccessStrictServiceTokenAuth]
+    ui_read_only_toggle_reason: Option[types.AccessUiReadOnlyToggleReason]
+    user_seat_expiration_inactive_time: Option[types.AccessUserSeatExpirationInactiveTime]
+    warp_auth_non_browser_401: Option[types.AccessWarpAuthNonBrowser401]
+    warp_auth_session_duration: Option[types.AccessWarpAuthSessionDuration]
+  PutAccountOrZoneAccountOrZoneIdAccessOrganizationsRequest = object
+    allow_authenticate_via_warp: Option[types.AccessAllowAuthenticateViaWarp]
+    auth_domain: Option[types.AccessAuthDomain]
+    auto_redirect_to_identity: Option[types.AccessAutoRedirectToIdentity]
+    custom_pages: Option[types.AccessCustomPages]
+    deny_unmatched_requests: Option[types.AccessDenyUnmatchedRequests]
+    deny_unmatched_requests_exempted_zone_names: Option[types.AccessDenyUnmatchedRequestsExemptedZoneNames]
+    disable_end_user_app_creation: Option[types.AccessDisableEndUserAppCreation]
+    is_ui_read_only: Option[types.AccessIsUiReadOnly]
+    login_design: Option[types.AccessLoginDesign]
+    mfa_config: Option[types.AccessOrgMfaConfig]
+    mfa_piv_key_requirements: Option[types.AccessMfaPivKeyRequirements]
+    mfa_required_for_all_apps: Option[types.AccessMfaRequiredForAllApps]
+    name: Option[types.AccessName]
+    service_token_inactivity: Option[types.AccessServiceTokenInactivity]
+    session_duration: Option[types.AccessSessionDuration]
+    strict_service_token_auth: Option[types.AccessStrictServiceTokenAuth]
+    ui_read_only_toggle_reason: Option[types.AccessUiReadOnlyToggleReason]
+    user_seat_expiration_inactive_time: Option[types.AccessUserSeatExpirationInactiveTime]
+    warp_auth_non_browser_401: Option[types.AccessWarpAuthNonBrowser401]
+    warp_auth_session_duration: Option[types.AccessWarpAuthSessionDuration]
+  PatchAccountOrZoneAccountOrZoneIdAccessOrganizationsRequest = object
+    allow_authenticate_via_warp: Option[types.AccessAllowAuthenticateViaWarp]
+    auth_domain: Option[types.AccessAuthDomain]
+    auto_redirect_to_identity: Option[types.AccessAutoRedirectToIdentity]
+    custom_pages: Option[types.AccessCustomPages]
+    deny_unmatched_requests: Option[types.AccessDenyUnmatchedRequests]
+    deny_unmatched_requests_exempted_zone_names: Option[types.AccessDenyUnmatchedRequestsExemptedZoneNames]
+    disable_end_user_app_creation: Option[types.AccessDisableEndUserAppCreation]
+    is_ui_read_only: Option[types.AccessIsUiReadOnly]
+    login_design: Option[types.AccessLoginDesign]
+    mfa_config: Option[types.AccessOrgMfaConfig]
+    mfa_piv_key_requirements: Option[types.AccessMfaPivKeyRequirements]
+    mfa_required_for_all_apps: Option[types.AccessMfaRequiredForAllApps]
+    name: Option[types.AccessName]
+    service_token_inactivity: Option[types.AccessServiceTokenInactivity]
+    session_duration: Option[types.AccessSessionDuration]
+    strict_service_token_auth: Option[types.AccessStrictServiceTokenAuth]
+    ui_read_only_toggle_reason: Option[types.AccessUiReadOnlyToggleReason]
+    user_seat_expiration_inactive_time: Option[types.AccessUserSeatExpirationInactiveTime]
+    warp_auth_non_browser_401: Option[types.AccessWarpAuthNonBrowser401]
+    warp_auth_session_duration: Option[types.AccessWarpAuthSessionDuration]
+  PostAccountOrZoneAccountOrZoneIdAccessOrganizationsRevokeUserRequest = object
+    devices: Option[bool]
+    email: string
+    user_uid: Option[string]
+    warp_session_reauth: Option[bool]
 
 proc getAccountsAccountIdAccessOrganizations*(client: CloudflareClient,
                                               accountId: types.AccessIdentifier): Future[types.AccessGetResponse] {.async.} =
@@ -227,5 +294,79 @@ proc patchAccountsAccountIdAccessOrganizationsTrustSettings*(client: CloudflareC
   case res.code
   of Http200:
     result = fromJson(body, types.AccessTrustSettingsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdAccessOrganizations*(client: CloudflareClient,
+                                                         accountOrZone: AccountOrZone,
+                                                         accountOrZoneId: types.AccessIdentifier): Future[types.AccessGetResponse] {.async.} =
+  ## Returns the configuration for your Zero Trust organization.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/access/organizations")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessGetResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdAccessOrganizations*(client: CloudflareClient,
+                                                          accountOrZone: AccountOrZone,
+                                                          accountOrZoneId: types.AccessIdentifier,
+                                                          body: PostAccountOrZoneAccountOrZoneIdAccessOrganizationsRequest): Future[types.AccessSingleResponse] {.async.} =
+  ## Sets up a Zero Trust organization for your account or zone.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/access/organizations", body)
+  let body = await res.body
+  case res.code
+  of Http201:
+    result = fromJson(body, types.AccessSingleResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountOrZoneAccountOrZoneIdAccessOrganizations*(client: CloudflareClient,
+                                                         accountOrZone: AccountOrZone,
+                                                         accountOrZoneId: types.AccessIdentifier,
+                                                         body: PutAccountOrZoneAccountOrZoneIdAccessOrganizationsRequest): Future[types.AccessSingleResponse] {.async.} =
+  ## Updates the configuration for your Zero Trust organization.
+
+  let res = await client.httpPUT(fmt"/{accountOrZone}/{accountOrZoneId}/access/organizations", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessSingleResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountOrZoneAccountOrZoneIdAccessOrganizations*(client: CloudflareClient,
+                                                           accountOrZone: AccountOrZone,
+                                                           accountOrZoneId: types.AccessIdentifier,
+                                                           body: PatchAccountOrZoneAccountOrZoneIdAccessOrganizationsRequest): Future[types.AccessSingleResponse] {.async.} =
+  ## Updates only the fields included in the request body. Omitted fields keep their
+  ## current values. To clear `mfa_config` or `mfa_piv_key_requirements`, send the
+  ## field as `{}`.
+
+  let res = await client.httpPATCH(fmt"/{accountOrZone}/{accountOrZoneId}/access/organizations", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessSingleResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdAccessOrganizationsRevokeUser*(client: CloudflareClient,
+                                                                    accountOrZone: AccountOrZone,
+                                                                    accountOrZoneId: types.AccessIdentifier,
+                                                                    devices: bool = default(bool),
+                                                                    body: PostAccountOrZoneAccountOrZoneIdAccessOrganizationsRevokeUserRequest): Future[types.AccessEmptyResponse] {.async.} =
+  ## Revokes a user's access across all applications.
+
+  var q = initOrderedTable[string, string]()
+  q["devices"] = $devices
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/access/organizations/revoke_user", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessEmptyResponse)
   else:
     raise newException(CloudflareClientError, body)

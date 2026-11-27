@@ -23,3 +23,19 @@ proc getAccountsAccountIdEntitlements*(client: CloudflareClient,
     result = fromJson(body, types.EntitlementsEntitlementsResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdEntitlements*(client: CloudflareClient,
+                                                  accountOrZone: AccountOrZone,
+                                                  accountOrZoneId: types.EntitlementsIdentifier): Future[types.EntitlementsEntitlementsResponse] {.async.} =
+  ## Returns the list of entitlements (features and their allocations) for a given
+  ## account or zone. Each entitlement describes a product feature the account or
+  ## zone is permitted to use and the allocation value (boolean, count, range, enum,
+  ## or string) that governs its behaviour.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/entitlements")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.EntitlementsEntitlementsResponse)
+  else:
+    raise newException(CloudflareClientError, body)

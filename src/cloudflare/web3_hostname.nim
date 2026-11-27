@@ -11,7 +11,7 @@ import ./private/types
 
 proc getZonesZoneIdWeb3Hostnames*(client: CloudflareClient,
                                   zoneId: types.Web3Identifier): Future[types.Web3CollectionResponse] {.async.} =
-  ## List Web3 Hostnames
+  ## Lists all Web3 hostnames configured for the zone.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/web3/hostnames")
   let body = await res.body
@@ -24,7 +24,7 @@ proc getZonesZoneIdWeb3Hostnames*(client: CloudflareClient,
 proc postZonesZoneIdWeb3Hostnames*(client: CloudflareClient,
                                    zoneId: types.Web3Identifier,
                                    body: types.Web3CreateRequest): Future[types.Web3SingleResponse] {.async.} =
-  ## Create Web3 Hostname
+  ## Creates a new Web3 hostname for serving decentralized web content.
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/web3/hostnames", body)
   let body = await res.body
@@ -37,7 +37,8 @@ proc postZonesZoneIdWeb3Hostnames*(client: CloudflareClient,
 proc getZonesZoneIdWeb3HostnamesIdentifier*(client: CloudflareClient,
                                             identifier: types.Web3Identifier,
                                             zoneId: types.Web3Identifier): Future[types.Web3SingleResponse] {.async.} =
-  ## Web3 Hostname Details
+  ## Retrieves details for a specific Web3 hostname, including its target gateway and
+  ## DNSLink settings.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/web3/hostnames/{identifier}")
   let body = await res.body
@@ -50,7 +51,7 @@ proc getZonesZoneIdWeb3HostnamesIdentifier*(client: CloudflareClient,
 proc deleteZonesZoneIdWeb3HostnamesIdentifier*(client: CloudflareClient,
                                                identifier: types.Web3Identifier,
                                                zoneId: types.Web3Identifier): Future[types.Web3ApiResponseSingleId] {.async.} =
-  ## Delete Web3 Hostname
+  ## Deletes a Web3 hostname and its configuration from the zone.
 
   let res = await client.httpDELETE(fmt"/zones/{zoneId}/web3/hostnames/{identifier}")
   let body = await res.body
@@ -64,7 +65,7 @@ proc patchZonesZoneIdWeb3HostnamesIdentifier*(client: CloudflareClient,
                                               identifier: types.Web3Identifier,
                                               zoneId: types.Web3Identifier,
                                               body: types.Web3ModifyRequest): Future[types.Web3SingleResponse] {.async.} =
-  ## Edit Web3 Hostname
+  ## Updates a Web3 hostname configuration.
 
   let res = await client.httpPATCH(fmt"/zones/{zoneId}/web3/hostnames/{identifier}", body)
   let body = await res.body
@@ -77,7 +78,8 @@ proc patchZonesZoneIdWeb3HostnamesIdentifier*(client: CloudflareClient,
 proc getZonesZoneIdWeb3HostnamesIdentifierIpfsUniversalPathContentList*(client: CloudflareClient,
                                                                         identifier: types.Web3Identifier,
                                                                         zoneId: types.Web3Identifier): Future[types.Web3ContentListDetailsResponse] {.async.} =
-  ## IPFS Universal Path Gateway Content List Details
+  ## Retrieves the IPFS Universal Path Gateway content list configuration for a Web3
+  ## hostname.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/web3/hostnames/{identifier}/ipfs_universal_path/content_list")
   let body = await res.body
@@ -91,7 +93,7 @@ proc putZonesZoneIdWeb3HostnamesIdentifierIpfsUniversalPathContentList*(client: 
                                                                         identifier: types.Web3Identifier,
                                                                         zoneId: types.Web3Identifier,
                                                                         body: types.Web3ContentListUpdateRequest): Future[types.Web3ContentListDetailsResponse] {.async.} =
-  ## Update IPFS Universal Path Gateway Content List
+  ## Updates the IPFS Universal Path Gateway content list for a Web3 hostname.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/web3/hostnames/{identifier}/ipfs_universal_path/content_list", body)
   let body = await res.body
@@ -104,7 +106,7 @@ proc putZonesZoneIdWeb3HostnamesIdentifierIpfsUniversalPathContentList*(client: 
 proc getZonesZoneIdWeb3HostnamesIdentifierIpfsUniversalPathContentListEntries*(client: CloudflareClient,
                                                                                identifier: types.Web3Identifier,
                                                                                zoneId: types.Web3Identifier): Future[types.Web3ContentListEntryCollectionResponse] {.async.} =
-  ## List IPFS Universal Path Gateway Content List Entries
+  ## Lists entries in an IPFS Universal Path Gateway content list.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/web3/hostnames/{identifier}/ipfs_universal_path/content_list/entries")
   let body = await res.body
@@ -118,7 +120,7 @@ proc postZonesZoneIdWeb3HostnamesIdentifierIpfsUniversalPathContentListEntries*(
                                                                                 identifier: types.Web3Identifier,
                                                                                 zoneId: types.Web3Identifier,
                                                                                 body: types.Web3ContentListEntryCreateRequest): Future[types.Web3ContentListEntrySingleResponse] {.async.} =
-  ## Create IPFS Universal Path Gateway Content List Entry
+  ## Creates a new entry in an IPFS Universal Path Gateway content list.
 
   let res = await client.httpPOST(fmt"/zones/{zoneId}/web3/hostnames/{identifier}/ipfs_universal_path/content_list/entries", body)
   let body = await res.body
@@ -132,7 +134,7 @@ proc getZonesZoneIdWeb3HostnamesIdentifierIpfsUniversalPathContentListEntriesCon
                                                                                                          contentListEntryIdentifier: types.Web3Identifier,
                                                                                                          identifier: types.Web3Identifier,
                                                                                                          zoneId: types.Web3Identifier): Future[types.Web3ContentListEntrySingleResponse] {.async.} =
-  ## IPFS Universal Path Gateway Content List Entry Details
+  ## Retrieves details for a specific IPFS Universal Path Gateway content list entry.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/web3/hostnames/{identifier}/ipfs_universal_path/content_list/entries/{contentListEntryIdentifier}")
   let body = await res.body
@@ -147,7 +149,7 @@ proc putZonesZoneIdWeb3HostnamesIdentifierIpfsUniversalPathContentListEntriesCon
                                                                                                          identifier: types.Web3Identifier,
                                                                                                          zoneId: types.Web3Identifier,
                                                                                                          body: types.Web3ContentListEntryCreateRequest): Future[types.Web3ContentListEntrySingleResponse] {.async.} =
-  ## Edit IPFS Universal Path Gateway Content List Entry
+  ## Updates an IPFS Universal Path Gateway content list entry.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/web3/hostnames/{identifier}/ipfs_universal_path/content_list/entries/{contentListEntryIdentifier}", body)
   let body = await res.body
@@ -161,7 +163,7 @@ proc deleteZonesZoneIdWeb3HostnamesIdentifierIpfsUniversalPathContentListEntries
                                                                                                             contentListEntryIdentifier: types.Web3Identifier,
                                                                                                             identifier: types.Web3Identifier,
                                                                                                             zoneId: types.Web3Identifier): Future[types.Web3ApiResponseSingleId] {.async.} =
-  ## Delete IPFS Universal Path Gateway Content List Entry
+  ## Deletes an entry from an IPFS Universal Path Gateway content list.
 
   let res = await client.httpDELETE(fmt"/zones/{zoneId}/web3/hostnames/{identifier}/ipfs_universal_path/content_list/entries/{contentListEntryIdentifier}")
   let body = await res.body

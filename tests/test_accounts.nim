@@ -11,57 +11,57 @@ import cloudflare
 import ./common
 
 suite "accounts serialization":
-  test "round-trips OrganizationsApiOrganization":
-    let obj = newOrganizationsApiOrganization()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiOrganization)) == openjson.toJson(obj)
-
   test "round-trips IamResponseCollectionAccounts":
     let obj = newIamResponseCollectionAccounts()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamResponseCollectionAccounts)) == openjson.toJson(obj)
+
+  test "round-trips OrganizationsV4ErrorResponse":
+    let obj = newOrganizationsV4ErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsV4ErrorResponse)) == openjson.toJson(obj)
 
   test "round-trips IamApiResponseSingleId":
     let obj = newIamApiResponseSingleId()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamApiResponseSingleId)) == openjson.toJson(obj)
 
-  test "round-trips OrganizationsApiModifyProfileRequest":
-    let obj = newOrganizationsApiModifyProfileRequest()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiModifyProfileRequest)) == openjson.toJson(obj)
+  test "round-trips OrganizationsV4Message":
+    let obj = newOrganizationsV4Message()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsV4Message)) == openjson.toJson(obj)
 
   test "round-trips IamAccountIdentifier":
     let obj = newIamAccountIdentifier()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamAccountIdentifier)) == openjson.toJson(obj)
 
-  test "round-trips OrganizationsApiMoveAccountResult":
-    let obj = newOrganizationsApiMoveAccountResult()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiMoveAccountResult)) == openjson.toJson(obj)
+  test "round-trips OrganizationsOrganization":
+    let obj = newOrganizationsOrganization()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsOrganization)) == openjson.toJson(obj)
+
+  test "round-trips OrganizationsProfile":
+    let obj = newOrganizationsProfile()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsProfile)) == openjson.toJson(obj)
 
   test "round-trips IamCreateAccount":
     let obj = newIamCreateAccount()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamCreateAccount)) == openjson.toJson(obj)
 
-  test "round-trips OrganizationsApiProfile":
-    let obj = newOrganizationsApiProfile()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiProfile)) == openjson.toJson(obj)
-
   test "round-trips IamApiResponseCommonFailure":
     let obj = newIamApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamApiResponseCommonFailure)) == openjson.toJson(obj)
-
-  test "round-trips OrganizationsApiV4ErrorResponse":
-    let obj = newOrganizationsApiV4ErrorResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiV4ErrorResponse)) == openjson.toJson(obj)
 
   test "round-trips IamComponentsSchemasAccount":
     let obj = newIamComponentsSchemasAccount()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamComponentsSchemasAccount)) == openjson.toJson(obj)
 
-  test "round-trips OrganizationsApiV4Message":
-    let obj = newOrganizationsApiV4Message()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiV4Message)) == openjson.toJson(obj)
+  test "round-trips OrganizationsMoveAccountResult":
+    let obj = newOrganizationsMoveAccountResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsMoveAccountResult)) == openjson.toJson(obj)
 
   test "round-trips IamResponseSingleAccount":
     let obj = newIamResponseSingleAccount()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamResponseSingleAccount)) == openjson.toJson(obj)
+
+  test "round-trips OrganizationsModifyProfileRequest":
+    let obj = newOrganizationsModifyProfileRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsModifyProfileRequest)) == openjson.toJson(obj)
 
   test "round-trips PostAccountsAccountIdMoveResponse":
     let obj = cloudflare.PostAccountsAccountIdMoveResponse()
@@ -114,5 +114,5 @@ suite "accounts endpoints":
   test "PUT /accounts/{account_id}/profile":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdProfile("test", newOrganizationsApiModifyProfileRequest())
+    discard waitFor client.putAccountsAccountIdProfile("test", newOrganizationsModifyProfileRequest())
 

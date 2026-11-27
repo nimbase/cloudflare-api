@@ -10,7 +10,7 @@ import ./private/types
 
 
 proc getZonesZoneIdUrlNormalization*(client: CloudflareClient,
-                                     zoneId: types.RulesetsZoneId): Future[JsonNode] {.async.} =
+                                     zoneId: types.UrlNormalizationZoneId): Future[JsonNode] {.async.} =
   ## Fetches the current URL Normalization settings.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/url_normalization")
@@ -22,8 +22,8 @@ proc getZonesZoneIdUrlNormalization*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc putZonesZoneIdUrlNormalization*(client: CloudflareClient,
-                                     zoneId: types.RulesetsZoneId,
-                                     body: types.RulesetsUrlNormalization): Future[JsonNode] {.async.} =
+                                     zoneId: types.UrlNormalizationZoneId,
+                                     body: types.UrlNormalizationUrlNormalization): Future[JsonNode] {.async.} =
   ## Updates the URL Normalization settings.
 
   let res = await client.httpPUT(fmt"/zones/{zoneId}/url_normalization", body)
@@ -35,7 +35,7 @@ proc putZonesZoneIdUrlNormalization*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc deleteZonesZoneIdUrlNormalization*(client: CloudflareClient,
-                                        zoneId: types.RulesetsZoneId): Future[AsyncResponse] {.async.} =
+                                        zoneId: types.UrlNormalizationZoneId): Future[AsyncResponse] {.async.} =
   ## Deletes the URL Normalization settings.
 
   let res = await client.httpDELETE(fmt"/zones/{zoneId}/url_normalization")

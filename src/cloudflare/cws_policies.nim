@@ -90,8 +90,8 @@ proc putAccountsAccountIdCwsPoliciesPolicyId*(client: CloudflareClient,
 proc deleteAccountsAccountIdCwsPoliciesPolicyId*(client: CloudflareClient,
                                                  accountId: string,
                                                  policyId: string): Future[types.CwsResponseDeletedResult] {.async.} =
-  ## Deletes the policy and cascades its policy-set membership rows. The policy sets
-  ## remain.
+  ## Deletes the policy when no policy set references it. If referenced, the request
+  ## is rejected with the policy set IDs and names; detach the policy first.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cws/policies/{policyId}")
   let body = await res.body

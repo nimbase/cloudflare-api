@@ -33,3 +33,28 @@ proc putAccountsAccountIdCniSettings*(client: CloudflareClient,
     result = fromJson(body, types.NscSettings)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdNetworkqualitySettings*(client: CloudflareClient,
+                                                 accountId: string): Future[types.NetworkqualitySettingsSuccess] {.async.} =
+  ## Returns Network Quality Test settings for an account.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/networkquality/settings")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.NetworkqualitySettingsSuccess)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountsAccountIdNetworkqualitySettings*(client: CloudflareClient,
+                                                 accountId: string,
+                                                 body: types.NetworkqualitySettingsUpdate): Future[types.NetworkqualitySettingsSuccess] {.async.} =
+  ## Updates Network Quality Test settings for an account.
+
+  let res = await client.httpPUT(fmt"/accounts/{accountId}/networkquality/settings", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.NetworkqualitySettingsSuccess)
+  else:
+    raise newException(CloudflareClientError, body)

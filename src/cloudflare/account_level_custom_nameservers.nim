@@ -46,3 +46,31 @@ proc deleteAccountsAccountIdCustomNsCustomNsId*(client: CloudflareClient,
     result = fromJson(body, types.DnsCustomNameserversEmptyResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdCustomNs*(client: CloudflareClient,
+                                              accountOrZone: AccountOrZone,
+                                              accountOrZoneId: types.DnsCustomNameserversIdentifier): Future[types.DnsCustomNameserversAcnsResponseCollection] {.async.} =
+  ## List an account or zone's custom nameservers.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/custom_ns")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.DnsCustomNameserversAcnsResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdCustomNs*(client: CloudflareClient,
+                                               accountOrZone: AccountOrZone,
+                                               accountOrZoneId: types.DnsCustomNameserversIdentifier,
+                                               body: types.DnsCustomNameserversCustomNSInput): Future[types.DnsCustomNameserversAcnsResponseSingle] {.async.} =
+  ## Adds a custom nameserver to the account or zone for use as a vanity nameserver
+  ## on zones.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/custom_ns", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.DnsCustomNameserversAcnsResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)

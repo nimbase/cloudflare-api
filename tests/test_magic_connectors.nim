@@ -39,10 +39,6 @@ suite "magic_connectors serialization":
     let obj = newMconnTelemetryCustomerEventsGetSuccess()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnTelemetryCustomerEventsGetSuccess)) == openjson.toJson(obj)
 
-  test "round-trips MconnInterrupt":
-    let obj = newMconnInterrupt()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnInterrupt)) == openjson.toJson(obj)
-
   test "round-trips MconnCustomerConnectorsUpdateRequest":
     let obj = newMconnCustomerConnectorsUpdateRequest()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.MconnCustomerConnectorsUpdateRequest)) == openjson.toJson(obj)
@@ -130,7 +126,7 @@ suite "magic_connectors endpoints":
   test "POST /accounts/{account_id}/magic/connectors/{connector_id}/interrupts":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdMagicConnectorsConnectorIdInterrupts("test", "test", newMconnInterrupt())
+    discard waitFor client.postAccountsAccountIdMagicConnectorsConnectorIdInterrupts("test", "test", newMconnConnectorInterruptsCreateRequest())
 
   test "GET /accounts/{account_id}/magic/connectors/{connector_id}/telemetry/events":
     let client = initCloudflareClient("test-key")

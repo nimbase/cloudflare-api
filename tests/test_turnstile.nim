@@ -35,7 +35,7 @@ suite "turnstile endpoints":
   test "GET /accounts/{account_id}/challenges/widgets":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdChallengesWidgets()
+    discard waitFor client.getAccountsAccountIdChallengesWidgets(1.0, 1.0, orderId, directionAsc, "test")
 
   test "GET /accounts/{account_id}/challenges/widgets/{sitekey}":
     let client = initCloudflareClient("test-key")

@@ -11,21 +11,25 @@ import cloudflare
 import ./common
 
 suite "user_subscription serialization":
-  test "round-trips BillSubsApiSubscriptionV2":
-    let obj = newBillSubsApiSubscriptionV2()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiSubscriptionV2)) == openjson.toJson(obj)
+  test "round-trips BillSubsApiResponseCommonFailure":
+    let obj = newBillSubsApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiUserSubscriptionResponseSingle":
-    let obj = newBillSubsApiUserSubscriptionResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiUserSubscriptionResponseSingle)) == openjson.toJson(obj)
+  test "round-trips BillSubsUserSubscriptionResponseCollection":
+    let obj = newBillSubsUserSubscriptionResponseCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsUserSubscriptionResponseCollection)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiApiResponseCommonFailure":
-    let obj = newBillSubsApiApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips BillSubsSubscriptionV2":
+    let obj = newBillSubsSubscriptionV2()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsSubscriptionV2)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiUserSubscriptionResponseCollection":
-    let obj = newBillSubsApiUserSubscriptionResponseCollection()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiUserSubscriptionResponseCollection)) == openjson.toJson(obj)
+  test "round-trips BillSubsUserSubscriptionResponseSingle":
+    let obj = newBillSubsUserSubscriptionResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsUserSubscriptionResponseSingle)) == openjson.toJson(obj)
+
+  test "round-trips BillSubsAccountSubscriptionResponseSingle":
+    let obj = newBillSubsAccountSubscriptionResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsAccountSubscriptionResponseSingle)) == openjson.toJson(obj)
 
   test "round-trips DeleteUserSubscriptionsIdentifierResponse":
     let obj = cloudflare.DeleteUserSubscriptionsIdentifierResponse()
@@ -40,12 +44,17 @@ suite "user_subscription endpoints":
   test "POST /user/subscriptions":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postUserSubscriptions(newBillSubsApiSubscriptionV2())
+    discard waitFor client.postUserSubscriptions(newBillSubsSubscriptionV2())
+
+  test "GET /user/subscriptions/{identifier}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getUserSubscriptionsIdentifier("test")
 
   test "PUT /user/subscriptions/{identifier}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putUserSubscriptionsIdentifier("test", newBillSubsApiSubscriptionV2())
+    discard waitFor client.putUserSubscriptionsIdentifier("test", newBillSubsSubscriptionV2())
 
   test "DELETE /user/subscriptions/{identifier}":
     let client = initCloudflareClient("test-key")

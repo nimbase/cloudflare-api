@@ -175,8 +175,8 @@ proc postAccountsAccountIdGatewayRulesRuleIdResetExpiration*(client: CloudflareC
                                                              ruleId: types.ZeroTrustGatewayUuid4,
                                                              accountId: types.ZeroTrustGatewayIdentifier2): Future[types.ZeroTrustGatewaySingleResponse4] {.async.} =
   ## Resets the expiration of a Zero Trust Gateway Rule if its duration elapsed and
-  ## it has a default duration. The Zero Trust Gateway Rule must have values  for
-  ## both `expiration.expires_at` and `expiration.duration`.
+  ## it has a default duration. The Zero Trust Gateway Rule must have values for both
+  ## `expiration.expires_at` and `expiration.duration`.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/gateway/rules/{ruleId}/reset_expiration")
   let body = await res.body

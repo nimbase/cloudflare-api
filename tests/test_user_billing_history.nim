@@ -11,13 +11,13 @@ import cloudflare
 import ./common
 
 suite "user_billing_history serialization":
-  test "round-trips BillSubsApiApiResponseCommonFailure":
-    let obj = newBillSubsApiApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips BillSubsBillingHistoryCollection":
+    let obj = newBillSubsBillingHistoryCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsBillingHistoryCollection)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiBillingHistoryCollection":
-    let obj = newBillSubsApiBillingHistoryCollection()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiBillingHistoryCollection)) == openjson.toJson(obj)
+  test "round-trips BillSubsApiResponseCommonFailure":
+    let obj = newBillSubsApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiResponseCommonFailure)) == openjson.toJson(obj)
 
 suite "user_billing_history endpoints":
   test "GET /user/billing/history":

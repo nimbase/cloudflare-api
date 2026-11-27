@@ -33,3 +33,30 @@ proc patchAccountsAccountIdDnsSettings*(client: CloudflareClient,
     result = fromJson(body, types.DnsSettingsDnsResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdDnsSettings*(client: CloudflareClient,
+                                                 accountOrZone: AccountOrZone,
+                                                 accountOrZoneId: types.DnsSettingsIdentifier): Future[types.DnsSettingsDnsResponseSingle] {.async.} =
+  ## Show DNS settings for an account or zone
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/dns_settings")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.DnsSettingsDnsResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountOrZoneAccountOrZoneIdDnsSettings*(client: CloudflareClient,
+                                                   accountOrZone: AccountOrZone,
+                                                   accountOrZoneId: types.DnsSettingsIdentifier,
+                                                   body: types.DnsSettingsAccountSettingsPatch): Future[types.DnsSettingsDnsResponseSingle] {.async.} =
+  ## Update DNS settings for an account or zone
+
+  let res = await client.httpPATCH(fmt"/{accountOrZone}/{accountOrZoneId}/dns_settings", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.DnsSettingsDnsResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)

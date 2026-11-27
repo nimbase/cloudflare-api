@@ -20,6 +20,8 @@ type
     output_format: string
   PostAccountsAccountIdD1DatabaseDatabaseIdUndeleteRequest = object
     new_name: Option[JsonNode]
+  PutAccountsAccountIdD1InsightsSettingsRequest = object
+    ai_enabled: bool
   D1OrderByOption* = enum
     orderByRowsRead = "rows_read"
     orderByRowsWritten = "rows_written"
@@ -30,13 +32,15 @@ proc getAccountsAccountIdD1Database*(client: CloudflareClient,
                                      accountId: types.D1AccountIdentifier,
                                      name: string = default(string),
                                      page: float64 = default(float64),
-                                     perPage: float64 = default(float64)): Future[JsonNode] {.async.} =
+                                     perPage: float64 = default(float64),
+                                     fields: seq[string] = default(seq[string])): Future[JsonNode] {.async.} =
   ## List D1 databases in your account.
 
   var q = initOrderedTable[string, string]()
   q["name"] = $name
   q["page"] = $page
   q["per_page"] = $perPage
+  q["fields"] = $fields
   let res = await client.httpGET(fmt"/accounts/{accountId}/d1/database", q)
   let body = await res.body
   case res.code
@@ -326,5 +330,83 @@ proc getAccountsAccountIdD1InsightsQueries*(client: CloudflareClient,
   case res.code
   of Http200:
     result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdD1InsightsRecommendations*(client: CloudflareClient,
+                                                    accountId: types.D1AccountIdentifier,
+                                                    databaseId: seq[string] = @[],
+                                                    limit: int64 = 20,
+                                                    cursor: string = default(string)): Future[JsonNode] {.async.} =
+  ## List index recommendations for the databases in your account, or for the
+  ## databases in
+  ## `database_id`, from highest to lowest estimated impact.
+  ##
+  ## D1 generates recommendations in the background from recent query usage. Each run
+  ## replaces
+  ## the recommendations of the databases it analyzed. Recommendations that are not
+  ## refreshed
+  ## expire after 7 days. Not every database has recommendations.
+  ##
+  ## Recommendations are only generated and returned while `ai_enabled` is true in
+  ## the account's
+  ## D1 Insights settings. When it is false, the response is an empty list. To check
+  ## or change the
+  ## setting, use `GET` or `PUT /accounts/{account_id}/d1/insights/settings`.
+
+  var q = initOrderedTable[string, string]()
+  for v in databaseId: q["database_id"] = $v
+  q["limit"] = $limit
+  q["cursor"] = $cursor
+  let res = await client.httpGET(fmt"/accounts/{accountId}/d1/insights/recommendations", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdD1InsightsSettings*(client: CloudflareClient,
+                                             accountId: types.D1AccountIdentifier): Future[types.D1InsightsSettingsResponse] {.async.} =
+  ## Get whether D1 Insights uses AI on this account's query data.
+  ##
+  ## While `ai_enabled` is true, D1 sends the account's query statements, query usage
+  ## and database
+  ## schemas to Workers AI to generate index recommendations, and
+  ## `GET /accounts/{account_id}/d1/insights/recommendations` returns them.
+  ##
+  ## Until the account changes the setting with `PUT`, the default depends on the
+  ## account's plan.
+  ##
+  ## Requires the Account Settings Read permission.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/d1/insights/settings")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.D1InsightsSettingsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountsAccountIdD1InsightsSettings*(client: CloudflareClient,
+                                             accountId: types.D1AccountIdentifier,
+                                             body: PutAccountsAccountIdD1InsightsSettingsRequest): Future[types.D1InsightsSettingsResponse] {.async.} =
+  ## Turn AI use for D1 Insights on or off for every database in this account.
+  ##
+  ## When you turn it off, D1 stops generating index recommendations for the account
+  ## and
+  ## `GET /accounts/{account_id}/d1/insights/recommendations` returns an empty list.
+  ## Existing
+  ## recommendations are not deleted. They expire 7 days after they were generated,
+  ## so any that
+  ## have not expired are returned again if you turn it back on.
+  ##
+  ## Requires the Account Settings Write permission.
+
+  let res = await client.httpPUT(fmt"/accounts/{accountId}/d1/insights/settings", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.D1InsightsSettingsResponse)
   else:
     raise newException(CloudflareClientError, body)

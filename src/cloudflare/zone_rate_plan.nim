@@ -10,7 +10,7 @@ import ./private/types
 
 
 proc getZonesZoneIdAvailablePlans*(client: CloudflareClient,
-                                   zoneId: types.BillSubsApiIdentifier): Future[JsonNode] {.async.} =
+                                   zoneId: types.BillSubsIdentifier): Future[JsonNode] {.async.} =
   ## Lists available plans the zone can subscribe to.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/available_plans")
@@ -22,8 +22,8 @@ proc getZonesZoneIdAvailablePlans*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdAvailablePlansPlanIdentifier*(client: CloudflareClient,
-                                                 planIdentifier: types.BillSubsApiIdentifier,
-                                                 zoneId: types.BillSubsApiIdentifier): Future[JsonNode] {.async.} =
+                                                 planIdentifier: types.BillSubsIdentifier,
+                                                 zoneId: types.BillSubsIdentifier): Future[JsonNode] {.async.} =
   ## Details of the available plan that the zone can subscribe to.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/available_plans/{planIdentifier}")
@@ -35,13 +35,13 @@ proc getZonesZoneIdAvailablePlansPlanIdentifier*(client: CloudflareClient,
     raise newException(CloudflareClientError, body)
 
 proc getZonesZoneIdAvailableRatePlans*(client: CloudflareClient,
-                                       zoneId: types.BillSubsApiIdentifier): Future[types.BillSubsApiPlanResponseCollection] {.async.} =
+                                       zoneId: types.BillSubsIdentifier): Future[types.BillSubsPlanResponseCollection] {.async.} =
   ## Lists all rate plans the zone can subscribe to.
 
   let res = await client.httpGET(fmt"/zones/{zoneId}/available_rate_plans")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiPlanResponseCollection)
+    result = fromJson(body, types.BillSubsPlanResponseCollection)
   else:
     raise newException(CloudflareClientError, body)

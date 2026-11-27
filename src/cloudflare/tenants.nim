@@ -11,9 +11,9 @@ import ./private/types
 type
   GetTenantsTenantIdAccountsResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: seq[types.OrganizationsApiLegacyAccount]
-    result_info: types.OrganizationsApiPageTokenResultInfo
+    messages: seq[types.OrganizationsV4Message]
+    result: seq[types.OrganizationsLegacyAccount]
+    result_info: types.OrganizationsAccountListResultInfo
     success: bool
   TenantStatusOption* = enum
     statusActive = "active"

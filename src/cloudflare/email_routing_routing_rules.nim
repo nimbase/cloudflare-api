@@ -151,3 +151,23 @@ proc deleteZonesZoneIdEmailRoutingRulesRuleIdentifier*(client: CloudflareClient,
     result = fromJson(body, types.EmailRuleResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdEmailRoutingRules*(client: CloudflareClient,
+                                                       accountOrZone: AccountOrZone,
+                                                       accountOrZoneId: types.EmailIdentifier,
+                                                       page: float64 = default(float64),
+                                                       perPage: float64 = default(float64),
+                                                       enabled: EmailRoutingRoutingRuleEnabledOption = enabledTrue): Future[types.EmailAccountRulesResponseCollection] {.async.} =
+  ## Lists existing routing rules across all zones in the account or zone.
+
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  q["enabled"] = $enabled
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/email/routing/rules", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.EmailAccountRulesResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)

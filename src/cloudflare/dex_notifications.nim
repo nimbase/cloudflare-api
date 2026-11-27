@@ -71,8 +71,7 @@ proc getAccountsAccountIdDexNotificationsNotificationIdOutcomes*(client: Cloudfl
                                                                  perPage: int64 = 50,
                                                                  cursor: string = default(string),
                                                                  outcome: DexNotificationOutcomeOption = outcomeDelivered): Future[JsonNode] {.async.} =
-  ## Lists observed device outcomes for a notification sendout. Sampling may omit
-  ## outcomes; each result includes its sampling interval.
+  ## Lists observed device outcomes for a notification sendout.
 
   var q = initOrderedTable[string, string]()
   q["per_page"] = $perPage

@@ -23,10 +23,6 @@ suite "event serialization":
     let obj = cloudflare.PostAccountsAccountIdCloudforceOneEventsCreateBulkResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneEventsCreateBulkResponse)) == openjson.toJson(obj)
 
-  test "round-trips PostAccountsAccountIdCloudforceOneEventsCreateBulkRelationshipsResponse":
-    let obj = cloudflare.PostAccountsAccountIdCloudforceOneEventsCreateBulkRelationshipsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneEventsCreateBulkRelationshipsResponse)) == openjson.toJson(obj)
-
   test "round-trips PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdCopyResponse":
     let obj = cloudflare.PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdCopyResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdCopyResponse)) == openjson.toJson(obj)

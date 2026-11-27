@@ -18,8 +18,9 @@ proc getAccountsAccountIdPayPerUseEnabledDomains*(client: CloudflareClient,
   ## boundary from the price agreement and publisher zone lifecycles. A future
   ## expiration remains active and is exposed to the operator. After expiration, the
   ## license remains listed as expired for one calendar month before it is omitted;
-  ## an active agreement for the same domain takes precedence. The requesting account
-  ## must be an active Pay Per Use operator.
+  ## an active agreement for the same domain takes precedence. Report usage for these
+  ## domains with url. Publisher offers are listed by the enabled publishers endpoint
+  ## instead. The requesting account must be an active Pay Per Use operator.
 
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor

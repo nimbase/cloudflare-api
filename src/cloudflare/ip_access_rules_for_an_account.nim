@@ -13,6 +13,10 @@ type
     configuration: types.FirewallConfiguration
     mode: JsonNode
     notes: Option[JsonNode]
+  PostAccountOrZoneAccountOrZoneIdFirewallAccessRulesRulesRequest = object
+    configuration: types.FirewallConfiguration
+    mode: JsonNode
+    notes: Option[JsonNode]
   IpAccessRulesForAnAccountConfigurationTargetOption* = enum
     configurationTargetIp = "ip"
     configurationTargetIpRange = "ip_range"
@@ -119,6 +123,105 @@ proc patchAccountsAccountIdFirewallAccessRulesRulesRuleId*(client: CloudflareCli
   ## Note: This operation will affect all zones in the account.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/firewall/access_rules/rules/{ruleId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.FirewallResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdFirewallAccessRulesRules*(client: CloudflareClient,
+                                                              accountOrZone: AccountOrZone,
+                                                              accountOrZoneId: types.FirewallAccountIdentifier,
+                                                              mode: types.FirewallSchemasMode = default(types.FirewallSchemasMode),
+                                                              configurationTarget: IpAccessRulesForAnAccountConfigurationTargetOption = configurationTargetIp,
+                                                              configurationValue: string = default(string),
+                                                              notes: string = default(string),
+                                                              match: IpAccessRulesForAnAccountMatchOption = matchAll,
+                                                              page: float64 = default(float64),
+                                                              perPage: float64 = default(float64),
+                                                              order: IpAccessRulesForAnAccountOrderOption = orderConfigurationTarget,
+                                                              direction: IpAccessRulesForAnAccountDirectionOption = directionAsc): Future[types.FirewallResponseCollection] {.async.} =
+  ## Fetches IP Access rules of an account or zone. These rules apply to all the
+  ## zones in the account or zone. You can filter the results using several optional
+  ## parameters.
+
+  var q = initOrderedTable[string, string]()
+  q["mode"] = $mode
+  q["configuration.target"] = $configurationTarget
+  q["configuration.value"] = $configurationValue
+  q["notes"] = $notes
+  q["match"] = $match
+  q["page"] = $page
+  q["per_page"] = $perPage
+  q["order"] = $order
+  q["direction"] = $direction
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/firewall/access_rules/rules", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.FirewallResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdFirewallAccessRulesRules*(client: CloudflareClient,
+                                                               accountOrZone: AccountOrZone,
+                                                               accountOrZoneId: types.FirewallAccountIdentifier,
+                                                               body: PostAccountOrZoneAccountOrZoneIdFirewallAccessRulesRulesRequest): Future[types.FirewallResponseSingle] {.async.} =
+  ## Creates a new IP Access rule for an account or zone. The rule will apply to all
+  ## zones in the account or zone.
+  ##
+  ## Note: To create an IP Access rule that applies to a single zone, refer to the
+  ## [IP Access rules for a zone](#ip-access-rules-for-a-zone) endpoints.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/firewall/access_rules/rules", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.FirewallResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdFirewallAccessRulesRulesRuleId*(client: CloudflareClient,
+                                                                    accountOrZone: AccountOrZone,
+                                                                    ruleId: types.FirewallRuleIdentifier,
+                                                                    accountOrZoneId: types.FirewallAccountIdentifier): Future[types.FirewallResponseSingle] {.async.} =
+  ## Fetches the details of an IP Access rule defined.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/firewall/access_rules/rules/{ruleId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.FirewallResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountOrZoneAccountOrZoneIdFirewallAccessRulesRulesRuleId*(client: CloudflareClient,
+                                                                       accountOrZone: AccountOrZone,
+                                                                       ruleId: types.FirewallRuleIdentifier,
+                                                                       accountOrZoneId: types.FirewallAccountIdentifier): Future[types.FirewallApiResponseSingleId] {.async.} =
+  ## Deletes an existing IP Access rule defined.
+  ##
+  ## Note: This operation will affect all zones in the account or zone.
+
+  let res = await client.httpDELETE(fmt"/{accountOrZone}/{accountOrZoneId}/firewall/access_rules/rules/{ruleId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.FirewallApiResponseSingleId)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc patchAccountOrZoneAccountOrZoneIdFirewallAccessRulesRulesRuleId*(client: CloudflareClient,
+                                                                      accountOrZone: AccountOrZone,
+                                                                      ruleId: types.FirewallRuleIdentifier,
+                                                                      accountOrZoneId: types.FirewallAccountIdentifier,
+                                                                      body: types.FirewallSchemasRule): Future[types.FirewallResponseSingle] {.async.} =
+  ## Updates an IP Access rule defined.
+  ##
+  ## Note: This operation will affect all zones in the account or zone.
+
+  let res = await client.httpPATCH(fmt"/{accountOrZone}/{accountOrZoneId}/firewall/access_rules/rules/{ruleId}", body)
   let body = await res.body
   case res.code
   of Http200:

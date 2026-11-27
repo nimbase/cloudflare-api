@@ -11,13 +11,13 @@ import cloudflare
 import ./common
 
 suite "rate_plans serialization":
-  test "round-trips BillSubsApiRatePlanSimpleResponse":
-    let obj = newBillSubsApiRatePlanSimpleResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiRatePlanSimpleResponse)) == openjson.toJson(obj)
+  test "round-trips BillSubsApiResponseCommonFailure":
+    let obj = newBillSubsApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiApiResponseCommonFailure":
-    let obj = newBillSubsApiApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips BillSubsRatePlanSimpleResponse":
+    let obj = newBillSubsRatePlanSimpleResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsRatePlanSimpleResponse)) == openjson.toJson(obj)
 
 suite "rate_plans endpoints":
   test "GET /billing/rate_plans/{public_key}":

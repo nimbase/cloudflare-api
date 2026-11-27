@@ -17,8 +17,8 @@ type
     zipcode: Option[types.IamZipcode]
   GetUserTenantsResponse* = object
     errors: seq[JsonNode]
-    messages: seq[types.OrganizationsApiV4Message]
-    result: seq[types.OrganizationsApiLegacyTenant]
+    messages: seq[types.OrganizationsV4Message]
+    result: seq[types.OrganizationsLegacyTenant]
     success: bool
 
 proc getUser*(client: CloudflareClient): Future[types.IamSingleUserResponse] {.async.} =

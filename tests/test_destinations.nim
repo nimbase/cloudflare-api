@@ -19,6 +19,10 @@ suite "destinations serialization":
     let obj = cloudflare.PostAccountsAccountIdWorkersObservabilityDestinationsResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.PostAccountsAccountIdWorkersObservabilityDestinationsResponse)) == openjson.toJson(obj)
 
+  test "round-trips GetAccountsAccountIdWorkersObservabilityDestinationsSlugResponse":
+    let obj = cloudflare.GetAccountsAccountIdWorkersObservabilityDestinationsSlugResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.GetAccountsAccountIdWorkersObservabilityDestinationsSlugResponse)) == openjson.toJson(obj)
+
   test "round-trips DeleteAccountsAccountIdWorkersObservabilityDestinationsSlugResponse":
     let obj = cloudflare.DeleteAccountsAccountIdWorkersObservabilityDestinationsSlugResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.DeleteAccountsAccountIdWorkersObservabilityDestinationsSlugResponse)) == openjson.toJson(obj)
@@ -32,6 +36,11 @@ suite "destinations endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdWorkersObservabilityDestinations(1.0, 1.0, orderAsc, orderByCreated)
+
+  test "GET /accounts/{account_id}/workers/observability/destinations/{slug}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdWorkersObservabilityDestinationsSlug("test")
 
   test "DELETE /accounts/{account_id}/workers/observability/destinations/{slug}":
     let client = initCloudflareClient("test-key")

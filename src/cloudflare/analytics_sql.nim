@@ -11,12 +11,11 @@ import ./private/types
 
 proc getAccountsAccountIdAnalyticsSql*(client: CloudflareClient,
                                        accountId: string, query: string): Future[JsonNode] {.async.} =
-  ## Executes a SQL query scoped to the account in the request path. API Gateway
-  ## preserves the account path, and SQL API requires it to match the signed JWT
-  ## account, so an accountTag predicate or JSON scope is not required. Explicit
-  ## account scope must match the path account. Any zone restrictions must belong to
-  ## that account. Query parameters, time ranges, output formats, authorization, and
-  ## responses follow the legacy query endpoint.
+  ## Executes a SQL query scoped to the account in the path. An accountTag predicate
+  ## or JSON scope is not required. Explicit account scope must match the path
+  ## account. Any requested zones must belong to that account. Query parameters, time
+  ## ranges, output formats, authorization, and responses follow the legacy query
+  ## endpoint.
 
   var q = initOrderedTable[string, string]()
   q["query"] = $query
@@ -31,12 +30,11 @@ proc getAccountsAccountIdAnalyticsSql*(client: CloudflareClient,
 proc postAccountsAccountIdAnalyticsSql*(client: CloudflareClient,
                                         accountId: string,
                                         body: types.AnalyticsSqlSqlQueryRequest): Future[JsonNode] {.async.} =
-  ## Executes a SQL query scoped to the account in the request path. API Gateway
-  ## preserves the account path, and SQL API requires it to match the signed JWT
-  ## account, so an accountTag predicate or JSON scope is not required. Explicit
-  ## account scope must match the path account. Any zone restrictions must belong to
-  ## that account. Query parameters, time ranges, output formats, authorization, and
-  ## responses follow the legacy query endpoint.
+  ## Executes a SQL query scoped to the account in the path. An accountTag predicate
+  ## or JSON scope is not required. Explicit account scope must match the path
+  ## account. Any requested zones must belong to that account. Query parameters, time
+  ## ranges, output formats, authorization, and responses follow the legacy query
+  ## endpoint.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/analytics/sql", body)
   let body = await res.body
@@ -54,11 +52,9 @@ proc getAccountsAccountIdAnalyticsSqlIntrospection*(client: CloudflareClient,
                                                     includeWae: bool = true,
                                                     includeLex: bool = true,
                                                     datasetName: string = default(string)): Future[types.AnalyticsSqlIntrospectionResponse] {.async.} =
-  ## Returns the dataset catalogue for the account in the request path. API Gateway
-  ## preserves the account path, and SQL API requires it to match the signed JWT
-  ## account; account_tag is not required as a query parameter. If supplied, it must
-  ## match the path account. Dataset and column discovery options are identical to
-  ## the legacy introspection endpoint.
+  ## Returns the dataset catalogue for the account in the path. The account_tag query
+  ## parameter is optional and must match the path account if supplied. Dataset and
+  ## column discovery options are identical to the legacy introspection endpoint.
 
   var q = initOrderedTable[string, string]()
   q["include_columns"] = $includeColumns

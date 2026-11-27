@@ -131,3 +131,62 @@ proc getZonesZoneIdSecurityCenterInsightsIssueIdAuditLog*(client: CloudflareClie
     result = fromJson(body, types.SecurityCenterAuditLogResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdSecurityCenterInsightsAuditLog*(client: CloudflareClient,
+                                                                    accountOrZone: AccountOrZone,
+                                                                    accountOrZoneId: types.SecurityCenterIdentifier,
+                                                                    perPage: int64 = 25,
+                                                                    cursor: string = default(string),
+                                                                    fieldChanged: SecurityCenterAuditLogFieldChangedOption = fieldChangedStatus,
+                                                                    changedBy: string = default(string),
+                                                                    since: string = default(string),
+                                                                    before: string = default(string),
+                                                                    order: SecurityCenterAuditLogOrderOption = orderDesc): Future[types.SecurityCenterAuditLogResponse] {.async.} =
+  ## Lists audit log entries for all Security Center insights in the account or zone,
+  ## showing changes to insight status and classification.
+
+  var q = initOrderedTable[string, string]()
+  q["per_page"] = $perPage
+  q["cursor"] = $cursor
+  q["field_changed"] = $fieldChanged
+  q["changed_by"] = $changedBy
+  q["since"] = $since
+  q["before"] = $before
+  q["order"] = $order
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/security-center/insights/audit-log", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.SecurityCenterAuditLogResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdSecurityCenterInsightsIssueIdAuditLog*(client: CloudflareClient,
+                                                                           accountOrZone: AccountOrZone,
+                                                                           accountOrZoneId: types.SecurityCenterIdentifier,
+                                                                           issueId: string,
+                                                                           perPage: int64 = 25,
+                                                                           cursor: string = default(string),
+                                                                           fieldChanged: SecurityCenterAuditLogFieldChangedOption = fieldChangedStatus,
+                                                                           changedBy: string = default(string),
+                                                                           since: string = default(string),
+                                                                           before: string = default(string),
+                                                                           order: SecurityCenterAuditLogOrderOption = orderDesc): Future[types.SecurityCenterAuditLogResponse] {.async.} =
+  ## Lists audit log entries for a specific Security Center insight, showing changes
+  ## to its status and classification over time.
+
+  var q = initOrderedTable[string, string]()
+  q["per_page"] = $perPage
+  q["cursor"] = $cursor
+  q["field_changed"] = $fieldChanged
+  q["changed_by"] = $changedBy
+  q["since"] = $since
+  q["before"] = $before
+  q["order"] = $order
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/security-center/insights/{issueId}/audit-log", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.SecurityCenterAuditLogResponse)
+  else:
+    raise newException(CloudflareClientError, body)

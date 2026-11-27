@@ -220,7 +220,7 @@ suite "threat_signals endpoints":
   test "GET /accounts/{account_id}/cloudforce-one/v2/threat-signals/search":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdCloudforceOneV2ThreatSignalsSearch("test", "test", openjson.newJObject(), "test")
+    discard waitFor client.getAccountsAccountIdCloudforceOneV2ThreatSignalsSearch("test", "test", openjson.newJObject(), @["test"])
 
   test "GET /accounts/{account_id}/cloudforce-one/v2/threat-signals/skills":
     let client = initCloudflareClient("test-key")

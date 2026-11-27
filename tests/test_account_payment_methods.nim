@@ -11,25 +11,25 @@ import cloudflare
 import ./common
 
 suite "account_payment_methods serialization":
-  test "round-trips BillSubsApiPaymentMethodResponseSingle":
-    let obj = newBillSubsApiPaymentMethodResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiPaymentMethodResponseSingle)) == openjson.toJson(obj)
+  test "round-trips BillSubsPaymentMethodResponseSingle":
+    let obj = newBillSubsPaymentMethodResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsPaymentMethodResponseSingle)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiApiResponseSingle":
-    let obj = newBillSubsApiApiResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiApiResponseSingle)) == openjson.toJson(obj)
+  test "round-trips BillSubsApiResponseCommonFailure":
+    let obj = newBillSubsApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiPaymentMethod":
-    let obj = newBillSubsApiPaymentMethod()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiPaymentMethod)) == openjson.toJson(obj)
+  test "round-trips BillSubsPaymentMethodResponseCollection":
+    let obj = newBillSubsPaymentMethodResponseCollection()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsPaymentMethodResponseCollection)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiApiResponseCommonFailure":
-    let obj = newBillSubsApiApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips BillSubsPaymentMethod":
+    let obj = newBillSubsPaymentMethod()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsPaymentMethod)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiPaymentMethodResponseCollection":
-    let obj = newBillSubsApiPaymentMethodResponseCollection()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiPaymentMethodResponseCollection)) == openjson.toJson(obj)
+  test "round-trips BillSubsApiResponseSingle":
+    let obj = newBillSubsApiResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiResponseSingle)) == openjson.toJson(obj)
 
 suite "account_payment_methods endpoints":
   test "GET /accounts/{account_id}/payment-methods":
@@ -40,7 +40,7 @@ suite "account_payment_methods endpoints":
   test "POST /accounts/{account_id}/payment-methods":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postAccountsAccountIdPaymentMethods("test", newBillSubsApiPaymentMethod())
+    discard waitFor client.postAccountsAccountIdPaymentMethods("test", newBillSubsPaymentMethod())
 
   test "GET /accounts/{account_id}/payment-methods/{payment_method_id}":
     let client = initCloudflareClient("test-key")
@@ -50,7 +50,7 @@ suite "account_payment_methods endpoints":
   test "PUT /accounts/{account_id}/payment-methods/{payment_method_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putAccountsAccountIdPaymentMethodsPaymentMethodId("test", "test", newBillSubsApiPaymentMethod())
+    discard waitFor client.putAccountsAccountIdPaymentMethodsPaymentMethodId("test", "test", newBillSubsPaymentMethod())
 
   test "DELETE /accounts/{account_id}/payment-methods/{payment_method_id}":
     let client = initCloudflareClient("test-key")

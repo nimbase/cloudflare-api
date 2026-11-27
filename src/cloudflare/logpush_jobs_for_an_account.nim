@@ -49,6 +49,46 @@ type
     destination_conf: types.LogpushDestinationConf
   PostAccountsAccountIdLogpushValidateOriginRequest = object
     logpull_options: Option[types.LogpushLogpullOptions]
+  PostAccountOrZoneAccountOrZoneIdLogpushJobsRequest = object
+    dataset: Option[types.LogpushDataset]
+    destination_conf: types.LogpushDestinationConf
+    enabled: Option[types.LogpushEnabled]
+    filter: Option[types.LogpushFilter]
+    filter_attack_traffic: Option[types.LogpushFilterAttackTraffic]
+    frequency: Option[types.LogpushFrequency]
+    kind: Option[types.LogpushKind]
+    logpull_options: Option[types.LogpushLogpullOptions]
+    max_upload_bytes: Option[types.LogpushMaxUploadBytes]
+    max_upload_interval_seconds: Option[types.LogpushMaxUploadIntervalSeconds]
+    max_upload_records: Option[types.LogpushMaxUploadRecords]
+    name: Option[types.LogpushName]
+    output_options: Option[types.LogpushOutputOptions]
+    ownership_challenge: Option[types.LogpushOwnershipChallenge]
+  PutAccountOrZoneAccountOrZoneIdLogpushJobsJobIdRequest = object
+    destination_conf: Option[types.LogpushDestinationConf]
+    enabled: Option[types.LogpushEnabled]
+    filter: Option[types.LogpushFilter]
+    filter_attack_traffic: Option[types.LogpushFilterAttackTraffic]
+    frequency: Option[types.LogpushFrequency]
+    kind: Option[types.LogpushKind]
+    logpull_options: Option[types.LogpushLogpullOptions]
+    max_upload_bytes: Option[types.LogpushMaxUploadBytes]
+    max_upload_interval_seconds: Option[types.LogpushMaxUploadIntervalSeconds]
+    max_upload_records: Option[types.LogpushMaxUploadRecords]
+    name: Option[types.LogpushName]
+    output_options: Option[types.LogpushOutputOptions]
+    ownership_challenge: Option[types.LogpushOwnershipChallenge]
+  PostAccountOrZoneAccountOrZoneIdLogpushOwnershipRequest = object
+    destination_conf: types.LogpushDestinationConf
+  PostAccountOrZoneAccountOrZoneIdLogpushOwnershipValidateRequest = object
+    destination_conf: types.LogpushDestinationConf
+    ownership_challenge: types.LogpushOwnershipChallenge
+  PostAccountOrZoneAccountOrZoneIdLogpushValidateDestinationRequest = object
+    destination_conf: types.LogpushDestinationConf
+  PostAccountOrZoneAccountOrZoneIdLogpushValidateDestinationExistsRequest = object
+    destination_conf: types.LogpushDestinationConf
+  PostAccountOrZoneAccountOrZoneIdLogpushValidateOriginRequest = object
+    logpull_options: Option[types.LogpushLogpullOptions]
 
 proc getAccountsAccountIdLogpushDatasetsDatasetIdFields*(client: CloudflareClient,
                                                          datasetId: types.LogpushDataset,
@@ -200,6 +240,175 @@ proc postAccountsAccountIdLogpushValidateOrigin*(client: CloudflareClient,
   ## Validates logpull origin with logpull_options.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/logpush/validate/origin", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LogpushValidateResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdLogpushDatasetsDatasetIdFields*(client: CloudflareClient,
+                                                                    accountOrZone: AccountOrZone,
+                                                                    datasetId: types.LogpushDataset,
+                                                                    accountOrZoneId: types.LogpushIdentifier): Future[types.LogpushLogpushFieldResponseCollection] {.async.} =
+  ## Lists all fields available for a dataset. The response result is. an object with
+  ## key-value pairs, where keys are field names, and values are descriptions.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/logpush/datasets/{datasetId}/fields")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LogpushLogpushFieldResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdLogpushDatasetsDatasetIdJobs*(client: CloudflareClient,
+                                                                  accountOrZone: AccountOrZone,
+                                                                  datasetId: types.LogpushDataset,
+                                                                  accountOrZoneId: types.LogpushIdentifier): Future[types.LogpushLogpushJobResponseCollection] {.async.} =
+  ## Lists Logpush jobs for an account or zone for a dataset.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/logpush/datasets/{datasetId}/jobs")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LogpushLogpushJobResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdLogpushJobs*(client: CloudflareClient,
+                                                 accountOrZone: AccountOrZone,
+                                                 accountOrZoneId: types.LogpushIdentifier): Future[types.LogpushLogpushJobResponseCollection] {.async.} =
+  ## Lists Logpush jobs for an account or zone.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/logpush/jobs")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LogpushLogpushJobResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdLogpushJobs*(client: CloudflareClient,
+                                                  accountOrZone: AccountOrZone,
+                                                  accountOrZoneId: types.LogpushIdentifier,
+                                                  body: PostAccountOrZoneAccountOrZoneIdLogpushJobsRequest): Future[types.LogpushLogpushJobResponseSingle] {.async.} =
+  ## Creates a new Logpush job for an account or zone.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/logpush/jobs", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LogpushLogpushJobResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdLogpushJobsJobId*(client: CloudflareClient,
+                                                      accountOrZone: AccountOrZone,
+                                                      jobId: types.LogpushId,
+                                                      accountOrZoneId: types.LogpushIdentifier): Future[types.LogpushLogpushJobResponseSingle] {.async.} =
+  ## Gets the details of a Logpush job.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/logpush/jobs/{jobId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LogpushLogpushJobResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountOrZoneAccountOrZoneIdLogpushJobsJobId*(client: CloudflareClient,
+                                                      accountOrZone: AccountOrZone,
+                                                      jobId: types.LogpushId,
+                                                      accountOrZoneId: types.LogpushIdentifier,
+                                                      body: PutAccountOrZoneAccountOrZoneIdLogpushJobsJobIdRequest): Future[types.LogpushLogpushJobResponseSingle] {.async.} =
+  ## Updates a Logpush job.
+
+  let res = await client.httpPUT(fmt"/{accountOrZone}/{accountOrZoneId}/logpush/jobs/{jobId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LogpushLogpushJobResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountOrZoneAccountOrZoneIdLogpushJobsJobId*(client: CloudflareClient,
+                                                         accountOrZone: AccountOrZone,
+                                                         jobId: types.LogpushId,
+                                                         accountOrZoneId: types.LogpushIdentifier): Future[JsonNode] {.async.} =
+  ## Deletes a Logpush job.
+
+  let res = await client.httpDELETE(fmt"/{accountOrZone}/{accountOrZoneId}/logpush/jobs/{jobId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdLogpushOwnership*(client: CloudflareClient,
+                                                       accountOrZone: AccountOrZone,
+                                                       accountOrZoneId: types.LogpushIdentifier,
+                                                       body: PostAccountOrZoneAccountOrZoneIdLogpushOwnershipRequest): Future[types.LogpushGetOwnershipResponse] {.async.} =
+  ## Gets a new ownership challenge sent to your destination.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/logpush/ownership", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LogpushGetOwnershipResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdLogpushOwnershipValidate*(client: CloudflareClient,
+                                                               accountOrZone: AccountOrZone,
+                                                               accountOrZoneId: types.LogpushIdentifier,
+                                                               body: PostAccountOrZoneAccountOrZoneIdLogpushOwnershipValidateRequest): Future[types.LogpushValidateOwnershipResponse] {.async.} =
+  ## Validates ownership challenge of the destination.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/logpush/ownership/validate", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LogpushValidateOwnershipResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdLogpushValidateDestination*(client: CloudflareClient,
+                                                                 accountOrZone: AccountOrZone,
+                                                                 accountOrZoneId: types.LogpushIdentifier,
+                                                                 body: PostAccountOrZoneAccountOrZoneIdLogpushValidateDestinationRequest): Future[types.LogpushValidateResponse] {.async.} =
+  ## Validates destination.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/logpush/validate/destination", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LogpushValidateResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdLogpushValidateDestinationExists*(client: CloudflareClient,
+                                                                       accountOrZone: AccountOrZone,
+                                                                       accountOrZoneId: types.LogpushIdentifier,
+                                                                       body: PostAccountOrZoneAccountOrZoneIdLogpushValidateDestinationExistsRequest): Future[types.LogpushDestinationExistsResponse] {.async.} =
+  ## Checks if there is an existing job with a destination.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/logpush/validate/destination/exists", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.LogpushDestinationExistsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdLogpushValidateOrigin*(client: CloudflareClient,
+                                                            accountOrZone: AccountOrZone,
+                                                            accountOrZoneId: types.LogpushIdentifier,
+                                                            body: PostAccountOrZoneAccountOrZoneIdLogpushValidateOriginRequest): Future[types.LogpushValidateResponse] {.async.} =
+  ## Validates logpull origin with logpull_options.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/logpush/validate/origin", body)
   let body = await res.body
   case res.code
   of Http200:

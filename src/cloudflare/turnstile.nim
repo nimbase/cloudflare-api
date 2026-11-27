@@ -26,14 +26,35 @@ type
     mode: JsonNode
     name: types.TurnstileName
     offlabel: Option[types.TurnstileOfflabel]
-    region: Option[types.TurnstileRegion]
   PostAccountsAccountIdChallengesWidgetsSitekeyRotateSecretRequest = object
     invalidate_immediately: Option[types.TurnstileInvalidateImmediately]
+  TurnstileOrderOption* = enum
+    orderId = "id"
+    orderSitekey = "sitekey"
+    orderName = "name"
+    orderCreatedOn = "created_on"
+    orderModifiedOn = "modified_on"
 
-proc getAccountsAccountIdChallengesWidgets*(client: CloudflareClient): Future[JsonNode] {.async.} =
+  TurnstileDirectionOption* = enum
+    directionAsc = "asc"
+    directionDesc = "desc"
+
+
+proc getAccountsAccountIdChallengesWidgets*(client: CloudflareClient,
+                                            page: float64 = default(float64),
+                                            perPage: float64 = default(float64),
+                                            order: TurnstileOrderOption = orderId,
+                                            direction: TurnstileDirectionOption = directionAsc,
+                                            filter: string = default(string)): Future[JsonNode] {.async.} =
   ## Lists Turnstile widgets for an account.
 
-  let res = await client.httpGET("/accounts/{account_id}/challenges/widgets")
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  q["order"] = $order
+  q["direction"] = $direction
+  q["filter"] = $filter
+  let res = await client.httpGET("/accounts/{account_id}/challenges/widgets", q)
   let body = await res.body
   case res.code
   of Http200:

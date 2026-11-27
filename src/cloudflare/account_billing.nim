@@ -17,7 +17,7 @@ type
     validate_payment_method: Option[bool]
 
 proc getAccountsAccountIdBillingBadDebt*(client: CloudflareClient,
-                                         accountId: types.BillSubsApiIdentifier): Future[types.BillSubsApiBadDebtResponseSingle] {.async.} =
+                                         accountId: types.BillSubsIdentifier): Future[types.BillSubsBadDebtResponseSingle] {.async.} =
   ## Gets bad debt information for an account, including outstanding invoices and
   ## total debt amount.
 
@@ -25,24 +25,24 @@ proc getAccountsAccountIdBillingBadDebt*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiBadDebtResponseSingle)
+    result = fromJson(body, types.BillSubsBadDebtResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdBillingCredits*(client: CloudflareClient,
-                                         accountId: types.BillSubsApiIdentifier): Future[types.BillSubsApiAccountCreditsResponse] {.async.} =
+                                         accountId: types.BillSubsIdentifier): Future[types.BillSubsAccountCreditsResponse] {.async.} =
   ## Gets the credit balance and eligibility for an account.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/billing/credits")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiAccountCreditsResponse)
+    result = fromJson(body, types.BillSubsAccountCreditsResponse)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdBillingProfilePaymentMethod*(client: CloudflareClient,
-                                                       accountId: types.BillSubsApiIdentifier): Future[types.BillSubsApiPaymentIntentResponseSingle] {.async.} =
+                                                       accountId: types.BillSubsIdentifier): Future[types.BillSubsPaymentIntentResponseSingle] {.async.} =
   ## Creates a Stripe payment intent for adding or updating a payment method on the
   ## account's billing profile. Returns a client secret for frontend payment method
   ## collection.
@@ -51,24 +51,24 @@ proc postAccountsAccountIdBillingProfilePaymentMethod*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiPaymentIntentResponseSingle)
+    result = fromJson(body, types.BillSubsPaymentIntentResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdBillingUnpaidInvoice*(client: CloudflareClient,
-                                               accountId: types.BillSubsApiIdentifier): Future[types.BillSubsApiUnpaidInvoicesResponseSingle] {.async.} =
+                                               accountId: types.BillSubsIdentifier): Future[types.BillSubsUnpaidInvoicesResponseSingle] {.async.} =
   ## Gets unpaid invoice information for an account.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/billing/unpaid-invoice")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiUnpaidInvoicesResponseSingle)
+    result = fromJson(body, types.BillSubsUnpaidInvoicesResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdClientSecret*(client: CloudflareClient,
-                                        accountId: types.BillSubsApiIdentifier): Future[types.BillSubsApiClientSecretResponseSingle] {.async.} =
+                                        accountId: types.BillSubsIdentifier): Future[types.BillSubsClientSecretResponseSingle] {.async.} =
   ## Creates a Stripe setup intent for adding a payment method to an account. Returns
   ## a client secret for frontend payment method collection.
 
@@ -76,26 +76,26 @@ proc postAccountsAccountIdClientSecret*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiClientSecretResponseSingle)
+    result = fromJson(body, types.BillSubsClientSecretResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc patchAccountsAccountIdInvoices*(client: CloudflareClient,
-                                     accountId: types.BillSubsApiIdentifier,
-                                     body: PatchAccountsAccountIdInvoicesRequest): Future[types.BillSubsApiApiResponseSingle] {.async.} =
+                                     accountId: types.BillSubsIdentifier,
+                                     body: PatchAccountsAccountIdInvoicesRequest): Future[types.BillSubsApiResponseSingle] {.async.} =
   ## Toggles PDF invoice generation for an account.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/invoices", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiApiResponseSingle)
+    result = fromJson(body, types.BillSubsApiResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdPayInvoice*(client: CloudflareClient,
-                                      accountId: types.BillSubsApiIdentifier,
-                                      body: PostAccountsAccountIdPayInvoiceRequest): Future[types.BillSubsApiClientSecretResponseSingle] {.async.} =
+                                      accountId: types.BillSubsIdentifier,
+                                      body: PostAccountsAccountIdPayInvoiceRequest): Future[types.BillSubsClientSecretResponseSingle] {.async.} =
   ## Pays an outstanding invoice for an account. Returns a Stripe client secret when
   ## Strong Customer Authentication (SCA) is required to complete the payment.
 
@@ -103,13 +103,13 @@ proc postAccountsAccountIdPayInvoice*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiClientSecretResponseSingle)
+    result = fromJson(body, types.BillSubsClientSecretResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdReceiptsReceiptIdPdf*(client: CloudflareClient,
-                                               accountId: types.BillSubsApiIdentifier,
-                                               receiptId: types.BillSubsApiIdentifier,
+                                               accountId: types.BillSubsIdentifier,
+                                               receiptId: types.BillSubsIdentifier,
                                                doctype: string = default(string)): Future[AsyncResponse] {.async.} =
   ## Downloads a receipt as a PDF document.
 
@@ -119,7 +119,7 @@ proc getAccountsAccountIdReceiptsReceiptIdPdf*(client: CloudflareClient,
   return res
 
 proc postBillingAddressValidation*(client: CloudflareClient,
-                                   body: types.BillSubsApiAddressValidationRequest): Future[types.BillSubsApiAddressValidationResponseSingle] {.async.} =
+                                   body: types.BillSubsAddressValidationRequest): Future[types.BillSubsAddressValidationResponseSingle] {.async.} =
   ## Validates a billing address and returns validated address suggestions.
   ## Authentication is not enforced to support pre-signup address validation flows,
   ## so credentials are accepted but not required.
@@ -128,6 +128,6 @@ proc postBillingAddressValidation*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiAddressValidationResponseSingle)
+    result = fromJson(body, types.BillSubsAddressValidationResponseSingle)
   else:
     raise newException(CloudflareClientError, body)

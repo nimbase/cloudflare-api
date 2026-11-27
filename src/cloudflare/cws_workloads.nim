@@ -87,7 +87,9 @@ proc putAccountsAccountIdCwsWorkloadsWorkloadId*(client: CloudflareClient,
 proc deleteAccountsAccountIdCwsWorkloadsWorkloadId*(client: CloudflareClient,
                                                     accountId: string,
                                                     workloadId: string): Future[types.CwsResponseDeletedResult] {.async.} =
-  ## Deletes the workload if it is not targeted by a policy set.
+  ## Deletes the workload if it is not targeted by a policy set. When policy sets
+  ## still reference it, the error identifies each policy set by ID and name so those
+  ## relationships can be removed first.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/cws/workloads/{workloadId}")
   let body = await res.body

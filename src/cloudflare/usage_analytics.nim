@@ -154,3 +154,60 @@ proc getZonesZoneIdStreamUsage*(client: CloudflareClient,
     result = fromJson(body, types.UsageAnalyticsStreamUsageResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdMediaUsage*(client: CloudflareClient,
+                                                accountOrZone: AccountOrZone,
+                                                accountOrZoneId: types.UsageAnalyticsIdentifier,
+                                                metrics: string = default(string),
+                                                since: string = default(string),
+                                                until: string = default(string),
+                                                timeDelta: UsageAnalyticTimeDeltaOption = timeDeltaHour,
+                                                limit: int64 = 100,
+                                                filters: string = default(string)): Future[types.UsageAnalyticsStreamUsageResponse] {.async.} =
+  ## Retrieve Media usage analytics for an account or zone. This endpoint shares the
+  ## same backend handler as the Stream usage endpoint and returns identical Stream
+  ## metrics (streamMinutesViewed). The gateway rewrites this path to the shared
+  ## usage handler.
+
+  var q = initOrderedTable[string, string]()
+  q["metrics"] = $metrics
+  q["since"] = $since
+  q["until"] = $until
+  q["time_delta"] = $timeDelta
+  q["limit"] = $limit
+  q["filters"] = $filters
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/media/usage", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.UsageAnalyticsStreamUsageResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdStreamUsage*(client: CloudflareClient,
+                                                 accountOrZone: AccountOrZone,
+                                                 accountOrZoneId: types.UsageAnalyticsIdentifier,
+                                                 metrics: string = default(string),
+                                                 since: string = default(string),
+                                                 until: string = default(string),
+                                                 timeDelta: UsageAnalyticTimeDeltaOption = timeDeltaHour,
+                                                 limit: int64 = 100,
+                                                 filters: string = default(string)): Future[types.UsageAnalyticsStreamUsageResponse] {.async.} =
+  ## Retrieve Stream usage analytics for an account or zone. Returns time-series data
+  ## for Stream billable minutes viewed across all zones in the account or zone. The
+  ## gateway rewrites this path before forwarding to the backend usage handler.
+
+  var q = initOrderedTable[string, string]()
+  q["metrics"] = $metrics
+  q["since"] = $since
+  q["until"] = $until
+  q["time_delta"] = $timeDelta
+  q["limit"] = $limit
+  q["filters"] = $filters
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/stream/usage", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.UsageAnalyticsStreamUsageResponse)
+  else:
+    raise newException(CloudflareClientError, body)

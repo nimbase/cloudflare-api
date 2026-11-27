@@ -23,6 +23,11 @@ type
     messages: seq[JsonNode]
     result: JsonNode
     success: bool
+  GetAccountsAccountIdWorkersObservabilityDestinationsSlugResponse* = object
+    errors: seq[JsonNode]
+    messages: seq[JsonNode]
+    result: JsonNode
+    success: bool
   DeleteAccountsAccountIdWorkersObservabilityDestinationsSlugResponse* = object
     errors: seq[JsonNode]
     messages: seq[JsonNode]
@@ -74,6 +79,18 @@ proc postAccountsAccountIdWorkersObservabilityDestinations*(client: CloudflareCl
   case res.code
   of Http201:
     result = fromJson(body, PostAccountsAccountIdWorkersObservabilityDestinationsResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdWorkersObservabilityDestinationsSlug*(client: CloudflareClient,
+                                                               slug: string): Future[GetAccountsAccountIdWorkersObservabilityDestinationsSlugResponse] {.async.} =
+  ## Get a Workers Observability Telemetry Destination.
+
+  let res = await client.httpGET(fmt"/accounts/{account_id}/workers/observability/destinations/{slug}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, GetAccountsAccountIdWorkersObservabilityDestinationsSlugResponse)
   else:
     raise newException(CloudflareClientError, body)
 

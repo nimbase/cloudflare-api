@@ -10,8 +10,8 @@ import ./private/types
 
 
 proc getAccountsAccountIdPaymentMethods*(client: CloudflareClient,
-                                         accountId: types.BillSubsApiIdentifier,
-                                         page: int64 = 1, perPage: int64 = 20): Future[types.BillSubsApiPaymentMethodResponseCollection] {.async.} =
+                                         accountId: types.BillSubsIdentifier,
+                                         page: int64 = 1, perPage: int64 = 20): Future[types.BillSubsPaymentMethodResponseCollection] {.async.} =
   ## Lists all payment methods for an account.
 
   var q = initOrderedTable[string, string]()
@@ -21,72 +21,72 @@ proc getAccountsAccountIdPaymentMethods*(client: CloudflareClient,
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiPaymentMethodResponseCollection)
+    result = fromJson(body, types.BillSubsPaymentMethodResponseCollection)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdPaymentMethods*(client: CloudflareClient,
-                                          accountId: types.BillSubsApiIdentifier,
-                                          body: types.BillSubsApiPaymentMethod): Future[types.BillSubsApiPaymentMethodResponseSingle] {.async.} =
+                                          accountId: types.BillSubsIdentifier,
+                                          body: types.BillSubsPaymentMethod): Future[types.BillSubsPaymentMethodResponseSingle] {.async.} =
   ## Creates a new payment method for an account.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/payment-methods", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiPaymentMethodResponseSingle)
+    result = fromJson(body, types.BillSubsPaymentMethodResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc getAccountsAccountIdPaymentMethodsPaymentMethodId*(client: CloudflareClient,
-                                                        accountId: types.BillSubsApiIdentifier,
-                                                        paymentMethodId: types.BillSubsApiIdentifier): Future[types.BillSubsApiPaymentMethodResponseSingle] {.async.} =
+                                                        accountId: types.BillSubsIdentifier,
+                                                        paymentMethodId: types.BillSubsIdentifier): Future[types.BillSubsPaymentMethodResponseSingle] {.async.} =
   ## Gets a specific payment method for an account.
 
   let res = await client.httpGET(fmt"/accounts/{accountId}/payment-methods/{paymentMethodId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiPaymentMethodResponseSingle)
+    result = fromJson(body, types.BillSubsPaymentMethodResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc putAccountsAccountIdPaymentMethodsPaymentMethodId*(client: CloudflareClient,
-                                                        accountId: types.BillSubsApiIdentifier,
-                                                        paymentMethodId: types.BillSubsApiIdentifier,
-                                                        body: types.BillSubsApiPaymentMethod): Future[types.BillSubsApiPaymentMethodResponseSingle] {.async.} =
+                                                        accountId: types.BillSubsIdentifier,
+                                                        paymentMethodId: types.BillSubsIdentifier,
+                                                        body: types.BillSubsPaymentMethod): Future[types.BillSubsPaymentMethodResponseSingle] {.async.} =
   ## Updates a payment method for an account.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/payment-methods/{paymentMethodId}", body)
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiPaymentMethodResponseSingle)
+    result = fromJson(body, types.BillSubsPaymentMethodResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc deleteAccountsAccountIdPaymentMethodsPaymentMethodId*(client: CloudflareClient,
-                                                           accountId: types.BillSubsApiIdentifier,
-                                                           paymentMethodId: types.BillSubsApiIdentifier): Future[types.BillSubsApiApiResponseSingle] {.async.} =
+                                                           accountId: types.BillSubsIdentifier,
+                                                           paymentMethodId: types.BillSubsIdentifier): Future[types.BillSubsApiResponseSingle] {.async.} =
   ## Deletes a payment method from an account.
 
   let res = await client.httpDELETE(fmt"/accounts/{accountId}/payment-methods/{paymentMethodId}")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiApiResponseSingle)
+    result = fromJson(body, types.BillSubsApiResponseSingle)
   else:
     raise newException(CloudflareClientError, body)
 
 proc postAccountsAccountIdPaymentMethodsPaymentMethodIdSetAsDefault*(client: CloudflareClient,
-                                                                     accountId: types.BillSubsApiIdentifier,
-                                                                     paymentMethodId: types.BillSubsApiIdentifier): Future[types.BillSubsApiApiResponseSingle] {.async.} =
+                                                                     accountId: types.BillSubsIdentifier,
+                                                                     paymentMethodId: types.BillSubsIdentifier): Future[types.BillSubsApiResponseSingle] {.async.} =
   ## Sets a payment method as the default for an account.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/payment-methods/{paymentMethodId}/set-as-default")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiApiResponseSingle)
+    result = fromJson(body, types.BillSubsApiResponseSingle)
   else:
     raise newException(CloudflareClientError, body)

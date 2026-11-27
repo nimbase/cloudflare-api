@@ -25,6 +25,20 @@ type
     tags: Option[types.AccessTags]
   PostAccountsAccountIdAccessServiceTokensServiceTokenIdRotateRequest = object
     previous_client_secret_expires_at: Option[string]
+  PostAccountOrZoneAccountOrZoneIdAccessServiceTokensRequest = object
+    client_secret_version: Option[types.AccessClientSecretVersion]
+    duration: Option[types.AccessDuration]
+    enabled: Option[types.AccessEnabled]
+    name: types.AccessName2
+    previous_client_secret_expires_at: Option[types.AccessPreviousClientSecretExpiresAt]
+    tags: Option[types.AccessTags]
+  PutAccountOrZoneAccountOrZoneIdAccessServiceTokensServiceTokenIdRequest = object
+    client_secret_version: Option[types.AccessClientSecretVersion]
+    duration: Option[types.AccessDuration]
+    enabled: Option[types.AccessEnabled]
+    name: Option[types.AccessName2]
+    previous_client_secret_expires_at: Option[types.AccessPreviousClientSecretExpiresAt]
+    tags: Option[types.AccessTags]
 
 proc getAccountsAccountIdAccessServiceTokens*(client: CloudflareClient,
                                               accountId: types.AccessIdentifier,
@@ -126,5 +140,86 @@ proc postAccountsAccountIdAccessServiceTokensServiceTokenIdRotate*(client: Cloud
   case res.code
   of Http200:
     result = fromJson(body, types.AccessCreateResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdAccessServiceTokens*(client: CloudflareClient,
+                                                         accountOrZone: AccountOrZone,
+                                                         accountOrZoneId: types.AccessIdentifier,
+                                                         name: string = default(string),
+                                                         search: string = default(string),
+                                                         page: int64 = 1,
+                                                         perPage: int64 = 1000): Future[types.AccessResponseCollection4] {.async.} =
+  ## Lists all service tokens.
+
+  var q = initOrderedTable[string, string]()
+  q["name"] = $name
+  q["search"] = $search
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/access/service_tokens", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessResponseCollection4)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdAccessServiceTokens*(client: CloudflareClient,
+                                                          accountOrZone: AccountOrZone,
+                                                          accountOrZoneId: types.AccessIdentifier,
+                                                          body: PostAccountOrZoneAccountOrZoneIdAccessServiceTokensRequest): Future[types.AccessCreateResponse] {.async.} =
+  ## Generates a new service token. **Note:** This is the only time you can get the
+  ## Client Secret. If you lose the Client Secret, you will have to rotate the Client
+  ## Secret or create a new service token.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/access/service_tokens", body)
+  let body = await res.body
+  case res.code
+  of Http201:
+    result = fromJson(body, types.AccessCreateResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdAccessServiceTokensServiceTokenId*(client: CloudflareClient,
+                                                                       accountOrZone: AccountOrZone,
+                                                                       serviceTokenId: types.AccessUuid,
+                                                                       accountOrZoneId: types.AccessIdentifier): Future[types.AccessSingleResponse2] {.async.} =
+  ## Fetches a single service token.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/access/service_tokens/{serviceTokenId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessSingleResponse2)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountOrZoneAccountOrZoneIdAccessServiceTokensServiceTokenId*(client: CloudflareClient,
+                                                                       accountOrZone: AccountOrZone,
+                                                                       serviceTokenId: types.AccessUuid,
+                                                                       accountOrZoneId: types.AccessIdentifier,
+                                                                       body: PutAccountOrZoneAccountOrZoneIdAccessServiceTokensServiceTokenIdRequest): Future[types.AccessSingleResponse2] {.async.} =
+  ## Updates a configured service token.
+
+  let res = await client.httpPUT(fmt"/{accountOrZone}/{accountOrZoneId}/access/service_tokens/{serviceTokenId}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessSingleResponse2)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountOrZoneAccountOrZoneIdAccessServiceTokensServiceTokenId*(client: CloudflareClient,
+                                                                          accountOrZone: AccountOrZone,
+                                                                          serviceTokenId: types.AccessUuid,
+                                                                          accountOrZoneId: types.AccessIdentifier): Future[types.AccessSingleResponse2] {.async.} =
+  ## Deletes a service token.
+
+  let res = await client.httpDELETE(fmt"/{accountOrZone}/{accountOrZoneId}/access/service_tokens/{serviceTokenId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessSingleResponse2)
   else:
     raise newException(CloudflareClientError, body)

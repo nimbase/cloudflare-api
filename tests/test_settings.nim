@@ -11,9 +11,21 @@ import cloudflare
 import ./common
 
 suite "settings serialization":
+  test "round-trips NetworkqualityErrorEnvelope":
+    let obj = newNetworkqualityErrorEnvelope()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.NetworkqualityErrorEnvelope)) == openjson.toJson(obj)
+
+  test "round-trips NetworkqualitySettingsSuccess":
+    let obj = newNetworkqualitySettingsSuccess()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.NetworkqualitySettingsSuccess)) == openjson.toJson(obj)
+
   test "round-trips NscSettings":
     let obj = newNscSettings()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.NscSettings)) == openjson.toJson(obj)
+
+  test "round-trips NetworkqualitySettingsUpdate":
+    let obj = newNetworkqualitySettingsUpdate()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.NetworkqualitySettingsUpdate)) == openjson.toJson(obj)
 
   test "round-trips NscSettingsRequest":
     let obj = newNscSettingsRequest()
@@ -29,4 +41,14 @@ suite "settings endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.putAccountsAccountIdCniSettings("test", newNscSettingsRequest())
+
+  test "GET /accounts/{account_id}/networkquality/settings":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdNetworkqualitySettings("test")
+
+  test "PUT /accounts/{account_id}/networkquality/settings":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.putAccountsAccountIdNetworkqualitySettings("test", newNetworkqualitySettingsUpdate())
 

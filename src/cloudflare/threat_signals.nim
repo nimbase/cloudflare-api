@@ -208,7 +208,7 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles*(client: Cloudflar
                                                                accountId: string,
                                                                cursor: string = default(string),
                                                                perPage: int64 = 20,
-                                                               feedId: string = default(string),
+                                                               feedId: seq[string] = @[],
                                                                articleId: seq[string] = @[],
                                                                read: bool = default(bool),
                                                                tagId: seq[string] = @[],
@@ -222,6 +222,7 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles*(client: Cloudflar
                                                                fetchedAfter: string = default(string),
                                                                fetchedBefore: string = default(string),
                                                                feedCategory: string = default(string),
+                                                               feedCategoryId: seq[string] = default(seq[string]),
                                                                sourceType: ThreatSignalSourceTypeOption = sourceTypeCurated,
                                                                tagAppliedBy: ThreatSignalTagAppliedByOption = tagAppliedByAi,
                                                                pirId: string = default(string),
@@ -233,7 +234,7 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles*(client: Cloudflar
   var q = initOrderedTable[string, string]()
   q["cursor"] = $cursor
   q["per_page"] = $perPage
-  q["feed_id"] = $feedId
+  for v in feedId: q["feed_id"] = $v
   for v in articleId: q["article_id"] = $v
   q["read"] = $read
   for v in tagId: q["tag_id"] = $v
@@ -247,6 +248,7 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsArticles*(client: Cloudflar
   q["fetched_after"] = $fetchedAfter
   q["fetched_before"] = $fetchedBefore
   q["feed_category"] = $feedCategory
+  q["feed_category_id"] = $feedCategoryId
   q["source_type"] = $sourceType
   q["tag_applied_by"] = $tagAppliedBy
   q["pir_id"] = $pirId
@@ -616,7 +618,12 @@ proc putAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdSkills*(client: 
                                                                         feedId: string,
                                                                         body: PutAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdSkillsRequest): Future[PutAccountsAccountIdCloudforceOneV2ThreatSignalsFeedsFeedIdSkillsResponse] {.async.} =
   ## Replaces the ordered custom skills assigned to a Threat Signals feed. Requires a
-  ## paid Threat Signals subscription.
+  ## paid Threat Signals subscription. Adding an active Custom Skill that would put
+  ## the feed above its per-feed limit
+  ## (`cfone.threat.threat_signals_active_skills_per_feed`) returns 403 with
+  ## `errors[0].reason` `threat_signals_feed_skill_limit`, and
+  ## `errors[0].feed_custom_skill_limit` and `errors[0].feed_custom_skill_count` give
+  ## the limit and current count. Removing or reordering skills is always allowed.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/feeds/{feedId}/skills", body)
   let body = await res.body
@@ -658,14 +665,14 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsSearch*(client: CloudflareC
                                                              accountId: string,
                                                              query: string,
                                                              maxResults: JsonNode = default(JsonNode),
-                                                             feedId: string = default(string)): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsSearchResponse] {.async.} =
+                                                             feedId: seq[string] = @[]): Future[GetAccountsAccountIdCloudforceOneV2ThreatSignalsSearchResponse] {.async.} =
   ## Searches the account's Threat Signals articles using keyword and semantic
   ## retrieval.
 
   var q = initOrderedTable[string, string]()
   q["query"] = $query
   q["max_results"] = $maxResults
-  q["feed_id"] = $feedId
+  for v in feedId: q["feed_id"] = $v
   let res = await client.httpGET(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/search", q)
   let body = await res.body
   case res.code
@@ -695,8 +702,12 @@ proc getAccountsAccountIdCloudforceOneV2ThreatSignalsSkills*(client: CloudflareC
 proc postAccountsAccountIdCloudforceOneV2ThreatSignalsSkills*(client: CloudflareClient,
                                                               accountId: string,
                                                               body: PostAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsRequest): Future[PostAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsResponse] {.async.} =
-  ## Creates a Custom Skill for the account. Free Threat Signals accounts cannot
-  ## create Custom Skills.
+  ## Creates an active Custom Skill for the account. Free Threat Signals accounts
+  ## cannot create Custom Skills. When the account is at its active Custom Skill
+  ## limit (`cfone.threat.threat_signals_skills`), returns 403 with
+  ## `errors[0].reason` `threat_signals_skill_limit`, and
+  ## `errors[0].custom_skill_limit` and `errors[0].custom_skill_count` give the limit
+  ## and current count. Managed Default Skills do not count.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/skills", body)
   let body = await res.body
@@ -740,7 +751,12 @@ proc patchAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillId*(client: Cl
                                                                       skillId: string,
                                                                       body: PatchAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillIdRequest): Future[PatchAccountsAccountIdCloudforceOneV2ThreatSignalsSkillsSkillIdResponse] {.async.} =
   ## Updates a Custom Skill. Managed Default Skills cannot be updated. Free Threat
-  ## Signals accounts cannot update Custom Skills.
+  ## Signals accounts cannot update Custom Skills. Activating an inactive skill
+  ## (`is_active` true) returns 403 with `errors[0].reason`
+  ## `threat_signals_skill_limit` when the account is at its active Custom Skill
+  ## limit, or `threat_signals_feed_skill_limit` (with `errors[0].feed_id`,
+  ## `errors[0].feed_custom_skill_limit`, and `errors[0].feed_custom_skill_count`)
+  ## when a feed it is assigned to is at its per-feed limit.
 
   let res = await client.httpPATCH(fmt"/accounts/{accountId}/cloudforce-one/v2/threat-signals/skills/{skillId}", body)
   let body = await res.body

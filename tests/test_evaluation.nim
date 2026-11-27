@@ -19,6 +19,22 @@ suite "evaluation serialization":
     let obj = newFlagshipError()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FlagshipError)) == openjson.toJson(obj)
 
+  test "round-trips FlagshipOfrepEvaluationRequest":
+    let obj = newFlagshipOfrepEvaluationRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FlagshipOfrepEvaluationRequest)) == openjson.toJson(obj)
+
+  test "round-trips FlagshipOfrepBulkEvaluationResponse":
+    let obj = newFlagshipOfrepBulkEvaluationResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FlagshipOfrepBulkEvaluationResponse)) == openjson.toJson(obj)
+
+  test "round-trips FlagshipOfrepEvaluationSuccess":
+    let obj = newFlagshipOfrepEvaluationSuccess()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FlagshipOfrepEvaluationSuccess)) == openjson.toJson(obj)
+
+  test "round-trips FlagshipOfrepEvaluationFailure":
+    let obj = newFlagshipOfrepEvaluationFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FlagshipOfrepEvaluationFailure)) == openjson.toJson(obj)
+
   test "round-trips FlagshipEvaluationResult":
     let obj = newFlagshipEvaluationResult()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.FlagshipEvaluationResult)) == openjson.toJson(obj)
@@ -28,4 +44,14 @@ suite "evaluation endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdFlagshipAppsAppIdEvaluate("test", "test", "test", "test")
+
+  test "POST /accounts/{account_id}/flagship/apps/{app_id}/ofrep/v1/evaluate/flags":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdFlagshipAppsAppIdOfrepV1EvaluateFlags("test", "test", newFlagshipOfrepEvaluationRequest())
+
+  test "POST /accounts/{account_id}/flagship/apps/{app_id}/ofrep/v1/evaluate/flags/{flag_key}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.postAccountsAccountIdFlagshipAppsAppIdOfrepV1EvaluateFlagsFlagKey("test", "test", "test", newFlagshipOfrepEvaluationRequest())
 

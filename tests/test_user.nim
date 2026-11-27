@@ -15,21 +15,21 @@ suite "user serialization":
     let obj = newIamSingleUserResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamSingleUserResponse)) == openjson.toJson(obj)
 
-  test "round-trips OrganizationsApiLegacyTenant":
-    let obj = newOrganizationsApiLegacyTenant()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiLegacyTenant)) == openjson.toJson(obj)
+  test "round-trips OrganizationsV4ErrorResponse":
+    let obj = newOrganizationsV4ErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsV4ErrorResponse)) == openjson.toJson(obj)
+
+  test "round-trips OrganizationsV4Message":
+    let obj = newOrganizationsV4Message()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsV4Message)) == openjson.toJson(obj)
 
   test "round-trips IamApiResponseCommonFailure":
     let obj = newIamApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.IamApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips OrganizationsApiV4ErrorResponse":
-    let obj = newOrganizationsApiV4ErrorResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiV4ErrorResponse)) == openjson.toJson(obj)
-
-  test "round-trips OrganizationsApiV4Message":
-    let obj = newOrganizationsApiV4Message()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiV4Message)) == openjson.toJson(obj)
+  test "round-trips OrganizationsLegacyTenant":
+    let obj = newOrganizationsLegacyTenant()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsLegacyTenant)) == openjson.toJson(obj)
 
   test "round-trips GetUserTenantsResponse":
     let obj = cloudflare.GetUserTenantsResponse()

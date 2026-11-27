@@ -47,6 +47,10 @@ suite "d1 serialization":
     let obj = newD1DatabaseResponse()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.D1DatabaseResponse)) == openjson.toJson(obj)
 
+  test "round-trips D1InsightsRecommendation":
+    let obj = newD1InsightsRecommendation()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.D1InsightsRecommendation)) == openjson.toJson(obj)
+
   test "round-trips D1QueryMeta":
     let obj = newD1QueryMeta()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.D1QueryMeta)) == openjson.toJson(obj)
@@ -63,16 +67,15 @@ suite "d1 serialization":
     let obj = newD1DatabaseUpdatePartialRequestBody()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.D1DatabaseUpdatePartialRequestBody)) == openjson.toJson(obj)
 
+  test "round-trips D1InsightsSettingsResponse":
+    let obj = newD1InsightsSettingsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.D1InsightsSettingsResponse)) == openjson.toJson(obj)
+
   test "round-trips D1InsightsDatabaseUsage":
     let obj = newD1InsightsDatabaseUsage()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.D1InsightsDatabaseUsage)) == openjson.toJson(obj)
 
 suite "d1 endpoints":
-  test "GET /accounts/{account_id}/d1/database":
-    let client = initCloudflareClient("test-key")
-    client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.getAccountsAccountIdD1Database("test", "test", 1.0, 1.0)
-
   test "PUT /accounts/{account_id}/d1/database/{database_id}":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
@@ -122,4 +125,14 @@ suite "d1 endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdD1InsightsQueries("test", orderByRowsRead, "test", "test", "test", 1)
+
+  test "GET /accounts/{account_id}/d1/insights/recommendations":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdD1InsightsRecommendations("test", @["test"], 1, "test")
+
+  test "GET /accounts/{account_id}/d1/insights/settings":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdD1InsightsSettings("test")
 

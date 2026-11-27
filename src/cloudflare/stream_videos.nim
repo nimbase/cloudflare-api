@@ -83,7 +83,8 @@ proc postAccountsAccountIdStreamDirectUpload*(client: CloudflareClient,
                                               accountId: types.StreamAccountIdentifier,
                                               body: types.StreamDirectUploadRequest): Future[types.StreamDirectUploadResponse] {.async.} =
   ## Creates a direct upload endpoint that allows an end-user to upload a video
-  ## without an API key.
+  ## without an API key. `encodingMode` is fixed when the upload URL is created and
+  ## cannot be changed when the generated URL is used.
 
   let res = await client.httpPOST(fmt"/accounts/{accountId}/stream/direct_upload", body)
   let body = await res.body

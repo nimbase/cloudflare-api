@@ -63,3 +63,63 @@ proc deleteAccountsAccountIdAccessAppsAppIdCa*(client: CloudflareClient,
     result = fromJson(body, types.AccessIdResponse2)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdAccessAppsCa*(client: CloudflareClient,
+                                                  accountOrZone: AccountOrZone,
+                                                  accountOrZoneId: types.AccessIdentifier,
+                                                  page: int64 = 1,
+                                                  perPage: int64 = 100): Future[types.AccessResponseCollection5] {.async.} =
+  ## Lists short-lived certificate CAs and their public keys.
+
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/access/apps/ca", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessResponseCollection5)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdAccessAppsAppIdCa*(client: CloudflareClient,
+                                                       accountOrZone: AccountOrZone,
+                                                       appId: types.AccessUuid,
+                                                       accountOrZoneId: types.AccessIdentifier): Future[types.AccessSingleResponse6] {.async.} =
+  ## Fetches a short-lived certificate CA and its public key.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/access/apps/{appId}/ca")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessSingleResponse6)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdAccessAppsAppIdCa*(client: CloudflareClient,
+                                                        accountOrZone: AccountOrZone,
+                                                        appId: types.AccessUuid,
+                                                        accountOrZoneId: types.AccessIdentifier): Future[types.AccessSingleResponse6] {.async.} =
+  ## Generates a new short-lived certificate CA and public key.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/access/apps/{appId}/ca")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AccessSingleResponse6)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountOrZoneAccountOrZoneIdAccessAppsAppIdCa*(client: CloudflareClient,
+                                                          accountOrZone: AccountOrZone,
+                                                          appId: types.AccessUuid,
+                                                          accountOrZoneId: types.AccessIdentifier): Future[types.AccessIdResponse2] {.async.} =
+  ## Deletes a short-lived certificate CA.
+
+  let res = await client.httpDELETE(fmt"/{accountOrZone}/{accountOrZoneId}/access/apps/{appId}/ca")
+  let body = await res.body
+  case res.code
+  of Http202:
+    result = fromJson(body, types.AccessIdResponse2)
+  else:
+    raise newException(CloudflareClientError, body)

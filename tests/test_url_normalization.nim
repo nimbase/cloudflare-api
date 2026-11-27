@@ -11,17 +11,17 @@ import cloudflare
 import ./common
 
 suite "url_normalization serialization":
-  test "round-trips RulesetsUrlNormalization":
-    let obj = newRulesetsUrlNormalization()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RulesetsUrlNormalization)) == openjson.toJson(obj)
+  test "round-trips UrlNormalizationResponse":
+    let obj = newUrlNormalizationResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.UrlNormalizationResponse)) == openjson.toJson(obj)
 
-  test "round-trips RulesetsMessage":
-    let obj = newRulesetsMessage()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RulesetsMessage)) == openjson.toJson(obj)
+  test "round-trips UrlNormalizationMessage":
+    let obj = newUrlNormalizationMessage()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.UrlNormalizationMessage)) == openjson.toJson(obj)
 
-  test "round-trips RulesetsResponse":
-    let obj = newRulesetsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.RulesetsResponse)) == openjson.toJson(obj)
+  test "round-trips UrlNormalizationUrlNormalization":
+    let obj = newUrlNormalizationUrlNormalization()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.UrlNormalizationUrlNormalization)) == openjson.toJson(obj)
 
 suite "url_normalization endpoints":
   test "GET /zones/{zone_id}/url_normalization":
@@ -32,7 +32,7 @@ suite "url_normalization endpoints":
   test "PUT /zones/{zone_id}/url_normalization":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.putZonesZoneIdUrlNormalization("test", newRulesetsUrlNormalization())
+    discard waitFor client.putZonesZoneIdUrlNormalization("test", newUrlNormalizationUrlNormalization())
 
   test "DELETE /zones/{zone_id}/url_normalization":
     let client = initCloudflareClient("test-key")

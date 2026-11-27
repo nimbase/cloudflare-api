@@ -406,3 +406,21 @@ proc getZonesZoneIdWaitingRoomsWaitingRoomIdStatus*(client: CloudflareClient,
     result = fromJson(body, types.WaitingroomStatusResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdWaitingRooms*(client: CloudflareClient,
+                                                  accountOrZone: AccountOrZone,
+                                                  accountOrZoneId: types.WaitingroomIdentifier,
+                                                  page: float64 = default(float64),
+                                                  perPage: float64 = default(float64)): Future[types.WaitingroomResponseCollection] {.async.} =
+  ## Lists waiting rooms for account or zone.
+
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/waiting_rooms", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.WaitingroomResponseCollection)
+  else:
+    raise newException(CloudflareClientError, body)

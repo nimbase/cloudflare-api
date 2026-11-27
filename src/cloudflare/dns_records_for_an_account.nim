@@ -21,3 +21,17 @@ proc getAccountsAccountIdDnsRecordsUsage*(client: CloudflareClient,
     result = fromJson(body, types.DnsRecordsDnsResponseAccountUsage)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdDnsRecordsUsage*(client: CloudflareClient,
+                                                     accountOrZone: AccountOrZone,
+                                                     accountOrZoneId: types.DnsRecordsIdentifier): Future[types.DnsRecordsDnsResponseAccountUsage] {.async.} =
+  ## Get the current DNS record usage and quota for an account or zone. May include
+  ## internal DNS usage and quota.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/dns_records/usage")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.DnsRecordsDnsResponseAccountUsage)
+  else:
+    raise newException(CloudflareClientError, body)

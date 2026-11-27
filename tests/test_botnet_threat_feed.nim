@@ -11,13 +11,13 @@ import cloudflare
 import ./common
 
 suite "botnet_threat_feed serialization":
-  test "round-trips BotnetFeedApiApiResponseCommonFailure":
-    let obj = newBotnetFeedApiApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BotnetFeedApiApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips BotnetFeedApiResponseCommonFailure":
+    let obj = newBotnetFeedApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BotnetFeedApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips BotnetFeedApiApiResponseCommon":
-    let obj = newBotnetFeedApiApiResponseCommon()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BotnetFeedApiApiResponseCommon)) == openjson.toJson(obj)
+  test "round-trips BotnetFeedApiResponseCommon":
+    let obj = newBotnetFeedApiResponseCommon()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BotnetFeedApiResponseCommon)) == openjson.toJson(obj)
 
 suite "botnet_threat_feed endpoints":
   test "GET /accounts/{account_id}/botnet_feed/asn/{asn_id}/day_report":

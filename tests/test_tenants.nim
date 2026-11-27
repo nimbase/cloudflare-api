@@ -11,21 +11,17 @@ import cloudflare
 import ./common
 
 suite "tenants serialization":
-  test "round-trips OrganizationsApiV4ErrorResponse":
-    let obj = newOrganizationsApiV4ErrorResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiV4ErrorResponse)) == openjson.toJson(obj)
+  test "round-trips OrganizationsV4ErrorResponse":
+    let obj = newOrganizationsV4ErrorResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsV4ErrorResponse)) == openjson.toJson(obj)
 
-  test "round-trips OrganizationsApiLegacyAccount":
-    let obj = newOrganizationsApiLegacyAccount()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiLegacyAccount)) == openjson.toJson(obj)
+  test "round-trips OrganizationsV4Message":
+    let obj = newOrganizationsV4Message()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsV4Message)) == openjson.toJson(obj)
 
-  test "round-trips OrganizationsApiV4Message":
-    let obj = newOrganizationsApiV4Message()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiV4Message)) == openjson.toJson(obj)
-
-  test "round-trips OrganizationsApiPageTokenResultInfo":
-    let obj = newOrganizationsApiPageTokenResultInfo()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsApiPageTokenResultInfo)) == openjson.toJson(obj)
+  test "round-trips OrganizationsLegacyAccount":
+    let obj = newOrganizationsLegacyAccount()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.OrganizationsLegacyAccount)) == openjson.toJson(obj)
 
   test "round-trips GetTenantsTenantIdAccountsResponse":
     let obj = cloudflare.GetTenantsTenantIdAccountsResponse()

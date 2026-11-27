@@ -11,41 +11,41 @@ import cloudflare
 import ./common
 
 suite "account_billing serialization":
-  test "round-trips BillSubsApiClientSecretResponseSingle":
-    let obj = newBillSubsApiClientSecretResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiClientSecretResponseSingle)) == openjson.toJson(obj)
+  test "round-trips BillSubsAddressValidationRequest":
+    let obj = newBillSubsAddressValidationRequest()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsAddressValidationRequest)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiAccountCreditsResponse":
-    let obj = newBillSubsApiAccountCreditsResponse()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiAccountCreditsResponse)) == openjson.toJson(obj)
+  test "round-trips BillSubsBadDebtResponseSingle":
+    let obj = newBillSubsBadDebtResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsBadDebtResponseSingle)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiAddressValidationResponseSingle":
-    let obj = newBillSubsApiAddressValidationResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiAddressValidationResponseSingle)) == openjson.toJson(obj)
+  test "round-trips BillSubsApiResponseCommonFailure":
+    let obj = newBillSubsApiResponseCommonFailure()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiResponseCommonFailure)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiApiResponseSingle":
-    let obj = newBillSubsApiApiResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiApiResponseSingle)) == openjson.toJson(obj)
+  test "round-trips BillSubsClientSecretResponseSingle":
+    let obj = newBillSubsClientSecretResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsClientSecretResponseSingle)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiBadDebtResponseSingle":
-    let obj = newBillSubsApiBadDebtResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiBadDebtResponseSingle)) == openjson.toJson(obj)
+  test "round-trips BillSubsAccountCreditsResponse":
+    let obj = newBillSubsAccountCreditsResponse()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsAccountCreditsResponse)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiPaymentIntentResponseSingle":
-    let obj = newBillSubsApiPaymentIntentResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiPaymentIntentResponseSingle)) == openjson.toJson(obj)
+  test "round-trips BillSubsAddressValidationResponseSingle":
+    let obj = newBillSubsAddressValidationResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsAddressValidationResponseSingle)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiApiResponseCommonFailure":
-    let obj = newBillSubsApiApiResponseCommonFailure()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiApiResponseCommonFailure)) == openjson.toJson(obj)
+  test "round-trips BillSubsPaymentIntentResponseSingle":
+    let obj = newBillSubsPaymentIntentResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsPaymentIntentResponseSingle)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiAddressValidationRequest":
-    let obj = newBillSubsApiAddressValidationRequest()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiAddressValidationRequest)) == openjson.toJson(obj)
+  test "round-trips BillSubsApiResponseSingle":
+    let obj = newBillSubsApiResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiResponseSingle)) == openjson.toJson(obj)
 
-  test "round-trips BillSubsApiUnpaidInvoicesResponseSingle":
-    let obj = newBillSubsApiUnpaidInvoicesResponseSingle()
-    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsApiUnpaidInvoicesResponseSingle)) == openjson.toJson(obj)
+  test "round-trips BillSubsUnpaidInvoicesResponseSingle":
+    let obj = newBillSubsUnpaidInvoicesResponseSingle()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.BillSubsUnpaidInvoicesResponseSingle)) == openjson.toJson(obj)
 
 suite "account_billing endpoints":
   test "GET /accounts/{account_id}/billing/bad-debt":
@@ -81,5 +81,5 @@ suite "account_billing endpoints":
   test "POST /billing/address-validation":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
-    discard waitFor client.postBillingAddressValidation(newBillSubsApiAddressValidationRequest())
+    discard waitFor client.postBillingAddressValidation(newBillSubsAddressValidationRequest())
 

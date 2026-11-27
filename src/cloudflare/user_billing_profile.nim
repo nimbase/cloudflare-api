@@ -8,13 +8,13 @@ import ./private/metaclient
 import ./private/types
 
 
-proc getUserBillingProfile*(client: CloudflareClient): Future[types.BillSubsApiBillingResponseSingle] {.async.} =
+proc getUserBillingProfile*(client: CloudflareClient): Future[types.BillSubsBillingResponseSingle] {.async.} =
   ## Accesses your billing profile object.
 
   let res = await client.httpGET("/user/billing/profile")
   let body = await res.body
   case res.code
   of Http200:
-    result = fromJson(body, types.BillSubsApiBillingResponseSingle)
+    result = fromJson(body, types.BillSubsBillingResponseSingle)
   else:
     raise newException(CloudflareClientError, body)

@@ -11,6 +11,14 @@ import cloudflare
 import ./common
 
 suite "account_settings serialization":
+  test "round-trips SpeedWorkerTransformationsResult":
+    let obj = newSpeedWorkerTransformationsResult()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedWorkerTransformationsResult)) == openjson.toJson(obj)
+
+  test "round-trips SpeedWorkerTransformations":
+    let obj = newSpeedWorkerTransformations()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedWorkerTransformations)) == openjson.toJson(obj)
+
   test "round-trips SpeedApiResponseCommon":
     let obj = newSpeedApiResponseCommon()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedApiResponseCommon)) == openjson.toJson(obj)
@@ -18,6 +26,10 @@ suite "account_settings serialization":
   test "round-trips SpeedApiResponseCommonFailure":
     let obj = newSpeedApiResponseCommonFailure()
     check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedApiResponseCommonFailure)) == openjson.toJson(obj)
+
+  test "round-trips SpeedWorkerTransformationsDeleted":
+    let obj = newSpeedWorkerTransformationsDeleted()
+    check openjson.toJson(openjson.fromJson(openjson.toJson(obj), cloudflare.SpeedWorkerTransformationsDeleted)) == openjson.toJson(obj)
 
   test "round-trips SpeedUtBillingResponse":
     let obj = newSpeedUtBillingResponse()
@@ -32,6 +44,21 @@ suite "account_settings endpoints":
     let client = initCloudflareClient("test-key")
     client.baseUri = "http://127.0.0.1:" & $int(startMock())
     discard waitFor client.getAccountsAccountIdSettingsTransformations("test")
+
+  test "GET /accounts/{account_id}/settings/transformations/workers/{script_name}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.getAccountsAccountIdSettingsTransformationsWorkersScriptName("test", "test")
+
+  test "PUT /accounts/{account_id}/settings/transformations/workers/{script_name}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.putAccountsAccountIdSettingsTransformationsWorkersScriptName("test", "test", newSpeedWorkerTransformations())
+
+  test "DELETE /accounts/{account_id}/settings/transformations/workers/{script_name}":
+    let client = initCloudflareClient("test-key")
+    client.baseUri = "http://127.0.0.1:" & $int(startMock())
+    discard waitFor client.deleteAccountsAccountIdSettingsTransformationsWorkersScriptName("test", "test")
 
   test "GET /accounts/{account_id}/settings/ut-billing":
     let client = initCloudflareClient("test-key")

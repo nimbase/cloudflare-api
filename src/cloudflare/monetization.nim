@@ -143,3 +143,31 @@ proc patchZonesZoneIdMonetizationRulesRuleId*(client: CloudflareClient,
     result = fromJson(body, types.MonetizationMonetizationRuleCollectionResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdMonetization*(client: CloudflareClient,
+                                                  accountOrZone: AccountOrZone,
+                                                  accountOrZoneId: types.MonetizationAccountIdentifier): Future[types.MonetizationMonetizationEligibilityResponse] {.async.} =
+  ## Returns the account or zone's latest stored monetization eligibility result.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/monetization")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.MonetizationMonetizationEligibilityResponse)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdMonetization*(client: CloudflareClient,
+                                                   accountOrZone: AccountOrZone,
+                                                   accountOrZoneId: types.MonetizationAccountIdentifier,
+                                                   body: types.MonetizationMonetizationAccountEligibilityCheckInput): Future[types.MonetizationMonetizationAccountEligibilityCheckResponse] {.async.} =
+  ## Checks the account or zone for Monetization Gateway eligibility and returns its
+  ## pending, approved, or rejected decision.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/monetization", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.MonetizationMonetizationAccountEligibilityCheckResponse)
+  else:
+    raise newException(CloudflareClientError, body)

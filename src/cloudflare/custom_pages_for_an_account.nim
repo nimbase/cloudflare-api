@@ -12,6 +12,9 @@ type
   PutAccountsAccountIdCustomPagesIdentifierRequest = object
     state: types.CustomPagesState
     url: types.CustomPagesUrl
+  PutAccountOrZoneAccountOrZoneIdCustomPagesIdentifierRequest = object
+    state: types.CustomPagesState
+    url: types.CustomPagesUrl
 
 proc getAccountsAccountIdCustomPages*(client: CloudflareClient,
                                       accountId: types.CustomPagesIdentifier): Future[types.CustomPagesCustomPageResultList] {.async.} =
@@ -59,6 +62,63 @@ proc putAccountsAccountIdCustomPagesIdentifier*(client: CloudflareClient,
   ## Updates the configuration for a custom page type at the account level.
 
   let res = await client.httpPUT(fmt"/accounts/{accountId}/custom_pages/{identifier}", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.CustomPagesCustomPageResult)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdCustomPages*(client: CloudflareClient,
+                                                 accountOrZone: AccountOrZone,
+                                                 accountOrZoneId: types.CustomPagesIdentifier): Future[types.CustomPagesCustomPageResultList] {.async.} =
+  ## Lists all custom page configurations for an account or zone.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/custom_pages")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.CustomPagesCustomPageResultList)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdCustomPagesPreviewTokens*(client: CloudflareClient,
+                                                               accountOrZone: AccountOrZone,
+                                                               accountOrZoneId: types.CustomPagesIdentifier,
+                                                               body: types.CustomPagesPreviewRequest): Future[types.CustomPagesPreviewTokenResult] {.async.} =
+  ## Creates a signed JWT for previewing an account or zone-level custom page before
+  ## it is published.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/custom_pages/preview_tokens", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.CustomPagesPreviewTokenResult)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdCustomPagesIdentifier*(client: CloudflareClient,
+                                                           accountOrZone: AccountOrZone,
+                                                           identifier: types.CustomPagesErrorPageType,
+                                                           accountOrZoneId: types.CustomPagesIdentifier): Future[types.CustomPagesCustomPageResult] {.async.} =
+  ## Returns the configuration for a custom page type.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/custom_pages/{identifier}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.CustomPagesCustomPageResult)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountOrZoneAccountOrZoneIdCustomPagesIdentifier*(client: CloudflareClient,
+                                                           accountOrZone: AccountOrZone,
+                                                           identifier: types.CustomPagesErrorPageType,
+                                                           accountOrZoneId: types.CustomPagesIdentifier,
+                                                           body: PutAccountOrZoneAccountOrZoneIdCustomPagesIdentifierRequest): Future[types.CustomPagesCustomPageResult] {.async.} =
+  ## Updates the configuration for a custom page type.
+
+  let res = await client.httpPUT(fmt"/{accountOrZone}/{accountOrZoneId}/custom_pages/{identifier}", body)
   let body = await res.body
   case res.code
   of Http200:

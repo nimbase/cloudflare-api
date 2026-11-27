@@ -95,21 +95,6 @@ type
       ## Array of error details
     queued_indicators_count: float64
       ## Number of indicators queued for async processing
-  PostAccountsAccountIdCloudforceOneEventsCreateBulkRelationshipsRequest = object
-    data: seq[JsonNode]
-    dataset_id: string
-  PostAccountsAccountIdCloudforceOneEventsCreateBulkRelationshipsResponse* = object
-    ## Result of bulk relationship creation operation
-    created_events_count: float64
-      ## Number of events created
-    created_indicators_count: float64
-      ## Number of indicators created
-    created_relationships_count: float64
-      ## Number of relationships created
-    error_count: float64
-      ## Number of errors encountered
-    errors: seq[JsonNode]
-      ## Array of error details
   PostAccountsAccountIdCloudforceOneEventsDatasetDatasetIdCopyRequest = object
     dest_dataset_id: string
     event_ids: seq[string]
@@ -197,7 +182,8 @@ type
     account_id: int64
       ## Account ID
     alert_enabled: bool
-      ## Deprecated: saved-query alerting and rules were removed. Always false.
+      ## Send an hourly notification when new events match this saved view. Receive it by
+      ## adding the view to a Threat Events saved query notification policy.
     alert_rollup_enabled: bool
       ## Deprecated: saved-query alerting and rules were removed. Always false.
     created_at: string
@@ -224,7 +210,8 @@ type
     account_id: int64
       ## Account ID
     alert_enabled: bool
-      ## Deprecated: saved-query alerting and rules were removed. Always false.
+      ## Send an hourly notification when new events match this saved view. Receive it by
+      ## adding the view to a Threat Events saved query notification policy.
     alert_rollup_enabled: bool
       ## Deprecated: saved-query alerting and rules were removed. Always false.
     created_at: string
@@ -258,7 +245,8 @@ type
     account_id: int64
       ## Account ID
     alert_enabled: bool
-      ## Deprecated: saved-query alerting and rules were removed. Always false.
+      ## Send an hourly notification when new events match this saved view. Receive it by
+      ## adding the view to a Threat Events saved query notification policy.
     alert_rollup_enabled: bool
       ## Deprecated: saved-query alerting and rules were removed. Always false.
     created_at: string
@@ -292,7 +280,8 @@ type
     account_id: int64
       ## Account ID
     alert_enabled: bool
-      ## Deprecated: saved-query alerting and rules were removed. Always false.
+      ## Send an hourly notification when new events match this saved view. Receive it by
+      ## adding the view to a Threat Events saved query notification policy.
     alert_rollup_enabled: bool
       ## Deprecated: saved-query alerting and rules were removed. Always false.
     created_at: string
@@ -674,21 +663,6 @@ proc postAccountsAccountIdCloudforceOneEventsCreateBulk*(client: CloudflareClien
   case res.code
   of Http202:
     result = fromJson(body, PostAccountsAccountIdCloudforceOneEventsCreateBulkResponse)
-  else:
-    raise newException(CloudflareClientError, body)
-
-proc postAccountsAccountIdCloudforceOneEventsCreateBulkRelationships*(client: CloudflareClient,
-                                                                      accountId: string,
-                                                                      body: PostAccountsAccountIdCloudforceOneEventsCreateBulkRelationshipsRequest): Future[PostAccountsAccountIdCloudforceOneEventsCreateBulkRelationshipsResponse] {.async.} =
-  ## Legacy. Use `threat-intel events bulk-create` (`POST /events/create/bulk`) and
-  ## `threat-intel events relationships create` (`POST /events/relationships/create`)
-  ## instead.
-
-  let res = await client.httpPOST(fmt"/accounts/{accountId}/cloudforce-one/events/create/bulk/relationships", body)
-  let body = await res.body
-  case res.code
-  of Http200:
-    result = fromJson(body, PostAccountsAccountIdCloudforceOneEventsCreateBulkRelationshipsResponse)
   else:
     raise newException(CloudflareClientError, body)
 

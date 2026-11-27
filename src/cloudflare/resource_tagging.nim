@@ -179,3 +179,53 @@ proc deleteZonesZoneIdTags*(client: CloudflareClient,
   q["access_application_id"] = $accessApplicationId
   let res = await client.httpDELETE(fmt"/zones/{zoneId}/tags", q)
   return res
+
+proc getAccountOrZoneAccountOrZoneIdTags*(client: CloudflareClient,
+                                          accountOrZone: AccountOrZone,
+                                          accountOrZoneId: types.ResourceTaggingAccountId,
+                                          resourceId: types.ResourceTaggingResourceId,
+                                          resourceType: types.ResourceTaggingAccountResourceType,
+                                          workerId: types.ResourceTaggingWorkerId = default(types.ResourceTaggingWorkerId)): Future[types.ResourceTaggingTaggedResourceResponseSingle] {.async.} =
+  ## Retrieves tags for a specific account or zone-level resource.
+
+  var q = initOrderedTable[string, string]()
+  q["resource_id"] = $resourceId
+  q["resource_type"] = $resourceType
+  q["worker_id"] = $workerId
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/tags", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.ResourceTaggingTaggedResourceResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc putAccountOrZoneAccountOrZoneIdTags*(client: CloudflareClient,
+                                          accountOrZone: AccountOrZone,
+                                          accountOrZoneId: types.ResourceTaggingAccountId,
+                                          body: types.ResourceTaggingSetTagsRequestAccountLevel): Future[types.ResourceTaggingTaggedResourceResponseSingle] {.async.} =
+  ## Creates or updates tags for a specific account or zone-level resource. Replaces
+  ## all existing tags for the resource.
+
+  let res = await client.httpPUT(fmt"/{accountOrZone}/{accountOrZoneId}/tags", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.ResourceTaggingTaggedResourceResponseSingle)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountOrZoneAccountOrZoneIdTags*(client: CloudflareClient,
+                                             accountOrZone: AccountOrZone,
+                                             accountOrZoneId: types.ResourceTaggingAccountId,
+                                             resourceId: types.ResourceTaggingResourceId,
+                                             resourceType: types.ResourceTaggingAccountResourceType,
+                                             workerId: types.ResourceTaggingWorkerId = default(types.ResourceTaggingWorkerId)): Future[AsyncResponse] {.async.} =
+  ## Removes all tags from a specific account or zone-level resource.
+
+  var q = initOrderedTable[string, string]()
+  q["resource_id"] = $resourceId
+  q["resource_type"] = $resourceType
+  q["worker_id"] = $workerId
+  let res = await client.httpDELETE(fmt"/{accountOrZone}/{accountOrZoneId}/tags", q)
+  return res

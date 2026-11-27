@@ -81,3 +81,70 @@ proc deleteAccountsAccountIdCustomCsrsCustomCsrId*(client: CloudflareClient,
     result = fromJson(body, types.TlsCertificatesAndHostnamesCustomCsrResponseIdOnly)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdCustomCsrs*(client: CloudflareClient,
+                                                accountOrZone: AccountOrZone,
+                                                accountOrZoneId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                page: float64 = default(float64),
+                                                perPage: float64 = default(float64),
+                                                order: CustomCsrsForAnAccountOrderOption = orderCreatedAt,
+                                                direction: CustomCsrsForAnAccountDirectionOption = directionAsc): Future[types.TlsCertificatesAndHostnamesCustomCsrResponseCollection2] {.async.} =
+  ## List all custom Certificate Signing Requests (CSRs) for an account or zone.
+
+  var q = initOrderedTable[string, string]()
+  q["page"] = $page
+  q["per_page"] = $perPage
+  q["order"] = $order
+  q["direction"] = $direction
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/custom_csrs", q)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.TlsCertificatesAndHostnamesCustomCsrResponseCollection2)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdCustomCsrs*(client: CloudflareClient,
+                                                 accountOrZone: AccountOrZone,
+                                                 accountOrZoneId: types.TlsCertificatesAndHostnamesIdentifier,
+                                                 body: types.TlsCertificatesAndHostnamesCustomCsrCreateRequest2): Future[types.TlsCertificatesAndHostnamesCustomCsrResponseSingle2] {.async.} =
+  ## Generate a new custom Certificate Signing Request (CSR) for an account or zone.
+  ## Cloudflare generates and securely stores the private key associated with the
+  ## CSR.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/custom_csrs", body)
+  let body = await res.body
+  case res.code
+  of Http201:
+    result = fromJson(body, types.TlsCertificatesAndHostnamesCustomCsrResponseSingle2)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdCustomCsrsCustomCsrId*(client: CloudflareClient,
+                                                           accountOrZone: AccountOrZone,
+                                                           customCsrId: types.TlsCertificatesAndHostnamesCustomCsrIdentifier,
+                                                           accountOrZoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCustomCsrResponseSingle2] {.async.} =
+  ## Retrieve details for a specific custom Certificate Signing Request (CSR).
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/custom_csrs/{customCsrId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.TlsCertificatesAndHostnamesCustomCsrResponseSingle2)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc deleteAccountOrZoneAccountOrZoneIdCustomCsrsCustomCsrId*(client: CloudflareClient,
+                                                              accountOrZone: AccountOrZone,
+                                                              customCsrId: types.TlsCertificatesAndHostnamesCustomCsrIdentifier,
+                                                              accountOrZoneId: types.TlsCertificatesAndHostnamesIdentifier): Future[types.TlsCertificatesAndHostnamesCustomCsrResponseIdOnly] {.async.} =
+  ## Delete a custom Certificate Signing Request (CSR) and its associated private
+  ## key.
+
+  let res = await client.httpDELETE(fmt"/{accountOrZone}/{accountOrZoneId}/custom_csrs/{customCsrId}")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.TlsCertificatesAndHostnamesCustomCsrResponseIdOnly)
+  else:
+    raise newException(CloudflareClientError, body)

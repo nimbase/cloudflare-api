@@ -56,6 +56,7 @@ type
 
 proc getAccountsAccountIdEventSubscriptionsSubscriptions*(client: CloudflareClient,
                                                           accountId: types.MqIdentifier,
+                                                          queueId: string = default(string),
                                                           page: int64 = 1,
                                                           perPage: int64 = 20,
                                                           order: QueueOrderOption = orderName,
@@ -64,6 +65,7 @@ proc getAccountsAccountIdEventSubscriptionsSubscriptions*(client: CloudflareClie
   ## filtering.
 
   var q = initOrderedTable[string, string]()
+  q["queue_id"] = $queueId
   q["page"] = $page
   q["per_page"] = $perPage
   q["order"] = $order

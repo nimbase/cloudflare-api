@@ -68,3 +68,36 @@ proc postZonesZoneIdSecurityCenterInsightsScans*(client: CloudflareClient,
     result = fromJson(body, JsonNode)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountOrZoneAccountOrZoneIdSecurityCenterInsightsScans*(client: CloudflareClient,
+                                                                 accountOrZone: AccountOrZone,
+                                                                 accountOrZoneId: types.SecurityCenterIdentifier): Future[JsonNode] {.async.} =
+  ## Returns the most recent on-demand scans for the account or zone, up to a maximum
+  ## of 5. Each scan includes its ID, start time, and current status. This includes
+  ## both account or zone-wide and zone-scoped scans. Also returns quota information
+  ## showing how many scans have been used and how many remain in the current 24-hour
+  ## window.
+
+  let res = await client.httpGET(fmt"/{accountOrZone}/{accountOrZoneId}/security-center/insights/scans")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)
+
+proc postAccountOrZoneAccountOrZoneIdSecurityCenterInsightsScans*(client: CloudflareClient,
+                                                                  accountOrZone: AccountOrZone,
+                                                                  accountOrZoneId: types.SecurityCenterIdentifier,
+                                                                  body: types.SecurityCenterNewScanRequest): Future[JsonNode] {.async.} =
+  ## Initiates an on-demand security scan for the entire account or zone, scanning
+  ## all zones associated with the account or zone. Rate limited to 5 scans per
+  ## account or zone per 24-hour window.
+
+  let res = await client.httpPOST(fmt"/{accountOrZone}/{accountOrZoneId}/security-center/insights/scans", body)
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, JsonNode)
+  else:
+    raise newException(CloudflareClientError, body)

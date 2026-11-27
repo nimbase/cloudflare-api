@@ -337,3 +337,19 @@ proc patchAccountsAccountIdResourceLibraryApplicationsId*(client: CloudflareClie
     result = fromJson(body, types.AlexandriaGetApplicationResponse)
   else:
     raise newException(CloudflareClientError, body)
+
+proc getAccountsAccountIdResourceLibraryApplicationsIdReferences*(client: CloudflareClient,
+                                                                  accountId: string,
+                                                                  id: types.AlexandriaApplicationId): Future[types.AlexandriaApplicationReferencesResponse] {.async.} =
+  ## List the resources in the account that reference a custom application, such as
+  ## Gateway rules. This is the same list a delete of the application returns when it
+  ## is rejected. A delete checks the references again, so the list can change before
+  ## the delete runs.
+
+  let res = await client.httpGET(fmt"/accounts/{accountId}/resource-library/applications/{id}/references")
+  let body = await res.body
+  case res.code
+  of Http200:
+    result = fromJson(body, types.AlexandriaApplicationReferencesResponse)
+  else:
+    raise newException(CloudflareClientError, body)
